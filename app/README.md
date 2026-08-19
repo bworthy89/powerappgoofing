@@ -80,14 +80,18 @@ The UI mirrors the guide-viewer Playbooks pages rather than a conventional Power
 | | Value |
 |---|---|
 | Page | White `#FFFFFF`, content in a centred fixed-width column (900 / 700 / 1100), 32px gutters |
-| Cards | White, 1px `#E9ECEF` hairline, 8px radius. No drop shadows — Power Apps classic controls cannot render them |
-| Badges | Pill labels, 11-12px radius, tinted fill with a darker text tone: blue `#E7F5FF`/`#1971C2`, green `#EBFBEE`/`#2B8A3E`, grey `#F1F3F5`/`#495057`, amber `#FFF4E6`/`#E8590C` |
+| Cards | White, 1px `#E9ECEF` hairline, square corners. `Label` supports neither radius nor shadow |
+| Badges | Tinted chips with a darker text tone: blue `#E7F5FF`/`#1971C2`, green `#EBFBEE`/`#2B8A3E`, grey `#F1F3F5`/`#495057`, amber `#FFF4E6`/`#E8590C`. Square, not pills — see below |
 | Section labels | Uppercase, 10pt, bold, `#868E96` |
 | Back links | Borderless buttons in `#228BE6` with a `#F1F3F5` hover fill |
 | Tabs | Borderless pills; active is `#E7F5FF` fill with `#1971C2` text |
 
-Two deliberate departures from the React original, both forced by the platform:
+Three departures from the React original, all forced by the platform:
 
+- **No rounded corners on cards or badges.** `Label` rejects `RadiusTopLeft` and its siblings
+  (`PA2108`), and every card surface and badge is a `Label`. Radius survives only on
+  `Classic/Button` and `Classic/TextInput`, so the tabs, back links, Open buttons, and the search
+  box are rounded while the cards and chips are square.
 - **No hover shadow on cards.** Classic controls have no shadow property. Selection and emphasis
   are carried by border colour instead, which is why the selected component card and current-standard
   software rows switch their `BorderColor` as well as their `Fill`.
@@ -95,8 +99,12 @@ Two deliberate departures from the React original, both forced by the platform:
   no functional gain, so the back links use a text chevron. Add `Icon` controls afterwards in Studio
   if you want them.
 
-Every card surface is a `Label` with `Text: =""` rather than a `Rectangle`, because `Label` reliably
-supports `Fill`, `BorderColor`, `BorderThickness`, and the four `Radius*` properties together.
+Every card surface is a `Label` with `Text: =""`, which reliably supports `Fill`, `BorderColor`,
+and `BorderThickness` together.
+
+If you want true rounded pills, hover shadows, and text truncation, the card and badge layer can be
+rebuilt with `HtmlText` controls, which render real CSS. That is a larger change and carries its own
+paste-validation risk, so it is deliberately not what this kit does.
 
 ## Design notes worth knowing before you edit
 

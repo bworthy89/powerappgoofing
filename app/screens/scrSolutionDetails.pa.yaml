@@ -207,10 +207,6 @@ Screens:
                         Fill: =If(!IsBlank(varComponent) && ThisItem.ID = varComponent.ID, AppTheme.PrimaryLight, AppTheme.Card)
                         BorderColor: =If(!IsBlank(varComponent) && ThisItem.ID = varComponent.ID, AppTheme.Primary, AppTheme.Border)
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblComponentModel:
                       Control: Label
                       Properties:
@@ -258,10 +254,6 @@ Screens:
                   Color: =AppTheme.PrimaryDark
                   Size: =11
                   VerticalAlign: =VerticalAlign.Middle
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
                   Visible: =!IsBlank(varComponent)
             - btnClearComponent:
                 Control: Classic/Button
@@ -296,10 +288,6 @@ Screens:
                   Fill: =AppTheme.Card
                   BorderColor: =AppTheme.Border
                   BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
                   Visible: =varSelectedSection = "Overview"
             - lblOverviewScopeLabel:
                 Control: Label
@@ -397,10 +385,6 @@ Screens:
                         Fill: =If(ThisItem.CurrentStandard, AppTheme.SuccessLight, AppTheme.Card)
                         BorderColor: =If(ThisItem.CurrentStandard, AppTheme.Success, AppTheme.Border)
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblSoftwareName:
                       Control: Label
                       Properties:
@@ -448,10 +432,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                   - lblBadgeCurrentStandard:
                       Control: Label
                       Properties:
@@ -466,10 +446,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =12
-                        RadiusTopRight: =12
-                        RadiusBottomLeft: =12
-                        RadiusBottomRight: =12
                         Visible: =ThisItem.CurrentStandard
             - lblNoSoftware:
                 Control: Label
@@ -532,10 +508,6 @@ Screens:
                         Fill: =AppTheme.Card
                         BorderColor: =AppTheme.Border
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblGuideTitle:
                       Control: Label
                       Properties:
@@ -561,10 +533,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                   - lblGuideBadgeStatus:
                       Control: Label
                       Properties:
@@ -579,10 +547,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                   - btnOpenGuide:
                       Control: Classic/Button
                       Properties:
@@ -675,10 +639,6 @@ Screens:
                         Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
                         BorderColor: =If(ThisItem.Featured, AppTheme.Warning, AppTheme.Border)
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblSIATitle:
                       Control: Label
                       Properties:
@@ -704,10 +664,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                   - lblSIANotes:
                       Control: Label
                       Properties:
@@ -819,10 +775,6 @@ Screens:
                         Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
                         BorderColor: =If(ThisItem.Featured, AppTheme.Warning, AppTheme.Border)
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblFirmwareTitle:
                       Control: Label
                       Properties:
@@ -848,10 +800,6 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                   - lblFirmwareNotes:
                       Control: Label
                       Properties:
