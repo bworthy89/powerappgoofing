@@ -1,757 +1,913 @@
-# Screen 3 of 3 — Solution Details (main technician workspace)
-# Paste into: Power Apps Studio > new blank screen > right-click screen > Code view > Paste
-# Contains the v1.1 corrected filters: the three-branch AppliesTo scope clause and the
-# mirrored ReferenceCategory / Restricted / ReferenceStatus columns on TB_CustomerReferences.
+# Screen 3 of 3 — Solution Details
+# Same visual language as the guide-viewer Playbooks pages: centered column, white surface,
+# hairline cards, tinted pill badges, uppercase section labels, subtle link-style buttons.
+# Retains the v1.1 corrected filters (three-branch AppliesTo scope clause and the mirrored
+# ReferenceCategory / Restricted / ReferenceStatus columns on TB_CustomerReferences).
 Screens:
   scrSolutionDetails:
     Properties:
-      Fill: =AppTheme.Background
+      Fill: =AppTheme.Bg
     Children:
-      - conSolutionHeader:
+      - conSolutionPage:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            X: =0
+            X: =Max((Parent.Width - 1100) / 2, 0)
             Y: =0
-            Width: =Parent.Width
-            Height: =96
-            Fill: =AppTheme.Primary
+            Width: =Min(Parent.Width, 1100)
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
           Children:
             - btnBackToToolbox:
                 Control: Classic/Button
                 Properties:
-                  X: =24
+                  X: =26
                   Y: =28
-                  Width: =100
-                  Height: =40
-                  Text: ="< Back"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
+                  Width: =180
+                  Height: =32
+                  Text: ="<  Back to solutions"
+                  Fill: =AppTheme.Bg
+                  HoverFill: =AppTheme.Muted
+                  PressedFill: =AppTheme.Muted
+                  Color: =AppTheme.Primary
+                  HoverColor: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  Size: =11
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
                   OnSelect: |
                     =Set(varComponent, Blank());
                     Navigate(scrCustomerToolbox, ScreenTransition.Fade)
-            - lblSolutionHeaderTitle:
+            - lblSolutionTitle:
                 Control: Label
                 Properties:
-                  X: =144
-                  Y: =20
-                  Width: =Parent.Width - 320
-                  Height: =32
-                  Text: =varCustomer.Title & "  —  " & varSolution.SolutionModel
-                  Color: =Color.White
+                  X: =32
+                  Y: =68
+                  Width: =Parent.Width - 64
+                  Height: =34
+                  Text: =varSolution.Title
+                  Color: =AppTheme.Fg
                   Size: =20
-                  FontWeight: =FontWeight.Semibold
-            - lblSolutionHeaderStatus:
+                  FontWeight: =FontWeight.Bold
+            - lblSolutionSubtitle:
                 Control: Label
                 Properties:
-                  X: =144
-                  Y: =52
-                  Width: =Parent.Width - 320
-                  Height: =26
-                  Text: =varSolution.Title & "  •  " & varSolution.DeploymentStatus.Value
-                  Color: =ColorValue("#C7D8E3")
+                  X: =32
+                  Y: =102
+                  Width: =Parent.Width - 64
+                  Height: =22
+                  Text: =varCustomer.Title & "  •  " & varSolution.DeploymentStatus.Value
+                  Color: =AppTheme.MutedFg
                   Size: =12
-            - btnHome:
+
+            # ---------------- section tabs ----------------
+            - btnSecOverview:
                 Control: Classic/Button
                 Properties:
-                  X: =Parent.Width - 140
-                  Y: =28
-                  Width: =110
-                  Height: =40
-                  Text: ="Customers"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
-                  OnSelect: |
-                    =Set(varSolution, Blank());
-                    Set(varComponent, Blank());
-                    Navigate(scrCustomers, ScreenTransition.Fade)
-
-      # ---------------- section navigation ----------------
-      - btnSecOverview:
-          Control: Classic/Button
-          Properties:
-            X: =32
-            Y: =112
-            Width: =130
-            Height: =40
-            Text: ="Overview"
-            Fill: =If(varSelectedSection = "Overview", AppTheme.Secondary, AppTheme.Card)
-            Color: =If(varSelectedSection = "Overview", Color.White, AppTheme.Text)
-            BorderColor: =AppTheme.Border
-            OnSelect: =Set(varSelectedSection, "Overview")
-      - btnSecSoftware:
-          Control: Classic/Button
-          Properties:
-            X: =170
-            Y: =112
-            Width: =130
-            Height: =40
-            Text: ="Software"
-            Fill: =If(varSelectedSection = "Software", AppTheme.Secondary, AppTheme.Card)
-            Color: =If(varSelectedSection = "Software", Color.White, AppTheme.Text)
-            BorderColor: =AppTheme.Border
-            OnSelect: =Set(varSelectedSection, "Software")
-      - btnSecGuides:
-          Control: Classic/Button
-          Properties:
-            X: =308
-            Y: =112
-            Width: =130
-            Height: =40
-            Text: ="Guides"
-            Fill: =If(varSelectedSection = "Guides", AppTheme.Secondary, AppTheme.Card)
-            Color: =If(varSelectedSection = "Guides", Color.White, AppTheme.Text)
-            BorderColor: =AppTheme.Border
-            OnSelect: =Set(varSelectedSection, "Guides")
-      - btnSecSIA:
-          Control: Classic/Button
-          Properties:
-            X: =446
-            Y: =112
-            Width: =150
-            Height: =40
-            Text: ="SIA Documents"
-            Fill: =If(varSelectedSection = "SIA", AppTheme.Secondary, AppTheme.Card)
-            Color: =If(varSelectedSection = "SIA", Color.White, AppTheme.Text)
-            BorderColor: =AppTheme.Border
-            OnSelect: =Set(varSelectedSection, "SIA")
-      - btnSecFirmware:
-          Control: Classic/Button
-          Properties:
-            X: =604
-            Y: =112
-            Width: =130
-            Height: =40
-            Text: ="Firmware"
-            Fill: =If(varSelectedSection = "Firmware", AppTheme.Secondary, AppTheme.Card)
-            Color: =If(varSelectedSection = "Firmware", Color.White, AppTheme.Text)
-            BorderColor: =AppTheme.Border
-            OnSelect: =Set(varSelectedSection, "Firmware")
-
-      # ---------------- component rail ----------------
-      - lblComponentsHeading:
-          Control: Label
-          Properties:
-            X: =32
-            Y: =166
-            Width: =300
-            Height: =26
-            Text: ="Components"
-            Color: =AppTheme.Text
-            Size: =13
-            FontWeight: =FontWeight.Semibold
-      - galComponents:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =32
-            Y: =198
-            Width: =300
-            Height: =Parent.Height - 230
-            TemplateSize: =76
-            TemplatePadding: =6
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_SolutionComponents,
-                      CustomerSolution.Id = varSolution.ID &&
-                      Installed = true
-                  ),
-                  "DisplayOrder",
-                  SortOrder.Ascending,
-                  "ComponentModel",
-                  SortOrder.Ascending
-              )
-            OnSelect: =Set(varComponent, ThisItem)
-          Children:
-            - recComponentCard:
-                Control: Rectangle
-                Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =70
-                  Fill: |
-                    =If(
-                        !IsBlank(varComponent) && ThisItem.ID = varComponent.ID,
-                        ColorValue("#E5F1FB"),
-                        AppTheme.Card
-                    )
-                  BorderColor: |
-                    =If(
-                        !IsBlank(varComponent) && ThisItem.ID = varComponent.ID,
-                        AppTheme.Secondary,
-                        AppTheme.Border
-                    )
-                  BorderThickness: =1
-            - lblComponentModel:
-                Control: Label
-                Properties:
-                  X: =16
-                  Y: =8
-                  Width: =Parent.TemplateWidth - 32
-                  Height: =26
-                  Text: =ThisItem.ComponentModel
-                  Color: =AppTheme.Text
-                  Size: =13
-                  FontWeight: =FontWeight.Semibold
-            - lblComponentCategory:
-                Control: Label
-                Properties:
-                  X: =16
-                  Y: =36
-                  Width: =Parent.TemplateWidth - 32
-                  Height: =24
-                  Text: =ThisItem.ComponentCategory.Value
-                  Color: =AppTheme.MutedText
+                  X: =32
+                  Y: =138
+                  Width: =130
+                  Height: =36
+                  Text: ="Overview"
+                  Fill: =If(varSelectedSection = "Overview", AppTheme.PrimaryLight, AppTheme.Bg)
+                  HoverFill: =AppTheme.Muted
+                  Color: =If(varSelectedSection = "Overview", AppTheme.PrimaryDark, AppTheme.MutedFg)
+                  BorderThickness: =0
                   Size: =11
-      - lblNoComponents:
-          Control: Label
-          Properties:
-            X: =32
-            Y: =240
-            Width: =300
-            Height: =60
-            Text: ="No installed components are recorded for this solution."
-            Color: =AppTheme.MutedText
-            Size: =12
-            Align: =Align.Center
-            Visible: =CountRows(galComponents.AllItems) = 0
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  OnSelect: =Set(varSelectedSection, "Overview")
+            - btnSecSoftware:
+                Control: Classic/Button
+                Properties:
+                  X: =170
+                  Y: =138
+                  Width: =130
+                  Height: =36
+                  Text: ="Software"
+                  Fill: =If(varSelectedSection = "Software", AppTheme.PrimaryLight, AppTheme.Bg)
+                  HoverFill: =AppTheme.Muted
+                  Color: =If(varSelectedSection = "Software", AppTheme.PrimaryDark, AppTheme.MutedFg)
+                  BorderThickness: =0
+                  Size: =11
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  OnSelect: =Set(varSelectedSection, "Software")
+            - btnSecGuides:
+                Control: Classic/Button
+                Properties:
+                  X: =308
+                  Y: =138
+                  Width: =130
+                  Height: =36
+                  Text: ="Guides"
+                  Fill: =If(varSelectedSection = "Guides", AppTheme.PrimaryLight, AppTheme.Bg)
+                  HoverFill: =AppTheme.Muted
+                  Color: =If(varSelectedSection = "Guides", AppTheme.PrimaryDark, AppTheme.MutedFg)
+                  BorderThickness: =0
+                  Size: =11
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  OnSelect: =Set(varSelectedSection, "Guides")
+            - btnSecSIA:
+                Control: Classic/Button
+                Properties:
+                  X: =446
+                  Y: =138
+                  Width: =150
+                  Height: =36
+                  Text: ="SIA Documents"
+                  Fill: =If(varSelectedSection = "SIA", AppTheme.PrimaryLight, AppTheme.Bg)
+                  HoverFill: =AppTheme.Muted
+                  Color: =If(varSelectedSection = "SIA", AppTheme.PrimaryDark, AppTheme.MutedFg)
+                  BorderThickness: =0
+                  Size: =11
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  OnSelect: =Set(varSelectedSection, "SIA")
+            - btnSecFirmware:
+                Control: Classic/Button
+                Properties:
+                  X: =604
+                  Y: =138
+                  Width: =130
+                  Height: =36
+                  Text: ="Firmware"
+                  Fill: =If(varSelectedSection = "Firmware", AppTheme.PrimaryLight, AppTheme.Bg)
+                  HoverFill: =AppTheme.Muted
+                  Color: =If(varSelectedSection = "Firmware", AppTheme.PrimaryDark, AppTheme.MutedFg)
+                  BorderThickness: =0
+                  Size: =11
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  OnSelect: =Set(varSelectedSection, "Firmware")
 
-      # ---------------- selected component banner ----------------
-      - conSelectedComponent:
-          Control: GroupContainer
-          Variant: ManualLayout
-          Properties:
-            X: =352
-            Y: =166
-            Width: =Parent.Width - 384
-            Height: =44
-            Fill: =ColorValue("#E5F1FB")
-            Visible: =!IsBlank(varComponent)
-          Children:
-            - lblSelectedComponent:
+            # ---------------- component rail ----------------
+            - lblComponentsLabel:
                 Control: Label
                 Properties:
-                  X: =16
-                  Y: =0
-                  Width: =Parent.Width - 160
-                  Height: =44
-                  Text: |
-                    ="Filtered by component: " & varComponent.ComponentModel
-                  Color: =AppTheme.Text
-                  Size: =12
+                  X: =32
+                  Y: =192
+                  Width: =260
+                  Height: =18
+                  Text: ="COMPONENTS"
+                  Color: =AppTheme.MutedFg
+                  Size: =10
+                  FontWeight: =FontWeight.Bold
+            - galComponents:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =32
+                  Y: =214
+                  Width: =260
+                  Height: =Parent.Height - 246
+                  TemplateSize: =72
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_SolutionComponents,
+                            CustomerSolution.Id = varSolution.ID &&
+                            Installed = true
+                        ),
+                        "DisplayOrder",
+                        SortOrder.Ascending,
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: =Set(varComponent, ThisItem)
+                Children:
+                  - lblComponentCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =64
+                        Text: =""
+                        Fill: =If(!IsBlank(varComponent) && ThisItem.ID = varComponent.ID, AppTheme.PrimaryLight, AppTheme.Card)
+                        BorderColor: =If(!IsBlank(varComponent) && ThisItem.ID = varComponent.ID, AppTheme.Primary, AppTheme.Border)
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblComponentModel:
+                      Control: Label
+                      Properties:
+                        X: =14
+                        Y: =10
+                        Width: =Parent.TemplateWidth - 28
+                        Height: =22
+                        Text: =ThisItem.ComponentModel
+                        Color: =AppTheme.Fg
+                        Size: =12
+                        FontWeight: =FontWeight.Semibold
+                  - lblComponentCategory:
+                      Control: Label
+                      Properties:
+                        X: =14
+                        Y: =32
+                        Width: =Parent.TemplateWidth - 28
+                        Height: =20
+                        Text: =ThisItem.ComponentCategory.Value
+                        Color: =AppTheme.MutedFg
+                        Size: =10
+            - lblNoComponents:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =240
+                  Width: =260
+                  Height: =40
+                  Text: ="No installed components recorded."
+                  Color: =AppTheme.MutedFg
+                  Size: =11
+                  Align: =Align.Center
+                  Visible: =CountRows(galComponents.AllItems) = 0
+
+            # ---------------- component filter banner ----------------
+            - lblFilterBanner:
+                Control: Label
+                Properties:
+                  X: =316
+                  Y: =186
+                  Width: =Parent.Width - 348
+                  Height: =36
+                  Text: ="    Filtered by " & varComponent.ComponentModel
+                  Fill: =AppTheme.PrimaryLight
+                  Color: =AppTheme.PrimaryDark
+                  Size: =11
                   VerticalAlign: =VerticalAlign.Middle
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =!IsBlank(varComponent)
             - btnClearComponent:
                 Control: Classic/Button
                 Properties:
-                  X: =Parent.Width - 140
-                  Y: =6
-                  Width: =124
-                  Height: =32
+                  X: =Parent.Width - 452
+                  Y: =192
+                  Width: =104
+                  Height: =24
                   Text: ="Clear filter"
-                  Fill: =AppTheme.Card
-                  Color: =AppTheme.Secondary
-                  BorderColor: =AppTheme.Secondary
-                  Size: =11
+                  Fill: =AppTheme.PrimaryLight
+                  HoverFill: =AppTheme.Card
+                  Color: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  Size: =10
+                  FontWeight: =FontWeight.Semibold
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  Visible: =!IsBlank(varComponent)
                   OnSelect: =Set(varComponent, Blank())
 
-      # ---------------- Overview section ----------------
-      - conOverview:
-          Control: GroupContainer
-          Variant: ManualLayout
-          Properties:
-            X: =352
-            Y: =226
-            Width: =Parent.Width - 384
-            Height: =Parent.Height - 258
-            Fill: =AppTheme.Card
-            Visible: =varSelectedSection = "Overview"
-          Children:
-            - lblOverviewHeading:
+            # ---------------- Overview ----------------
+            - lblOverviewCard:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =16
-                  Width: =Parent.Width - 40
-                  Height: =28
-                  Text: ="Solution overview"
-                  Color: =AppTheme.Text
-                  Size: =15
-                  FontWeight: =FontWeight.Semibold
+                  X: =316
+                  Y: =232
+                  Width: =Parent.Width - 348
+                  Height: =240
+                  Text: =""
+                  Fill: =AppTheme.Card
+                  BorderColor: =AppTheme.Border
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =varSelectedSection = "Overview"
+            - lblOverviewScopeLabel:
+                Control: Label
+                Properties:
+                  X: =340
+                  Y: =252
+                  Width: =Parent.Width - 396
+                  Height: =18
+                  Text: ="DEPLOYMENT SCOPE"
+                  Color: =AppTheme.MutedFg
+                  Size: =9
+                  FontWeight: =FontWeight.Bold
+                  Visible: =varSelectedSection = "Overview"
             - lblOverviewScope:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =52
-                  Width: =Parent.Width - 40
-                  Height: =80
+                  X: =340
+                  Y: =272
+                  Width: =Parent.Width - 396
+                  Height: =72
                   Text: =Coalesce(varSolution.DeploymentScope, "No deployment scope recorded.")
-                  Color: =AppTheme.Text
-                  Size: =12
+                  Color: =AppTheme.Fg
+                  Size: =11
+                  Visible: =varSelectedSection = "Overview"
+            - lblOverviewConfigLabel:
+                Control: Label
+                Properties:
+                  X: =340
+                  Y: =352
+                  Width: =Parent.Width - 396
+                  Height: =18
+                  Text: ="CUSTOMER CONFIGURATION"
+                  Color: =AppTheme.MutedFg
+                  Size: =9
+                  FontWeight: =FontWeight.Bold
+                  Visible: =varSelectedSection = "Overview"
             - lblOverviewConfig:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =140
-                  Width: =Parent.Width - 40
-                  Height: =80
+                  X: =340
+                  Y: =372
+                  Width: =Parent.Width - 396
+                  Height: =84
                   Text: =Coalesce(varSolution.CustomerConfiguration, "No configuration summary recorded.")
-                  Color: =AppTheme.MutedText
-                  Size: =12
-            - lblOverviewHint:
-                Control: Label
+                  Color: =AppTheme.Fg
+                  Size: =11
+                  Visible: =varSelectedSection = "Overview"
+
+            # ---------------- Software ----------------
+            - galSoftware:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =20
+                  X: =316
                   Y: =232
-                  Width: =Parent.Width - 40
-                  Height: =60
-                  Text: ="Select a component on the left, then use the tabs above to see software, guides, SIA documentation, and firmware for it."
-                  Color: =AppTheme.MutedText
-                  Size: =12
-
-      # ---------------- Software section ----------------
-      - galSoftware:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =352
-            Y: =226
-            Width: =Parent.Width - 384
-            Height: =Parent.Height - 258
-            TemplateSize: =104
-            TemplatePadding: =8
-            Visible: =varSelectedSection = "Software"
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_SoftwareInstallations,
-                      Customer.Id = varCustomer.ID &&
-                      (
-                          AppliesTo.Value = "Customer" ||
-                          CustomerSolution.Id = varSolution.ID ||
-                          (
-                              AppliesTo.Value = "Component" &&
-                              SolutionComponent.Id = varComponent.ID
-                          )
-                      ) &&
-                      (
-                          IsBlank(varComponent) ||
-                          SolutionComponent.Id = Blank() ||
-                          SolutionComponent.Id = varComponent.ID
-                      )
-                  ),
-                  "SoftwareName",
-                  SortOrder.Ascending,
-                  "SoftwareVersion",
-                  SortOrder.Descending
-              )
-          Children:
-            - recSoftwareCard:
-                Control: Rectangle
-                Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =96
-                  Fill: =If(ThisItem.CurrentStandard, AppTheme.SuccessLight, AppTheme.Card)
-                  BorderColor: =AppTheme.Border
-                  BorderThickness: =1
-            - lblSoftwareName:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =10
-                  Width: =Parent.TemplateWidth - 220
-                  Height: =28
-                  Text: =ThisItem.SoftwareName & "  " & ThisItem.SoftwareVersion
-                  Color: =AppTheme.Text
-                  Size: =14
-                  FontWeight: =FontWeight.Semibold
-            - lblSoftwareDetail:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =40
-                  Width: =Parent.TemplateWidth - 220
-                  Height: =24
-                  Text: |
-                    =Concat(
+                  Width: =Parent.Width - 348
+                  Height: =Parent.Height - 264
+                  TemplateSize: =88
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Visible: =varSelectedSection = "Software"
+                  Items: |
+                    =SortByColumns(
                         Filter(
-                            [
-                                If(!IsBlank(ThisItem.ImageVersion), "Image " & ThisItem.ImageVersion),
-                                If(!IsBlank(ThisItem.DatabaseVersion), "DB " & ThisItem.DatabaseVersion),
-                                If(!IsBlank(ThisItem.ConfigurationVersion), "Config " & ThisItem.ConfigurationVersion)
-                            ],
-                            !IsBlank(Value)
+                            TB_SoftwareInstallations,
+                            Customer.Id = varCustomer.ID &&
+                            (
+                                AppliesTo.Value = "Customer" ||
+                                CustomerSolution.Id = varSolution.ID ||
+                                (
+                                    AppliesTo.Value = "Component" &&
+                                    SolutionComponent.Id = varComponent.ID
+                                )
+                            ) &&
+                            (
+                                IsBlank(varComponent) ||
+                                SolutionComponent.Id = Blank() ||
+                                SolutionComponent.Id = varComponent.ID
+                            )
                         ),
-                        Value,
-                        "   •   "
+                        "SoftwareName",
+                        SortOrder.Ascending,
+                        "SoftwareVersion",
+                        SortOrder.Descending
                     )
-                  Color: =AppTheme.MutedText
-                  Size: =11
-            - lblSoftwareScope:
+                Children:
+                  - lblSoftwareCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =80
+                        Text: =""
+                        Fill: =If(ThisItem.CurrentStandard, AppTheme.SuccessLight, AppTheme.Card)
+                        BorderColor: =If(ThisItem.CurrentStandard, AppTheme.Success, AppTheme.Border)
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblSoftwareName:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =12
+                        Width: =Parent.TemplateWidth - 200
+                        Height: =22
+                        Text: =ThisItem.SoftwareName & "   " & ThisItem.SoftwareVersion
+                        Color: =AppTheme.Fg
+                        Size: =12
+                        FontWeight: =FontWeight.Semibold
+                  - lblSoftwareDetail:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =34
+                        Width: =Parent.TemplateWidth - 200
+                        Height: =18
+                        Text: |
+                          =Concat(
+                              Filter(
+                                  [
+                                      If(!IsBlank(ThisItem.ImageVersion), "Image " & ThisItem.ImageVersion),
+                                      If(!IsBlank(ThisItem.DatabaseVersion), "DB " & ThisItem.DatabaseVersion),
+                                      If(!IsBlank(ThisItem.ConfigurationVersion), "Config " & ThisItem.ConfigurationVersion)
+                                  ],
+                                  !IsBlank(Value)
+                              ),
+                              Value,
+                              "   •   "
+                          )
+                        Color: =AppTheme.MutedFg
+                        Size: =10
+                  - lblBadgeAppliesTo:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =52
+                        Width: =92
+                        Height: =22
+                        Text: =ThisItem.AppliesTo.Value
+                        Fill: =AppTheme.GrayLight
+                        Color: =AppTheme.GrayDark
+                        Size: =9
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                  - lblBadgeCurrentStandard:
+                      Control: Label
+                      Properties:
+                        X: =Parent.TemplateWidth - 176
+                        Y: =28
+                        Width: =160
+                        Height: =24
+                        Text: ="Current standard"
+                        Fill: =AppTheme.SuccessLight
+                        Color: =AppTheme.SuccessDark
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        Visible: =ThisItem.CurrentStandard
+            - lblNoSoftware:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =64
-                  Width: =Parent.TemplateWidth - 220
+                  X: =316
+                  Y: =300
+                  Width: =Parent.Width - 348
                   Height: =24
-                  Text: ="Applies to " & ThisItem.AppliesTo.Value & "  •  " & ThisItem.DeploymentStatus.Value
-                  Color: =AppTheme.MutedText
+                  Text: ="No software matches this customer, solution, and component."
+                  Color: =AppTheme.MutedFg
                   Size: =11
-            - lblCurrentStandardBadge:
-                Control: Label
-                Properties:
-                  X: =Parent.TemplateWidth - 200
-                  Y: =32
-                  Width: =180
-                  Height: =32
-                  Text: ="Current standard"
-                  Color: =AppTheme.Success
-                  Size: =11
-                  FontWeight: =FontWeight.Semibold
-                  Align: =Align.Right
-                  VerticalAlign: =VerticalAlign.Middle
-                  Visible: =ThisItem.CurrentStandard
-      - lblNoSoftware:
-          Control: Label
-          Properties:
-            X: =352
-            Y: =300
-            Width: =Parent.Width - 384
-            Height: =60
-            Text: ="No software records match the selected customer, solution, and component."
-            Color: =AppTheme.MutedText
-            Size: =12
-            Align: =Align.Center
-            Visible: =varSelectedSection = "Software" && CountRows(galSoftware.AllItems) = 0
+                  Align: =Align.Center
+                  Visible: =varSelectedSection = "Software" && CountRows(galSoftware.AllItems) = 0
 
-      # ---------------- Guides section ----------------
-      - galGuides:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =352
-            Y: =226
-            Width: =Parent.Width - 384
-            Height: =Parent.Height - 258
-            TemplateSize: =96
-            TemplatePadding: =8
-            Visible: =varSelectedSection = "Guides"
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_CustomerGuides,
-                      Customer.Id = varCustomer.ID &&
-                      Active = true &&
-                      (
-                          AppliesTo.Value = "Customer" ||
-                          CustomerSolution.Id = varSolution.ID ||
-                          (
-                              AppliesTo.Value = "Component" &&
-                              SolutionComponent.Id = varComponent.ID
-                          )
-                      ) &&
-                      (
-                          IsBlank(varComponent) ||
-                          SolutionComponent.Id = Blank() ||
-                          SolutionComponent.Id = varComponent.ID
-                      )
-                  ),
-                  "Title",
-                  SortOrder.Ascending
-              )
-          Children:
-            - recGuideCard:
-                Control: Rectangle
+            # ---------------- Guides ----------------
+            - galGuides:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =88
-                  Fill: =AppTheme.Card
-                  BorderColor: =AppTheme.Border
-                  BorderThickness: =1
-            - lblGuideTitle:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =10
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =28
-                  Text: =ThisItem.Title
-                  Color: =AppTheme.Text
-                  Size: =14
-                  FontWeight: =FontWeight.Semibold
-            - lblGuideMeta:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =40
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =38
-                  Text: =ThisItem.GuideType.Value & "  •  " & ThisItem.DocumentStatus.Value & If(!IsBlank(ThisItem.Revision), "  •  Rev " & ThisItem.Revision)
-                  Color: =AppTheme.MutedText
-                  Size: =11
-            - btnOpenGuide:
-                Control: Classic/Button
-                Properties:
-                  X: =Parent.TemplateWidth - 150
-                  Y: =28
-                  Width: =130
-                  Height: =36
-                  Text: ="Open guide"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
-                  Size: =11
-                  OnSelect: |
-                    =If(
-                        IsBlank(ThisItem.DocumentURL),
-                        Notify(
-                            "No document URL is saved on this guide.",
-                            NotificationType.Warning
+                  X: =316
+                  Y: =232
+                  Width: =Parent.Width - 348
+                  Height: =Parent.Height - 264
+                  TemplateSize: =84
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Visible: =varSelectedSection = "Guides"
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_CustomerGuides,
+                            Customer.Id = varCustomer.ID &&
+                            Active = true &&
+                            (
+                                AppliesTo.Value = "Customer" ||
+                                CustomerSolution.Id = varSolution.ID ||
+                                (
+                                    AppliesTo.Value = "Component" &&
+                                    SolutionComponent.Id = varComponent.ID
+                                )
+                            ) &&
+                            (
+                                IsBlank(varComponent) ||
+                                SolutionComponent.Id = Blank() ||
+                                SolutionComponent.Id = varComponent.ID
+                            )
                         ),
-                        Launch(ThisItem.DocumentURL)
+                        "Title",
+                        SortOrder.Ascending
                     )
-      - lblNoGuides:
-          Control: Label
-          Properties:
-            X: =352
-            Y: =300
-            Width: =Parent.Width - 384
-            Height: =60
-            Text: ="No guides match the selected customer, solution, and component."
-            Color: =AppTheme.MutedText
-            Size: =12
-            Align: =Align.Center
-            Visible: =varSelectedSection = "Guides" && CountRows(galGuides.AllItems) = 0
-
-      # ---------------- SIA documentation section ----------------
-      # Card text comes entirely from TB_CustomerReferences (the mirrored columns), so there is
-      # no per-row LookUp. The product URL is resolved only when the button is pressed.
-      - galSIA:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =352
-            Y: =226
-            Width: =Parent.Width - 384
-            Height: =Parent.Height - 258
-            TemplateSize: =96
-            TemplatePadding: =8
-            Visible: =varSelectedSection = "SIA"
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_CustomerReferences,
-                      Customer.Id = varCustomer.ID &&
-                      Active = true &&
-                      Restricted = false &&
-                      ReferenceStatus.Value <> "Retired" &&
-                      ReferenceCategory.Value = "SIA Documentation" &&
-                      (
-                          AppliesTo.Value = "Customer" ||
-                          CustomerSolution.Id = varSolution.ID ||
-                          (
-                              AppliesTo.Value = "Component" &&
-                              SolutionComponent.Id = varComponent.ID
+                Children:
+                  - lblGuideCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =76
+                        Text: =""
+                        Fill: =AppTheme.Card
+                        BorderColor: =AppTheme.Border
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblGuideTitle:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =12
+                        Width: =Parent.TemplateWidth - 130
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Color: =AppTheme.Fg
+                        Size: =12
+                        FontWeight: =FontWeight.Semibold
+                  - lblGuideBadgeType:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =40
+                        Width: =140
+                        Height: =22
+                        Text: =ThisItem.GuideType.Value
+                        Fill: =AppTheme.PrimaryLight
+                        Color: =AppTheme.PrimaryDark
+                        Size: =9
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                  - lblGuideBadgeStatus:
+                      Control: Label
+                      Properties:
+                        X: =162
+                        Y: =40
+                        Width: =128
+                        Height: =22
+                        Text: =ThisItem.DocumentStatus.Value
+                        Fill: =If(ThisItem.DocumentStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.DocumentStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Size: =9
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                  - btnOpenGuide:
+                      Control: Classic/Button
+                      Properties:
+                        X: =Parent.TemplateWidth - 110
+                        Y: =24
+                        Width: =92
+                        Height: =30
+                        Text: ="Open"
+                        Fill: =AppTheme.Card
+                        HoverFill: =AppTheme.PrimaryLight
+                        Color: =AppTheme.Primary
+                        BorderColor: =AppTheme.BorderStrong
+                        BorderThickness: =1
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        OnSelect: |
+                          =If(
+                              IsBlank(ThisItem.DocumentURL),
+                              Notify(
+                                  "No document URL is saved on this guide.",
+                                  NotificationType.Warning
+                              ),
+                              Launch(ThisItem.DocumentURL)
                           )
-                      ) &&
-                      (
-                          IsBlank(varComponent) ||
-                          SolutionComponent.Id = Blank() ||
-                          SolutionComponent.Id = varComponent.ID
-                      )
-                  ),
-                  "DisplayOrder",
-                  SortOrder.Ascending
-              )
-          Children:
-            - recSIACard:
-                Control: Rectangle
-                Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =88
-                  Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
-                  BorderColor: =AppTheme.Border
-                  BorderThickness: =1
-            - lblSIATitle:
+            - lblNoGuides:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =10
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =28
-                  Text: =ThisItem.Title
-                  Color: =AppTheme.Text
-                  Size: =14
-                  FontWeight: =FontWeight.Semibold
-            - lblSIAMeta:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =40
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =38
-                  Text: =ThisItem.ReferenceStatus.Value & If(!IsBlank(ThisItem.CustomerSpecificNotes), "  •  " & ThisItem.CustomerSpecificNotes)
-                  Color: =AppTheme.MutedText
+                  X: =316
+                  Y: =300
+                  Width: =Parent.Width - 348
+                  Height: =24
+                  Text: ="No guides match this customer, solution, and component."
+                  Color: =AppTheme.MutedFg
                   Size: =11
-            - btnOpenSIA:
-                Control: Classic/Button
-                Properties:
-                  X: =Parent.TemplateWidth - 150
-                  Y: =28
-                  Width: =130
-                  Height: =36
-                  Text: ="Open"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
-                  Size: =11
-                  OnSelect: |
-                    =With(
-                        {
-                            refRecord: LookUp(
-                                TB_ProductReferences,
-                                ID = ThisItem.ProductReference.Id
-                            )
-                        },
-                        If(
-                            IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
-                            Notify(
-                                "No reference URL is saved for this item.",
-                                NotificationType.Warning
-                            ),
-                            Launch(refRecord.ReferenceURL)
-                        )
-                    )
-      - lblNoSIA:
-          Control: Label
-          Properties:
-            X: =352
-            Y: =300
-            Width: =Parent.Width - 384
-            Height: =60
-            Text: ="No SIA documentation matches the selected customer, solution, and component."
-            Color: =AppTheme.MutedText
-            Size: =12
-            Align: =Align.Center
-            Visible: =varSelectedSection = "SIA" && CountRows(galSIA.AllItems) = 0
+                  Align: =Align.Center
+                  Visible: =varSelectedSection = "Guides" && CountRows(galGuides.AllItems) = 0
 
-      # ---------------- Firmware section ----------------
-      - galFirmware:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =352
-            Y: =226
-            Width: =Parent.Width - 384
-            Height: =Parent.Height - 258
-            TemplateSize: =96
-            TemplatePadding: =8
-            Visible: =varSelectedSection = "Firmware"
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_CustomerReferences,
-                      Customer.Id = varCustomer.ID &&
-                      Active = true &&
-                      Restricted = false &&
-                      ReferenceStatus.Value <> "Retired" &&
-                      ReferenceCategory.Value = "Firmware and Downloads" &&
-                      (
-                          AppliesTo.Value = "Customer" ||
-                          CustomerSolution.Id = varSolution.ID ||
-                          (
-                              AppliesTo.Value = "Component" &&
-                              SolutionComponent.Id = varComponent.ID
-                          )
-                      ) &&
-                      (
-                          IsBlank(varComponent) ||
-                          SolutionComponent.Id = Blank() ||
-                          SolutionComponent.Id = varComponent.ID
-                      )
-                  ),
-                  "DisplayOrder",
-                  SortOrder.Ascending
-              )
-          Children:
-            - recFirmwareCard:
-                Control: Rectangle
+            # ---------------- SIA documentation ----------------
+            - galSIA:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =88
-                  Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
-                  BorderColor: =AppTheme.Border
-                  BorderThickness: =1
-            - lblFirmwareTitle:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =10
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =28
-                  Text: =ThisItem.Title
-                  Color: =AppTheme.Text
-                  Size: =14
-                  FontWeight: =FontWeight.Semibold
-            - lblFirmwareMeta:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =40
-                  Width: =Parent.TemplateWidth - 180
-                  Height: =38
-                  Text: =ThisItem.ReferenceStatus.Value & If(!IsBlank(ThisItem.CustomerSpecificNotes), "  •  " & ThisItem.CustomerSpecificNotes)
-                  Color: =AppTheme.MutedText
-                  Size: =11
-            - btnOpenFirmware:
-                Control: Classic/Button
-                Properties:
-                  X: =Parent.TemplateWidth - 150
-                  Y: =28
-                  Width: =130
-                  Height: =36
-                  Text: ="Open"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
-                  Size: =11
-                  OnSelect: |
-                    =With(
-                        {
-                            refRecord: LookUp(
-                                TB_ProductReferences,
-                                ID = ThisItem.ProductReference.Id
+                  X: =316
+                  Y: =232
+                  Width: =Parent.Width - 348
+                  Height: =Parent.Height - 264
+                  TemplateSize: =84
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Visible: =varSelectedSection = "SIA"
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_CustomerReferences,
+                            Customer.Id = varCustomer.ID &&
+                            Active = true &&
+                            Restricted = false &&
+                            ReferenceStatus.Value <> "Retired" &&
+                            ReferenceCategory.Value = "SIA Documentation" &&
+                            (
+                                AppliesTo.Value = "Customer" ||
+                                CustomerSolution.Id = varSolution.ID ||
+                                (
+                                    AppliesTo.Value = "Component" &&
+                                    SolutionComponent.Id = varComponent.ID
+                                )
+                            ) &&
+                            (
+                                IsBlank(varComponent) ||
+                                SolutionComponent.Id = Blank() ||
+                                SolutionComponent.Id = varComponent.ID
                             )
-                        },
-                        If(
-                            IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
-                            Notify(
-                                "No reference URL is saved for this item.",
-                                NotificationType.Warning
-                            ),
-                            Launch(refRecord.ReferenceURL)
-                        )
+                        ),
+                        "DisplayOrder",
+                        SortOrder.Ascending
                     )
-      - lblNoFirmware:
-          Control: Label
-          Properties:
-            X: =352
-            Y: =300
-            Width: =Parent.Width - 384
-            Height: =60
-            Text: ="No firmware or downloads match the selected customer, solution, and component."
-            Color: =AppTheme.MutedText
-            Size: =12
-            Align: =Align.Center
-            Visible: =varSelectedSection = "Firmware" && CountRows(galFirmware.AllItems) = 0
+                Children:
+                  - lblSIACard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =76
+                        Text: =""
+                        Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
+                        BorderColor: =If(ThisItem.Featured, AppTheme.Warning, AppTheme.Border)
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblSIATitle:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =12
+                        Width: =Parent.TemplateWidth - 130
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Color: =AppTheme.Fg
+                        Size: =12
+                        FontWeight: =FontWeight.Semibold
+                  - lblSIABadgeStatus:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =40
+                        Width: =120
+                        Height: =22
+                        Text: =ThisItem.ReferenceStatus.Value
+                        Fill: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Size: =9
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                  - lblSIANotes:
+                      Control: Label
+                      Properties:
+                        X: =144
+                        Y: =40
+                        Width: =Parent.TemplateWidth - 258
+                        Height: =22
+                        Text: =Coalesce(ThisItem.CustomerSpecificNotes, "")
+                        Color: =AppTheme.MutedFg
+                        Size: =10
+                        VerticalAlign: =VerticalAlign.Middle
+                  - btnOpenSIA:
+                      Control: Classic/Button
+                      Properties:
+                        X: =Parent.TemplateWidth - 110
+                        Y: =24
+                        Width: =92
+                        Height: =30
+                        Text: ="Open"
+                        Fill: =AppTheme.Card
+                        HoverFill: =AppTheme.PrimaryLight
+                        Color: =AppTheme.Primary
+                        BorderColor: =AppTheme.BorderStrong
+                        BorderThickness: =1
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        OnSelect: |
+                          =With(
+                              {
+                                  refRecord: LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.ProductReference.Id
+                                  )
+                              },
+                              If(
+                                  IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
+                                  Notify(
+                                      "No reference URL is saved for this item.",
+                                      NotificationType.Warning
+                                  ),
+                                  Launch(refRecord.ReferenceURL)
+                              )
+                          )
+            - lblNoSIA:
+                Control: Label
+                Properties:
+                  X: =316
+                  Y: =300
+                  Width: =Parent.Width - 348
+                  Height: =24
+                  Text: ="No SIA documentation matches this customer, solution, and component."
+                  Color: =AppTheme.MutedFg
+                  Size: =11
+                  Align: =Align.Center
+                  Visible: =varSelectedSection = "SIA" && CountRows(galSIA.AllItems) = 0
+
+            # ---------------- Firmware and downloads ----------------
+            - galFirmware:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =316
+                  Y: =232
+                  Width: =Parent.Width - 348
+                  Height: =Parent.Height - 264
+                  TemplateSize: =84
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Visible: =varSelectedSection = "Firmware"
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_CustomerReferences,
+                            Customer.Id = varCustomer.ID &&
+                            Active = true &&
+                            Restricted = false &&
+                            ReferenceStatus.Value <> "Retired" &&
+                            ReferenceCategory.Value = "Firmware and Downloads" &&
+                            (
+                                AppliesTo.Value = "Customer" ||
+                                CustomerSolution.Id = varSolution.ID ||
+                                (
+                                    AppliesTo.Value = "Component" &&
+                                    SolutionComponent.Id = varComponent.ID
+                                )
+                            ) &&
+                            (
+                                IsBlank(varComponent) ||
+                                SolutionComponent.Id = Blank() ||
+                                SolutionComponent.Id = varComponent.ID
+                            )
+                        ),
+                        "DisplayOrder",
+                        SortOrder.Ascending
+                    )
+                Children:
+                  - lblFirmwareCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =76
+                        Text: =""
+                        Fill: =If(ThisItem.Featured, AppTheme.WarningLight, AppTheme.Card)
+                        BorderColor: =If(ThisItem.Featured, AppTheme.Warning, AppTheme.Border)
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblFirmwareTitle:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =12
+                        Width: =Parent.TemplateWidth - 130
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Color: =AppTheme.Fg
+                        Size: =12
+                        FontWeight: =FontWeight.Semibold
+                  - lblFirmwareBadgeStatus:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =40
+                        Width: =120
+                        Height: =22
+                        Text: =ThisItem.ReferenceStatus.Value
+                        Fill: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Size: =9
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                  - lblFirmwareNotes:
+                      Control: Label
+                      Properties:
+                        X: =144
+                        Y: =40
+                        Width: =Parent.TemplateWidth - 258
+                        Height: =22
+                        Text: =Coalesce(ThisItem.CustomerSpecificNotes, "")
+                        Color: =AppTheme.MutedFg
+                        Size: =10
+                        VerticalAlign: =VerticalAlign.Middle
+                  - btnOpenFirmware:
+                      Control: Classic/Button
+                      Properties:
+                        X: =Parent.TemplateWidth - 110
+                        Y: =24
+                        Width: =92
+                        Height: =30
+                        Text: ="Open"
+                        Fill: =AppTheme.Card
+                        HoverFill: =AppTheme.PrimaryLight
+                        Color: =AppTheme.Primary
+                        BorderColor: =AppTheme.BorderStrong
+                        BorderThickness: =1
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        OnSelect: |
+                          =With(
+                              {
+                                  refRecord: LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.ProductReference.Id
+                                  )
+                              },
+                              If(
+                                  IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
+                                  Notify(
+                                      "No reference URL is saved for this item.",
+                                      NotificationType.Warning
+                                  ),
+                                  Launch(refRecord.ReferenceURL)
+                              )
+                          )
+            - lblNoFirmware:
+                Control: Label
+                Properties:
+                  X: =316
+                  Y: =300
+                  Width: =Parent.Width - 348
+                  Height: =24
+                  Text: ="No firmware or downloads match this customer, solution, and component."
+                  Color: =AppTheme.MutedFg
+                  Size: =11
+                  Align: =Align.Center
+                  Visible: =varSelectedSection = "Firmware" && CountRows(galFirmware.AllItems) = 0

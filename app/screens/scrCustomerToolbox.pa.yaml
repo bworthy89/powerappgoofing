@@ -1,200 +1,248 @@
 # Screen 2 of 3 — Customer Toolbox
-# Paste into: Power Apps Studio > new blank screen > right-click screen > Code view > Paste
+# Mimics the guide-viewer CustomerPlaybooksPage: centered 700px column, subtle back link,
+# large title with dimmed count, then a single-column stack of hairline row cards.
+# NOTE: if your TB_CustomerSolutions uses a Choice column named SolutionType instead of the
+# text column SolutionModel, replace ThisItem.SolutionModel with ThisItem.SolutionType.Value.
+# The gallery sorts on Title, never on the model column, so a Choice type is safe here.
 Screens:
   scrCustomerToolbox:
     Properties:
-      Fill: =AppTheme.Background
+      Fill: =AppTheme.Bg
     Children:
-      - conToolboxHeader:
+      - conToolboxPage:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            X: =0
+            X: =Max((Parent.Width - 700) / 2, 0)
             Y: =0
-            Width: =Parent.Width
-            Height: =96
-            Fill: =AppTheme.Primary
+            Width: =Min(Parent.Width, 700)
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
           Children:
             - btnBackToCustomers:
                 Control: Classic/Button
                 Properties:
-                  X: =24
+                  X: =26
                   Y: =28
-                  Width: =100
-                  Height: =40
-                  Text: ="< Back"
-                  Fill: =AppTheme.Secondary
-                  Color: =Color.White
-                  BorderColor: =AppTheme.Secondary
-                  OnSelect: =Navigate(scrCustomers, ScreenTransition.Fade)
-            - lblSelectedCustomer:
-                Control: Label
-                Properties:
-                  X: =144
-                  Y: =20
-                  Width: =Parent.Width - 300
+                  Width: =180
                   Height: =32
+                  Text: ="<  Back to customers"
+                  Fill: =AppTheme.Bg
+                  HoverFill: =AppTheme.Muted
+                  PressedFill: =AppTheme.Muted
+                  Color: =AppTheme.Primary
+                  HoverColor: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  Size: =11
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrCustomers, ScreenTransition.Fade)
+            - lblToolboxCustomerName:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =72
+                  Width: =Parent.Width - 64
+                  Height: =34
                   Text: =varCustomer.Title
-                  Color: =Color.White
+                  Color: =AppTheme.Fg
                   Size: =20
-                  FontWeight: =FontWeight.Semibold
-            - lblCustomerCodeHeader:
+                  FontWeight: =FontWeight.Bold
+            - lblSolutionCount:
                 Control: Label
                 Properties:
-                  X: =144
-                  Y: =52
-                  Width: =Parent.Width - 300
-                  Height: =26
-                  Text: =varCustomer.CustomerCode
-                  Color: =ColorValue("#C7D8E3")
+                  X: =32
+                  Y: =106
+                  Width: =Parent.Width - 64
+                  Height: =22
+                  Text: =CountRows(galSolutions.AllItems) & If(CountRows(galSolutions.AllItems) = 1, " solution", " solutions")
+                  Color: =AppTheme.MutedFg
                   Size: =12
-      - conCustomerSummary:
-          Control: GroupContainer
-          Variant: ManualLayout
-          Properties:
-            X: =32
-            Y: =120
-            Width: =Parent.Width - 64
-            Height: =136
-            Fill: =AppTheme.Card
-          Children:
-            - lblSummaryHeading:
+            - lblNotesCard:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =12
-                  Width: =400
-                  Height: =24
-                  Text: ="Customer overview"
-                  Color: =AppTheme.Text
-                  Size: =13
-                  FontWeight: =FontWeight.Semibold
-            - lblCustomerDescription:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =40
-                  Width: =Parent.Width - 40
-                  Height: =40
-                  Text: =Coalesce(varCustomer.CustomerDescription, "No description recorded.")
-                  Color: =AppTheme.Text
-                  Size: =12
-            - lblSupportNotes:
-                Control: Label
-                Properties:
-                  X: =20
-                  Y: =82
-                  Width: =Parent.Width - 40
-                  Height: =40
-                  Text: =Coalesce(varCustomer.SupportNotes, "No customer-wide support notes recorded.")
-                  Color: =AppTheme.MutedText
-                  Size: =12
-      - lblSolutionsHeading:
-          Control: Label
-          Properties:
-            X: =32
-            Y: =272
-            Width: =500
-            Height: =28
-            Text: ="Installed solutions"
-            Color: =AppTheme.Text
-            Size: =15
-            FontWeight: =FontWeight.Semibold
-      - galSolutions:
-          Control: Gallery
-          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
-          Properties:
-            X: =32
-            Y: =308
-            Width: =Parent.Width - 64
-            Height: =Parent.Height - 340
-            TemplateSize: =96
-            TemplatePadding: =8
-            Items: |
-              =SortByColumns(
-                  Filter(
-                      TB_CustomerSolutions,
-                      Customer.Id = varCustomer.ID &&
-                      Active = true
-                  ),
-                  "SortOrder",
-                  SortOrder.Ascending,
-                  "SolutionModel",
-                  SortOrder.Ascending
-              )
-            OnSelect: |
-              =Set(varSolution, ThisItem);
-              Set(varComponent, Blank());
-              Set(varSelectedSection, "Overview");
-              Navigate(scrSolutionDetails, ScreenTransition.Fade)
-          Children:
-            - recSolutionCard:
-                Control: Rectangle
-                Properties:
-                  X: =0
-                  Y: =0
-                  Width: =Parent.TemplateWidth
-                  Height: =88
-                  Fill: =AppTheme.Card
+                  X: =32
+                  Y: =144
+                  Width: =Parent.Width - 64
+                  Height: =84
+                  Text: =""
+                  Fill: =AppTheme.BgSecondary
                   BorderColor: =AppTheme.Border
                   BorderThickness: =1
-            - lblSolutionName:
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =!IsBlank(varCustomer.SupportNotes)
+            - lblNotesLabel:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =12
-                  Width: =Parent.TemplateWidth - 260
-                  Height: =28
-                  Text: =ThisItem.Title
-                  Color: =AppTheme.Text
-                  Size: =15
-                  FontWeight: =FontWeight.Semibold
-            - lblSolutionModel:
+                  X: =48
+                  Y: =156
+                  Width: =Parent.Width - 96
+                  Height: =18
+                  Text: ="SUPPORT NOTES"
+                  Color: =AppTheme.MutedFg
+                  Size: =9
+                  FontWeight: =FontWeight.Bold
+                  Visible: =!IsBlank(varCustomer.SupportNotes)
+            - lblNotesBody:
                 Control: Label
                 Properties:
-                  X: =20
-                  Y: =44
-                  Width: =Parent.TemplateWidth - 260
-                  Height: =26
-                  Text: =ThisItem.SolutionModel & If(!IsBlank(ThisItem.SolutionFamily.Value), "  •  " & ThisItem.SolutionFamily.Value)
-                  Color: =AppTheme.MutedText
+                  X: =48
+                  Y: =176
+                  Width: =Parent.Width - 96
+                  Height: =44
+                  Text: =varCustomer.SupportNotes
+                  Color: =AppTheme.Fg
                   Size: =11
-            - recStatusBadge:
-                Control: Rectangle
-                Properties:
-                  X: =Parent.TemplateWidth - 230
-                  Y: =28
-                  Width: =200
-                  Height: =32
-                  Fill: |
-                    =Switch(
-                        ThisItem.DeploymentStatus.Value,
-                        "Current", AppTheme.SuccessLight,
-                        "Upgrade Required", AppTheme.WarningLight,
-                        "Mixed Deployment", AppTheme.WarningLight,
-                        ColorValue("#EDEBE9")
-                    )
-            - lblStatusBadge:
+                  Visible: =!IsBlank(varCustomer.SupportNotes)
+            - lblSolutionsLabel:
                 Control: Label
                 Properties:
-                  X: =Parent.TemplateWidth - 230
-                  Y: =28
-                  Width: =200
-                  Height: =32
-                  Text: =ThisItem.DeploymentStatus.Value
-                  Color: =AppTheme.Text
+                  X: =32
+                  Y: =If(IsBlank(varCustomer.SupportNotes), 152, 248)
+                  Width: =400
+                  Height: =20
+                  Text: ="SOLUTIONS"
+                  Color: =AppTheme.MutedFg
+                  Size: =10
+                  FontWeight: =FontWeight.Bold
+            - galSolutions:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =32
+                  Y: =If(IsBlank(varCustomer.SupportNotes), 178, 274)
+                  Width: =Parent.Width - 64
+                  Height: =Parent.Height - If(IsBlank(varCustomer.SupportNotes), 210, 306)
+                  TemplateSize: =92
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_CustomerSolutions,
+                            Customer.Id = varCustomer.ID &&
+                            Active = true
+                        ),
+                        "SortOrder",
+                        SortOrder.Ascending,
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: |
+                    =Set(varSolution, ThisItem);
+                    Set(varComponent, Blank());
+                    Set(varSelectedSection, "Overview");
+                    Navigate(scrSolutionDetails, ScreenTransition.Fade)
+                Children:
+                  - lblSolutionCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =84
+                        Text: =""
+                        Fill: =AppTheme.Card
+                        BorderColor: =AppTheme.Border
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblSolutionName:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =12
+                        Width: =Parent.TemplateWidth - 190
+                        Height: =24
+                        Text: =ThisItem.Title
+                        Color: =AppTheme.Fg
+                        Size: =13
+                        FontWeight: =FontWeight.Semibold
+                  - lblBadgeModel:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =44
+                        Width: =108
+                        Height: =24
+                        Text: =ThisItem.SolutionModel
+                        Fill: =AppTheme.PrimaryLight
+                        Color: =AppTheme.PrimaryDark
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                  - lblBadgeFamily:
+                      Control: Label
+                      Properties:
+                        X: =130
+                        Y: =44
+                        Width: =116
+                        Height: =24
+                        Text: =ThisItem.SolutionFamily.Value
+                        Fill: =AppTheme.GrayLight
+                        Color: =AppTheme.GrayDark
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        Visible: =!IsBlank(ThisItem.SolutionFamily.Value)
+                  - lblBadgeStatus:
+                      Control: Label
+                      Properties:
+                        X: =Parent.TemplateWidth - 168
+                        Y: =30
+                        Width: =152
+                        Height: =24
+                        Text: =ThisItem.DeploymentStatus.Value
+                        Fill: |
+                          =Switch(
+                              ThisItem.DeploymentStatus.Value,
+                              "Current", AppTheme.SuccessLight,
+                              "Upgrade Required", AppTheme.WarningLight,
+                              "Mixed Deployment", AppTheme.WarningLight,
+                              AppTheme.GrayLight
+                          )
+                        Color: |
+                          =Switch(
+                              ThisItem.DeploymentStatus.Value,
+                              "Current", AppTheme.SuccessDark,
+                              "Upgrade Required", AppTheme.WarningDark,
+                              "Mixed Deployment", AppTheme.WarningDark,
+                              AppTheme.GrayDark
+                          )
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+            - lblNoSolutions:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =320
+                  Width: =Parent.Width - 64
+                  Height: =24
+                  Text: ="No active solutions are recorded for this customer."
+                  Color: =AppTheme.MutedFg
                   Size: =11
                   Align: =Align.Center
-                  VerticalAlign: =VerticalAlign.Middle
-      - lblNoSolutions:
-          Control: Label
-          Properties:
-            X: =32
-            Y: =360
-            Width: =Parent.Width - 64
-            Height: =60
-            Text: ="No active solutions are recorded for this customer."
-            Color: =AppTheme.MutedText
-            Size: =13
-            Align: =Align.Center
-            Visible: =CountRows(galSolutions.AllItems) = 0
+                  Visible: =CountRows(galSolutions.AllItems) = 0

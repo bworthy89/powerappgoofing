@@ -13,36 +13,28 @@ Nothing else will resolve until `AppTheme` exists.
 >
 > | Dropdown reads | Paste this | Contains `Set(`? |
 > |---|---|---|
-> | `Formulas` | the `AppTheme = { ... };` block, and nothing else | never |
-> | `OnStart` | the four `Set(var...)` state lines | always |
-> | `StartScreen` | `scrCustomers` | never |
->
-> The **Fallback** section further down is an *alternative* to the Formulas block for environments
-> that lack it, not a step to also perform. Use one or the other.
-
-## App.Formulas  (preferred)
-
-Select **App** in Tree view, then open the **property dropdown at the top-left of the formula bar**
-and choose **Formulas**. It is in the same dropdown as OnStart, not in the right-hand pane, which is
-the usual reason people cannot find it. Paste the block below and click away from the formula bar to
-commit it.
-
-If `Formulas` is not in that dropdown, skip to the fallback below — the app works either way.
-
-```powerfx
-AppTheme = {
-    Primary: ColorValue("#003B5C"),
-    Secondary: ColorValue("#0078D4"),
-    Background: ColorValue("#F5F7FA"),
-    Card: Color.White,
-    Text: ColorValue("#202124"),
-    MutedText: ColorValue("#605E5C"),
-    Border: ColorValue("#D2D6DC"),
-    Success: ColorValue("#107C10"),
-    SuccessLight: ColorValue("#DFF6DD"),
-    Warning: ColorValue("#FFB900"),
-    WarningLight: ColorValue("#FFF4CE"),
-    Error: ColorValue("#A80000")
+> | `Formulas` | the `AppTheme = {
+    Bg: ColorValue("#FFFFFF"),
+    BgSecondary: ColorValue("#F8F9FA"),
+    Card: ColorValue("#FFFFFF"),
+    Muted: ColorValue("#F1F3F5"),
+    Fg: ColorValue("#1A1B1E"),
+    MutedFg: ColorValue("#868E96"),
+    TertiaryFg: ColorValue("#ADB5BD"),
+    Border: ColorValue("#E9ECEF"),
+    BorderStrong: ColorValue("#DEE2E6"),
+    Primary: ColorValue("#228BE6"),
+    PrimaryDark: ColorValue("#1971C2"),
+    PrimaryLight: ColorValue("#E7F5FF"),
+    Success: ColorValue("#40C057"),
+    SuccessDark: ColorValue("#2B8A3E"),
+    SuccessLight: ColorValue("#EBFBEE"),
+    Warning: ColorValue("#FD7E14"),
+    WarningDark: ColorValue("#E8590C"),
+    WarningLight: ColorValue("#FFF4E6"),
+    Danger: ColorValue("#FA5252"),
+    GrayLight: ColorValue("#F1F3F5"),
+    GrayDark: ColorValue("#495057")
 };
 ```
 
@@ -60,19 +52,28 @@ Set(varSelectedSection, "Overview")
 Put this in **App.OnStart** instead, then right-click App in Tree view and choose **Run OnStart**.
 
 ```powerfx
-Set(AppTheme, {
-    Primary: ColorValue("#003B5C"),
-    Secondary: ColorValue("#0078D4"),
-    Background: ColorValue("#F5F7FA"),
-    Card: Color.White,
-    Text: ColorValue("#202124"),
-    MutedText: ColorValue("#605E5C"),
-    Border: ColorValue("#D2D6DC"),
-    Success: ColorValue("#107C10"),
-    SuccessLight: ColorValue("#DFF6DD"),
-    Warning: ColorValue("#FFB900"),
-    WarningLight: ColorValue("#FFF4CE"),
-    Error: ColorValue("#A80000")
+Set(AppTheme, AppTheme = {
+    Bg: ColorValue("#FFFFFF"),
+    BgSecondary: ColorValue("#F8F9FA"),
+    Card: ColorValue("#FFFFFF"),
+    Muted: ColorValue("#F1F3F5"),
+    Fg: ColorValue("#1A1B1E"),
+    MutedFg: ColorValue("#868E96"),
+    TertiaryFg: ColorValue("#ADB5BD"),
+    Border: ColorValue("#E9ECEF"),
+    BorderStrong: ColorValue("#DEE2E6"),
+    Primary: ColorValue("#228BE6"),
+    PrimaryDark: ColorValue("#1971C2"),
+    PrimaryLight: ColorValue("#E7F5FF"),
+    Success: ColorValue("#40C057"),
+    SuccessDark: ColorValue("#2B8A3E"),
+    SuccessLight: ColorValue("#EBFBEE"),
+    Warning: ColorValue("#FD7E14"),
+    WarningDark: ColorValue("#E8590C"),
+    WarningLight: ColorValue("#FFF4E6"),
+    Danger: ColorValue("#FA5252"),
+    GrayLight: ColorValue("#F1F3F5"),
+    GrayDark: ColorValue("#495057")
 });
 Set(varCustomer, Blank());
 Set(varSolution, Blank());
