@@ -69,6 +69,22 @@ is undefined until OnStart has run, so controls show errors in Studio until you 
 
 Use this or the App.Formulas block, not both — defining the same name twice is an error.
 
+## Troubleshooting these two blocks
+
+The two theme blocks are **not interchangeable**. Each one is valid in exactly one property, and
+using the wrong one produces a confusing error that does not mention the theme at all.
+
+| Error you see | What it means | Fix |
+|---|---|---|
+| `Missing function argument type, for example the ":Text" in "FindMonth( d:Text ):Number = ..."` | `Set(AppTheme, {...})` was pasted into **App.Formulas**. The parser reads `Set(` as the start of a user-defined function, so `AppTheme` looks like an untyped parameter. | Remove `Set(` and its closing `)` so the statement reads `AppTheme = { ... };` |
+| `Name isn't valid. 'AppTheme' isn't recognized` | Neither block has been committed yet, or OnStart has not been run. | Define one of the two blocks, and use Run OnStart if you chose the OnStart version |
+| `Behavior function in a non-behavior property` | `Set(...)` used somewhere that only accepts data formulas. | Move it to App.OnStart |
+
+Quick way to tell which property you are in: the formula bar's property dropdown reads either
+`Formulas` or `OnStart`. `Formulas` never contains the word `Set`.
+
+Do not define `AppTheme` in both places. Defining the same name twice is an error.
+
 ## App.StartScreen
 
 ```powerfx
