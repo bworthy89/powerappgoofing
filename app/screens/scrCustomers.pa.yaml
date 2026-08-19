@@ -101,7 +101,7 @@ Screens:
                             (
                                 IsBlank(Trim(txtCustomerSearch.Text)) ||
                                 StartsWith(Title, Trim(txtCustomerSearch.Text)) ||
-                                StartsWith(CustomerCode, Trim(txtCustomerSearch.Text))
+                                StartsWith('Customer Code', Trim(txtCustomerSearch.Text))
                             )
                         ),
                         "Title",
@@ -143,7 +143,7 @@ Screens:
                         Y: =38
                         Width: =Parent.TemplateWidth - 44
                         Height: =20
-                        Text: =Coalesce(ThisItem.CustomerDescription, "No description")
+                        Text: =Coalesce(ThisItem.Description, "No description")
                         Color: =AppTheme.MutedFg
                         Size: =10
                   - lblBadgeCode:
@@ -153,7 +153,7 @@ Screens:
                         Y: =70
                         Width: =78
                         Height: =24
-                        Text: =Coalesce(ThisItem.CustomerCode, "--")
+                        Text: =Coalesce(ThisItem.'Customer Code', "--")
                         Fill: =AppTheme.GrayLight
                         Color: =AppTheme.GrayDark
                         Size: =10
@@ -167,9 +167,9 @@ Screens:
                         Y: =70
                         Width: =92
                         Height: =24
-                        Text: =If(IsBlank(ThisItem.LastVerified), "Unverified", "Verified")
-                        Fill: =If(IsBlank(ThisItem.LastVerified), AppTheme.WarningLight, AppTheme.SuccessLight)
-                        Color: =If(IsBlank(ThisItem.LastVerified), AppTheme.WarningDark, AppTheme.SuccessDark)
+                        Text: =If(IsBlank(ThisItem.'Last Reviewed'), "Unreviewed", "Reviewed")
+                        Fill: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningLight, AppTheme.SuccessLight)
+                        Color: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningDark, AppTheme.SuccessDark)
                         Size: =10
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center

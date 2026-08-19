@@ -22,19 +22,23 @@ What **is** supported, and what this kit uses, is Code view paste:
 > before a new control is created."
 
 You paste three blocks. Studio validates each one and builds the real controls. Total time is a
-few minutes, versus rebuilding 76 controls by hand.
+few minutes, versus rebuilding 79 controls by hand.
 
 ## Contents
 
 | File | What to do with it |
 |---|---|
+| `00_Schema_Reference.md` | Read first — the real column names, types and choice values, and the traps in them |
+| `TB_*.csv` | The SharePoint exports these files are written against. Source of truth, not sample data |
 | `01_App_Properties.md` | Set App.Formulas, App.OnStart, App.StartScreen, and two Settings values |
-| `screens/scrCustomers.pa.yaml` | Screen 1 — Customer Directory (11 controls) |
-| `screens/scrCustomerToolbox.pa.yaml` | Screen 2 — Customer Toolbox (16 controls) |
-| `screens/scrSolutionDetails.pa.yaml` | Screen 3 — Solution Details (49 controls) |
+| `screens/scrCustomers.pa.yaml` | Screen 1 — Customer Directory (14 controls) |
+| `screens/scrCustomerToolbox.pa.yaml` | Screen 2 — Customer Toolbox (15 controls) |
+| `screens/scrSolutionDetails.pa.yaml` | Screen 3 — Solution Details (50 controls) |
 
 ## Order of operations
 
+0. Read `00_Schema_Reference.md`. If your lists have drifted from the exports in `TB_*.csv`,
+   re-export and reconcile before pasting — every formula binds to a column display name.
 1. Create a blank **Tablet** canvas app named `Technician Toolbox`.
 2. Add all seven SharePoint lists as data sources. **Do this before pasting** — paste validation
    fails on any formula that references a list the app cannot see.
@@ -110,26 +114,49 @@ paste-validation risk, so it is deliberately not what this kit does.
 
 - **Section switching is `Visible`, not `Navigate`.** All four resource galleries occupy the same
   rectangle at `X=352, Y=226` and show or hide on `varSelectedSection`. If you move one, move all.
-- **The SIA and Firmware cards render entirely from `TB_CustomerReferences`.** Title, status, and
-  notes come from the mapping record's mirrored columns, so there is no per-row `LookUp`. Only the
-  Open button resolves `TB_ProductReferences`, and only when pressed.
-- **The three-branch `AppliesTo` clause is deliberate.** Removing the
-  `AppliesTo.Value = "Component" && SolutionComponent.Id = varComponent.ID` branch reintroduces the
-  v1.0 bug where component-level records never appear. See section 9 of the guide.
+- **`TB_CustomerReferences` is a junction list, so the SIA and Firmware galleries join.** The
+  mapping row carries only `Featured` and `Display Order`; type, status, restriction, URL and
+  description live on `TB_ProductReferences`. Both galleries wrap their filter in
+  `AddColumns(... As Map, "RefRec", LookUp(TB_ProductReferences, ID = Map.'Product Reference'.Id))`
+  and read everything else off `ThisItem.RefRec`. Drop that join and the cards go blank.
+- **The two galleries are split by `Reference Type`, and the split must stay exhaustive.** All 13
+  choice values are routed — eight to SIA, five to Firmware. A new choice added on the list appears
+  in **neither** gallery until it is added to one of the two `in [...]` lists.
+- **The three-branch `'Applies To'` clause is deliberate.** Removing the
+  `'Applies To'.Value = "Component" && 'Solution Component'.Id = varComponent.ID` branch
+  reintroduces the v1.0 bug where component-level records never appear. See section 9 of the guide.
 - **`galComponents` is a left rail, not a horizontal strip.** Vertical galleries were used throughout
   so that one template variant covers every gallery in the app.
 - **Screen 1's gallery wraps.** `WrapCount: 3` produces the card grid from the Playbooks landing page.
   Lower it to 2 if you narrow the 900px column.
 - **Screen 2 shifts vertically.** The solutions label and gallery use
-  `If(IsBlank(varCustomer.SupportNotes), ...)` so the layout closes up when a customer has no notes.
+  `If(IsBlank(varCustomer.'Support Notes'), ...)` so the layout closes up when a customer has no notes.
+- **"Current standard" is a status value, not a flag.** `TB_SoftwareInstallations` has no boolean;
+  the highlighted row and its badge both key off `'Deployment Status'.Value = "Current Standard"`.
+- **`galComponents` sorts on `Title` alone.** `TB_SolutionComponents` has no `Display Order`
+  column, so set component titles in the order you want them read.
 
 ## Verification performed on this kit
 
 - All three files parse as well-formed YAML.
-- 76 controls, no duplicate control names within or across screens.
+- 79 control nodes — counting containers and gallery template children — with no duplicate
+  control names within or across screens.
 - Every property value carries the required leading `=`.
-- Every `ThisItem.<column>`, `varCustomer.<column>`, `varSolution.<column>`, and
-  `varComponent.<column>` reference was checked against the seven list schemas. No mismatches.
+- Every column reference — quoted display names and every `ThisItem.`, `varCustomer.`,
+  `varSolution.`, `varComponent.`, `RefRec.` and `Map.` field — was checked against the field XML
+  and header rows in `TB_*.csv`. No mismatches.
+- Every `Reference Type` choice value is routed to exactly one of the two reference galleries:
+  13 values, none unrouted, none duplicated.
 
 Not verified: whether your environment's Studio accepts these exact `Control:` identifiers, and
 whether `Customer.Id = varCustomer.ID` delegates against SharePoint. Both need a live environment.
+
+Two things are asserted rather than verified, because the exports do not carry the evidence:
+
+- **`TB_CustomerGuides` types.** That export has no `ListSchema` block, so `'Guide Type'` and
+  `'Document Status '` are assumed to be Choice columns and `'Document URL'` a Hyperlink. If one is
+  plain text, drop the `.Value` from that reference in `scrSolutionDetails.pa.yaml`.
+- **`TB_CustomerSolutions.'Deployment Status'` choices.** The list still carries the default
+  `Choice 1 / Choice 2 / Choice 3`. The badge is written against the vocabulary already configured
+  on `TB_SoftwareInstallations`; until the solutions list matches, the badge renders the raw
+  placeholder in neutral gray. Nothing errors — it just looks wrong.

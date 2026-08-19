@@ -136,3 +136,13 @@ The paste will fail validation on any screen whose formulas reference a list tha
 - TB_CustomerGuides
 - TB_ProductReferences
 - TB_CustomerReferences
+
+Connect them with these exact names. The screens address columns by **display name**, so a list
+whose columns have been renamed since the export in `app/TB_*.csv` will fail to paste with
+`Name isn't valid`. Read [`00_Schema_Reference.md`](00_Schema_Reference.md) before you touch a
+column name — several display names on this site contain typos and trailing spaces that the
+formulas reproduce deliberately.
+
+The `Data row limit` above matters more than usual here. Every parent/child filter compares a
+lookup's `.Id`, which SharePoint cannot delegate, and the two reference galleries join
+`TB_CustomerReferences` to `TB_ProductReferences` in memory. Both are bounded by that limit.

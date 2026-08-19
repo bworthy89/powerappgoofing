@@ -1,8 +1,9 @@
 # Screen 3 of 3 — Solution Details
 # Same visual language as the guide-viewer Playbooks pages: centered column, white surface,
 # hairline cards, tinted pill badges, uppercase section labels, subtle link-style buttons.
-# Retains the v1.1 corrected filters (three-branch AppliesTo scope clause and the mirrored
-# ReferenceCategory / Restricted / ReferenceStatus columns on TB_CustomerReferences).
+# Bound to the exported schema - see 00_Schema_Reference.md. TB_CustomerReferences is a junction
+# list, so galSIA and galFirmware join each mapping row to its TB_ProductReferences record with
+# AddColumns + LookUp, and read type, status, URL and description off that joined "RefRec" column.
 Screens:
   scrSolutionDetails:
     Properties:
@@ -58,7 +59,7 @@ Screens:
                   Y: =102
                   Width: =Parent.Width - 64
                   Height: =22
-                  Text: =varCustomer.Title & "  •  " & varSolution.DeploymentStatus.Value
+                  Text: =varCustomer.Title & "  •  " & varSolution.'Deployment Status'.Value
                   Color: =AppTheme.MutedFg
                   Size: =12
 
@@ -186,11 +187,9 @@ Screens:
                     =SortByColumns(
                         Filter(
                             TB_SolutionComponents,
-                            CustomerSolution.Id = varSolution.ID &&
+                            'Customer Solution'.Id = varSolution.ID &&
                             Installed = true
                         ),
-                        "DisplayOrder",
-                        SortOrder.Ascending,
                         "Title",
                         SortOrder.Ascending
                     )
@@ -214,18 +213,18 @@ Screens:
                         Y: =10
                         Width: =Parent.TemplateWidth - 28
                         Height: =22
-                        Text: =ThisItem.ComponentModel
+                        Text: =ThisItem.'Component Model'
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
-                  - lblComponentCategory:
+                  - lblComponentRole:
                       Control: Label
                       Properties:
                         X: =14
                         Y: =32
                         Width: =Parent.TemplateWidth - 28
                         Height: =20
-                        Text: =ThisItem.ComponentCategory.Value
+                        Text: =ThisItem.'Component Role'
                         Color: =AppTheme.MutedFg
                         Size: =10
             - lblNoComponents:
@@ -249,7 +248,7 @@ Screens:
                   Y: =186
                   Width: =Parent.Width - 348
                   Height: =36
-                  Text: ="    Filtered by " & varComponent.ComponentModel
+                  Text: ="    Filtered by " & varComponent.'Component Model'
                   Fill: =AppTheme.PrimaryLight
                   Color: =AppTheme.PrimaryDark
                   Size: =11
@@ -308,7 +307,7 @@ Screens:
                   Y: =272
                   Width: =Parent.Width - 396
                   Height: =72
-                  Text: =Coalesce(varSolution.DeploymentScope, "No deployment scope recorded.")
+                  Text: =Coalesce(varSolution.'Deployment Scope', "No deployment scope recorded.")
                   Color: =AppTheme.Fg
                   Size: =11
                   Visible: =varSelectedSection = "Overview"
@@ -331,7 +330,7 @@ Screens:
                   Y: =372
                   Width: =Parent.Width - 396
                   Height: =84
-                  Text: =Coalesce(varSolution.CustomerConfiguration, "No configuration summary recorded.")
+                  Text: =Coalesce(varSolution.'Customer Configuration', "No configuration summary recorded.")
                   Color: =AppTheme.Fg
                   Size: =11
                   Visible: =varSelectedSection = "Overview"
@@ -355,22 +354,22 @@ Screens:
                             TB_SoftwareInstallations,
                             Customer.Id = varCustomer.ID &&
                             (
-                                AppliesTo.Value = "Customer" ||
-                                CustomerSolution.Id = varSolution.ID ||
+                                'Applies To'.Value = "Customer" ||
+                                'Customer Solution'.Id = varSolution.ID ||
                                 (
-                                    AppliesTo.Value = "Component" &&
-                                    SolutionComponent.Id = varComponent.ID
+                                    'Applies To'.Value = "Component" &&
+                                    'Solution Component'.Id = varComponent.ID
                                 )
                             ) &&
                             (
                                 IsBlank(varComponent) ||
-                                SolutionComponent.Id = Blank() ||
-                                SolutionComponent.Id = varComponent.ID
+                                'Solution Component'.Id = Blank() ||
+                                'Solution Component'.Id = varComponent.ID
                             )
                         ),
-                        "SoftwareName",
+                        "Software Name",
                         SortOrder.Ascending,
-                        "SoftwareVersion",
+                        "Software Version",
                         SortOrder.Descending
                     )
                 Children:
@@ -382,8 +381,8 @@ Screens:
                         Width: =Parent.TemplateWidth
                         Height: =80
                         Text: =""
-                        Fill: =If(ThisItem.CurrentStandard, AppTheme.SuccessLight, AppTheme.Card)
-                        BorderColor: =If(ThisItem.CurrentStandard, AppTheme.Success, AppTheme.Border)
+                        Fill: =If(ThisItem.'Deployment Status'.Value = "Current Standard", AppTheme.SuccessLight, AppTheme.Card)
+                        BorderColor: =If(ThisItem.'Deployment Status'.Value = "Current Standard", AppTheme.Success, AppTheme.Border)
                         BorderThickness: =1
                   - lblSoftwareName:
                       Control: Label
@@ -392,7 +391,7 @@ Screens:
                         Y: =12
                         Width: =Parent.TemplateWidth - 200
                         Height: =22
-                        Text: =ThisItem.SoftwareName & "   " & ThisItem.SoftwareVersion
+                        Text: =ThisItem.'Software Name' & "   " & ThisItem.'Software Version'
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
@@ -407,9 +406,8 @@ Screens:
                           =Concat(
                               Filter(
                                   [
-                                      If(!IsBlank(ThisItem.ImageVersion), "Image " & ThisItem.ImageVersion),
-                                      If(!IsBlank(ThisItem.DatabaseVersion), "DB " & ThisItem.DatabaseVersion),
-                                      If(!IsBlank(ThisItem.ConfigurationVersion), "Config " & ThisItem.ConfigurationVersion)
+                                      If(!IsBlank(ThisItem.'Windows Version'), "Windows " & ThisItem.'Windows Version'),
+                                      If(!IsBlank(ThisItem.'Deployment Scope'), ThisItem.'Deployment Scope')
                                   ],
                                   !IsBlank(Value)
                               ),
@@ -425,28 +423,44 @@ Screens:
                         Y: =52
                         Width: =92
                         Height: =22
-                        Text: =ThisItem.AppliesTo.Value
+                        Text: =ThisItem.'Applies To'.Value
                         Fill: =AppTheme.GrayLight
                         Color: =AppTheme.GrayDark
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                  - lblBadgeCurrentStandard:
+                  - lblBadgeDeploymentStatus:
                       Control: Label
                       Properties:
                         X: =Parent.TemplateWidth - 176
                         Y: =28
                         Width: =160
                         Height: =24
-                        Text: ="Current standard"
-                        Fill: =AppTheme.SuccessLight
-                        Color: =AppTheme.SuccessDark
+                        Text: =ThisItem.'Deployment Status'.Value
+                        Fill: |
+                          =Switch(
+                              ThisItem.'Deployment Status'.Value,
+                              "Current Standard", AppTheme.SuccessLight,
+                              "Installed", AppTheme.SuccessLight,
+                              "Upgrade Planned", AppTheme.WarningLight,
+                              "Upgrade Required", AppTheme.WarningLight,
+                              AppTheme.GrayLight
+                          )
+                        Color: |
+                          =Switch(
+                              ThisItem.'Deployment Status'.Value,
+                              "Current Standard", AppTheme.SuccessDark,
+                              "Installed", AppTheme.SuccessDark,
+                              "Upgrade Planned", AppTheme.WarningDark,
+                              "Upgrade Required", AppTheme.WarningDark,
+                              AppTheme.GrayDark
+                          )
                         Size: =10
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        Visible: =ThisItem.CurrentStandard
+                        Visible: =!IsBlank(ThisItem.'Deployment Status'.Value)
             - lblNoSoftware:
                 Control: Label
                 Properties:
@@ -480,17 +494,17 @@ Screens:
                             Customer.Id = varCustomer.ID &&
                             Active = true &&
                             (
-                                AppliesTo.Value = "Customer" ||
-                                CustomerSolution.Id = varSolution.ID ||
+                                'Applies To'.Value = "Customer" ||
+                                'Customer Solution'.Id = varSolution.ID ||
                                 (
-                                    AppliesTo.Value = "Component" &&
-                                    SolutionComponent.Id = varComponent.ID
+                                    'Applies To'.Value = "Component" &&
+                                    'Solution Component'.Id = varComponent.ID
                                 )
                             ) &&
                             (
                                 IsBlank(varComponent) ||
-                                SolutionComponent.Id = Blank() ||
-                                SolutionComponent.Id = varComponent.ID
+                                'Solution Component'.Id = Blank() ||
+                                'Solution Component'.Id = varComponent.ID
                             )
                         ),
                         "Title",
@@ -526,7 +540,7 @@ Screens:
                         Y: =40
                         Width: =140
                         Height: =22
-                        Text: =ThisItem.GuideType.Value
+                        Text: =ThisItem.'Guide Type'.Value
                         Fill: =AppTheme.PrimaryLight
                         Color: =AppTheme.PrimaryDark
                         Size: =9
@@ -540,9 +554,9 @@ Screens:
                         Y: =40
                         Width: =128
                         Height: =22
-                        Text: =ThisItem.DocumentStatus.Value
-                        Fill: =If(ThisItem.DocumentStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
-                        Color: =If(ThisItem.DocumentStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Text: =ThisItem.'Document Status '.Value
+                        Fill: =If(ThisItem.'Document Status '.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.'Document Status '.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
@@ -568,12 +582,12 @@ Screens:
                         RadiusBottomRight: =6
                         OnSelect: |
                           =If(
-                              IsBlank(ThisItem.DocumentURL),
+                              IsBlank(ThisItem.'Document URL'),
                               Notify(
                                   "No document URL is saved on this guide.",
                                   NotificationType.Warning
                               ),
-                              Launch(ThisItem.DocumentURL)
+                              Launch(ThisItem.'Document URL')
                           )
             - lblNoGuides:
                 Control: Label
@@ -604,27 +618,46 @@ Screens:
                   Items: |
                     =SortByColumns(
                         Filter(
-                            TB_CustomerReferences,
-                            Customer.Id = varCustomer.ID &&
-                            Active = true &&
-                            Restricted = false &&
-                            ReferenceStatus.Value <> "Retired" &&
-                            ReferenceCategory.Value = "SIA Documentation" &&
-                            (
-                                AppliesTo.Value = "Customer" ||
-                                CustomerSolution.Id = varSolution.ID ||
-                                (
-                                    AppliesTo.Value = "Component" &&
-                                    SolutionComponent.Id = varComponent.ID
+                            AddColumns(
+                                Filter(
+                                    TB_CustomerReferences,
+                                    Customer.Id = varCustomer.ID &&
+                                    Active = true &&
+                                    (
+                                        'Applies To'.Value = "Customer" ||
+                                        'Customer Solution'.Id = varSolution.ID ||
+                                        (
+                                            'Applies To'.Value = "Component" &&
+                                            'Solution Component'.Id = varComponent.ID
+                                        )
+                                    ) &&
+                                    (
+                                        IsBlank(varComponent) ||
+                                        'Solution Component'.Id = Blank() ||
+                                        'Solution Component'.Id = varComponent.ID
+                                    )
+                                ) As Map,
+                                "RefRec",
+                                LookUp(
+                                    TB_ProductReferences,
+                                    ID = Map.'Product Reference'.Id
                                 )
-                            ) &&
-                            (
-                                IsBlank(varComponent) ||
-                                SolutionComponent.Id = Blank() ||
-                                SolutionComponent.Id = varComponent.ID
-                            )
+                            ),
+                            !IsBlank(RefRec) &&
+                            RefRec.Restricted <> true &&
+                            RefRec.'Release Status'.Value <> "Retired" &&
+                            RefRec.'Reference Type'.Value in [
+                                "SIA Product Page",
+                                "SIA Documantation",
+                                "Installation Manual",
+                                "Service Manual",
+                                "Troubleshooting Guide",
+                                "Technical Bulletin",
+                                "Technical Alert",
+                                "Product Specification"
+                            ]
                         ),
-                        "DisplayOrder",
+                        "Display Order",
                         SortOrder.Ascending
                     )
                 Children:
@@ -646,7 +679,7 @@ Screens:
                         Y: =12
                         Width: =Parent.TemplateWidth - 130
                         Height: =22
-                        Text: =ThisItem.Title
+                        Text: =Coalesce(ThisItem.RefRec.Title, ThisItem.Title)
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
@@ -657,9 +690,9 @@ Screens:
                         Y: =40
                         Width: =120
                         Height: =22
-                        Text: =ThisItem.ReferenceStatus.Value
-                        Fill: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
-                        Color: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Text: =ThisItem.RefRec.'Release Status'.Value
+                        Fill: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
@@ -671,7 +704,7 @@ Screens:
                         Y: =40
                         Width: =Parent.TemplateWidth - 258
                         Height: =22
-                        Text: =Coalesce(ThisItem.CustomerSpecificNotes, "")
+                        Text: =Coalesce(ThisItem.RefRec.Description, "")
                         Color: =AppTheme.MutedFg
                         Size: =10
                         VerticalAlign: =VerticalAlign.Middle
@@ -695,21 +728,13 @@ Screens:
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
                         OnSelect: |
-                          =With(
-                              {
-                                  refRecord: LookUp(
-                                      TB_ProductReferences,
-                                      ID = ThisItem.ProductReference.Id
-                                  )
-                              },
-                              If(
-                                  IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
-                                  Notify(
-                                      "No reference URL is saved for this item.",
-                                      NotificationType.Warning
-                                  ),
-                                  Launch(refRecord.ReferenceURL)
-                              )
+                          =If(
+                              IsBlank(ThisItem.RefRec.'Reference URL'),
+                              Notify(
+                                  "No reference URL is saved for this item.",
+                                  NotificationType.Warning
+                              ),
+                              Launch(ThisItem.RefRec.'Reference URL')
                           )
             - lblNoSIA:
                 Control: Label
@@ -740,27 +765,43 @@ Screens:
                   Items: |
                     =SortByColumns(
                         Filter(
-                            TB_CustomerReferences,
-                            Customer.Id = varCustomer.ID &&
-                            Active = true &&
-                            Restricted = false &&
-                            ReferenceStatus.Value <> "Retired" &&
-                            ReferenceCategory.Value = "Firmware and Downloads" &&
-                            (
-                                AppliesTo.Value = "Customer" ||
-                                CustomerSolution.Id = varSolution.ID ||
-                                (
-                                    AppliesTo.Value = "Component" &&
-                                    SolutionComponent.Id = varComponent.ID
+                            AddColumns(
+                                Filter(
+                                    TB_CustomerReferences,
+                                    Customer.Id = varCustomer.ID &&
+                                    Active = true &&
+                                    (
+                                        'Applies To'.Value = "Customer" ||
+                                        'Customer Solution'.Id = varSolution.ID ||
+                                        (
+                                            'Applies To'.Value = "Component" &&
+                                            'Solution Component'.Id = varComponent.ID
+                                        )
+                                    ) &&
+                                    (
+                                        IsBlank(varComponent) ||
+                                        'Solution Component'.Id = Blank() ||
+                                        'Solution Component'.Id = varComponent.ID
+                                    )
+                                ) As Map,
+                                "RefRec",
+                                LookUp(
+                                    TB_ProductReferences,
+                                    ID = Map.'Product Reference'.Id
                                 )
-                            ) &&
-                            (
-                                IsBlank(varComponent) ||
-                                SolutionComponent.Id = Blank() ||
-                                SolutionComponent.Id = varComponent.ID
-                            )
+                            ),
+                            !IsBlank(RefRec) &&
+                            RefRec.Restricted <> true &&
+                            RefRec.'Release Status'.Value <> "Retired" &&
+                            RefRec.'Reference Type'.Value in [
+                                "Machine Firmware",
+                                "BV Firmware",
+                                "Software Download",
+                                "Driver",
+                                "Support Tool"
+                            ]
                         ),
-                        "DisplayOrder",
+                        "Display Order",
                         SortOrder.Ascending
                     )
                 Children:
@@ -782,7 +823,7 @@ Screens:
                         Y: =12
                         Width: =Parent.TemplateWidth - 130
                         Height: =22
-                        Text: =ThisItem.Title
+                        Text: =Coalesce(ThisItem.RefRec.Title, ThisItem.Title)
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
@@ -793,9 +834,9 @@ Screens:
                         Y: =40
                         Width: =120
                         Height: =22
-                        Text: =ThisItem.ReferenceStatus.Value
-                        Fill: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
-                        Color: =If(ThisItem.ReferenceStatus.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Text: =ThisItem.RefRec.'Release Status'.Value
+                        Fill: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
@@ -807,7 +848,7 @@ Screens:
                         Y: =40
                         Width: =Parent.TemplateWidth - 258
                         Height: =22
-                        Text: =Coalesce(ThisItem.CustomerSpecificNotes, "")
+                        Text: =Coalesce(ThisItem.RefRec.Description, "")
                         Color: =AppTheme.MutedFg
                         Size: =10
                         VerticalAlign: =VerticalAlign.Middle
@@ -831,21 +872,13 @@ Screens:
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
                         OnSelect: |
-                          =With(
-                              {
-                                  refRecord: LookUp(
-                                      TB_ProductReferences,
-                                      ID = ThisItem.ProductReference.Id
-                                  )
-                              },
-                              If(
-                                  IsBlank(refRecord) || IsBlank(refRecord.ReferenceURL),
-                                  Notify(
-                                      "No reference URL is saved for this item.",
-                                      NotificationType.Warning
-                                  ),
-                                  Launch(refRecord.ReferenceURL)
-                              )
+                          =If(
+                              IsBlank(ThisItem.RefRec.'Reference URL'),
+                              Notify(
+                                  "No reference URL is saved for this item.",
+                                  NotificationType.Warning
+                              ),
+                              Launch(ThisItem.RefRec.'Reference URL')
                           )
             - lblNoFirmware:
                 Control: Label

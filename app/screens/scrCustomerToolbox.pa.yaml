@@ -1,9 +1,9 @@
 # Screen 2 of 3 — Customer Toolbox
 # Mimics the guide-viewer CustomerPlaybooksPage: centered 700px column, subtle back link,
 # large title with dimmed count, then a single-column stack of hairline row cards.
-# NOTE: if your TB_CustomerSolutions uses a Choice column named SolutionType instead of the
-# text column SolutionModel, replace ThisItem.SolutionModel with ThisItem.SolutionType.Value.
-# The gallery sorts on Title, never on the model column, so a Choice type is safe here.
+# Column names come from the exported schema - see 00_Schema_Reference.md. Two to watch:
+# 'Solution Famility' is misspelled on the list itself, and 'Deployment Status' still carries the
+# placeholder choices Choice 1/2/3, so the status badge stays gray until those are configured.
 Screens:
   scrCustomerToolbox:
     Properties:
@@ -71,7 +71,7 @@ Screens:
                   Fill: =AppTheme.BgSecondary
                   BorderColor: =AppTheme.Border
                   BorderThickness: =1
-                  Visible: =!IsBlank(varCustomer.SupportNotes)
+                  Visible: =!IsBlank(varCustomer.'Support Notes')
             - lblNotesLabel:
                 Control: Label
                 Properties:
@@ -83,7 +83,7 @@ Screens:
                   Color: =AppTheme.MutedFg
                   Size: =9
                   FontWeight: =FontWeight.Bold
-                  Visible: =!IsBlank(varCustomer.SupportNotes)
+                  Visible: =!IsBlank(varCustomer.'Support Notes')
             - lblNotesBody:
                 Control: Label
                 Properties:
@@ -91,15 +91,15 @@ Screens:
                   Y: =176
                   Width: =Parent.Width - 96
                   Height: =44
-                  Text: =varCustomer.SupportNotes
+                  Text: =varCustomer.'Support Notes'
                   Color: =AppTheme.Fg
                   Size: =11
-                  Visible: =!IsBlank(varCustomer.SupportNotes)
+                  Visible: =!IsBlank(varCustomer.'Support Notes')
             - lblSolutionsLabel:
                 Control: Label
                 Properties:
                   X: =32
-                  Y: =If(IsBlank(varCustomer.SupportNotes), 152, 248)
+                  Y: =If(IsBlank(varCustomer.'Support Notes'), 152, 248)
                   Width: =400
                   Height: =20
                   Text: ="SOLUTIONS"
@@ -111,9 +111,9 @@ Screens:
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
                   X: =32
-                  Y: =If(IsBlank(varCustomer.SupportNotes), 178, 274)
+                  Y: =If(IsBlank(varCustomer.'Support Notes'), 178, 274)
                   Width: =Parent.Width - 64
-                  Height: =Parent.Height - If(IsBlank(varCustomer.SupportNotes), 210, 306)
+                  Height: =Parent.Height - If(IsBlank(varCustomer.'Support Notes'), 210, 306)
                   TemplateSize: =92
                   TemplatePadding: =0
                   ShowScrollbar: =true
@@ -124,7 +124,7 @@ Screens:
                             Customer.Id = varCustomer.ID &&
                             Active = true
                         ),
-                        "SortOrder",
+                        "Sort Order",
                         SortOrder.Ascending,
                         "Title",
                         SortOrder.Ascending
@@ -164,7 +164,7 @@ Screens:
                         Y: =44
                         Width: =108
                         Height: =24
-                        Text: =ThisItem.SolutionModel
+                        Text: =ThisItem.'Solution Model'
                         Fill: =AppTheme.PrimaryLight
                         Color: =AppTheme.PrimaryDark
                         Size: =10
@@ -178,14 +178,14 @@ Screens:
                         Y: =44
                         Width: =116
                         Height: =24
-                        Text: =ThisItem.SolutionFamily.Value
+                        Text: =ThisItem.'Solution Famility'.Value
                         Fill: =AppTheme.GrayLight
                         Color: =AppTheme.GrayDark
                         Size: =10
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                        Visible: =!IsBlank(ThisItem.SolutionFamily.Value)
+                        Visible: =!IsBlank(ThisItem.'Solution Famility'.Value)
                   - lblBadgeStatus:
                       Control: Label
                       Properties:
@@ -193,21 +193,23 @@ Screens:
                         Y: =30
                         Width: =152
                         Height: =24
-                        Text: =ThisItem.DeploymentStatus.Value
+                        Text: =ThisItem.'Deployment Status'.Value
                         Fill: |
                           =Switch(
-                              ThisItem.DeploymentStatus.Value,
-                              "Current", AppTheme.SuccessLight,
+                              ThisItem.'Deployment Status'.Value,
+                              "Current Standard", AppTheme.SuccessLight,
+                              "Installed", AppTheme.SuccessLight,
+                              "Upgrade Planned", AppTheme.WarningLight,
                               "Upgrade Required", AppTheme.WarningLight,
-                              "Mixed Deployment", AppTheme.WarningLight,
                               AppTheme.GrayLight
                           )
                         Color: |
                           =Switch(
-                              ThisItem.DeploymentStatus.Value,
-                              "Current", AppTheme.SuccessDark,
+                              ThisItem.'Deployment Status'.Value,
+                              "Current Standard", AppTheme.SuccessDark,
+                              "Installed", AppTheme.SuccessDark,
+                              "Upgrade Planned", AppTheme.WarningDark,
                               "Upgrade Required", AppTheme.WarningDark,
-                              "Mixed Deployment", AppTheme.WarningDark,
                               AppTheme.GrayDark
                           )
                         Size: =10
