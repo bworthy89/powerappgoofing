@@ -114,16 +114,18 @@ paste-validation risk, so it is deliberately not what this kit does.
 
 - **Section switching is `Visible`, not `Navigate`.** All four resource galleries occupy the same
   rectangle at `X=352, Y=226` and show or hide on `varSelectedSection`. If you move one, move all.
-- **`TB_CustomerReferences` is a junction list, so the SIA and Firmware galleries join.** The
-  mapping row carries only `Featured` and `Display Order`; type, status, restriction, URL and
-  description live on `TB_ProductReferences`. Both galleries pull those across with `AddColumns`
-  as six flat columns — `RefTitle`, `RefType`, `RefStatus`, `RefRestricted`, `RefNotes`, `RefURL`
-  — each one a `LookUp` reduced to a scalar by its third argument. Drop the join and the cards
-  go blank.
-- **Keep those added columns scalar.** Collapsing them into a single record column and writing
-  `ThisItem.RefRec.'Reference Type'.Value` fails in Studio with `Name isn't valid. 'RefRec' isn't
-  recognized`, reported against `Items` — the `AddColumns` call errors, so the name never enters
-  scope. `Filter(...) As Map` fails the same way. Both were tried on a live environment.
+- **`TB_CustomerReferences` is a junction list, so the SIA and Firmware galleries look across.**
+  The mapping row carries `Title`, `Featured` and `Display Order`; type, status, restriction, URL
+  and description live on `TB_ProductReferences`. `Items` resolves type, status and restriction per
+  row to filter, and the status, notes and Open controls resolve what they display per row.
+- **Every one of those lookups must alias the inner list and qualify the outer row.**
+  `LookUp(TB_ProductReferences As Ref, Ref.ID = ThisRecord.'Product Reference'.Id, ...)` inside
+  `Items`, and `ThisItem.` in place of `ThisRecord.` inside a gallery child. Reaching the outer row
+  implicitly, or hoisting the lookup into `AddColumns`, fails paste validation with
+  `Name isn't valid` — see the table in `00_Schema_Reference.md`. Both were tried on a live
+  environment.
+- **The status badge colours read `Self.Text`, not a second lookup.** The `Text` resolves the
+  release status once; `Fill` and `Color` test `Self.Text = "Current"`.
 - **The two galleries are split by `Reference Type`, and the split must stay exhaustive.** All 13
   choice values are routed — eight to SIA, five to Firmware. A new choice added on the list appears
   in **neither** gallery until it is added to one of the two `in [...]` lists.

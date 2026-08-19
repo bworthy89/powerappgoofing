@@ -140,24 +140,34 @@ Everything the SIA and Firmware galleries display about a reference comes from t
 `TB_ProductReferences` row:
 
 ```powerfx
-AddColumns(
-    Filter(TB_CustomerReferences, ...),
-    "RefType",   LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference Type'.Value),
-    "RefStatus", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Release Status'.Value),
-    ...
+LookUp(
+    TB_ProductReferences As Ref,
+    Ref.ID = ThisRecord.'Product Reference'.Id,
+    Ref.'Reference Type'.Value
 )
 ```
 
-`Featured` and `Display Order` stay on the mapping row; `Reference Type`, `Release Status`,
-`Restricted`, `Reference URL`, `Description` and the reference's own `Title` are pulled across as
-six flat columns — `RefType`, `RefStatus`, `RefRestricted`, `RefURL`, `RefNotes`, `RefTitle`.
+`Featured`, `Display Order` and the card heading come off the mapping row itself. `Reference Type`,
+`Release Status` and `Restricted` are resolved per row inside the gallery's `Items` filter, and
+`Description` and `Reference URL` per row in the child controls.
 
-**Each added column must be a scalar.** The obvious shorthand — one column holding the whole
-looked-up record, then `ThisItem.RefRec.'Reference Type'.Value` in the children — is rejected by
-Studio with `Name isn't valid. 'RefRec' isn't recognized`, reported against the gallery's `Items`.
-So is `As` applied to a function result, as in `Filter(...) As Map`. Both were tried and both
-failed on a live environment; the flat form is what survives. The cost is one `LookUp` per added
-column per row, which is why the non-delegable row limit matters.
+**Two rules make these lookups paste.** The inner list is aliased — `TB_ProductReferences As Ref` —
+so `Ref.ID` cannot be confused with the mapping row's own `ID`. And the outer row is always reached
+through an explicit qualifier, `ThisRecord.` inside `Items` and `ThisItem.` inside a gallery child.
+
+Neither is optional. Two other shapes were tried against a live environment and both failed paste
+validation with `Name isn't valid`, reported against the gallery's `Items`:
+
+| Shape | Error |
+|---|---|
+| `AddColumns(Filter(...) As Map, "RefRec", LookUp(...))` — `As` on a function result, plus a record-valued column | `'RefRec' isn't recognized` |
+| `AddColumns(Filter(...), "RefTitle", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title), ...)` — scalar columns, but the outer row reached implicitly | `'RefTitle' isn't recognized` |
+
+In both cases the name in the error is the messenger. The `AddColumns` call itself fails, so the
+column never enters scope and the expression that reads it reports the missing name.
+
+The cost of the surviving shape is one `LookUp` per row per value read, which is why the
+non-delegable row limit matters.
 
 ## Re-checking this document
 
