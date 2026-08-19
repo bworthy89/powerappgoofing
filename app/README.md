@@ -38,8 +38,11 @@ few minutes, versus rebuilding 76 controls by hand.
 1. Create a blank **Tablet** canvas app named `Technician Toolbox`.
 2. Add all seven SharePoint lists as data sources. **Do this before pasting** — paste validation
    fails on any formula that references a list the app cannot see.
-3. Apply everything in `01_App_Properties.md`. `AppTheme` must exist before any screen is pasted,
-   or every `Fill` and `Color` in the pasted YAML will red-underline.
+3. Apply everything in `01_App_Properties.md`. **`AppTheme` must exist before any screen is
+   pasted**, or every `Fill` and `Color` in the pasted YAML reports `Name isn't valid.
+   'AppTheme' isn't recognized`. The Formulas property lives in the formula bar's property
+   dropdown next to OnStart, not in the right-hand pane; `01_App_Properties.md` has an
+   OnStart-based fallback that needs no edits to the screen files.
 4. For each screen file: add a blank screen, right-click it in Tree view, choose **Code view**,
    select all, paste the file contents, confirm.
 5. Delete the default `Screen1` if one is left over.
