@@ -3,6 +3,23 @@
 Set these three properties on the **App** node in Tree view before pasting any screen.
 Nothing else will resolve until `AppTheme` exists.
 
+> ### The one rule
+>
+> **`Set(` is only ever valid in `OnStart`. It is never valid in `Formulas`.**
+>
+> These are three separate properties, chosen from the dropdown at the **top-left of the formula
+> bar**, and each gets its own paste. Switch the dropdown between them. Pasting a `Set(...)` block
+> while the dropdown still reads `Formulas` is the cause of nearly every error below.
+>
+> | Dropdown reads | Paste this | Contains `Set(`? |
+> |---|---|---|
+> | `Formulas` | the `AppTheme = { ... };` block, and nothing else | never |
+> | `OnStart` | the four `Set(var...)` state lines | always |
+> | `StartScreen` | `scrCustomers` | never |
+>
+> The **Fallback** section further down is an *alternative* to the Formulas block for environments
+> that lack it, not a step to also perform. Use one or the other.
+
 ## App.Formulas  (preferred)
 
 Select **App** in Tree view, then open the **property dropdown at the top-left of the formula bar**
