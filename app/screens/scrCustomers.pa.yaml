@@ -11,7 +11,7 @@ Screens:
     Children:
       - conCustomerHeader:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =0
             Y: =0

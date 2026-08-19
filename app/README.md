@@ -45,6 +45,16 @@ few minutes, versus rebuilding 76 controls by hand.
 5. Delete the default `Screen1` if one is left over.
 6. Save, then run **Run OnStart** from the App node's right-click menu before previewing.
 
+## Control identifiers confirmed by Studio
+
+Studio's paste validator accepted `Gallery`, `Label`, `Rectangle`, `Classic/Button`, and
+`Classic/TextInput` unversioned, along with the `Screens:` wrapper and screen node, so no
+`@major.minor.patch` suffixes are needed.
+
+One correction has already been applied: `GroupContainer` takes `Variant: ManualLayout`, not
+`ManualLayoutContainer`. The valid container variants are `ManualLayout`, `AutoLayout`, and
+`GridLayout`.
+
 ## If paste validation fails
 
 The most likely cause is a control template version. This kit uses unversioned classic control

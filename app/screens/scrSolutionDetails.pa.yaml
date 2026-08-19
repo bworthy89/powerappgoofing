@@ -9,7 +9,7 @@ Screens:
     Children:
       - conSolutionHeader:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =0
             Y: =0
@@ -223,7 +223,7 @@ Screens:
       # ---------------- selected component banner ----------------
       - conSelectedComponent:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =352
             Y: =166
@@ -261,7 +261,7 @@ Screens:
       # ---------------- Overview section ----------------
       - conOverview:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =352
             Y: =226

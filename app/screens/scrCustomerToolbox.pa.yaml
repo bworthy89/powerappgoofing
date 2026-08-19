@@ -7,7 +7,7 @@ Screens:
     Children:
       - conToolboxHeader:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =0
             Y: =0
@@ -50,7 +50,7 @@ Screens:
                   Size: =12
       - conCustomerSummary:
           Control: GroupContainer
-          Variant: ManualLayoutContainer
+          Variant: ManualLayout
           Properties:
             X: =32
             Y: =120
