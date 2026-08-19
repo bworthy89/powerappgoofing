@@ -1,0 +1,11 @@
+# Internal build guides pulled from SharePoint — not for the public repo
+docs/
+
+# Working notes
+tasks/
+
+# Local noise
+venv/
+__pycache__/
+*.pyc
+.DS_Store

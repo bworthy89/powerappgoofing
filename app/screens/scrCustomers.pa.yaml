@@ -1,0 +1,150 @@
+# Screen 1 of 3 — Customer Directory
+# Paste into: Power Apps Studio > new blank screen > right-click screen > Code view > Paste
+Screens:
+  scrCustomers:
+    Properties:
+      Fill: =AppTheme.Background
+      OnVisible: |
+        =Set(varSolution, Blank());
+        Set(varComponent, Blank());
+        Set(varSelectedSection, "Overview")
+    Children:
+      - conCustomerHeader:
+          Control: GroupContainer
+          Variant: ManualLayoutContainer
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =96
+            Fill: =AppTheme.Primary
+          Children:
+            - lblAppTitle:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =20
+                  Width: =600
+                  Height: =32
+                  Text: ="Technician Toolbox"
+                  Color: =Color.White
+                  Size: =20
+                  FontWeight: =FontWeight.Semibold
+            - lblAppSubtitle:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =52
+                  Width: =600
+                  Height: =26
+                  Text: ="Select a customer to view installed solutions and documentation"
+                  Color: =ColorValue("#C7D8E3")
+                  Size: =12
+      - txtCustomerSearch:
+          Control: Classic/TextInput
+          Properties:
+            X: =32
+            Y: =124
+            Width: =420
+            Height: =40
+            Default: =""
+            HintText: ="Search customers"
+            BorderColor: =AppTheme.Border
+            Color: =AppTheme.Text
+      - lblCustomerCount:
+          Control: Label
+          Properties:
+            X: =470
+            Y: =124
+            Width: =360
+            Height: =40
+            Text: =CountRows(galCustomers.AllItems) & " customer(s)"
+            Color: =AppTheme.MutedText
+            Size: =12
+            VerticalAlign: =VerticalAlign.Middle
+      - galCustomers:
+          Control: Gallery
+          Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+          Properties:
+            X: =32
+            Y: =180
+            Width: =Parent.Width - 64
+            Height: =Parent.Height - 212
+            TemplateSize: =92
+            TemplatePadding: =8
+            ShowScrollbar: =true
+            Items: |
+              =SortByColumns(
+                  Filter(
+                      TB_Customers,
+                      Active = true &&
+                      (
+                          IsBlank(Trim(txtCustomerSearch.Text)) ||
+                          StartsWith(Title, Trim(txtCustomerSearch.Text)) ||
+                          StartsWith(CustomerCode, Trim(txtCustomerSearch.Text))
+                      )
+                  ),
+                  "Title",
+                  SortOrder.Ascending
+              )
+            OnSelect: |
+              =Set(varCustomer, ThisItem);
+              Set(varSolution, Blank());
+              Set(varComponent, Blank());
+              Set(varSelectedSection, "Overview");
+              Navigate(scrCustomerToolbox, ScreenTransition.Fade)
+          Children:
+            - recCustomerCard:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.TemplateWidth
+                  Height: =84
+                  Fill: =AppTheme.Card
+                  BorderColor: =AppTheme.Border
+                  BorderThickness: =1
+            - lblCustomerName:
+                Control: Label
+                Properties:
+                  X: =20
+                  Y: =12
+                  Width: =Parent.TemplateWidth - 220
+                  Height: =28
+                  Text: =ThisItem.Title
+                  Color: =AppTheme.Text
+                  Size: =15
+                  FontWeight: =FontWeight.Semibold
+            - lblCustomerCode:
+                Control: Label
+                Properties:
+                  X: =20
+                  Y: =42
+                  Width: =Parent.TemplateWidth - 220
+                  Height: =26
+                  Text: =ThisItem.CustomerCode & If(!IsBlank(ThisItem.CustomerDescription), "  •  " & ThisItem.CustomerDescription)
+                  Color: =AppTheme.MutedText
+                  Size: =11
+            - lblCustomerVerified:
+                Control: Label
+                Properties:
+                  X: =Parent.TemplateWidth - 200
+                  Y: =28
+                  Width: =180
+                  Height: =28
+                  Text: =If(IsBlank(ThisItem.LastVerified), "Not verified", "Verified " & Text(ThisItem.LastVerified, "mmm d, yyyy"))
+                  Color: =AppTheme.MutedText
+                  Size: =11
+                  Align: =Align.Right
+      - lblNoCustomers:
+          Control: Label
+          Properties:
+            X: =32
+            Y: =240
+            Width: =Parent.Width - 64
+            Height: =60
+            Text: ="No active customers match this search."
+            Color: =AppTheme.MutedText
+            Size: =13
+            Align: =Align.Center
+            Visible: =CountRows(galCustomers.AllItems) = 0
