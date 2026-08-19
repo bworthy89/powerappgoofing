@@ -116,9 +116,14 @@ paste-validation risk, so it is deliberately not what this kit does.
   rectangle at `X=352, Y=226` and show or hide on `varSelectedSection`. If you move one, move all.
 - **`TB_CustomerReferences` is a junction list, so the SIA and Firmware galleries join.** The
   mapping row carries only `Featured` and `Display Order`; type, status, restriction, URL and
-  description live on `TB_ProductReferences`. Both galleries wrap their filter in
-  `AddColumns(... As Map, "RefRec", LookUp(TB_ProductReferences, ID = Map.'Product Reference'.Id))`
-  and read everything else off `ThisItem.RefRec`. Drop that join and the cards go blank.
+  description live on `TB_ProductReferences`. Both galleries pull those across with `AddColumns`
+  as six flat columns — `RefTitle`, `RefType`, `RefStatus`, `RefRestricted`, `RefNotes`, `RefURL`
+  — each one a `LookUp` reduced to a scalar by its third argument. Drop the join and the cards
+  go blank.
+- **Keep those added columns scalar.** Collapsing them into a single record column and writing
+  `ThisItem.RefRec.'Reference Type'.Value` fails in Studio with `Name isn't valid. 'RefRec' isn't
+  recognized`, reported against `Items` — the `AddColumns` call errors, so the name never enters
+  scope. `Filter(...) As Map` fails the same way. Both were tried on a live environment.
 - **The two galleries are split by `Reference Type`, and the split must stay exhaustive.** All 13
   choice values are routed — eight to SIA, five to Firmware. A new choice added on the list appears
   in **neither** gallery until it is added to one of the two `in [...]` lists.

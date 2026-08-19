@@ -3,7 +3,9 @@
 # hairline cards, tinted pill badges, uppercase section labels, subtle link-style buttons.
 # Bound to the exported schema - see 00_Schema_Reference.md. TB_CustomerReferences is a junction
 # list, so galSIA and galFirmware join each mapping row to its TB_ProductReferences record with
-# AddColumns + LookUp, and read type, status, URL and description off that joined "RefRec" column.
+# AddColumns, pulling in RefTitle / RefType / RefStatus / RefRestricted / RefNotes / RefURL.
+# Each added column is a scalar taken through LookUp's third argument. Do not collapse them into
+# one record-valued column - Studio rejects that with "Name isn't valid. 'RefRec' isn't recognized".
 Screens:
   scrSolutionDetails:
     Properties:
@@ -636,17 +638,23 @@ Screens:
                                         'Solution Component'.Id = Blank() ||
                                         'Solution Component'.Id = varComponent.ID
                                     )
-                                ) As Map,
-                                "RefRec",
-                                LookUp(
-                                    TB_ProductReferences,
-                                    ID = Map.'Product Reference'.Id
-                                )
+                                ),
+                                "RefTitle",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title),
+                                "RefType",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference Type'.Value),
+                                "RefStatus",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Release Status'.Value),
+                                "RefRestricted",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Restricted),
+                                "RefNotes",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Description),
+                                "RefURL",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference URL')
                             ),
-                            !IsBlank(RefRec) &&
-                            RefRec.Restricted <> true &&
-                            RefRec.'Release Status'.Value <> "Retired" &&
-                            RefRec.'Reference Type'.Value in [
+                            RefRestricted <> true &&
+                            RefStatus <> "Retired" &&
+                            RefType in [
                                 "SIA Product Page",
                                 "SIA Documantation",
                                 "Installation Manual",
@@ -679,7 +687,7 @@ Screens:
                         Y: =12
                         Width: =Parent.TemplateWidth - 130
                         Height: =22
-                        Text: =Coalesce(ThisItem.RefRec.Title, ThisItem.Title)
+                        Text: =Coalesce(ThisItem.RefTitle, ThisItem.Title)
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
@@ -690,9 +698,9 @@ Screens:
                         Y: =40
                         Width: =120
                         Height: =22
-                        Text: =ThisItem.RefRec.'Release Status'.Value
-                        Fill: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
-                        Color: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Text: =ThisItem.RefStatus
+                        Fill: =If(ThisItem.RefStatus = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.RefStatus = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
@@ -704,7 +712,7 @@ Screens:
                         Y: =40
                         Width: =Parent.TemplateWidth - 258
                         Height: =22
-                        Text: =Coalesce(ThisItem.RefRec.Description, "")
+                        Text: =Coalesce(ThisItem.RefNotes, "")
                         Color: =AppTheme.MutedFg
                         Size: =10
                         VerticalAlign: =VerticalAlign.Middle
@@ -729,12 +737,12 @@ Screens:
                         RadiusBottomRight: =6
                         OnSelect: |
                           =If(
-                              IsBlank(ThisItem.RefRec.'Reference URL'),
+                              IsBlank(ThisItem.RefURL),
                               Notify(
                                   "No reference URL is saved for this item.",
                                   NotificationType.Warning
                               ),
-                              Launch(ThisItem.RefRec.'Reference URL')
+                              Launch(ThisItem.RefURL)
                           )
             - lblNoSIA:
                 Control: Label
@@ -783,17 +791,23 @@ Screens:
                                         'Solution Component'.Id = Blank() ||
                                         'Solution Component'.Id = varComponent.ID
                                     )
-                                ) As Map,
-                                "RefRec",
-                                LookUp(
-                                    TB_ProductReferences,
-                                    ID = Map.'Product Reference'.Id
-                                )
+                                ),
+                                "RefTitle",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title),
+                                "RefType",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference Type'.Value),
+                                "RefStatus",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Release Status'.Value),
+                                "RefRestricted",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Restricted),
+                                "RefNotes",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Description),
+                                "RefURL",
+                                LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference URL')
                             ),
-                            !IsBlank(RefRec) &&
-                            RefRec.Restricted <> true &&
-                            RefRec.'Release Status'.Value <> "Retired" &&
-                            RefRec.'Reference Type'.Value in [
+                            RefRestricted <> true &&
+                            RefStatus <> "Retired" &&
+                            RefType in [
                                 "Machine Firmware",
                                 "BV Firmware",
                                 "Software Download",
@@ -823,7 +837,7 @@ Screens:
                         Y: =12
                         Width: =Parent.TemplateWidth - 130
                         Height: =22
-                        Text: =Coalesce(ThisItem.RefRec.Title, ThisItem.Title)
+                        Text: =Coalesce(ThisItem.RefTitle, ThisItem.Title)
                         Color: =AppTheme.Fg
                         Size: =12
                         FontWeight: =FontWeight.Semibold
@@ -834,9 +848,9 @@ Screens:
                         Y: =40
                         Width: =120
                         Height: =22
-                        Text: =ThisItem.RefRec.'Release Status'.Value
-                        Fill: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
-                        Color: =If(ThisItem.RefRec.'Release Status'.Value = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
+                        Text: =ThisItem.RefStatus
+                        Fill: =If(ThisItem.RefStatus = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
+                        Color: =If(ThisItem.RefStatus = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
                         FontWeight: =FontWeight.Semibold
                         Align: =Align.Center
@@ -848,7 +862,7 @@ Screens:
                         Y: =40
                         Width: =Parent.TemplateWidth - 258
                         Height: =22
-                        Text: =Coalesce(ThisItem.RefRec.Description, "")
+                        Text: =Coalesce(ThisItem.RefNotes, "")
                         Color: =AppTheme.MutedFg
                         Size: =10
                         VerticalAlign: =VerticalAlign.Middle
@@ -873,12 +887,12 @@ Screens:
                         RadiusBottomRight: =6
                         OnSelect: |
                           =If(
-                              IsBlank(ThisItem.RefRec.'Reference URL'),
+                              IsBlank(ThisItem.RefURL),
                               Notify(
                                   "No reference URL is saved for this item.",
                                   NotificationType.Warning
                               ),
-                              Launch(ThisItem.RefRec.'Reference URL')
+                              Launch(ThisItem.RefURL)
                           )
             - lblNoFirmware:
                 Control: Label

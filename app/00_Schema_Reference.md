@@ -141,13 +141,23 @@ Everything the SIA and Firmware galleries display about a reference comes from t
 
 ```powerfx
 AddColumns(
-    Filter(TB_CustomerReferences, ...) As Map,
-    "RefRec", LookUp(TB_ProductReferences, ID = Map.'Product Reference'.Id)
+    Filter(TB_CustomerReferences, ...),
+    "RefType",   LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Reference Type'.Value),
+    "RefStatus", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, 'Release Status'.Value),
+    ...
 )
 ```
 
 `Featured` and `Display Order` stay on the mapping row; `Reference Type`, `Release Status`,
-`Restricted`, `Reference URL` and `Description` are read through `ThisItem.RefRec`.
+`Restricted`, `Reference URL`, `Description` and the reference's own `Title` are pulled across as
+six flat columns — `RefType`, `RefStatus`, `RefRestricted`, `RefURL`, `RefNotes`, `RefTitle`.
+
+**Each added column must be a scalar.** The obvious shorthand — one column holding the whole
+looked-up record, then `ThisItem.RefRec.'Reference Type'.Value` in the children — is rejected by
+Studio with `Name isn't valid. 'RefRec' isn't recognized`, reported against the gallery's `Items`.
+So is `As` applied to a function result, as in `Filter(...) As Map`. Both were tried and both
+failed on a live environment; the flat form is what survives. The cost is one `LookUp` per added
+column per row, which is why the non-delegable row limit matters.
 
 ## Re-checking this document
 
