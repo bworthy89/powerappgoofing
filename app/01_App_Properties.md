@@ -78,7 +78,12 @@ using the wrong one produces a confusing error that does not mention the theme a
 |---|---|---|
 | `Missing function argument type, for example the ":Text" in "FindMonth( d:Text ):Number = ..."` | `Set(AppTheme, {...})` was pasted into **App.Formulas**. The parser reads `Set(` as the start of a user-defined function, so `AppTheme` looks like an untyped parameter. | Remove `Set(` and its closing `)` so the statement reads `AppTheme = { ... };` |
 | `Name isn't valid. 'AppTheme' isn't recognized` | Neither block has been committed yet, or OnStart has not been run. | Define one of the two blocks, and use Run OnStart if you chose the OnStart version |
+| `Unexpected characters. The formula contains 'CurlyOpen' where 'Equ' is expected.` | The `=` is missing, usually left over from hand-editing `Set(AppTheme, {` down to `AppTheme {`. | Clear the property and paste the block fresh. It must begin `AppTheme = {` and end `};` |
 | `Behavior function in a non-behavior property` | `Set(...)` used somewhere that only accepts data formulas. | Move it to App.OnStart |
+
+Prefer clearing the property and pasting a block whole over editing one form into the other.
+Every error in this table so far has come from hand-editing `Set(AppTheme, {...})` into
+`AppTheme = {...}` and leaving a fragment behind.
 
 Quick way to tell which property you are in: the formula bar's property dropdown reads either
 `Formulas` or `OnStart`. `Formulas` never contains the word `Set`.
