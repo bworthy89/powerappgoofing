@@ -1,0 +1,651 @@
+# Screen — Solution
+# Answers one question: how is this solution running compared to catalogue. Reached from
+# scrCustomerOverview with varInstallation already set to a TB_Installations row whose
+# Parent is blank (a solution, not a unit) and varCustomer already set to the whole
+# TB_Customers record it belongs to. Shows, top to bottom: the installed version against
+# the catalogue's current standard version for this product, what is non-standard about
+# how this customer runs it (Config Notes, card hidden when blank), the units inside the
+# solution (child TB_Installations rows, tapping one hands off to scrUnit), and the
+# documents that cover the system — split into Documentation and Firmware & Downloads,
+# each gallery showing universal references (no Customer set) together with this
+# customer's own exceptions in one list.
+#
+# Version pair uses = or ≠ only — never a directional arrow, never "upgrade to". ≠ is
+# U+2260 and may not render in the Power Apps mobile player; if it shows as a box in
+# Studio, substitute the literal string "vs" for "≠" in lblSeparator.Text below. A blank
+# installed version is a third state, "not recorded" — never counted as current or off
+# standard. A blank catalogue standard suppresses the currency badge (rectCurrency /
+# lblCurrency) entirely, the same way scrCustomerOverview suppresses its card badge.
+#
+# Known risk: galDocs.DisplayMode and galFirmware.DisplayMode are set on the Gallery
+# control itself with a formula that reads ThisItem (per the brief, used verbatim).
+# Gallery.DisplayMode is ordinarily a single value for the whole control, evaluated
+# outside template scope, so ThisItem may not resolve there — this is the least-proven
+# construct in this file. Fallback if Studio rejects it: move DisplayMode onto a per-row
+# child control inside the template (e.g. a transparent Button wrapping the row) and keep
+# OnSelect on that child instead of on the gallery.
+#
+# lblChecked and lblException are named per the brief as a role, not a literal single
+# control — each gallery needs its own instance (a screen cannot have two controls named
+# lblChecked), so they appear here as lblDocsChecked/lblDocsException and
+# lblFirmwareChecked/lblFirmwareException, with the brief's formulas carried over
+# unchanged (both read ThisItem, generic to whichever gallery hosts them).
+#
+# Tapping a unit sets varInstallation to that unit row and navigates to scrUnit. scrUnit
+# does not exist until Task 6 — this reference errors in Studio until then, the same
+# accepted condition documented in scrCustomerOverview for its own galUnits.OnSelect.
+Screens:
+  scrSolution:
+    Properties:
+      Fill: =AppTheme.Bg
+    Children:
+      - conRoot:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
+            Y: =0
+            Width: =ContentWidth
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - btnBack:
+                Control: Classic/Button
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Gutter * 10
+                  Height: =28
+                  Text: ="<  Overview"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Fill: =AppTheme.Bg
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.Sunken
+                  Color: =AppTheme.Primary
+                  HoverColor: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrCustomerOverview, ScreenTransition.CoverRight)
+            - lblTitle:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 36
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =32
+                  Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
+                  Font: =AppFont
+                  Size: =AppType.Title
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - lblSubtitle:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 72
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =20
+                  Text: |
+                    =LookUp(TB_Products, ID = varInstallation.Product.Id).Family & "  •  " &
+                    varInstallation.Title &
+                    If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+            - conVersion:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 100
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =112
+                  Fill: =AppTheme.Surface
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                Children:
+                  - lblVersionHeading:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.Width - (Gutter * 2)
+                        Height: =16
+                        Text: ="SOFTWARE VERSION"
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Bold
+                        Color: =AppTheme.Muted
+                  - lblInstalled:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =34
+                        Width: =(Parent.Width - (Gutter * 2)) * 0.4
+                        Height: =28
+                        Align: =Align.Left
+                        VerticalAlign: =VerticalAlign.Middle
+                        Text: =Coalesce(varInstallation.'Installed Version', "not recorded")
+                        Font: =AppFont
+                        Size: =AppType.Heading
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                  - lblSeparator:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.4)
+                        Y: =34
+                        Width: =(Parent.Width - (Gutter * 2)) * 0.2
+                        Height: =28
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        Text: |
+                          =If(
+                              IsBlank(varInstallation.'Installed Version'),
+                              "",
+                              varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
+                              "=",
+                              "≠"
+                          )
+                        Font: =AppFont
+                        Size: =AppType.Heading
+                        FontWeight: =FontWeight.Bold
+                        Color: =AppTheme.Muted
+                  - lblStandard:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.6)
+                        Y: =34
+                        Width: =(Parent.Width - (Gutter * 2)) * 0.4
+                        Height: =28
+                        Align: =Align.Right
+                        VerticalAlign: =VerticalAlign.Middle
+                        Text: =Coalesce(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version', "—")
+                        Font: =AppFont
+                        Size: =AppType.Heading
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                  - rectCurrency:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =72
+                        Width: =Gutter * 9
+                        Height: =24
+                        BorderThickness: =0
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        Visible: =!IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version')
+                        Fill: |
+                          =If(
+                              IsBlank(varInstallation.'Installed Version'),
+                              AppTheme.NeutralLight,
+                              IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'),
+                              AppTheme.NeutralLight,
+                              varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
+                              AppTheme.OkLight,
+                              AppTheme.WarnLight
+                          )
+                  - lblCurrency:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =72
+                        Width: =Gutter * 9
+                        Height: =24
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                        Visible: =!IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version')
+                        Text: |
+                          =If(
+                              IsBlank(varInstallation.'Installed Version'),
+                              "not recorded",
+                              IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'),
+                              "",
+                              varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
+                              "on standard",
+                              "standard " & LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'
+                          )
+            - conConfigNotes:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 100 + 112 + Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =92
+                  Fill: =AppTheme.Surface
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =!IsBlank(varInstallation.'Config Notes')
+                Children:
+                  - lblConfigHeading:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.Width - (Gutter * 2)
+                        Height: =16
+                        Text: ="WHAT'S NON-STANDARD"
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Bold
+                        Color: =AppTheme.Muted
+                  - lblConfigNotes:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =32
+                        Width: =Parent.Width - (Gutter * 2)
+                        Height: =52
+                        Text: =varInstallation.'Config Notes'
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Fg
+            - lblUnitsHeading:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    )
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =24
+                  Text: ="Units"
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - galUnits:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =160
+                  TemplateSize: =32
+                  TemplatePadding: =4
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(TB_Installations, Parent.Id = varInstallation.ID, Status.Value <> "Retired"),
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: |
+                    =Set(varInstallation, ThisItem);
+                    Navigate(scrUnit, ScreenTransition.Cover)
+                Children:
+                  - lblUnitLine:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =4
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =24
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Text: |
+                          =ThisItem.Title & "  •  " &
+                          LookUp(TB_Products, ID = ThisItem.Product.Id).Title & "  —  " &
+                          If(
+                              IsBlank(ThisItem.'Installed Version'),
+                              "not recorded",
+                              IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
+                              "",
+                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              "on standard",
+                              "standard " & LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'
+                          ) &
+                          If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
+                        Color: |
+                          =If(
+                              IsBlank(ThisItem.'Installed Version'),
+                              AppTheme.Muted,
+                              IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
+                              AppTheme.Muted,
+                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              AppTheme.Ok,
+                              AppTheme.Warn
+                          )
+            - lblNoUnits:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No units are recorded for this solution."
+                  Visible: =CountRows(galUnits.AllItems) = 0
+            - lblDocsHeading:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =24
+                  Text: ="Documentation"
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - galDocs:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =180
+                  TemplateSize: =52
+                  TemplatePadding: =6
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_References,
+                            Product.Id = varInstallation.Product.Id,
+                            Section.Value = "Documentation",
+                            Or(IsBlank(Customer.Value), Customer.Id = varCustomer.ID)
+                        ),
+                        "Featured",
+                        SortOrder.Descending,
+                        "Reference Type",
+                        SortOrder.Ascending,
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: =Launch(ThisItem.URL)
+                  DisplayMode: =If(IsBlank(ThisItem.URL), DisplayMode.Disabled, DisplayMode.Edit)
+                Children:
+                  - rectDocsRow:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =0
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =48
+                        Fill: =AppTheme.Surface
+                        BorderColor: =AppTheme.LineSoft
+                        BorderThickness: =1
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                  - lblDocsTitle:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =4
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =20
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                        Text: =ThisItem.Title
+                  - lblDocsType:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
+                        Height: =18
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Color: =AppTheme.Muted
+                        Text: =ThisItem.'Reference Type'.Value
+                  - lblDocsException:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
+                        Height: =18
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Primary
+                        Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
+                  - lblDocsChecked:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
+                        Height: =18
+                        Align: =Align.Right
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Text: |
+                          =If(
+                              IsBlank(ThisItem.'Last Checked'),
+                              "never checked",
+                              DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                              "not checked in " & DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) & " months",
+                              "checked " & Text(ThisItem.'Last Checked', "dd mmm yyyy")
+                          )
+                        Color: |
+                          =If(
+                              IsBlank(ThisItem.'Last Checked'),
+                              AppTheme.Muted,
+                              DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                              AppTheme.Warn,
+                              AppTheme.Ok
+                          )
+            - lblNoDocs:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No documentation is on file for this system."
+                  Visible: =CountRows(galDocs.AllItems) = 0
+            - lblFirmwareHeading:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter + 32 + 180 + Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =24
+                  Text: ="Firmware & Downloads"
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - galFirmware:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter + 32 + 180 + Gutter + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: |
+                    =Parent.Height - (
+                        If(
+                            IsBlank(varInstallation.'Config Notes'),
+                            Gutter + 100 + 112 + Gutter,
+                            Gutter + 100 + 112 + Gutter + 92 + Gutter
+                        ) + 32 + 160 + Gutter + 32 + 180 + Gutter + 32
+                    ) - Gutter
+                  TemplateSize: =52
+                  TemplatePadding: =6
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_References,
+                            Product.Id = varInstallation.Product.Id,
+                            Section.Value = "Firmware & Downloads",
+                            Or(IsBlank(Customer.Value), Customer.Id = varCustomer.ID)
+                        ),
+                        "Featured",
+                        SortOrder.Descending,
+                        "Reference Type",
+                        SortOrder.Ascending,
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: =Launch(ThisItem.URL)
+                  DisplayMode: =If(IsBlank(ThisItem.URL), DisplayMode.Disabled, DisplayMode.Edit)
+                Children:
+                  - rectFirmwareRow:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =0
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =48
+                        Fill: =AppTheme.Surface
+                        BorderColor: =AppTheme.LineSoft
+                        BorderThickness: =1
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                  - lblFirmwareTitle:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =4
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =20
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                        Text: =ThisItem.Title
+                  - lblFirmwareType:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
+                        Height: =18
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Color: =AppTheme.Muted
+                        Text: =ThisItem.'Reference Type'.Value
+                  - lblFirmwareException:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
+                        Height: =18
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Primary
+                        Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
+                  - lblFirmwareChecked:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
+                        Y: =24
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
+                        Height: =18
+                        Align: =Align.Right
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Text: |
+                          =If(
+                              IsBlank(ThisItem.'Last Checked'),
+                              "never checked",
+                              DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                              "not checked in " & DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) & " months",
+                              "checked " & Text(ThisItem.'Last Checked', "dd mmm yyyy")
+                          )
+                        Color: |
+                          =If(
+                              IsBlank(ThisItem.'Last Checked'),
+                              AppTheme.Muted,
+                              DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                              AppTheme.Warn,
+                              AppTheme.Ok
+                          )
+            - lblNoFirmware:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: |
+                    =If(
+                        IsBlank(varInstallation.'Config Notes'),
+                        Gutter + 100 + 112 + Gutter,
+                        Gutter + 100 + 112 + Gutter + 92 + Gutter
+                    ) + 32 + 160 + Gutter + 32 + 180 + Gutter + 32
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No firmware or downloads are on file for this system."
+                  Visible: =CountRows(galFirmware.AllItems) = 0
