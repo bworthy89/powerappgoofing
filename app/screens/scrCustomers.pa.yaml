@@ -1,201 +1,205 @@
-# Screen 1 of 3 — Customers
-# Mimics the guide-viewer Playbooks landing page: centered 900px column, white surface,
-# hairline cards in a wrapping grid, uppercase section label, tinted pill badges.
+# Screen — Customers
+# The simplest screen in the rebuild: a searchable gallery of customers, each row
+# showing a three-state currency summary (off standard / not recorded / all on standard).
+# Selecting a row sets varCustomer and hands off to scrCustomerOverview. If this pastes
+# and renders, the data path and formula idioms are proven for every later screen.
 Screens:
   scrCustomers:
     Properties:
       Fill: =AppTheme.Bg
-      OnVisible: |
-        =Set(varSolution, Blank());
-        Set(varComponent, Blank());
-        Set(varSelectedSection, "Overview")
     Children:
-      - conCustomerPage:
+      - conRoot:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            X: =Max((Parent.Width - 900) / 2, 0)
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
             Y: =0
-            Width: =Min(Parent.Width, 900)
+            Width: =ContentWidth
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - lblPageTitle:
+            - lblTitle:
                 Control: Label
                 Properties:
-                  X: =32
-                  Y: =32
-                  Width: =500
-                  Height: =34
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
                   Text: ="Customers"
-                  Color: =AppTheme.Fg
-                  Size: =20
+                  Font: =AppFont
+                  Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
-            - lblPageSubtitle:
-                Control: Label
-                Properties:
-                  X: =32
-                  Y: =66
-                  Width: =500
-                  Height: =24
-                  Text: ="Find documentation and firmware by customer"
-                  Color: =AppTheme.MutedFg
-                  Size: =12
-            - txtCustomerSearch:
+                  Color: =AppTheme.Fg
+            - txtSearch:
                 Control: Classic/TextInput
                 Properties:
-                  X: =32
-                  Y: =110
-                  Width: =Parent.Width - 64
+                  X: =Gutter
+                  Y: =Gutter + 48
+                  Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
-                  HintText: ="Search by customer name..."
-                  Fill: =AppTheme.Card
+                  HintText: ="Search customers"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Fill: =AppTheme.Surface
                   Color: =AppTheme.Fg
-                  BorderColor: =AppTheme.BorderStrong
+                  BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Size: =12
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-            - lblSectionLabel:
-                Control: Label
-                Properties:
-                  X: =32
-                  Y: =178
-                  Width: =400
-                  Height: =20
-                  Text: ="ALL CUSTOMERS"
-                  Color: =AppTheme.MutedFg
-                  Size: =10
-                  FontWeight: =FontWeight.Bold
-            - lblCustomerCount:
-                Control: Label
-                Properties:
-                  X: =Parent.Width - 432
-                  Y: =178
-                  Width: =400
-                  Height: =20
-                  Text: =CountRows(galCustomers.AllItems) & If(CountRows(galCustomers.AllItems) = 1, " customer", " customers")
-                  Color: =AppTheme.TertiaryFg
-                  Size: =10
-                  Align: =Align.Right
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
             - galCustomers:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =32
-                  Y: =206
-                  Width: =Parent.Width - 64
-                  Height: =Parent.Height - 238
-                  WrapCount: =3
-                  TemplateSize: =124
+                  X: =Gutter
+                  Y: =Gutter + 104
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =Parent.Height - (Gutter + 104) - Gutter
+                  TemplateSize: =88
                   TemplatePadding: =0
                   ShowScrollbar: =true
                   Items: |
                     =SortByColumns(
                         Filter(
                             TB_Customers,
-                            Active = true &&
-                            (
-                                IsBlank(Trim(txtCustomerSearch.Text)) ||
-                                StartsWith(Title, Trim(txtCustomerSearch.Text)) ||
-                                StartsWith('Customer Code', Trim(txtCustomerSearch.Text))
-                            )
+                            Active = true,
+                            StartsWith(Title, Trim(txtSearch.Text))
                         ),
                         "Title",
                         SortOrder.Ascending
                     )
+                  # The four lines below feed scrHome's recently-viewed row (Task 8) —
+                  # device-local only, no list involved. Dedupe is RemoveIf(colRecent,
+                  # Id = ThisItem.ID), not Distinct: Distinct(Table, Formula) returns a
+                  # single-column table named Result rather than the original row, which
+                  # would have dropped Name and At and broken scrHome's
+                  # Index(colRecent, n).Name references. RemoveIf preserves every column
+                  # on every row; trimming to 3 removes the oldest At, not a ClearCollect
+                  # of the collection from itself. FALLBACK if Studio rejects
+                  # RemoveIf/SaveData here: delete these four lines (the Set + Navigate
+                  # above keep working on their own) and remove the recently-viewed block
+                  # from scrHome.
                   OnSelect: |
                     =Set(varCustomer, ThisItem);
-                    Set(varSolution, Blank());
-                    Set(varComponent, Blank());
-                    Set(varSelectedSection, "Overview");
-                    Navigate(scrCustomerToolbox, ScreenTransition.Fade)
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover);
+                    RemoveIf(colRecent, Id = ThisItem.ID);
+                    Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
+                    If(CountRows(colRecent) > 3,
+                       RemoveIf(colRecent, At = First(Sort(colRecent, At, SortOrder.Ascending)).At));
+                    SaveData(colRecent, "recent")
                 Children:
-                  - lblCustomerCard:
+                  - lblName:
                       Control: Label
                       Properties:
-                        X: =0
-                        Y: =0
-                        Width: =Parent.TemplateWidth - 12
-                        Height: =112
-                        Text: =""
-                        Fill: =AppTheme.Card
-                        BorderColor: =AppTheme.Border
-                        BorderThickness: =1
-                  - lblCustomerName:
-                      Control: Label
-                      Properties:
-                        X: =16
-                        Y: =14
-                        Width: =Parent.TemplateWidth - 44
-                        Height: =24
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =22
                         Text: =ThisItem.Title
-                        Color: =AppTheme.Fg
-                        Size: =13
+                        Font: =AppFont
+                        Size: =AppType.Body
                         FontWeight: =FontWeight.Semibold
-                  - lblCustomerDesc:
+                        Color: =AppTheme.Fg
+                  - lblDesc:
                       Control: Label
                       Properties:
-                        X: =16
-                        Y: =38
-                        Width: =Parent.TemplateWidth - 44
+                        X: =Gutter
+                        Y: =36
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =20
                         Text: =Coalesce(ThisItem.Description, "No description")
-                        Color: =AppTheme.MutedFg
-                        Size: =10
-                  - lblBadgeCode:
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                  - rectChip:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =60
+                        Width: =Gutter * 8
+                        Height: =22
+                        BorderThickness: =0
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                        Fill: |
+                          =If(
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) > 0,
+                              AppTheme.WarnLight,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) > 0,
+                              AppTheme.NeutralLight,
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID, Status.Value <> "Retired")) = 0,
+                              AppTheme.NeutralLight,
+                              AppTheme.OkLight
+                          )
+                  - lblChip:
                       Control: Label
                       Properties:
-                        X: =16
-                        Y: =70
-                        Width: =78
-                        Height: =24
-                        Text: =Coalesce(ThisItem.'Customer Code', "--")
-                        Fill: =AppTheme.GrayLight
-                        Color: =AppTheme.GrayDark
-                        Size: =10
-                        FontWeight: =FontWeight.Semibold
+                        X: =Gutter
+                        Y: =60
+                        Width: =Gutter * 8
+                        Height: =22
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
-                  - lblBadgeVerified:
-                      Control: Label
-                      Properties:
-                        X: =100
-                        Y: =70
-                        Width: =92
-                        Height: =24
-                        Text: =If(IsBlank(ThisItem.'Last Reviewed'), "Unreviewed", "Reviewed")
-                        Fill: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningLight, AppTheme.SuccessLight)
-                        Color: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningDark, AppTheme.SuccessDark)
-                        Size: =10
+                        Font: =AppFont
+                        Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Align: =Align.Center
-                        VerticalAlign: =VerticalAlign.Middle
-            - lblEmptyTitle:
-                Control: Label
-                Properties:
-                  X: =32
-                  Y: =300
-                  Width: =Parent.Width - 64
-                  Height: =28
-                  Text: ="No customers found"
-                  Color: =AppTheme.Fg
-                  Size: =14
-                  FontWeight: =FontWeight.Semibold
-                  Align: =Align.Center
-                  Visible: =CountRows(galCustomers.AllItems) = 0
-            - lblEmptyBody:
-                Control: Label
-                Properties:
-                  X: =32
-                  Y: =330
-                  Width: =Parent.Width - 64
-                  Height: =24
-                  Text: ="Try a different search term, or check that the customer is marked Active."
-                  Color: =AppTheme.MutedFg
-                  Size: =11
-                  Align: =Align.Center
-                  Visible: =CountRows(galCustomers.AllItems) = 0
+                        Color: =AppTheme.Fg
+                        Text: |
+                          =If(
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) > 0,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) & " off standard",
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) > 0,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) & " not recorded",
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID, Status.Value <> "Retired")) = 0,
+                              "nothing recorded",
+                              "all on standard"
+                          )

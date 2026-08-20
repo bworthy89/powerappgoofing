@@ -1,0 +1,201 @@
+# Screen 1 of 3 — Customers
+# Mimics the guide-viewer Playbooks landing page: centered 900px column, white surface,
+# hairline cards in a wrapping grid, uppercase section label, tinted pill badges.
+Screens:
+  scrCustomers:
+    Properties:
+      Fill: =AppTheme.Bg
+      OnVisible: |
+        =Set(varSolution, Blank());
+        Set(varComponent, Blank());
+        Set(varSelectedSection, "Overview")
+    Children:
+      - conCustomerPage:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - 900) / 2, 0)
+            Y: =0
+            Width: =Min(Parent.Width, 900)
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - lblPageTitle:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =32
+                  Width: =500
+                  Height: =34
+                  Text: ="Customers"
+                  Color: =AppTheme.Fg
+                  Size: =20
+                  FontWeight: =FontWeight.Bold
+            - lblPageSubtitle:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =66
+                  Width: =500
+                  Height: =24
+                  Text: ="Find documentation and firmware by customer"
+                  Color: =AppTheme.MutedFg
+                  Size: =12
+            - txtCustomerSearch:
+                Control: Classic/TextInput
+                Properties:
+                  X: =32
+                  Y: =110
+                  Width: =Parent.Width - 64
+                  Height: =44
+                  Default: =""
+                  HintText: ="Search by customer name..."
+                  Fill: =AppTheme.Card
+                  Color: =AppTheme.Fg
+                  BorderColor: =AppTheme.BorderStrong
+                  BorderThickness: =1
+                  Size: =12
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+            - lblSectionLabel:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =178
+                  Width: =400
+                  Height: =20
+                  Text: ="ALL CUSTOMERS"
+                  Color: =AppTheme.MutedFg
+                  Size: =10
+                  FontWeight: =FontWeight.Bold
+            - lblCustomerCount:
+                Control: Label
+                Properties:
+                  X: =Parent.Width - 432
+                  Y: =178
+                  Width: =400
+                  Height: =20
+                  Text: =CountRows(galCustomers.AllItems) & If(CountRows(galCustomers.AllItems) = 1, " customer", " customers")
+                  Color: =AppTheme.TertiaryFg
+                  Size: =10
+                  Align: =Align.Right
+            - galCustomers:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =32
+                  Y: =206
+                  Width: =Parent.Width - 64
+                  Height: =Parent.Height - 238
+                  WrapCount: =3
+                  TemplateSize: =124
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_Customers,
+                            Active = true &&
+                            (
+                                IsBlank(Trim(txtCustomerSearch.Text)) ||
+                                StartsWith(Title, Trim(txtCustomerSearch.Text)) ||
+                                StartsWith('Customer Code', Trim(txtCustomerSearch.Text))
+                            )
+                        ),
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: |
+                    =Set(varCustomer, ThisItem);
+                    Set(varSolution, Blank());
+                    Set(varComponent, Blank());
+                    Set(varSelectedSection, "Overview");
+                    Navigate(scrCustomerToolbox, ScreenTransition.Fade)
+                Children:
+                  - lblCustomerCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth - 12
+                        Height: =112
+                        Text: =""
+                        Fill: =AppTheme.Card
+                        BorderColor: =AppTheme.Border
+                        BorderThickness: =1
+                  - lblCustomerName:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =14
+                        Width: =Parent.TemplateWidth - 44
+                        Height: =24
+                        Text: =ThisItem.Title
+                        Color: =AppTheme.Fg
+                        Size: =13
+                        FontWeight: =FontWeight.Semibold
+                  - lblCustomerDesc:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =38
+                        Width: =Parent.TemplateWidth - 44
+                        Height: =20
+                        Text: =Coalesce(ThisItem.Description, "No description")
+                        Color: =AppTheme.MutedFg
+                        Size: =10
+                  - lblBadgeCode:
+                      Control: Label
+                      Properties:
+                        X: =16
+                        Y: =70
+                        Width: =78
+                        Height: =24
+                        Text: =Coalesce(ThisItem.'Customer Code', "--")
+                        Fill: =AppTheme.GrayLight
+                        Color: =AppTheme.GrayDark
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                  - lblBadgeVerified:
+                      Control: Label
+                      Properties:
+                        X: =100
+                        Y: =70
+                        Width: =92
+                        Height: =24
+                        Text: =If(IsBlank(ThisItem.'Last Reviewed'), "Unreviewed", "Reviewed")
+                        Fill: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningLight, AppTheme.SuccessLight)
+                        Color: =If(IsBlank(ThisItem.'Last Reviewed'), AppTheme.WarningDark, AppTheme.SuccessDark)
+                        Size: =10
+                        FontWeight: =FontWeight.Semibold
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+            - lblEmptyTitle:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =300
+                  Width: =Parent.Width - 64
+                  Height: =28
+                  Text: ="No customers found"
+                  Color: =AppTheme.Fg
+                  Size: =14
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  Visible: =CountRows(galCustomers.AllItems) = 0
+            - lblEmptyBody:
+                Control: Label
+                Properties:
+                  X: =32
+                  Y: =330
+                  Width: =Parent.Width - 64
+                  Height: =24
+                  Text: ="Try a different search term, or check that the customer is marked Active."
+                  Color: =AppTheme.MutedFg
+                  Size: =11
+                  Align: =Align.Center
+                  Visible: =CountRows(galCustomers.AllItems) = 0

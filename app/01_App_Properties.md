@@ -11,138 +11,99 @@ Nothing else will resolve until `AppTheme` exists.
 > bar**, and each gets its own paste. Switch the dropdown between them. Pasting a `Set(...)` block
 > while the dropdown still reads `Formulas` is the cause of nearly every error below.
 >
-> | Dropdown reads | Paste this | Contains `Set(`? |
+> | Dropdown reads | Paste this block | Contains `Set(`? |
 > |---|---|---|
-> | `Formulas` | the `AppTheme = {
-    Bg: ColorValue("#FFFFFF"),
-    BgSecondary: ColorValue("#F8F9FA"),
-    Card: ColorValue("#FFFFFF"),
-    Muted: ColorValue("#F1F3F5"),
-    Fg: ColorValue("#1A1B1E"),
-    MutedFg: ColorValue("#868E96"),
-    TertiaryFg: ColorValue("#ADB5BD"),
-    Border: ColorValue("#E9ECEF"),
-    BorderStrong: ColorValue("#DEE2E6"),
-    Primary: ColorValue("#228BE6"),
-    PrimaryDark: ColorValue("#1971C2"),
-    PrimaryLight: ColorValue("#E7F5FF"),
-    Success: ColorValue("#40C057"),
-    SuccessDark: ColorValue("#2B8A3E"),
-    SuccessLight: ColorValue("#EBFBEE"),
-    Warning: ColorValue("#FD7E14"),
-    WarningDark: ColorValue("#E8590C"),
-    WarningLight: ColorValue("#FFF4E6"),
-    Danger: ColorValue("#FA5252"),
-    GrayLight: ColorValue("#F1F3F5"),
-    GrayDark: ColorValue("#495057")
+> | `Formulas` | AppTheme, AppFont, AppType, IsNarrow, Gutter, ContentWidth (see below) | No |
+> | `OnStart` | Set(varCustomer, Blank()); Set(varInstallation, Blank()); Set(varExpandedModel, 0); LoadData(colRecent, "recent", true) | Yes |
+> | `StartScreen` | scrHome | No |
+
+## App.Formulas
+
+```powerfx
+AppTheme = {
+    Bg:            ColorValue("#F4F6F8"),
+    Surface:       ColorValue("#FFFFFF"),
+    Sunken:        ColorValue("#E7EBEF"),
+    Fg:            ColorValue("#14181C"),
+    FgSecondary:   ColorValue("#39424B"),
+    Muted:         ColorValue("#66727E"),
+    Faint:         ColorValue("#8C97A2"),
+    Line:          ColorValue("#DFE4E9"),
+    LineSoft:      ColorValue("#EBEEF1"),
+    Primary:       ColorValue("#0057B8"),
+    PrimaryDark:   ColorValue("#003D82"),
+    PrimaryLight:  ColorValue("#E7F0FA"),
+    OnPrimary:     ColorValue("#FFFFFF"),
+    Ok:            ColorValue("#17795E"),
+    OkLight:       ColorValue("#E2F2EC"),
+    Warn:          ColorValue("#9A6100"),
+    WarnLight:     ColorValue("#FBF0DC"),
+    Neutral:       ColorValue("#66727E"),
+    NeutralLight:  ColorValue("#EDF0F3")
 };
+
+AppFont = Font.'Lato';
+
+AppType = {
+    Display:  32,
+    Title:    22,
+    Heading:  17,
+    Body:     14,
+    Small:    12,
+    Micro:    10
+};
+
+IsNarrow = App.Width < 640;
+
+Gutter = If(App.Width < 640, 16, 24);
+
+ContentWidth = Min(App.Width - (Gutter * 2), 1100)
 ```
+
+Every label sets `Font: =AppFont` and `Size: =AppType.Body` (or similar size name). This
+establishes the convention: when you create a label, you choose its semantic role (Body,
+Heading, etc.), and the AppType record supplies the corresponding size. Lato is one of the
+few faces Power Apps can render; there is no web-font escape hatch, so the type system has to
+live entirely inside weights and sizes.
 
 ## App.OnStart
 
 ```powerfx
 Set(varCustomer, Blank());
-Set(varSolution, Blank());
-Set(varComponent, Blank());
-Set(varSelectedSection, "Overview")
+Set(varInstallation, Blank());
+Set(varExpandedModel, 0);
+LoadData(colRecent, "recent", true)
 ```
-
-## Fallback if App.Formulas is unavailable
-
-Put this in **App.OnStart** instead, then right-click App in Tree view and choose **Run OnStart**.
-
-```powerfx
-Set(AppTheme, AppTheme = {
-    Bg: ColorValue("#FFFFFF"),
-    BgSecondary: ColorValue("#F8F9FA"),
-    Card: ColorValue("#FFFFFF"),
-    Muted: ColorValue("#F1F3F5"),
-    Fg: ColorValue("#1A1B1E"),
-    MutedFg: ColorValue("#868E96"),
-    TertiaryFg: ColorValue("#ADB5BD"),
-    Border: ColorValue("#E9ECEF"),
-    BorderStrong: ColorValue("#DEE2E6"),
-    Primary: ColorValue("#228BE6"),
-    PrimaryDark: ColorValue("#1971C2"),
-    PrimaryLight: ColorValue("#E7F5FF"),
-    Success: ColorValue("#40C057"),
-    SuccessDark: ColorValue("#2B8A3E"),
-    SuccessLight: ColorValue("#EBFBEE"),
-    Warning: ColorValue("#FD7E14"),
-    WarningDark: ColorValue("#E8590C"),
-    WarningLight: ColorValue("#FFF4E6"),
-    Danger: ColorValue("#FA5252"),
-    GrayLight: ColorValue("#F1F3F5"),
-    GrayDark: ColorValue("#495057")
-});
-Set(varCustomer, Blank());
-Set(varSolution, Blank());
-Set(varComponent, Blank());
-Set(varSelectedSection, "Overview")
-```
-
-A global variable and a named formula are referenced with identical syntax, so **no change to the
-screen YAML is needed** — every `AppTheme.Background` keeps working. The only cost is that the theme
-is undefined until OnStart has run, so controls show errors in Studio until you use Run OnStart.
-
-Use this or the App.Formulas block, not both — defining the same name twice is an error.
-
-## Troubleshooting these two blocks
-
-The two theme blocks are **not interchangeable**. Each one is valid in exactly one property, and
-using the wrong one produces a confusing error that does not mention the theme at all.
-
-| Error you see | What it means | Fix |
-|---|---|---|
-| `Missing function argument type, for example the ":Text" in "FindMonth( d:Text ):Number = ..."` | `Set(AppTheme, {...})` was pasted into **App.Formulas**. The parser reads `Set(` as the start of a user-defined function, so `AppTheme` looks like an untyped parameter. | Remove `Set(` and its closing `)` so the statement reads `AppTheme = { ... };` |
-| `Name isn't valid. 'AppTheme' isn't recognized` | Neither block has been committed yet, or OnStart has not been run. | Define one of the two blocks, and use Run OnStart if you chose the OnStart version |
-| `Unexpected characters. The formula contains 'CurlyOpen' where 'Equ' is expected.` | The `=` is missing, usually left over from hand-editing `Set(AppTheme, {` down to `AppTheme {`. | Clear the property and paste the block fresh. It must begin `AppTheme = {` and end `};` |
-| `Behavior function in a non-behavior property` | `Set(...)` used somewhere that only accepts data formulas. | Move it to App.OnStart |
-
-Prefer clearing the property and pasting a block whole over editing one form into the other.
-Every error in this table so far has come from hand-editing `Set(AppTheme, {...})` into
-`AppTheme = {...}` and leaving a fragment behind.
-
-Quick way to tell which property you are in: the formula bar's property dropdown reads either
-`Formulas` or `OnStart`. `Formulas` never contains the word `Set`.
-
-Do not define `AppTheme` in both places. Defining the same name twice is an error.
 
 ## App.StartScreen
 
 ```powerfx
-scrCustomers
+scrHome
 ```
 
-Use StartScreen rather than a `Navigate()` in OnStart — Navigate in OnStart is no longer supported
-and StartScreen evaluates before the first screen paints.
+`scrHome` now exists (Task 8), so this formula resolves and no longer errors in Studio.
 
-## Settings to change
+## Troubleshooting
 
-- **Settings > General > Data row limit for non-delegable queries** → `2000`
-- **Settings > Display** → turn off Scale to fit, Lock aspect ratio, Lock orientation
-- **Settings > Upcoming features** → confirm **Enhanced component properties / Named formulas** is on,
-  otherwise the `App.Formulas` property will not appear.
+Pasting into the wrong property produces a confusing error. Each block is valid in exactly one
+place, and using the wrong one produces errors that do not mention the property at all.
 
-## Data sources to add first
+| Error you see | What it means | Fix |
+|---|---|---|
+| `Missing function argument type, for example the ":Text" in "FindMonth( d:Text ):Number = ..."` | `Set(varCustomer, ...)` or another `Set()` block was pasted into **Formulas**. The parser reads `Set(` as the start of a user-defined function, so the variable name looks like an untyped parameter. | Remove `Set(` and its closing `)` so the statement reads `varCustomer = Blank()` (data formulas only); or move the block to **OnStart** where `Set()` is valid. |
+| `Name isn't valid. 'AppTheme' isn't recognized` | The **Formulas** block has not been pasted yet, or the property is empty. | Paste the App.Formulas block into the **Formulas** property. |
+| `Unexpected characters. The formula contains 'CurlyOpen' where 'Equ' is expected.` | The `=` is missing, usually left over from hand-editing. | Clear the property and paste the block fresh. It must begin `AppTheme = {` and end `};` |
+| `Behavior function in a non-behavior property` | `Set(...)` used somewhere that only accepts data formulas (e.g., **Formulas**, **StartScreen**). | Move it to **OnStart**. |
 
-Add all seven SharePoint lists (Data > Add data > SharePoint > your Technician Toolbox site).
-The paste will fail validation on any screen whose formulas reference a list that is not connected yet.
+**Quick way to tell which property you are in:** the formula bar's property dropdown reads
+`Formulas`, `OnStart`, or `StartScreen`. Only `OnStart` contains the word `Set`.
 
-- TB_Customers
-- TB_CustomerSolutions
-- TB_SolutionComponents
-- TB_SoftwareInstallations
-- TB_CustomerGuides
-- TB_ProductReferences
-- TB_CustomerReferences
+Do not define `AppTheme` or any other name in both `Formulas` and `OnStart` — defining the
+same name twice is an error.
 
-Connect them with these exact names. The screens address columns by **display name**, so a list
-whose columns have been renamed since the export in `app/TB_*.csv` will fail to paste with
-`Name isn't valid`. Read [`00_Schema_Reference.md`](00_Schema_Reference.md) before you touch a
-column name — several display names on this site contain typos and trailing spaces that the
-formulas reproduce deliberately.
+## If App.Formulas is unavailable
 
-The `Data row limit` above matters more than usual here. Every parent/child filter compares a
-lookup's `.Id`, which SharePoint cannot delegate, and the two reference galleries join
-`TB_CustomerReferences` to `TB_ProductReferences` in memory. Both are bounded by that limit.
+Paste the same record into `App.OnStart` wrapped in `Set(AppTheme, {...})`, then right-click
+App in Tree view and choose **Run OnStart**. `IsNarrow` must then become
+`Set(varNarrow, App.Width < 640)` and every screen reference changes to `varNarrow`, which
+will not react to resizing — a real downgrade. Prefer Formulas.
