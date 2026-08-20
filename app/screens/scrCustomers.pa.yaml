@@ -18,11 +18,33 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
+            - btnBack:
+                Control: Classic/Button
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Gutter * 10
+                  Height: =28
+                  Text: ="<  Home"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Fill: =AppTheme.Bg
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.Sunken
+                  Color: =AppTheme.Primary
+                  HoverColor: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
             - lblTitle:
                 Control: Label
                 Properties:
                   X: =Gutter
-                  Y: =Gutter
+                  Y: =Gutter + 36
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =40
                   Text: ="Customers"
@@ -34,7 +56,7 @@ Screens:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
-                  Y: =Gutter + 48
+                  Y: =Gutter + 84
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
@@ -54,9 +76,9 @@ Screens:
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
                   X: =Gutter
-                  Y: =Gutter + 104
+                  Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 104) - Gutter
+                  Height: =Parent.Height - (Gutter + 140) - Gutter
                   TemplateSize: =88
                   TemplatePadding: =0
                   ShowScrollbar: =true
@@ -78,17 +100,19 @@ Screens:
                   # Index(colRecent, n).Name references. RemoveIf preserves every column
                   # on every row; trimming to 3 removes the oldest At, not a ClearCollect
                   # of the collection from itself. FALLBACK if Studio rejects
-                  # RemoveIf/SaveData here: delete these four lines (the Set + Navigate
-                  # above keep working on their own) and remove the recently-viewed block
-                  # from scrHome.
+                  # RemoveIf/SaveData here: delete these four lines (the Set line stays,
+                  # and Navigate stays as the last line) and remove the recently-viewed
+                  # block from scrHome. Navigate runs LAST, after the collection writes —
+                  # Navigate unloads this screen, and anything after it in the same
+                  # OnSelect would not be guaranteed to run.
                   OnSelect: |
                     =Set(varCustomer, ThisItem);
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover);
                     RemoveIf(colRecent, Id = ThisItem.ID);
                     Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
                     If(CountRows(colRecent) > 3,
                        RemoveIf(colRecent, At = First(Sort(colRecent, At, SortOrder.Ascending)).At));
-                    SaveData(colRecent, "recent")
+                    SaveData(colRecent, "recent");
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
                 Children:
                   - lblName:
                       Control: Label
@@ -133,6 +157,7 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
+                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
                                       'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
                                   )
                               ) > 0,
@@ -171,6 +196,7 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
+                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
                                       'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
                                   )
                               ) > 0,
@@ -180,6 +206,7 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
+                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
                                       'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
                                   )
                               ) & " off standard",
@@ -203,3 +230,16 @@ Screens:
                               "nothing recorded",
                               "all on standard"
                           )
+            - lblNoCustomers:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 140
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No customers match your search."
+                  Visible: =CountRows(galCustomers.AllItems) = 0
