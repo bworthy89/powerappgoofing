@@ -289,8 +289,7 @@ Screens:
                               Font: =AppFont
                               Size: =AppType.Small
                               Text: |
-                                =ThisItem.Title & "  •  " &
-                                LookUp(TB_Products, ID = ThisItem.Product.Id).Title & "  —  " &
+                                =LookUp(TB_Products, ID = ThisItem.Product.Id).Title & "  —  " &
                                 If(
                                     IsBlank(ThisItem.'Installed Version'),
                                     "not recorded",
