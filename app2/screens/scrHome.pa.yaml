@@ -68,32 +68,35 @@
 # retyped from memory each time, specifically to avoid the divergence-between-copies bug
 # this workaround invites.
 #
-# conDashboard is the one construct on this screen with no precedent in the other five
-# accepted files: an AutoLayout GroupContainer (Variant: AutoLayout) whose
-# LayoutDirection formula — =If(IsNarrow, LayoutDirection.Vertical,
-# LayoutDirection.Horizontal) — is given verbatim by the brief. Its three children
-# (cardBacklog, cardCustomerCount, cardModelCount) carry Width and Height but
-# deliberately no X/Y: those are exactly the properties an AutoLayout parent is supposed
-# to own, mirroring how Gallery children never carry X either. This is the construct
-# named as least-confident in the final report — nothing else on this screen relies on
-# it, and everywhere else (identity bar, entry tiles, recently-viewed row) responsive
-# stacking is done the proven way, with ManualLayout and an If(IsNarrow, ...) on each
-# position, exactly like the support-notes branch in scrCustomerOverview and the
-# expanded-model branch in scrCatalogue.
+# conDashboard collapses to one column below the breakpoint the same proven way as
+# every other responsive element on this screen: ManualLayout with an If(IsNarrow, ...)
+# on each card's X/Y/Width, exactly like the support-notes branch in
+# scrCustomerOverview and the expanded-model branch in scrCatalogue. An AutoLayout
+# GroupContainer (Variant: AutoLayout, formula-driven LayoutDirection) was tried first
+# since the brief gave the LayoutDirection formula verbatim, but it was the one
+# construct on this screen with no precedent in the other five accepted files and its
+# Variant/LayoutGap property names were unverifiable against this environment — on
+# review, flattened to ManualLayout, which costs one edit and removes the only
+# first-screen-loaded gamble on the page.
 #
 # Recently opened — device-local, no list involved. galCustomers.OnSelect in
-# scrCustomers (Task 3) now also writes colRecent via Collect + Distinct + SaveData;
-# App.OnStart now also calls LoadData(colRecent, "recent", true). Both are flagged
-# inline at their call sites below. FALLBACK, if Studio rejects the Distinct/SaveData/
-# LoadData chain: delete lblRecentHeading, btnRecent1, btnRecent2 and btnRecent3 from
-# this file, delete the two colRecent lines from scrCustomers' galCustomers.OnSelect,
-# and delete the LoadData line from App.OnStart. Nothing else on this screen reads
-# colRecent, so removing it is a clean subtraction — the brief calls this the least
-# load-bearing element on the screen, and it is written that way on purpose: btnRecent1
-# through btnRecent3 each guard their own Index(colRecent, n) behind
-# CountRows(colRecent) >= n, both in Text and in OnSelect, so an empty or partially
-# populated colRecent (the normal state on day one, before anyone has opened a customer)
-# never evaluates an out-of-range Index.
+# scrCustomers (Task 3) now also writes colRecent; App.OnStart now also calls
+# LoadData(colRecent, "recent", true). Both are flagged inline at their call sites
+# below. The dedupe-and-trim step in scrCustomers uses RemoveIf, not Distinct:
+# Distinct(Table, Formula) returns a single-column table named Result rather than the
+# original row, so Sort(Distinct(colRecent, Id), At, ...) would sort on a column that
+# no longer exists, and ClearCollect-ing the result back into colRecent would destroy
+# Name and At — breaking the three Index(colRecent, n).Name references below. RemoveIf
+# by Id first (dedupe), then RemoveIf the oldest At when over 3 rows (trim), preserves
+# every column on every row. FALLBACK, if Studio rejects RemoveIf/SaveData/LoadData:
+# delete lblRecentHeading, btnRecent1, btnRecent2 and btnRecent3 from this file, delete
+# the colRecent lines from scrCustomers' galCustomers.OnSelect, and delete the LoadData
+# line from App.OnStart. Nothing else on this screen reads colRecent, so removing it is
+# a clean subtraction — the brief calls this the least load-bearing element on the
+# screen, and it is written that way on purpose: btnRecent1 through btnRecent3 each
+# guard their own Index(colRecent, n) behind CountRows(colRecent) >= n, both in Text and
+# in OnSelect, so an empty or partially populated colRecent (the normal state on day
+# one, before anyone has opened a customer) never evaluates an out-of-range Index.
 Screens:
   scrHome:
     Properties:
@@ -121,28 +124,11 @@ Screens:
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - lblGreeting:
-                Control: Label
-                Properties:
-                  X: =Gutter
-                  Y: =If(IsNarrow, lblTitle.Y + lblTitle.Height, lblTitle.Y + 8)
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =24
-                  Align: =If(IsNarrow, Align.Left, Align.Right)
-                  Text: ="Hi, " & Coalesce(User().FullName, "there")
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  Color: =AppTheme.Muted
             - txtSearch:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
-                  Y: |
-                    =If(
-                        IsNarrow,
-                        lblGreeting.Y + lblGreeting.Height,
-                        lblTitle.Y + lblTitle.Height
-                    ) + Gutter
+                  Y: =lblTitle.Y + lblTitle.Height + Gutter
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
@@ -347,7 +333,7 @@ Screens:
                     CountRows(galSearchDocs.AllItems) = 0
             - conDashboard:
                 Control: GroupContainer
-                Variant: AutoLayout
+                Variant: ManualLayout
                 Properties:
                   X: =Gutter
                   Y: =lblSearchCustomersHead.Y
@@ -359,15 +345,17 @@ Screens:
                         cardBacklog.Height
                     )
                   Fill: =AppTheme.Bg
-                  LayoutDirection: =If(IsNarrow, LayoutDirection.Vertical, LayoutDirection.Horizontal)
-                  LayoutGap: =Gutter
                   Visible: =Len(Trim(txtSearch.Text)) < 2
                 Children:
                   - cardBacklog:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
-                        Width: =If(IsNarrow, Parent.Width, Parent.Width * 0.5)
+                        # conDashboard has no internal padding, so X = 0 is the correct
+                        # flush-left anchor for its first card, not a hard-coded position.
+                        X: =0
+                        Y: =0
+                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.5)
                         Height: =190
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line
@@ -434,6 +422,9 @@ Screens:
                               - rectBarTrack:
                                   Control: Rectangle
                                   Properties:
+                                    # conProportionBar's own X and Width are already derived
+                                    # and it has no internal padding, so X = 0 is the correct
+                                    # flush anchor here, not a hard-coded position.
                                     X: =0
                                     Y: =0
                                     Width: =Parent.Width
@@ -447,6 +438,8 @@ Screens:
                               - rectOnStandard:
                                   Control: Rectangle
                                   Properties:
+                                    # Same reasoning as rectBarTrack.X above: conProportionBar
+                                    # has no internal padding, so 0 is the correct anchor.
                                     X: =0
                                     Y: =0
                                     Height: =Parent.Height
@@ -500,7 +493,9 @@ Screens:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
-                        Width: =If(IsNarrow, Parent.Width, Parent.Width * 0.25)
+                        X: =If(IsNarrow, 0, cardBacklog.X + cardBacklog.Width + Gutter)
+                        Y: =If(IsNarrow, cardBacklog.Y + cardBacklog.Height + Gutter, 0)
+                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
                         Height: =If(IsNarrow, 96, cardBacklog.Height)
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line
@@ -539,7 +534,9 @@ Screens:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
-                        Width: =If(IsNarrow, Parent.Width, Parent.Width * 0.25)
+                        X: =If(IsNarrow, 0, cardCustomerCount.X + cardCustomerCount.Width + Gutter)
+                        Y: =If(IsNarrow, cardCustomerCount.Y + cardCustomerCount.Height + Gutter, 0)
+                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
                         Height: =If(IsNarrow, 96, cardBacklog.Height)
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line

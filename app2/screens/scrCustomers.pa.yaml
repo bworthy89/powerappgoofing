@@ -70,16 +70,24 @@ Screens:
                         "Title",
                         SortOrder.Ascending
                     )
-                  # The three Collect/ClearCollect/SaveData lines below feed scrHome's
-                  # recently-viewed row (Task 8) — device-local only, no list involved.
-                  # FALLBACK if Studio rejects Distinct here: delete these three lines (the
-                  # Set + Navigate above keep working on their own) and remove the
-                  # recently-viewed block from scrHome.
+                  # The four lines below feed scrHome's recently-viewed row (Task 8) —
+                  # device-local only, no list involved. Dedupe is RemoveIf(colRecent,
+                  # Id = ThisItem.ID), not Distinct: Distinct(Table, Formula) returns a
+                  # single-column table named Result rather than the original row, which
+                  # would have dropped Name and At and broken scrHome's
+                  # Index(colRecent, n).Name references. RemoveIf preserves every column
+                  # on every row; trimming to 3 removes the oldest At, not a ClearCollect
+                  # of the collection from itself. FALLBACK if Studio rejects
+                  # RemoveIf/SaveData here: delete these four lines (the Set + Navigate
+                  # above keep working on their own) and remove the recently-viewed block
+                  # from scrHome.
                   OnSelect: |
                     =Set(varCustomer, ThisItem);
                     Navigate(scrCustomerOverview, ScreenTransition.Cover);
+                    RemoveIf(colRecent, Id = ThisItem.ID);
                     Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
-                    ClearCollect(colRecent, FirstN(Sort(Distinct(colRecent, Id), At, SortOrder.Descending), 3));
+                    If(CountRows(colRecent) > 3,
+                       RemoveIf(colRecent, At = First(Sort(colRecent, At, SortOrder.Ascending)).At));
                     SaveData(colRecent, "recent")
                 Children:
                   - lblName:
