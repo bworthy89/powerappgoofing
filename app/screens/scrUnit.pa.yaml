@@ -178,7 +178,7 @@ Screens:
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
                         Height: =16
-                        Text: ="SOFTWARE VERSION"
+                        Text: ="FIRMWARE VERSION"
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Bold
@@ -493,14 +493,24 @@ Screens:
                         Gutter + 122 + 112 + Gutter + 92 + Gutter
                     ) + 32 + 180 + Gutter + 32
                   Width: =Parent.Width - (Gutter * 2)
+                  # Floored at 0: conRoot is fixed-height with no scroll idiom proven
+                  # anywhere in this kit (GroupContainer here is always ManualLayout — see
+                  # scrHome's note on why AutoLayout was rejected as unverified), so a
+                  # negative height would clip rather than degrade. The gallery's own
+                  # ShowScrollbar handles scrolling through however many rows fit the
+                  # floored height; on a screen tall enough for the fixed content above,
+                  # this evaluates to the same positive value as before.
                   Height: |
-                    =Parent.Height - (
-                        If(
-                            IsBlank(varInstallation.'Config Notes'),
-                            Gutter + 122 + 112 + Gutter,
-                            Gutter + 122 + 112 + Gutter + 92 + Gutter
-                        ) + 32 + 180 + Gutter + 32
-                    ) - Gutter
+                    =Max(
+                        Parent.Height - (
+                            If(
+                                IsBlank(varInstallation.'Config Notes'),
+                                Gutter + 122 + 112 + Gutter,
+                                Gutter + 122 + 112 + Gutter + 92 + Gutter
+                            ) + 32 + 180 + Gutter + 32
+                        ) - Gutter,
+                        0
+                    )
                   TemplateSize: =52
                   TemplatePadding: =6
                   ShowScrollbar: =true
