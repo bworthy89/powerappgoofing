@@ -166,10 +166,6 @@ Screens:
                   Fill: =AppTheme.Surface
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
                 Children:
                   - lblVersionHeading:
                       Control: Label
@@ -242,10 +238,6 @@ Screens:
                         Width: =Gutter * 9
                         Height: =24
                         BorderThickness: =0
-                        RadiusTopLeft: =12
-                        RadiusTopRight: =12
-                        RadiusBottomLeft: =12
-                        RadiusBottomRight: =12
                         Visible: =!IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version')
                         Fill: |
                           =If(
@@ -292,10 +284,6 @@ Screens:
                   Fill: =AppTheme.WarnLight
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
                   Visible: =!IsBlank(varInstallation.'Config Notes')
                 Children:
                   - lblConfigHeading:
@@ -381,10 +369,6 @@ Screens:
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
-                        RadiusTopLeft: =6
-                        RadiusTopRight: =6
-                        RadiusBottomLeft: =6
-                        RadiusBottomRight: =6
                   - lblDocsTitle:
                       Control: Label
                       Properties:
@@ -541,10 +525,6 @@ Screens:
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
-                        RadiusTopLeft: =6
-                        RadiusTopRight: =6
-                        RadiusBottomLeft: =6
-                        RadiusBottomRight: =6
                   - lblFirmwareTitle:
                       Control: Label
                       Properties:

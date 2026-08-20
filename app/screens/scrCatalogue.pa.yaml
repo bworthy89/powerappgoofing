@@ -152,10 +152,6 @@ Screens:
                         Fill: =If(ThisItem.ID = varExpandedModel, AppTheme.PrimaryLight, AppTheme.Surface)
                         BorderColor: =AppTheme.Line
                         BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
                   - lblModelTitle:
                       Control: Label
                       Properties:
@@ -259,10 +255,6 @@ Screens:
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
-                        RadiusTopLeft: =6
-                        RadiusTopRight: =6
-                        RadiusBottomLeft: =6
-                        RadiusBottomRight: =6
                   - lblDocTitle:
                       Control: Label
                       Properties:

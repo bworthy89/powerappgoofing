@@ -145,10 +145,6 @@ Screens:
                         Width: =Gutter * 8
                         Height: =22
                         BorderThickness: =0
-                        RadiusTopLeft: =11
-                        RadiusTopRight: =11
-                        RadiusBottomLeft: =11
-                        RadiusBottomRight: =11
                         Fill: |
                           =If(
                               CountRows(
