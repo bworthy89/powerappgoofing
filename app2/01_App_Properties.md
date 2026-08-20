@@ -14,7 +14,7 @@ Nothing else will resolve until `AppTheme` exists.
 > | Dropdown reads | Paste this block | Contains `Set(`? |
 > |---|---|---|
 > | `Formulas` | AppTheme, AppFont, AppType, IsNarrow, Gutter, ContentWidth (see below) | No |
-> | `OnStart` | Set(varCustomer, Blank()); Set(varInstallation, Blank()); Set(varExpandedModel, 0) | Yes |
+> | `OnStart` | Set(varCustomer, Blank()); Set(varInstallation, Blank()); Set(varExpandedModel, 0); LoadData(colRecent, "recent", true) | Yes |
 > | `StartScreen` | scrHome | No |
 
 ## App.Formulas
@@ -71,7 +71,8 @@ live entirely inside weights and sizes.
 ```powerfx
 Set(varCustomer, Blank());
 Set(varInstallation, Blank());
-Set(varExpandedModel, 0)
+Set(varExpandedModel, 0);
+LoadData(colRecent, "recent", true)
 ```
 
 ## App.StartScreen
@@ -80,7 +81,7 @@ Set(varExpandedModel, 0)
 scrHome
 ```
 
-Note: `scrHome` does not exist yet. This formula will error in Studio until Task 8 creates that screen — this is expected rather than a mistake to debug.
+`scrHome` now exists (Task 8), so this formula resolves and no longer errors in Studio.
 
 ## Troubleshooting
 

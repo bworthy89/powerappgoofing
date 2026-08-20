@@ -70,9 +70,17 @@ Screens:
                         "Title",
                         SortOrder.Ascending
                     )
+                  # The three Collect/ClearCollect/SaveData lines below feed scrHome's
+                  # recently-viewed row (Task 8) — device-local only, no list involved.
+                  # FALLBACK if Studio rejects Distinct here: delete these three lines (the
+                  # Set + Navigate above keep working on their own) and remove the
+                  # recently-viewed block from scrHome.
                   OnSelect: |
                     =Set(varCustomer, ThisItem);
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover);
+                    Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
+                    ClearCollect(colRecent, FirstN(Sort(Distinct(colRecent, Id), At, SortOrder.Descending), 3));
+                    SaveData(colRecent, "recent")
                 Children:
                   - lblName:
                       Control: Label
