@@ -171,7 +171,7 @@ The most likely failures, in the order you will meet them:
 | `Connect-PnPOnline` fails on client ID | App registration missing or unconsented (PowerShell 7 route only) |
 | `There is no Web named ".../_vti_bin/sites.asmx"` | The `-SiteUrl` is a page or library path, not a web. Strip it back to `.../sites/<site>` |
 | `Add-PnPFieldFromXml` fails on a lookup | The target list did not exist yet — re-run, since creation is idempotent |
-| Access denied on `Add-PnPList` | Not a site owner on that site |
+| Access denied on `New-PnPList` | Not a site owner on that site |
 | Default view not set | Non-fatal; the script warns and continues. Set the columns by hand in list settings |
 
 Every step reports what it did. If a run stops partway, read the last green line to see how far

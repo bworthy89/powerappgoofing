@@ -185,7 +185,7 @@ function New-ToolboxList {
         return
     }
     if ($PSCmdlet.ShouldProcess($Title, 'Create list')) {
-        Add-PnPList -Title $Title -Template GenericList -OnQuickLaunch | Out-Null
+        New-PnPList -Title $Title -Template GenericList -OnQuickLaunch | Out-Null
         Set-PnPList -Identity $Title -Description $Description | Out-Null
         Write-Ok "created list $Title"
     }
