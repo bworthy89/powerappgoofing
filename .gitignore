@@ -4,6 +4,9 @@ docs/
 # Working notes
 tasks/
 
+# Internal product/context notes — not for the public repo
+PRODUCT.md
+
 # Local noise
 venv/
 __pycache__/
