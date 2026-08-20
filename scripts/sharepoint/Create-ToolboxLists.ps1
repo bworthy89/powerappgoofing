@@ -167,6 +167,18 @@ function Write-Step { param([string]$Message) Write-Host "  $Message" -Foregroun
 function Write-Ok   { param([string]$Message) Write-Host "  $Message" -ForegroundColor Green }
 function Write-Skip { param([string]$Message) Write-Host "  $Message" -ForegroundColor DarkGray }
 
+function Get-FieldChoices {
+    # Get-PnPField hands back a generic CSOM Field, not a typed FieldChoice, so .Choices
+    # is not there to read. SchemaXml is present on every field and carries the values.
+    param($Field)
+    try {
+        $xml = [xml]$Field.SchemaXml
+        return @($xml.SelectNodes('//CHOICES/CHOICE') | ForEach-Object { $_.InnerText })
+    } catch {
+        return @()
+    }
+}
+
 function Test-ListExists {
     param([string]$Title)
     $null -ne (Get-PnPList -Identity $Title -ErrorAction SilentlyContinue)
@@ -433,14 +445,21 @@ if (-not $WhatIfPreference) {
                 Write-Warning "    MISSING: $($f.Display)"; $problems++
             } else {
                 $note = ''
-                if ($f.ContainsKey('Choices')) {
-                    # The whole point of scripting this: prove no Choice 1/2/3 survived.
-                    $actualChoices = @($actual.Choices)
-                    if ($actualChoices -contains 'Choice 1') {
-                        Write-Warning "    PLACEHOLDER CHOICES on $($f.Display)"; $problems++
-                    } else {
-                        $note = "  [$($actualChoices.Count) choices]"
+                try {
+                    if ($f.ContainsKey('Choices')) {
+                        # The whole point of scripting this: prove no Choice 1/2/3 survived.
+                        $actualChoices = Get-FieldChoices -Field $actual
+                        if ($actualChoices -contains 'Choice 1') {
+                            Write-Warning "    PLACEHOLDER CHOICES on $($f.Display)"; $problems++
+                        } elseif ($actualChoices.Count -ne $f.Choices.Count) {
+                            Write-Warning "    $($f.Display): expected $($f.Choices.Count), found $($actualChoices.Count)"; $problems++
+                        } else {
+                            $note = "  [$($actualChoices.Count) choices]"
+                        }
                     }
+                } catch {
+                    # A report must never abort the run.
+                    $note = "  [could not read choices]"
                 }
                 Write-Host "    ok  $($actual.Title)$note" -ForegroundColor Green
             }
