@@ -203,6 +203,7 @@ Screens:
                         RadiusTopRight: =12
                         RadiusBottomLeft: =12
                         RadiusBottomRight: =12
+                        Visible: =!IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version')
                         Fill: |
                           =If(
                               IsBlank(ThisItem.'Installed Version'),
@@ -226,6 +227,7 @@ Screens:
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Fg
+                        Visible: =!IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version')
                         Text: |
                           =If(
                               IsBlank(ThisItem.'Installed Version'),
@@ -265,6 +267,17 @@ Screens:
                               "Title",
                               SortOrder.Ascending
                           )
+                        # galUnits fills 128 of the card's 240px — over half — and a nested
+                        # Gallery captures its own taps rather than bubbling them to
+                        # galSolutions.OnSelect. Without its own OnSelect this region looks
+                        # tappable and silently does nothing. varInstallation here is set to
+                        # the UNIT row (ThisItem inside this gallery), not the solution.
+                        # scrUnit does not exist until Task 6 — this reference will error in
+                        # Studio until then, the same accepted condition as App.StartScreen
+                        # naming scrHome before Task 8.
+                        OnSelect: |
+                          =Set(varInstallation, ThisItem);
+                          Navigate(scrUnit, ScreenTransition.Cover)
                       Children:
                         - lblUnitLine:
                             Control: Label
@@ -325,8 +338,21 @@ Screens:
 # Items formula changes from
 #     Filter(TB_Installations, Parent.Id = ThisItem.ID, Status.Value <> "Retired")
 # to
-#     Filter(TB_Installations, Customer.Id = varCustomer.ID, !IsBlank(Parent.Value), Status.Value <> "Retired")
-# and lblUnitLine's Text formula gains a leading segment naming which solution the unit
+#     Filter(
+#         TB_Installations,
+#         Customer.Id = varCustomer.ID,
+#         !IsBlank(Parent.Value),
+#         Status.Value <> "Retired",
+#         LookUp(TB_Installations, ID = Parent.Id).Status.Value <> "Retired"
+#     )
+# The last clause is required, not cosmetic: in the live nested version a child of a
+# retired solution never renders, because retired solutions are already excluded from
+# galSolutions.Items and their nested galUnits never gets a chance to run. The flat
+# fallback has no such parent row to inherit exclusion from, so without this clause a
+# unit whose own Status is not "Retired" but whose PARENT is would render — and the
+# label lookup below would print that retired parent's title with no indication it is
+# retired. Filtering it out here means the label lookup never has to special-case it.
+# lblUnitLine's Text formula gains a leading segment naming which solution the unit
 # belongs to, since the card grouping is gone:
 #     LookUp(TB_Installations, ID = ThisItem.Parent.Id).Title & "  ▸  " & ThisItem.Title & ...
 # That LookUp is not a locally-introduced name — TB_Installations is the base list, not an
