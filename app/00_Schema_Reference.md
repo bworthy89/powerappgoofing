@@ -139,62 +139,54 @@ only says "this product reference is relevant to this customer, at this scope, i
 Everything the SIA and Firmware galleries display about a reference comes from the joined
 `TB_ProductReferences` row:
 
-**Before the app will paste, three fields must be projected onto this list.** SharePoint can
-surface columns of the target list directly on the mapping row, which is what `Items` filters on:
-
-1. Site contents > **TB_CustomerReferences** > gear icon > **List settings**. The modern column
-   editor does not expose this — you need the classic settings page.
-2. Under **Columns**, click **Product Reference**.
-3. Under *Add a column to show each of these additional fields*, tick **Reference Type**,
-   **Release Status** and **Restricted**. Click **OK**.
-
-That creates three read-only columns displayed as `Product Reference: Reference Type`,
-`Product Reference: Release Status` and `Product Reference: Restricted`. The galleries filter them
-straight off the row:
+Everything the SIA and Firmware galleries show about a reference is resolved per row, with a single
+lookup shape used in every place:
 
 ```powerfx
-'Product Reference: Reference Type'.Value in ["Machine Firmware", "Driver", ...]
+LookUp(TB_ProductReferences, ID = <row>.'Product Reference'.Id).<column>
 ```
 
-Only single-value types can be projected, so `Description` (multi-line) and `Reference URL`
-(hyperlink) cannot be. Those two are read per row in the child controls with a plain qualified
-lookup, and the reference's own title is already the lookup's display value, `'Product Reference'.Value`:
-
-```powerfx
-LookUp(TB_ProductReferences, ID = ThisItem.'Product Reference'.Id).'Reference URL'
-```
+`<row>` is `ThisItem` inside a gallery child, and the bare row scope inside a gallery's `Items`,
+where there is no `ThisItem` to hang it on. `Featured`, `Display Order` and the card heading come
+off the mapping row itself and need no lookup at all.
 
 ### Introduce no local names in these formulas
 
-This environment rejects every name the formula defines for itself. Three shapes were tried against
+This environment rejects every name a formula defines for itself. Three shapes were tried against
 it and all three failed paste validation with `Name isn't valid`, each error naming the invented
-name rather than the construct that failed to produce it:
+name rather than whatever actually failed to produce it:
 
 | Shape | Error |
 |---|---|
 | `AddColumns(Filter(...) As Map, "RefRec", LookUp(...))` | `'RefRec' isn't recognized` |
-| `AddColumns(Filter(...), "RefTitle", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title), ...)` | `'RefTitle' isn't recognized` |
+| `AddColumns(Filter(...), "RefTitle", LookUp(...), ...)` | `'RefTitle' isn't recognized` |
 | `With({RefURL: LookUp(TB_ProductReferences As Ref, ...)}, ...)` | `'RefURL' isn't recognized` |
 
-So: no `AddColumns` columns, no `With` bindings, no `As` aliases. Reach a row with `ThisItem.` and
-nothing else. Where a value is needed twice, repeat the `LookUp` rather than binding it to a name.
+So: no `AddColumns` columns, no `With` bindings, no `As` aliases. Where a value is needed twice,
+repeat the `LookUp` rather than binding it to a name. `TB_ProductReferences` is connected and
+resolves — `CountRows` against it returns a delegation warning, not an error — so the data source
+is not the problem, and the lookups themselves are the same shape the kit has always used.
 
-### Pre-flight check
+### If the lookups inside Items are what fails
 
-Projected fields arrive through the connector as lookups, so they are read with `.Value`. Confirm
-that on your site before pasting the screen — one Label, `Text` property:
+`Items` reaches the mapping row from inside a nested `LookUp` scope. If that turns out to be what
+this environment rejects, the way out is to stop asking Power Fx to do the join.
 
-```powerfx
-=First(TB_CustomerReferences).'Product Reference: Reference Type'.Value
-```
+SharePoint lookups can carry columns of the target list onto the mapping row as *additional
+fields*, but **only for text, number, currency, date/time, calculated and ID columns**. Ours are
+Choice and Yes/No, so they do not appear in that picker. The workaround is one indirection: add
+three **Calculated** columns to `TB_ProductReferences`, each returning single line of text —
 
-If it errors, drop the `.Value` and try again; whichever form works is the one the two galleries
-need, in the three `'Product Reference: ...'` lines of each `Items`. While you are there, the other
-unproven construct is worth one more Label:
+| Column | Formula |
+|---|---|
+| `Reference Type Text` | `=[Reference Type]` |
+| `Release Status Text` | `=[Release Status]` |
+| `Restricted Text` | `=IF([Restricted],"Yes","No")` |
 
-```powerfx
-=If("Driver" in ["Driver", "Support Tool"], "yes", "no")
-```
+— then tick those three under *Add a column to show each of these additional fields* on the
+`Product Reference` lookup in **TB_CustomerReferences** (classic List settings; the modern column
+editor does not expose it). `Items` can then filter `'Product Reference: Reference Type Text'`
+directly, with no join and no lookup at all.
 
 ## Re-checking this document
 

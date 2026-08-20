@@ -3,11 +3,11 @@
 # hairline cards, tinted pill badges, uppercase section labels, subtle link-style buttons.
 # Bound to the exported schema - see 00_Schema_Reference.md. TB_CustomerReferences is a junction
 # list, so galSIA and galFirmware join each mapping row to its TB_ProductReferences record with
-# SharePoint lookup projections: 'Product Reference: Reference Type' and friends are additional
-# fields of the Product Reference lookup, so Items filters them straight off the row with no join.
-# The two lookups that remain are for column types SharePoint cannot project. Introduce no local
-# names here - AddColumns columns, With bindings and As aliases have all failed paste validation
-# in this environment. Reach the row with ThisItem. and nothing else.
+# One lookup shape is used everywhere references are resolved:
+#   LookUp(TB_ProductReferences, ID = <row>.'Product Reference'.Id).<column>
+# with <row> being ThisItem in a gallery child and the bare row scope inside Items. Introduce no
+# local names - AddColumns columns, With bindings and As aliases have each failed paste validation
+# in this environment, every time reporting the invented name rather than what actually broke.
 Screens:
   scrSolutionDetails:
     Properties:
@@ -638,9 +638,18 @@ Screens:
                                 'Solution Component'.Id = Blank() ||
                                 'Solution Component'.Id = varComponent.ID
                             ) &&
-                            'Product Reference: Restricted' <> true &&
-                            'Product Reference: Release Status'.Value <> "Retired" &&
-                            'Product Reference: Reference Type'.Value in [
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).Restricted <> true &&
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).'Release Status'.Value <> "Retired" &&
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).'Reference Type'.Value in [
                                 "SIA Product Page",
                                 "SIA Documantation",
                                 "Installation Manual",
@@ -685,7 +694,10 @@ Screens:
                         Width: =120
                         Height: =22
                         Text: |
-                          =ThisItem.'Product Reference: Release Status'.Value
+                          =LookUp(
+                              TB_ProductReferences,
+                              ID = ThisItem.'Product Reference'.Id
+                          ).'Release Status'.Value
                         Fill: =If(Self.Text = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
                         Color: =If(Self.Text = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
@@ -793,9 +805,18 @@ Screens:
                                 'Solution Component'.Id = Blank() ||
                                 'Solution Component'.Id = varComponent.ID
                             ) &&
-                            'Product Reference: Restricted' <> true &&
-                            'Product Reference: Release Status'.Value <> "Retired" &&
-                            'Product Reference: Reference Type'.Value in [
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).Restricted <> true &&
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).'Release Status'.Value <> "Retired" &&
+                            LookUp(
+                                TB_ProductReferences,
+                                ID = 'Product Reference'.Id
+                            ).'Reference Type'.Value in [
                                 "Machine Firmware",
                                 "BV Firmware",
                                 "Software Download",
@@ -837,7 +858,10 @@ Screens:
                         Width: =120
                         Height: =22
                         Text: |
-                          =ThisItem.'Product Reference: Release Status'.Value
+                          =LookUp(
+                              TB_ProductReferences,
+                              ID = ThisItem.'Product Reference'.Id
+                          ).'Release Status'.Value
                         Fill: =If(Self.Text = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
                         Color: =If(Self.Text = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9

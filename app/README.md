@@ -37,8 +37,7 @@ few minutes, versus rebuilding 79 controls by hand.
 
 ## Order of operations
 
-0. Read `00_Schema_Reference.md`, and add the three projected columns it describes to
-   `TB_CustomerReferences`. If your lists have otherwise drifted from the exports in `TB_*.csv`,
+0. Read `00_Schema_Reference.md`. If your lists have drifted from the exports in `TB_*.csv`,
    re-export and reconcile before pasting — every formula binds to a column display name.
 1. Create a blank **Tablet** canvas app named `Technician Toolbox`.
 2. Add all seven SharePoint lists as data sources. **Do this before pasting** — paste validation
@@ -115,16 +114,14 @@ paste-validation risk, so it is deliberately not what this kit does.
 
 - **Section switching is `Visible`, not `Navigate`.** All four resource galleries occupy the same
   rectangle at `X=352, Y=226` and show or hide on `varSelectedSection`. If you move one, move all.
-- **`TB_CustomerReferences` is a junction list, and three of its columns are projections.**
-  `Product Reference: Reference Type`, `: Release Status` and `: Restricted` are additional fields
-  of the `Product Reference` lookup, added in classic List settings — `00_Schema_Reference.md` has
-  the steps. **Add them before pasting**; without them both reference galleries fail to resolve.
-  Type, status and restriction are then filtered straight off the mapping row with no join.
+- **`TB_CustomerReferences` is a junction list, so both reference galleries look across per row.**
+  The mapping row carries `Title`, `Featured` and `Display Order`; type, status, restriction, URL
+  and description live on `TB_ProductReferences` and are resolved with one shape used everywhere,
+  `LookUp(TB_ProductReferences, ID = <row>.'Product Reference'.Id).<column>` — `ThisItem` in a
+  gallery child, the bare row scope inside `Items`.
 - **Introduce no local names in a formula.** `AddColumns` columns, `With` bindings and `As` aliases
-  have each failed paste validation here with `Name isn't valid`. `Description` and `Reference URL`
-  cannot be projected, so the two controls that show them repeat a
-  `LookUp(TB_ProductReferences, ID = ThisItem.'Product Reference'.Id).<column>` instead of binding
-  it to a name.
+  have each failed paste validation here with `Name isn't valid`, every time reporting the invented
+  name rather than what actually broke. Where a value is needed twice, the `LookUp` is repeated.
 - **The status badge colours read `Self.Text`, not a second lookup.** The `Text` resolves the
   release status once; `Fill` and `Color` test `Self.Text = "Current"`.
 - **The two galleries are split by `Reference Type`, and the split must stay exhaustive.** All 13
