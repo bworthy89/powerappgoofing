@@ -35,7 +35,7 @@
     Use an existing PnP connection instead of opening a new one.
 
 .EXAMPLE
-    # Dry run first — shows every action, changes nothing
+    # Dry run first - shows every action, changes nothing
     ./Create-ToolboxLists.ps1 -SiteUrl https://contoso.sharepoint.com/sites/TT -ClientId <guid> -WhatIf
 
 .EXAMPLE
@@ -262,9 +262,9 @@ function New-ToolboxLookup {
 # ---------------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "Technician Toolbox — list provisioning" -ForegroundColor White
+Write-Host "Technician Toolbox - list provisioning" -ForegroundColor White
 Write-Host "  site: $SiteUrl"
-if ($WhatIfPreference) { Write-Host "  DRY RUN — nothing will be changed" -ForegroundColor Yellow }
+if ($WhatIfPreference) { Write-Host "  DRY RUN - nothing will be changed" -ForegroundColor Yellow }
 Write-Host ""
 
 if (-not $SkipConnect) {
@@ -281,7 +281,7 @@ if (-not $SkipConnect) {
 }
 
 # ---------------------------------------------------------------------------
-# Sanity check — is this URL actually a web?
+# Sanity check - is this URL actually a web?
 #
 # A URL copied from the browser address bar usually is not. Paths ending in
 # /sitepages, /lists/<name> or /<page>.aspx point inside a web, not at one, and
@@ -315,10 +315,10 @@ Nothing has been changed.
 }
 
 # ---------------------------------------------------------------------------
-# Step 0 — the one name collision with the legacy set
+# Step 0 - the one name collision with the legacy set
 # ---------------------------------------------------------------------------
 
-Write-Host "Step 0 — legacy check" -ForegroundColor White
+Write-Host "Step 0 - legacy check" -ForegroundColor White
 
 # Identify OUR list positively, and treat anything else as legacy.
 #
@@ -353,11 +353,11 @@ yourself first. Nothing has been changed.
 }
 
 # ---------------------------------------------------------------------------
-# Step 1 — lists and their non-lookup columns
+# Step 1 - lists and their non-lookup columns
 # ---------------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "Step 1 — lists and columns" -ForegroundColor White
+Write-Host "Step 1 - lists and columns" -ForegroundColor White
 
 foreach ($listName in $Schema.Keys) {
     $def = $Schema[$listName]
@@ -369,11 +369,11 @@ foreach ($listName in $Schema.Keys) {
 }
 
 # ---------------------------------------------------------------------------
-# Step 2 — lookups, once every target list exists
+# Step 2 - lookups, once every target list exists
 # ---------------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "Step 2 — lookups" -ForegroundColor White
+Write-Host "Step 2 - lookups" -ForegroundColor White
 
 foreach ($listName in $Schema.Keys) {
     $def = $Schema[$listName]
@@ -384,11 +384,11 @@ foreach ($listName in $Schema.Keys) {
 }
 
 # ---------------------------------------------------------------------------
-# Step 3 — default views, ordered for grid-view data entry
+# Step 3 - default views, ordered for grid-view data entry
 # ---------------------------------------------------------------------------
 
 Write-Host ""
-Write-Host "Step 3 — default views" -ForegroundColor White
+Write-Host "Step 3 - default views" -ForegroundColor White
 
 foreach ($listName in $ViewFields.Keys) {
     if (-not (Test-ListExists -Title $listName)) { Write-Skip "$listName not present, skipping view"; continue }
@@ -406,12 +406,12 @@ foreach ($listName in $ViewFields.Keys) {
 }
 
 # ---------------------------------------------------------------------------
-# Step 4 — verify, by reading back what is actually there
+# Step 4 - verify, by reading back what is actually there
 # ---------------------------------------------------------------------------
 
 if (-not $WhatIfPreference) {
     Write-Host ""
-    Write-Host "Step 4 — verification" -ForegroundColor White
+    Write-Host "Step 4 - verification" -ForegroundColor White
 
     $problems = 0
     foreach ($listName in $Schema.Keys) {
@@ -452,7 +452,7 @@ if (-not $WhatIfPreference) {
         Write-Host "All four lists verified. Nothing missing, no placeholder choices." -ForegroundColor Green
         Write-Host "Next: connect them as data sources in Power Apps Studio." -ForegroundColor Green
     } else {
-        Write-Warning "$problems problem(s) found. Fix and re-run — the script skips what already exists."
+        Write-Warning "$problems problem(s) found. Fix and re-run - the script skips what already exists."
     }
 }
 

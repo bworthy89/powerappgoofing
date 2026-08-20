@@ -65,10 +65,10 @@ $Protected = @(
 )
 
 Write-Host ""
-Write-Host "Technician Toolbox — remove the four rebuilt lists" -ForegroundColor White
+Write-Host "Technician Toolbox - remove the four rebuilt lists" -ForegroundColor White
 Write-Host "  site: $SiteUrl"
 Write-Host "  protected, will not be touched: $($Protected -join ', ')" -ForegroundColor DarkGray
-if ($WhatIfPreference) { Write-Host "  DRY RUN — nothing will be deleted" -ForegroundColor Yellow }
+if ($WhatIfPreference) { Write-Host "  DRY RUN - nothing will be deleted" -ForegroundColor Yellow }
 Write-Host ""
 
 if (-not $SkipConnect) {
@@ -99,7 +99,7 @@ foreach ($name in $Targets) {
     }
 
     if ($list.ItemCount -gt 0) {
-        Write-Warning "$name holds $($list.ItemCount) item(s) — they go to the recycle bin with it"
+        Write-Warning "$name holds $($list.ItemCount) item(s) - they go to the recycle bin with it"
     }
 
     if ($PSCmdlet.ShouldProcess($name, 'Delete list')) {
