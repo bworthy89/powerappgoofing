@@ -286,7 +286,12 @@ Screens:
                   TemplatePadding: =6
                   ShowScrollbar: =true
                   Visible: =Len(Trim(txtSearch.Text)) >= 2 && CountRows(Self.AllItems) > 0
-                  Items: =Filter(TB_References, Trim(txtSearch.Text) in Title)
+                  # IsBlank(Customer.Value) restricts this search to universal documents only,
+                  # the same reasoning scrCatalogue documents at its own document panel: this
+                  # screen has no customer in context, so a customer-specific reference here
+                  # would surface one customer's private procedure to every technician who
+                  # types a matching word — a real disclosure problem, not a hypothetical one.
+                  Items: =Filter(TB_References, Trim(txtSearch.Text) in Title, IsBlank(Customer.Value))
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - lblSrchDocTitle:
@@ -394,6 +399,7 @@ Screens:
                                         TB_Installations,
                                         Status.Value <> "Retired",
                                         !IsBlank('Installed Version'),
+                                        !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
                                         'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
                                     )
                                 )
@@ -471,6 +477,7 @@ Screens:
                                                   TB_Installations,
                                                   Status.Value <> "Retired",
                                                   !IsBlank('Installed Version'),
+                                                  !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
                                                   'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
                                               )
                                           ) / Max(CountRows(Filter(TB_Installations, Status.Value <> "Retired")), 1)
@@ -650,10 +657,13 @@ Screens:
                   RadiusTopRight: =8
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
-                  Text: =If(CountRows(colRecent) >= 1, Index(colRecent, 1).Name, "")
+                  # Sort(colRecent, At, SortOrder.Descending) at each read point, not on
+                  # write: Collect appends, so the most recently viewed customer is
+                  # wherever it landed in insertion order, not necessarily position 1.
+                  Text: =If(CountRows(colRecent) >= 1, Index(Sort(colRecent, At, SortOrder.Descending), 1).Name, "")
                   Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 1
                   OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(colRecent, 1).Id));
+                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 1).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
             - btnRecent2:
                 Control: Classic/Button
@@ -675,16 +685,16 @@ Screens:
                   RadiusTopRight: =8
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
-                  Text: =If(CountRows(colRecent) >= 2, Index(colRecent, 2).Name, "")
+                  Text: =If(CountRows(colRecent) >= 2, Index(Sort(colRecent, At, SortOrder.Descending), 2).Name, "")
                   Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 2
                   OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(colRecent, 2).Id));
+                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 2).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
             - btnRecent3:
                 Control: Classic/Button
                 Properties:
-                  X: =If(IsNarrow, Gutter, btnRecent2.X + btnRecent1.Width + Gutter)
-                  Y: =If(IsNarrow, btnRecent2.Y + btnRecent1.Height + 8, btnRecent1.Y)
+                  X: =If(IsNarrow, Gutter, btnRecent2.X + btnRecent2.Width + Gutter)
+                  Y: =If(IsNarrow, btnRecent2.Y + btnRecent2.Height + 8, btnRecent1.Y)
                   Width: =btnRecent1.Width
                   Height: =56
                   Font: =AppFont
@@ -700,8 +710,8 @@ Screens:
                   RadiusTopRight: =8
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
-                  Text: =If(CountRows(colRecent) >= 3, Index(colRecent, 3).Name, "")
+                  Text: =If(CountRows(colRecent) >= 3, Index(Sort(colRecent, At, SortOrder.Descending), 3).Name, "")
                   Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 3
                   OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(colRecent, 3).Id));
+                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 3).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
