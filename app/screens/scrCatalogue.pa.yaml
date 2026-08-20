@@ -135,8 +135,6 @@ Screens:
                             Active = true,
                             StartsWith(Title, Trim(txtSearch.Text))
                         ),
-                        "Product Type",
-                        SortOrder.Ascending,
                         "Title",
                         SortOrder.Ascending
                     )
@@ -238,8 +236,6 @@ Screens:
                   Items: |
                     =SortByColumns(
                         Filter(TB_References, Product.Id = varExpandedModel, IsBlank(Customer.Value)),
-                        "Section",
-                        SortOrder.Ascending,
                         "Title",
                         SortOrder.Ascending
                     )

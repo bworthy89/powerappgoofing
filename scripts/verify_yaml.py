@@ -31,6 +31,9 @@ SCHEMA = {
 }
 ALL_COLUMNS = set().union(*SCHEMA.values())
 
+# Choice columns are records, not scalars. Every read needs .Value.
+CHOICE_COLUMNS = ["'Product Type'", "Family", "Status", "Section", "'Reference Type'"]
+
 # Power Fx enum TYPE names whose members this project writes quoted
 # (Font.'Lato', FontWeight.'Bold'). This is a closed set defined by the
 # language itself, so listing the enum *types* here does not repeat the
@@ -101,6 +104,22 @@ def check_file(path):
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):
             findings.append((n, f"inline value contains ': ' — use a | block scalar: {stripped[:60]}"))
+
+        # 2b. a Choice column as a SortByColumns key. SortByColumns takes only
+        #     primitive columns; a choice raises the same "Invalid argument type".
+        if "SortByColumns" in text:  # any sort key in a file that sorts
+            for choice in CHOICE_COLUMNS:
+                bare = choice.strip("'")
+                if f'"{bare}"' in line:
+                    findings.append((n, f"SortByColumns cannot sort on the choice column {choice}: {stripped[:55]}"))
+
+        # 3. a Choice column used as a scalar. SharePoint choice columns are records;
+        #    concatenating or comparing one without .Value gives Studio's
+        #    "Invalid argument type. Expecting one of: Text, Number, ... ViewValue".
+        for choice in CHOICE_COLUMNS:
+            pattern = r"\." + re.escape(choice) + r"(?!\.Value)(?![\w'])"
+            if re.search(pattern, _code_only(line)):
+                findings.append((n, f"choice column {choice} used without .Value: {stripped[:60]}"))
 
         # 3. locally-introduced names (skip YAML comments and string literals)
         code_line = _code_only(line)

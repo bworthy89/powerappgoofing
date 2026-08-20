@@ -25,3 +25,18 @@ used it exclusively on those two.
 Cards and panels in these screens are therefore **square-cornered**. If the flat look matters, the
 fix is to rebuild a card background as a `Classic/Button` with `DisplayMode: =DisplayMode.View`,
 which accepts radius and does not respond to taps. Do not put radius back on a `Rectangle`.
+
+## Choice columns are records, not scalars
+
+Every SharePoint Choice column (`Product Type`, `Family`, `Status`, `Section`, `Reference Type`)
+must be read as `.Value`. Using one bare — concatenating it with `&`, or comparing it — gives
+*"Invalid argument type. Expecting one of the following: Text, Number, ... ViewValue"*.
+
+The same applies to sorting: **`SortByColumns` cannot sort on a Choice column at all.** It accepts
+only primitive columns. The document galleries therefore sort by `Featured` alone and the catalogue
+by `Title` alone, rather than the three-key order the design describes. To restore the full order,
+use nested `Sort()` calls, which take an expression and so can reach `.Value`:
+`Sort(Sort(tbl, 'Reference Type'.Value), Featured, SortOrder.Descending)` — innermost key applies
+last. Untested against Studio.
+
+`scripts/verify_yaml.py` now catches both mistakes.

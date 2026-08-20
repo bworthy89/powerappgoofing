@@ -178,7 +178,7 @@ Screens:
                         Width: =Parent.TemplateWidth - (Gutter * 4)
                         Height: =20
                         Text: |
-                          =LookUp(TB_Products, ID = ThisItem.Product.Id).Family & "  •  software " &
+                          =LookUp(TB_Products, ID = ThisItem.Product.Id).Family.Value & "  •  software " &
                           Coalesce(ThisItem.'Installed Version', "—")
                         Font: =AppFont
                         Size: =AppType.Small
