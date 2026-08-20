@@ -1,0 +1,189 @@
+# Screen — Customers
+# The simplest screen in the rebuild: a searchable gallery of customers, each row
+# showing a three-state currency summary (off standard / not recorded / all on standard).
+# Selecting a row sets varCustomer and hands off to scrCustomerOverview. If this pastes
+# and renders, the data path and formula idioms are proven for every later screen.
+Screens:
+  scrCustomers:
+    Properties:
+      Fill: =AppTheme.Bg
+    Children:
+      - conRoot:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
+            Y: =0
+            Width: =ContentWidth
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - lblTitle:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Text: ="Customers"
+                  Font: =AppFont
+                  Size: =AppType.Title
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - txtSearch:
+                Control: Classic/TextInput
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 48
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =44
+                  Default: =""
+                  HintText: ="Search customers"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Fill: =AppTheme.Surface
+                  Color: =AppTheme.Fg
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - galCustomers:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 104
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =Parent.Height - (Gutter + 104) - Gutter
+                  TemplateSize: =88
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_Customers,
+                            Active = true,
+                            StartsWith(Title, Trim(txtSearch.Text))
+                        ),
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: |
+                    =Set(varCustomer, ThisItem);
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
+                Children:
+                  - lblName:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                  - lblDesc:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =36
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =20
+                        Text: =Coalesce(ThisItem.Description, "No description")
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                  - rectChip:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =60
+                        Width: =Gutter * 8
+                        Height: =22
+                        BorderThickness: =0
+                        RadiusTopLeft: =11
+                        RadiusTopRight: =11
+                        RadiusBottomLeft: =11
+                        RadiusBottomRight: =11
+                        Fill: |
+                          =If(
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) > 0,
+                              AppTheme.WarnLight,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) > 0,
+                              AppTheme.NeutralLight,
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID)) = 0,
+                              AppTheme.NeutralLight,
+                              AppTheme.OkLight
+                          )
+                  - lblChip:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =60
+                        Width: =Gutter * 8
+                        Height: =22
+                        Align: =Align.Center
+                        VerticalAlign: =VerticalAlign.Middle
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                        Text: |
+                          =If(
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) > 0,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      !IsBlank('Installed Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                  )
+                              ) & " off standard",
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) > 0,
+                              CountRows(
+                                  Filter(
+                                      TB_Installations,
+                                      Customer.Id = ThisItem.ID,
+                                      Status.Value <> "Retired",
+                                      IsBlank('Installed Version')
+                                  )
+                              ) & " not recorded",
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID)) = 0,
+                              "nothing recorded",
+                              "all on standard"
+                          )
