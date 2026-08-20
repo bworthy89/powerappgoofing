@@ -1,8 +1,20 @@
-# Step 0 — The real SharePoint schema
+# Step 0 — The real SharePoint schema (PREVIOUS GENERATION — HISTORY ONLY)
 
-Everything in this kit is written against the exports in `app/TB_*.csv`, taken from the live
-Technician Toolbox site. Six of the seven files carry a `ListSchema={...}` block with the field
-XML; `TB_CustomerGuides.csv` exported with its header row only.
+> **This document describes the schema of the app that was retired at cutover.** It is not a
+> rulebook for the current app. The live app runs against four SharePoint lists provisioned from
+> a script — `TB_Customers`, `TB_Products`, `TB_Installations` and `TB_References` — living in
+> `app/` at the repo root, not the seven `TB_*` lists and CSVs described below.
+>
+> Every trap catalogued here — the misspelled `Solution Famility`, the trailing space in
+> `Document Status `, the placeholder `Choice 1 / Choice 2 / Choice 3` — was a defect of the old,
+> hand-provisioned lists. **None of these defects exist in the current schema.** They are kept
+> here only as a record of what the previous generation had to work around; do not carry any
+> workaround from this file into new code against the current four lists.
+
+Everything in this kit is written against the exports in `TB_*.csv` in this same directory, taken
+from the live Technician Toolbox site as it existed before cutover. Six of the seven files carry a
+`ListSchema={...}` block with the field XML; `TB_CustomerGuides.csv` exported with its header row
+only.
 
 > ### The one rule
 >
@@ -190,6 +202,7 @@ directly, with no join and no lookup at all.
 
 ## Re-checking this document
 
-`app/TB_*.csv` are the exports themselves — re-export from SharePoint, overwrite them, and diff.
+`TB_*.csv` in this directory are the exports themselves, as of before cutover. This document is
+retired along with the schema it describes; there is nothing left to re-check it against.
 Take the export from a view that shows **all** columns, otherwise the header row silently omits
 the lookups and you lose the only record of them.
