@@ -288,8 +288,17 @@ Screens:
                               Height: =20
                               Font: =AppFont
                               Size: =AppType.Small
+                              # The "  —  " separator is itself conditional: when Installed
+                              # Version is set but the catalogue standard is blank, the badge
+                              # segment below evaluates to "" and an unconditional separator
+                              # would dangle ("RBW 100  —  "). Suppressed for exactly that case.
                               Text: |
-                                =LookUp(TB_Products, ID = ThisItem.Product.Id).Title & "  —  " &
+                                =LookUp(TB_Products, ID = ThisItem.Product.Id).Title &
+                                If(
+                                    !IsBlank(ThisItem.'Installed Version') && IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
+                                    "",
+                                    "  —  "
+                                ) &
                                 If(
                                     IsBlank(ThisItem.'Installed Version'),
                                     "not recorded",
@@ -352,7 +361,10 @@ Screens:
 # label lookup below would print that retired parent's title with no indication it is
 # retired. Filtering it out here means the label lookup never has to special-case it.
 # lblUnitLine's Text formula gains a leading segment naming which solution the unit
-# belongs to, since the card grouping is gone:
-#     LookUp(TB_Installations, ID = ThisItem.Parent.Id).Title & "  ▸  " & ThisItem.Title & ...
-# That LookUp is not a locally-introduced name — TB_Installations is the base list, not an
-# alias — so it stays inside the "no local names" rule.
+# belongs to, since the card grouping is gone. TB_Installations.Title is never read
+# directly anywhere in this kit (a maintainer-facing row label, not shown by any screen —
+# the Product lookup already supplies the model name), so the leading segment is composed
+# the same way the rest of this line already is, through the parent's Product:
+#     LookUp(TB_Products, ID = LookUp(TB_Installations, ID = ThisItem.Parent.Id).Product.Id).Title & "  ▸  " & ...
+# Neither LookUp is a locally-introduced name — TB_Installations and TB_Products are base
+# lists, not aliases — so this stays inside the "no local names" rule.
