@@ -14,7 +14,7 @@ Nothing else will resolve until `AppTheme` exists.
 > | Dropdown reads | Paste this block | Contains `Set(`? |
 > |---|---|---|
 > | `Formulas` | AppTheme, AppFont, AppType, IsNarrow, Gutter, ContentWidth (see below) | No |
-> | `OnStart` | Set(varCustomer, Blank()); Set(varInstallation, Blank()); Set(varExpandedModel, 0); LoadData(colRecent, "recent", true) | Yes |
+> | `OnStart` | Set(varCustomer, Defaults(TB_Customers)); Set(varInstallation, Defaults(TB_Installations)); Set(varExpandedModel, 0); LoadData(colRecent, "recent", true) | Yes |
 > | `StartScreen` | scrHome | No |
 
 ## App.Formulas
@@ -69,10 +69,16 @@ live entirely inside weights and sizes.
 ## App.OnStart
 
 ```powerfx
-Set(varCustomer, Blank());
-Set(varInstallation, Blank());
+Set(varCustomer, Defaults(TB_Customers));
+Set(varInstallation, Defaults(TB_Installations));
 Set(varExpandedModel, 0);
 LoadData(colRecent, "recent", true)
+
+> **Why `Defaults()` and not `Blank()`.** `Set(varCustomer, Blank())` leaves the variable with no
+> type, and Studio rejects it: *"No type found for variable 'varCustomer'. Ensure that it is Set to
+> a non-Blank value somewhere in the app."* `Defaults(TB_Customers)` returns an empty record of
+> that list's shape, which is what gives the variable a schema for `varCustomer.Title` to resolve
+> against. Confirmed against the real tenant on 2026-08-20.
 ```
 
 ## App.StartScreen
