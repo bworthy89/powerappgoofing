@@ -31,25 +31,57 @@ SCHEMA = {
 }
 ALL_COLUMNS = set().union(*SCHEMA.values())
 
-# Single-quoted, capitalised Power Fx tokens that are legitimately not column
-# names (e.g. font enums like Font.'Lato'). Check 4 would otherwise flag these
-# as unknown columns, since the project's global constraints require this
-# quoted-enum style. Extend this list as new non-column quoted tokens show up.
+# Power Fx enum TYPE names whose members this project writes quoted
+# (Font.'Lato', FontWeight.'Bold'). This is a closed set defined by the
+# language itself, so listing the enum *types* here does not repeat the
+# whack-a-mole of listing every enum *value*. It must NOT be widened to "any
+# identifier before a dot": SharePoint column access uses the identical
+# shape (ThisItem.'Deployment Status'), and that is exactly what check 4
+# exists to catch — see tasks/lessons.md.
+QUOTED_ENUM_TYPES = {
+    "Font", "FontWeight", "Align", "DisplayMode", "TextMode",
+    "Overflow", "VerticalAlign", "TextDecoration",
+}
+_ENUM_PREFIX_RE = re.compile(
+    r"\b(?:" + "|".join(re.escape(t) for t in QUOTED_ENUM_TYPES) + r")\.\s*$"
+)
+
+# Fallback for single-quoted tokens the enum-prefix rule above does not reach
+# (e.g. a formula split across lines so the "EnumType." prefix is not on the
+# same line as the quote). Keep this list small. Must contain at least "Lato".
 NON_COLUMN_QUOTED_TOKENS = {
     "Lato",
-    "Segoe UI",
-    "Open Sans",
-    "Arial",
-    "Georgia",
-    "Courier New",
 }
 
 # Names the environment rejects. See tasks/lessons.md.
+# "As" is matched case-insensitively because Power Fx keywords are.
 BANNED = [
     (r"\bAddColumns\s*\(", "AddColumns introduces a local name this environment rejects"),
     (r"\bWith\s*\(", "With introduces a local name this environment rejects"),
-    (r"\s+As\s+[A-Za-z_]", "As aliases are rejected by this environment"),
+    (r"(?i)\s+As\s+[A-Za-z_]", "As aliases are rejected by this environment"),
 ]
+
+
+def _code_only(line):
+    """Strip a YAML comment and any double-quoted string contents from a line
+    so keyword checks do not fire on comment text or string literals (e.g. a
+    comment reading "not With AddColumns(" or a UI string "Configured As
+    default"). Single-quoted Power Fx tokens are left alone — check 4 needs
+    them and they are not where these keywords legitimately appear."""
+    out = []
+    in_string = False
+    for ch in line:
+        if in_string:
+            if ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+            continue
+        if ch == "#":
+            break
+        out.append(ch)
+    return "".join(out)
 
 
 def check_file(path):
@@ -70,13 +102,24 @@ def check_file(path):
         if m and ": " in m.group(2):
             findings.append((n, f"inline value contains ': ' — use a | block scalar: {stripped[:60]}"))
 
-        # 3. locally-introduced names
+        # 3. locally-introduced names (skip YAML comments and string literals)
+        code_line = _code_only(line)
         for pattern, why in BANNED:
-            if re.search(pattern, line):
+            if re.search(pattern, code_line):
                 findings.append((n, f"{why}: {stripped[:60]}"))
 
-        # 4. quoted names that look like columns but are not in the schema
-        for quoted in re.findall(r"'([^']{2,40})'", line):
+        # 4. quoted names that look like columns but are not in the schema.
+        # A single-quoted token immediately preceded by "EnumType." (Font,
+        # FontWeight, ...) is Power Fx enum syntax, not a column reference,
+        # so it is never flagged — no per-enum-value allowlist needed. Only
+        # the closed set of real enum type names is exempted; column access
+        # through a record/control (ThisItem.'Deployment Status') uses the
+        # same dotted shape and must still be checked.
+        for m in re.finditer(r"'([^']{2,40})'", line):
+            quoted = m.group(1)
+            prefix = line[:m.start()]
+            if _ENUM_PREFIX_RE.search(prefix):
+                continue
             if quoted in NON_COLUMN_QUOTED_TOKENS:
                 continue
             looks_like_column = " " in quoted or quoted[0].isupper()
