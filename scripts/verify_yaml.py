@@ -131,7 +131,7 @@ def check_file(path):
 
 
 def main():
-    root = Path(sys.argv[1] if len(sys.argv) > 1 else "app2/screens")
+    root = Path(sys.argv[1] if len(sys.argv) > 1 else "app/screens")
     files = sorted(root.rglob("*.pa.yaml")) if root.is_dir() else [root]
     if not files:
         sys.exit(f"no .pa.yaml files under {root}")

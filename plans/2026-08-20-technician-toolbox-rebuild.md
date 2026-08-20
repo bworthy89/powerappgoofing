@@ -67,7 +67,12 @@ Choice values, exactly:
 | `app2/screens/scrHome.pa.yaml` | Search, backlog figure, entry tiles, recent |
 | `seed/*.csv` | Grid-paste seed data, numbered in dependency order |
 
-`app2/` rather than `app/` so the previous generation stays readable side by side until this one works. Rename to `app/` and delete the old one in Task 10.
+`app2/` rather than `app/` so the previous generation stays readable side by side until this one
+works. Tasks 1-9 below were built and committed under that name; the paths in those tasks'
+Files/Steps sections are accurate to when they ran. **At cutover (Task 10) the previous generation
+was archived to `archive/` rather than deleted — its `TB_*.csv` exports are the only surviving
+record of the old SharePoint schema — and `app2/` was renamed to `app/`, which is where this app
+now lives.**
 
 ---
 
@@ -947,23 +952,32 @@ At least one row must show `on standard`, one `standard K38`, and one `not recor
 
 Studio preview at tablet width, then below 640. Nothing overflows, nothing is hidden that was visible.
 
-- [ ] **Step 4: Cut over**
+- [x] **Step 4: Cut over**
+
+As executed, this step differed from the command block originally drafted here. `app/TB_*.csv`
+are the only surviving record of the previous SharePoint schema, including its real defects, and
+are cited as evidence elsewhere — deleting them with `git rm -r app` would have destroyed that
+record. The kit was archived instead of deleted:
 
 ```bash
-git rm -r app
+git mv app archive
 git mv app2 app
 python3 scripts/verify_yaml.py app/screens
 git add -A
-git commit -m "Replace the old paste kit with the rebuilt six-screen app"
+git commit -m "Cut over: archive the previous generation, promote the rebuild to app/"
 ```
 
 - [ ] **Step 5: Delete the legacy lists**
 
 Once the app runs against the new four, remove the six remaining `TB_*` legacy lists in SharePoint. They go to the recycle bin.
 
-- [ ] **Step 6: Update the docs**
+- [x] **Step 6: Update the docs**
 
-`app/00_Schema_Reference.md` describes the previous generation. Either delete it or retitle it as history — it is no longer a rulebook, and leaving it in place invites someone to code around defects that no longer exist.
+`archive/00_Schema_Reference.md` describes the previous generation. Retitled as history rather
+than deleted: its header now states plainly that the current four lists are `TB_Customers`,
+`TB_Products`, `TB_Installations` and `TB_References`, and that the trap table's defects
+(misspelled `Solution Famility`, trailing-space `Document Status `, placeholder `Choice 1/2/3`)
+no longer exist on the new, script-provisioned lists.
 
 ---
 
