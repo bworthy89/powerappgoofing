@@ -59,11 +59,33 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
+            - btnBack:
+                Control: Classic/Button
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Gutter * 10
+                  Height: =28
+                  Text: ="<  Home"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Fill: =AppTheme.Bg
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.Sunken
+                  Color: =AppTheme.Primary
+                  HoverColor: =AppTheme.PrimaryDark
+                  BorderThickness: =0
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
             - lblTitle:
                 Control: Label
                 Properties:
                   X: =Gutter
-                  Y: =Gutter
+                  Y: =Gutter + 36
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =40
                   Text: ="Catalogue"
@@ -75,7 +97,7 @@ Screens:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
-                  Y: =Gutter + 48
+                  Y: =Gutter + 84
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
@@ -95,13 +117,13 @@ Screens:
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
                   X: =Gutter
-                  Y: =Gutter + 104
+                  Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
                   Height: |
                     =If(
                         IsBlank(varExpandedModel) || varExpandedModel = 0,
-                        Parent.Height - (Gutter + 104) - Gutter,
-                        Parent.Height - (Gutter + 104) - (Gutter * 2) - 240
+                        Parent.Height - (Gutter + 140) - Gutter,
+                        Parent.Height - (Gutter + 140) - (Gutter * 2) - 240
                     )
                   TemplateSize: =72
                   TemplatePadding: =8
@@ -307,7 +329,7 @@ Screens:
                 Control: Label
                 Properties:
                   X: =Gutter
-                  Y: =Gutter + 104
+                  Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =40
                   Align: =Align.Center
