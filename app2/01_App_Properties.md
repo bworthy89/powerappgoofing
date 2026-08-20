@@ -1,7 +1,21 @@
 # Step 1 — App-level properties
 
-Three properties, three separate pastes, chosen from the dropdown at the top-left of the
-formula bar. `Set(` is valid ONLY in `OnStart`.
+Set these three properties on the **App** node in Tree view before pasting any screen.
+Nothing else will resolve until `AppTheme` exists.
+
+> ### The one rule
+>
+> **`Set(` is only ever valid in `OnStart`. It is never valid in `Formulas`.**
+>
+> These are three separate properties, chosen from the dropdown at the **top-left of the formula
+> bar**, and each gets its own paste. Switch the dropdown between them. Pasting a `Set(...)` block
+> while the dropdown still reads `Formulas` is the cause of nearly every error below.
+>
+> | Dropdown reads | Paste this block | Contains `Set(`? |
+> |---|---|---|
+> | `Formulas` | AppTheme, AppFont, AppType, IsNarrow, Gutter, ContentWidth (see below) | No |
+> | `OnStart` | Set(varCustomer, Blank()); Set(varInstallation, Blank()); Set(varExpandedModel, 0) | Yes |
+> | `StartScreen` | scrHome | No |
 
 ## App.Formulas
 
@@ -67,6 +81,24 @@ scrHome
 ```
 
 Note: `scrHome` does not exist yet. This formula will error in Studio until Task 8 creates that screen — this is expected rather than a mistake to debug.
+
+## Troubleshooting
+
+Pasting into the wrong property produces a confusing error. Each block is valid in exactly one
+place, and using the wrong one produces errors that do not mention the property at all.
+
+| Error you see | What it means | Fix |
+|---|---|---|
+| `Missing function argument type, for example the ":Text" in "FindMonth( d:Text ):Number = ..."` | `Set(varCustomer, ...)` or another `Set()` block was pasted into **Formulas**. The parser reads `Set(` as the start of a user-defined function, so the variable name looks like an untyped parameter. | Remove `Set(` and its closing `)` so the statement reads `varCustomer = Blank()` (data formulas only); or move the block to **OnStart** where `Set()` is valid. |
+| `Name isn't valid. 'AppTheme' isn't recognized` | The **Formulas** block has not been pasted yet, or the property is empty. | Paste the App.Formulas block into the **Formulas** property. |
+| `Unexpected characters. The formula contains 'CurlyOpen' where 'Equ' is expected.` | The `=` is missing, usually left over from hand-editing. | Clear the property and paste the block fresh. It must begin `AppTheme = {` and end `};` |
+| `Behavior function in a non-behavior property` | `Set(...)` used somewhere that only accepts data formulas (e.g., **Formulas**, **StartScreen**). | Move it to **OnStart**. |
+
+**Quick way to tell which property you are in:** the formula bar's property dropdown reads
+`Formulas`, `OnStart`, or `StartScreen`. Only `OnStart` contains the word `Set`.
+
+Do not define `AppTheme` or any other name in both `Formulas` and `OnStart` — defining the
+same name twice is an error.
 
 ## If App.Formulas is unavailable
 
