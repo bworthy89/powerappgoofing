@@ -17,13 +17,11 @@
 # standard. A blank catalogue standard suppresses the currency badge (rectCurrency /
 # lblCurrency) entirely, the same way scrCustomerOverview suppresses its card badge.
 #
-# Known risk: galDocs.DisplayMode and galFirmware.DisplayMode are set on the Gallery
-# control itself with a formula that reads ThisItem (per the brief, used verbatim).
-# Gallery.DisplayMode is ordinarily a single value for the whole control, evaluated
-# outside template scope, so ThisItem may not resolve there — this is the least-proven
-# construct in this file. Fallback if Studio rejects it: move DisplayMode onto a per-row
-# child control inside the template (e.g. a transparent Button wrapping the row) and keep
-# OnSelect on that child instead of on the gallery.
+# A row with a blank URL must be visible but not tappable. Gallery.DisplayMode is a
+# screen-scoped scalar and the ThisItem token does not resolve inside it (Studio would
+# reject it as not recognized), so this is done with two row-scoped constructs instead:
+# OnSelect guards the Launch, and the row's title label dims when URL is blank. No
+# DisplayMode property appears on either gallery.
 #
 # lblChecked and lblException are named per the brief as a role, not a literal single
 # control — each gallery needs its own instance (a screen cannot have two controls named
@@ -151,6 +149,8 @@ Screens:
                         Text: |
                           =If(
                               IsBlank(varInstallation.'Installed Version'),
+                              "",
+                              IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'),
                               "",
                               varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
                               "=",
@@ -402,8 +402,7 @@ Screens:
                         "Title",
                         SortOrder.Ascending
                     )
-                  OnSelect: =Launch(ThisItem.URL)
-                  DisplayMode: =If(IsBlank(ThisItem.URL), DisplayMode.Disabled, DisplayMode.Edit)
+                  OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - rectDocsRow:
                       Control: Rectangle
@@ -429,7 +428,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
+                        Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
                   - lblDocsType:
                       Control: Label
@@ -553,8 +552,7 @@ Screens:
                         "Title",
                         SortOrder.Ascending
                     )
-                  OnSelect: =Launch(ThisItem.URL)
-                  DisplayMode: =If(IsBlank(ThisItem.URL), DisplayMode.Disabled, DisplayMode.Edit)
+                  OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - rectFirmwareRow:
                       Control: Rectangle
@@ -580,7 +578,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
+                        Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
                   - lblFirmwareType:
                       Control: Label
