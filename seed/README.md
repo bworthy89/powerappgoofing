@@ -1,5 +1,23 @@
 # Seeding
 
+**Prefer the script.** `scripts/sharepoint/Import-ToolboxSeed.ps1` resolves every lookup to a
+real item ID and stops with a named error if one cannot be resolved. Grid-view paste matches
+lookups by Title text and fails *silently*, leaving an empty cell that nothing reports.
+
+```powershell
+Connect-PnPOnline -Url https://<tenant>.sharepoint.com/sites/<site>/<web> -UseWebLogin
+cd scripts\sharepoint
+.\Import-ToolboxSeed.ps1 -SiteUrl <same url> -SkipConnect -WhatIf   # look first
+.\Import-ToolboxSeed.ps1 -SiteUrl <same url> -SkipConnect
+```
+
+It refuses to run against a list that already holds rows; pass `-Replace` to clear the four lists
+first. It never touches the legacy lists.
+
+The manual route below still works if PowerShell is unavailable.
+
+---
+
 Four CSV files, numbered in the order they must be pasted. This is sample data — invented
 customers, invented URLs — built to exercise every state the app can render, not a record of a
 real deployment.
