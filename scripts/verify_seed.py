@@ -9,13 +9,18 @@ lookup value that was never populated. So this has to be caught before
 pasting, by a script that compares every lookup value against the parent
 list's Title column character for character.
 
-Two kinds of check:
+Three kinds of check:
 
   1. Referential integrity — every value in a lookup column (Customer,
      Parent, Product) must appear verbatim as a Title in the parent CSV.
   2. Choice-column integrity — every value in a Choice column must be one
      of the values the list will actually offer, so a typo does not become
      a silent new choice value SharePoint quietly accepts.
+  3. Title uniqueness — no CSV may contain the same Title twice. A
+     duplicate Title makes lookup resolution ambiguous: SharePoint's paste
+     still succeeds, silently, bound to whichever matching row it finds
+     first, so this is the same silent-failure family as (1) and cannot be
+     caught by looking at the app either.
 
 Usage:
     python3 scripts/verify_seed.py [seed_dir]
@@ -25,6 +30,7 @@ per-file state-coverage summary if everything checks out.
 """
 import csv
 import sys
+from collections import Counter, defaultdict
 from pathlib import Path
 
 CHOICES = {
@@ -102,6 +108,15 @@ def main():
     customer_titles = {r["Title"] for r in tables["TB_Customers"]}
     product_titles = {r["Title"] for r in tables["TB_Products"]}
     installation_titles = {r["Title"] for r in tables["TB_Installations"]}
+
+    # --- Title uniqueness --------------------------------------------------
+    for name, filename in FILES.items():
+        counts = Counter(r.get("Title", "") for r in tables.get(name, []))
+        for title, n in sorted(counts.items()):
+            if n > 1:
+                findings.append(
+                    f"{filename}: Title {title!r} appears {n} times — duplicate Titles make "
+                    f"lookup resolution ambiguous")
 
     # --- referential integrity -------------------------------------------
     for i, row in enumerate(tables["TB_Installations"], start=2):
@@ -190,9 +205,14 @@ def main():
             return "no-standard"
         return "on" if installed == standard else "off"
 
-    on_standard = sum(1 for r in inst if installed_state(r) == "on")
-    off_standard = sum(1 for r in inst if installed_state(r) == "off")
-    blank_installed = sum(1 for r in inst if installed_state(r) == "blank")
+    # Retired rows never reach a currency-comparing screen (no screen queries
+    # them for it — they vanish from every gallery), so they are excluded
+    # from the on/off/blank currency counts below to avoid implying a state
+    # that is never actually rendered.
+    non_retired = [r for r in inst if r.get("Status", "") != "Retired"]
+    on_standard = sum(1 for r in non_retired if installed_state(r) == "on")
+    off_standard = sum(1 for r in non_retired if installed_state(r) == "off")
+    blank_installed = sum(1 for r in non_retired if installed_state(r) == "blank")
     blank_standard_product = sum(
         1 for p in prod if not p.get("Current Standard Version", "").strip())
     retired = sum(1 for r in inst if r.get("Status", "").strip() == "Retired")
@@ -205,6 +225,11 @@ def main():
     blank_url_refs = sum(1 for r in refs if not r.get("URL", "").strip())
     blank_last_checked = sum(1 for r in refs if not r.get("Last Checked", "").strip())
     customer_specific_refs = sum(1 for r in refs if r.get("Customer", "").strip())
+
+    product_customers = defaultdict(set)
+    for r in inst:
+        product_customers[r.get("Product", "")].add(r.get("Customer", ""))
+    shared_products = sorted(p for p, custs in product_customers.items() if len(custs) > 1)
 
     import datetime
     today = datetime.date.today()
@@ -222,9 +247,9 @@ def main():
             older_than_12mo += 1
 
     print("State coverage:")
-    print(f"  installation on standard (installed == current standard) : {on_standard}")
-    print(f"  installation off standard (installed != current standard): {off_standard}")
-    print(f"  installation with blank Installed Version ('not recorded'): {blank_installed}")
+    print(f"  installation on standard, excl. retired (installed == standard) : {on_standard}")
+    print(f"  installation off standard, excl. retired (installed != standard): {off_standard}")
+    print(f"  installation with blank Installed Version, excl. retired ('not recorded'): {blank_installed}")
     print(f"  product with blank Current Standard Version (badge hidden): {blank_standard_product}")
     print(f"  retired installation                                      : {retired}")
     print(f"  upgrade-planned installation                              : {upgrade_planned}")
@@ -235,6 +260,8 @@ def main():
     print(f"  references with blank Last Checked ('never checked')     : {blank_last_checked}")
     print(f"  references older than 12 months (age display)            : {older_than_12mo}")
     print(f"  customer-specific references (Customer set)               : {customer_specific_refs}")
+    print(f"  products installed at 2+ customers (disclosure filter demonstrable): "
+          f"{len(shared_products)} ({', '.join(shared_products) or 'none'})")
     sys.exit(0)
 
 

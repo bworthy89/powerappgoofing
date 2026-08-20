@@ -60,6 +60,20 @@ tell them apart is to already know which rows were supposed to have a value — 
 why the checker runs against the source CSVs before paste, rather than trying to audit
 SharePoint after the fact.
 
+## The one check that proves references don't leak across customers
+
+`CI 300X` is installed at two customers: `Northgate Retail Group` (the original unit) and
+`Harbour Savings Bank` (`Harbour Savings Bank - CI 300X`). `TB_References` has a
+customer-specific document for that product, `Northgate CI 300X Service Procedure`, scoped to
+`Northgate Retail Group` only.
+
+After pasting all four files, open the app and check the **Harbour Savings Bank** installation
+of `CI 300X`: its document list must show the universal `CI 300X` documents (service manual,
+installation manual, firmware, error code manual) and must **not** show `Northgate CI 300X
+Service Procedure`. If Northgate's document appears on Harbour's screen, the reference-scoping
+filter is broken — this is the one filter in the app where a mistake would leak one customer's
+private procedure to another customer's technician, so this check is not optional.
+
 ## What this seed set covers
 
 Run `python3 scripts/verify_seed.py seed` for the full breakdown; each state named in the task
@@ -74,3 +88,6 @@ appears at least once:
 - a customer-specific reference (`Customer` set) sitting alongside universal references for the
   same product, for two different products
 - a solution (`Northgate Retail Group - CI 300X`) with two units nested beneath it via `Parent`
+- a product (`CI 300X`) installed at two different customers, one of which carries a
+  customer-specific reference — see "The one check that proves references don't leak across
+  customers" above
