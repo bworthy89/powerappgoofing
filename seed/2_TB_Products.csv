@@ -1,0 +1,12 @@
+Title,Product Type,Family,Current Standard Version,Description,Active
+CI 300X,Solution,CashInfinity,K38,Front office cash recycling solution,Yes
+CI 300,Solution,CashInfinity,K38,Front office cash recycling solution,Yes
+RBW 100,Note Recycler,CashInfinity,V4.21,Note recycling module,Yes
+CI CS,Coin Recycler,CashInfinity,4.0.1,Coin recycling module,Yes
+CI DV,Drop Vault,CashInfinity,K36,Rear drop vault module,Yes
+BV 300,Solution,Banking,V4.06,Branch teller cash recycling solution,Yes
+BIO 50,Biometric,Banking,,Fingerprint authentication module,Yes
+TP 100,Printer,Retail,3.10.0,Receipt and validation printer,Yes
+SC 200,Scanner,Retail,3.10.0,Barcode and document scanner,Yes
+KIOSK PC,PC,Self Service,3.10.0,Self-service kiosk control PC,Yes
+UPS 1500,UPS,Self Service,K36,Uninterruptible power supply,Yes

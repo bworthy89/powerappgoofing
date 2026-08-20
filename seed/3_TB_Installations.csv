@@ -1,0 +1,10 @@
+Title,Customer,Parent,Product,Installed Version,Status,Config Notes
+Northgate Retail Group - CI 300X,Northgate Retail Group,,CI 300X,K38,In Service,"Lobby unit, four lanes, refurbished 2024."
+Northgate Retail Group - RBW 100 (lobby),Northgate Retail Group,Northgate Retail Group - CI 300X,RBW 100,V4.21,In Service,Note module 1 of 2.
+Northgate Retail Group - CI CS (lobby),Northgate Retail Group,Northgate Retail Group - CI 300X,CI CS,3.9.0,In Service,"Coin module 1 of 2, overdue for firmware update."
+Northgate Retail Group - CI DV,Northgate Retail Group,,CI DV,,In Service,Awaiting commissioning; version not yet confirmed.
+Harbour Savings Bank - BV 300,Harbour Savings Bank,,BV 300,V4.06,Upgrade Planned,"Central cash centre, branch upgrade scheduled Q4 2026."
+Harbour Savings Bank - BIO 50 (teller line),Harbour Savings Bank,Harbour Savings Bank - BV 300,BIO 50,2.3.1,In Service,"Teller authentication, four positions."
+Harbour Savings Bank - TP 100,Harbour Savings Bank,,TP 100,3.10.0,In Service,Statement printer at branch counter.
+Coastway Fuel - KIOSK PC,Coastway Fuel,,KIOSK PC,3.10.0,In Service,"Forecourt kiosk 1, unattended payment."
+Coastway Fuel - UPS 1500,Coastway Fuel,,UPS 1500,K36,Retired,"Decommissioned after kiosk 2 removal, 2025."

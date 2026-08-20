@@ -1,0 +1,22 @@
+Title,Product,Customer,Section,Reference Type,URL,Version,Featured,Last Checked
+CI 300X Service Manual,CI 300X,,Documentation,Service Manual,https://docs.example.com/ci300x/service-manual,K38,Yes,2026-06-01
+CI 300X Installation Manual,CI 300X,,Documentation,Installation Manual,https://docs.example.com/ci300x/install-manual,K38,No,2026-02-15
+Northgate CI 300X Service Procedure,CI 300X,Northgate Retail Group,Documentation,Service Manual,https://docs.example.com/northgate/ci300x-service,K38,No,2026-05-01
+CI 300X Firmware K38,CI 300X,,Firmware & Downloads,Machine Firmware,https://downloads.example.com/ci300x/k38.bin,K38,Yes,2026-07-10
+CI 300X Error Code Manual,CI 300X,,Documentation,Error Code Manual,,K38,No,2026-04-01
+RBW 100 Service Manual,RBW 100,,Documentation,Service Manual,https://docs.example.com/rbw100/service-manual,V4.21,Yes,2024-05-01
+RBW 100 Firmware V4.21,RBW 100,,Firmware & Downloads,Machine Firmware,https://downloads.example.com/rbw100/v4.21.bin,V4.21,Yes,
+CI CS Service Manual,CI CS,,Documentation,Service Manual,https://docs.example.com/cics/service-manual,4.0.1,No,2026-01-20
+CI CS Firmware 4.0.1,CI CS,,Firmware & Downloads,Machine Firmware,https://downloads.example.com/cics/4.0.1.bin,4.0.1,No,2026-03-11
+CI CS Technical Alert - Hopper Sensor,CI CS,,Documentation,Technical Alert,https://docs.example.com/cics/alert-hopper-sensor,4.0.1,Yes,2026-08-01
+CI DV Service Manual,CI DV,,Documentation,Service Manual,https://docs.example.com/cidv/service-manual,K36,No,2026-02-01
+BV 300 Service Manual,BV 300,,Documentation,Service Manual,https://docs.example.com/bv300/service-manual,V4.06,Yes,2026-06-15
+BV 300 Technical Bulletin - Jam Sensor,BV 300,,Documentation,Technical Bulletin,https://docs.example.com/bv300/tb-jam-sensor,,No,2026-04-20
+BV 300 Firmware V4.06,BV 300,,Firmware & Downloads,BV Firmware,https://downloads.example.com/bv300/v4.06.bin,V4.06,Yes,2026-06-20
+BIO 50 Installation Manual,BIO 50,,Documentation,Installation Manual,https://docs.example.com/bio50/install-manual,,No,2026-01-05
+TP 100 Driver Package,TP 100,,Firmware & Downloads,Driver,https://downloads.example.com/tp100/driver.zip,3.10.0,No,2026-07-01
+TP 100 Support Tool,TP 100,,Firmware & Downloads,Support Tool,https://downloads.example.com/tp100/support-tool.exe,3.10.0,No,2026-05-25
+SC 200 Product Specification,SC 200,,Documentation,Product Specification,https://docs.example.com/sc200/spec-sheet,3.10.0,No,2026-06-30
+KIOSK PC Software Download - Kiosk Manager,KIOSK PC,,Firmware & Downloads,Software Download,https://downloads.example.com/kioskpc/manager.msi,3.10.0,Yes,2026-07-18
+UPS 1500 Service Manual,UPS 1500,,Documentation,Service Manual,https://docs.example.com/ups1500/service-manual,K36,No,2026-02-28
+Coastway Fuel Kiosk PC Firmware Note,KIOSK PC,Coastway Fuel,Documentation,Customer Specific,https://docs.example.com/coastway/kiosk-pc-notes,,No,2026-03-05
