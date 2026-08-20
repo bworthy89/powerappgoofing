@@ -3,9 +3,11 @@
 # hairline cards, tinted pill badges, uppercase section labels, subtle link-style buttons.
 # Bound to the exported schema - see 00_Schema_Reference.md. TB_CustomerReferences is a junction
 # list, so galSIA and galFirmware join each mapping row to its TB_ProductReferences record with
-# a per-row LookUp. Every LookUp aliases the inner list (TB_ProductReferences As Ref) and reaches
-# the outer row through an explicit ThisRecord. or ThisItem. qualifier - never an implicit outer
-# scope reference, and never AddColumns. Both of those were tried and both failed paste validation.
+# SharePoint lookup projections: 'Product Reference: Reference Type' and friends are additional
+# fields of the Product Reference lookup, so Items filters them straight off the row with no join.
+# The two lookups that remain are for column types SharePoint cannot project. Introduce no local
+# names here - AddColumns columns, With bindings and As aliases have all failed paste validation
+# in this environment. Reach the row with ThisItem. and nothing else.
 Screens:
   scrSolutionDetails:
     Properties:
@@ -636,21 +638,9 @@ Screens:
                                 'Solution Component'.Id = Blank() ||
                                 'Solution Component'.Id = varComponent.ID
                             ) &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.Restricted
-                            ) <> true &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.'Release Status'.Value
-                            ) <> "Retired" &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.'Reference Type'.Value
-                            ) in [
+                            'Product Reference: Restricted' <> true &&
+                            'Product Reference: Release Status'.Value <> "Retired" &&
+                            'Product Reference: Reference Type'.Value in [
                                 "SIA Product Page",
                                 "SIA Documantation",
                                 "Installation Manual",
@@ -695,11 +685,7 @@ Screens:
                         Width: =120
                         Height: =22
                         Text: |
-                          =LookUp(
-                              TB_ProductReferences As Ref,
-                              Ref.ID = ThisItem.'Product Reference'.Id,
-                              Ref.'Release Status'.Value
-                          )
+                          =ThisItem.'Product Reference: Release Status'.Value
                         Fill: =If(Self.Text = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
                         Color: =If(Self.Text = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
@@ -716,10 +702,9 @@ Screens:
                         Text: |
                           =Coalesce(
                               LookUp(
-                                  TB_ProductReferences As Ref,
-                                  Ref.ID = ThisItem.'Product Reference'.Id,
-                                  Ref.Description
-                              ),
+                                  TB_ProductReferences,
+                                  ID = ThisItem.'Product Reference'.Id
+                              ).Description,
                               ""
                           )
                         Color: =AppTheme.MutedFg
@@ -745,21 +730,22 @@ Screens:
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
                         OnSelect: |
-                          =With(
-                              {
-                                  RefURL: LookUp(
-                                      TB_ProductReferences As Ref,
-                                      Ref.ID = ThisItem.'Product Reference'.Id,
-                                      Ref.'Reference URL'
-                                  )
-                              },
-                              If(
-                                  IsBlank(RefURL),
-                                  Notify(
-                                      "No reference URL is saved for this item.",
-                                      NotificationType.Warning
-                                  ),
-                                  Launch(RefURL)
+                          =If(
+                              IsBlank(
+                                  LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.'Product Reference'.Id
+                                  ).'Reference URL'
+                              ),
+                              Notify(
+                                  "No reference URL is saved for this item.",
+                                  NotificationType.Warning
+                              ),
+                              Launch(
+                                  LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.'Product Reference'.Id
+                                  ).'Reference URL'
                               )
                           )
             - lblNoSIA:
@@ -807,21 +793,9 @@ Screens:
                                 'Solution Component'.Id = Blank() ||
                                 'Solution Component'.Id = varComponent.ID
                             ) &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.Restricted
-                            ) <> true &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.'Release Status'.Value
-                            ) <> "Retired" &&
-                            LookUp(
-                                TB_ProductReferences As Ref,
-                                Ref.ID = ThisRecord.'Product Reference'.Id,
-                                Ref.'Reference Type'.Value
-                            ) in [
+                            'Product Reference: Restricted' <> true &&
+                            'Product Reference: Release Status'.Value <> "Retired" &&
+                            'Product Reference: Reference Type'.Value in [
                                 "Machine Firmware",
                                 "BV Firmware",
                                 "Software Download",
@@ -863,11 +837,7 @@ Screens:
                         Width: =120
                         Height: =22
                         Text: |
-                          =LookUp(
-                              TB_ProductReferences As Ref,
-                              Ref.ID = ThisItem.'Product Reference'.Id,
-                              Ref.'Release Status'.Value
-                          )
+                          =ThisItem.'Product Reference: Release Status'.Value
                         Fill: =If(Self.Text = "Current", AppTheme.SuccessLight, AppTheme.GrayLight)
                         Color: =If(Self.Text = "Current", AppTheme.SuccessDark, AppTheme.GrayDark)
                         Size: =9
@@ -884,10 +854,9 @@ Screens:
                         Text: |
                           =Coalesce(
                               LookUp(
-                                  TB_ProductReferences As Ref,
-                                  Ref.ID = ThisItem.'Product Reference'.Id,
-                                  Ref.Description
-                              ),
+                                  TB_ProductReferences,
+                                  ID = ThisItem.'Product Reference'.Id
+                              ).Description,
                               ""
                           )
                         Color: =AppTheme.MutedFg
@@ -913,21 +882,22 @@ Screens:
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
                         OnSelect: |
-                          =With(
-                              {
-                                  RefURL: LookUp(
-                                      TB_ProductReferences As Ref,
-                                      Ref.ID = ThisItem.'Product Reference'.Id,
-                                      Ref.'Reference URL'
-                                  )
-                              },
-                              If(
-                                  IsBlank(RefURL),
-                                  Notify(
-                                      "No reference URL is saved for this item.",
-                                      NotificationType.Warning
-                                  ),
-                                  Launch(RefURL)
+                          =If(
+                              IsBlank(
+                                  LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.'Product Reference'.Id
+                                  ).'Reference URL'
+                              ),
+                              Notify(
+                                  "No reference URL is saved for this item.",
+                                  NotificationType.Warning
+                              ),
+                              Launch(
+                                  LookUp(
+                                      TB_ProductReferences,
+                                      ID = ThisItem.'Product Reference'.Id
+                                  ).'Reference URL'
                               )
                           )
             - lblNoFirmware:

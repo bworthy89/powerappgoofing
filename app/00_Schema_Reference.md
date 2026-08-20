@@ -139,35 +139,62 @@ only says "this product reference is relevant to this customer, at this scope, i
 Everything the SIA and Firmware galleries display about a reference comes from the joined
 `TB_ProductReferences` row:
 
+**Before the app will paste, three fields must be projected onto this list.** SharePoint can
+surface columns of the target list directly on the mapping row, which is what `Items` filters on:
+
+1. Site contents > **TB_CustomerReferences** > gear icon > **List settings**. The modern column
+   editor does not expose this — you need the classic settings page.
+2. Under **Columns**, click **Product Reference**.
+3. Under *Add a column to show each of these additional fields*, tick **Reference Type**,
+   **Release Status** and **Restricted**. Click **OK**.
+
+That creates three read-only columns displayed as `Product Reference: Reference Type`,
+`Product Reference: Release Status` and `Product Reference: Restricted`. The galleries filter them
+straight off the row:
+
 ```powerfx
-LookUp(
-    TB_ProductReferences As Ref,
-    Ref.ID = ThisRecord.'Product Reference'.Id,
-    Ref.'Reference Type'.Value
-)
+'Product Reference: Reference Type'.Value in ["Machine Firmware", "Driver", ...]
 ```
 
-`Featured`, `Display Order` and the card heading come off the mapping row itself. `Reference Type`,
-`Release Status` and `Restricted` are resolved per row inside the gallery's `Items` filter, and
-`Description` and `Reference URL` per row in the child controls.
+Only single-value types can be projected, so `Description` (multi-line) and `Reference URL`
+(hyperlink) cannot be. Those two are read per row in the child controls with a plain qualified
+lookup, and the reference's own title is already the lookup's display value, `'Product Reference'.Value`:
 
-**Two rules make these lookups paste.** The inner list is aliased — `TB_ProductReferences As Ref` —
-so `Ref.ID` cannot be confused with the mapping row's own `ID`. And the outer row is always reached
-through an explicit qualifier, `ThisRecord.` inside `Items` and `ThisItem.` inside a gallery child.
+```powerfx
+LookUp(TB_ProductReferences, ID = ThisItem.'Product Reference'.Id).'Reference URL'
+```
 
-Neither is optional. Two other shapes were tried against a live environment and both failed paste
-validation with `Name isn't valid`, reported against the gallery's `Items`:
+### Introduce no local names in these formulas
+
+This environment rejects every name the formula defines for itself. Three shapes were tried against
+it and all three failed paste validation with `Name isn't valid`, each error naming the invented
+name rather than the construct that failed to produce it:
 
 | Shape | Error |
 |---|---|
-| `AddColumns(Filter(...) As Map, "RefRec", LookUp(...))` — `As` on a function result, plus a record-valued column | `'RefRec' isn't recognized` |
-| `AddColumns(Filter(...), "RefTitle", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title), ...)` — scalar columns, but the outer row reached implicitly | `'RefTitle' isn't recognized` |
+| `AddColumns(Filter(...) As Map, "RefRec", LookUp(...))` | `'RefRec' isn't recognized` |
+| `AddColumns(Filter(...), "RefTitle", LookUp(TB_ProductReferences, ID = 'Product Reference'.Id, Title), ...)` | `'RefTitle' isn't recognized` |
+| `With({RefURL: LookUp(TB_ProductReferences As Ref, ...)}, ...)` | `'RefURL' isn't recognized` |
 
-In both cases the name in the error is the messenger. The `AddColumns` call itself fails, so the
-column never enters scope and the expression that reads it reports the missing name.
+So: no `AddColumns` columns, no `With` bindings, no `As` aliases. Reach a row with `ThisItem.` and
+nothing else. Where a value is needed twice, repeat the `LookUp` rather than binding it to a name.
 
-The cost of the surviving shape is one `LookUp` per row per value read, which is why the
-non-delegable row limit matters.
+### Pre-flight check
+
+Projected fields arrive through the connector as lookups, so they are read with `.Value`. Confirm
+that on your site before pasting the screen — one Label, `Text` property:
+
+```powerfx
+=First(TB_CustomerReferences).'Product Reference: Reference Type'.Value
+```
+
+If it errors, drop the `.Value` and try again; whichever form works is the one the two galleries
+need, in the three `'Product Reference: ...'` lines of each `Items`. While you are there, the other
+unproven construct is worth one more Label:
+
+```powerfx
+=If("Driver" in ["Driver", "Support Tool"], "yes", "no")
+```
 
 ## Re-checking this document
 

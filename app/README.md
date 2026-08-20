@@ -37,7 +37,8 @@ few minutes, versus rebuilding 79 controls by hand.
 
 ## Order of operations
 
-0. Read `00_Schema_Reference.md`. If your lists have drifted from the exports in `TB_*.csv`,
+0. Read `00_Schema_Reference.md`, and add the three projected columns it describes to
+   `TB_CustomerReferences`. If your lists have otherwise drifted from the exports in `TB_*.csv`,
    re-export and reconcile before pasting — every formula binds to a column display name.
 1. Create a blank **Tablet** canvas app named `Technician Toolbox`.
 2. Add all seven SharePoint lists as data sources. **Do this before pasting** — paste validation
@@ -114,16 +115,16 @@ paste-validation risk, so it is deliberately not what this kit does.
 
 - **Section switching is `Visible`, not `Navigate`.** All four resource galleries occupy the same
   rectangle at `X=352, Y=226` and show or hide on `varSelectedSection`. If you move one, move all.
-- **`TB_CustomerReferences` is a junction list, so the SIA and Firmware galleries look across.**
-  The mapping row carries `Title`, `Featured` and `Display Order`; type, status, restriction, URL
-  and description live on `TB_ProductReferences`. `Items` resolves type, status and restriction per
-  row to filter, and the status, notes and Open controls resolve what they display per row.
-- **Every one of those lookups must alias the inner list and qualify the outer row.**
-  `LookUp(TB_ProductReferences As Ref, Ref.ID = ThisRecord.'Product Reference'.Id, ...)` inside
-  `Items`, and `ThisItem.` in place of `ThisRecord.` inside a gallery child. Reaching the outer row
-  implicitly, or hoisting the lookup into `AddColumns`, fails paste validation with
-  `Name isn't valid` — see the table in `00_Schema_Reference.md`. Both were tried on a live
-  environment.
+- **`TB_CustomerReferences` is a junction list, and three of its columns are projections.**
+  `Product Reference: Reference Type`, `: Release Status` and `: Restricted` are additional fields
+  of the `Product Reference` lookup, added in classic List settings — `00_Schema_Reference.md` has
+  the steps. **Add them before pasting**; without them both reference galleries fail to resolve.
+  Type, status and restriction are then filtered straight off the mapping row with no join.
+- **Introduce no local names in a formula.** `AddColumns` columns, `With` bindings and `As` aliases
+  have each failed paste validation here with `Name isn't valid`. `Description` and `Reference URL`
+  cannot be projected, so the two controls that show them repeat a
+  `LookUp(TB_ProductReferences, ID = ThisItem.'Product Reference'.Id).<column>` instead of binding
+  it to a name.
 - **The status badge colours read `Self.Text`, not a second lookup.** The `Text` resolves the
   release status once; `Fill` and `Color` test `Self.Text = "Current"`.
 - **The two galleries are split by `Reference Type`, and the split must stay exhaustive.** All 13
