@@ -1,0 +1,294 @@
+# Screen — Catalogue
+# The only route to a document without a customer in context: a technician who knows the
+# machine but not the site. Reached with no varCustomer and no varInstallation set — this
+# screen never reads either variable. A search box filters TB_Products by Title; the gallery
+# below sorts by Product Type then Title. Selecting a model expands it inline instead of
+# navigating, because a seventh screen would carry no information this one cannot show, and
+# the screen count stays at six: galModels.OnSelect sets varExpandedModel to the tapped row's
+# ID, and the nested galModelDocs gallery's Visible tests varExpandedModel = ThisItem.ID.
+# varExpandedModel starts at 0 in App.OnStart, so nothing is expanded on entry.
+#
+# lblStandard.Text is Coalesce(ThisItem.'Current Standard Version', "no standard set") with
+# no comparison alongside it — this screen has no installed version to compare against, only
+# the catalogue's own claim of what standard is. Showing "no standard set" rather than hiding
+# the row is deliberate: this is the screen that lets the maintainer audit the catalogue while
+# populating it, so a gap in the data must be visible here, not swallowed.
+#
+# The inline gallery filters IsBlank(Customer.Value) with no Or(...) — universal documents
+# only. Customer-specific references are excluded on purpose: without a customer in context
+# they carry no meaning, and surfacing one customer's bespoke procedure to every technician
+# browsing the catalogue is a real disclosure problem, not a hypothetical one. Checked before
+# writing this file and again before committing it.
+#
+# A row with a blank URL is visible but not tappable, the same two-part idiom as scrSolution:
+# OnSelect guards the Launch, and the row's title label dims when URL is blank. No DisplayMode
+# property appears on either gallery — it is a screen-scoped scalar and ThisItem does not
+# resolve inside it.
+#
+# Layout problem: an inline expanding gallery changes a row's apparent height, but
+# Gallery.TemplateSize is a single scalar evaluated once for the whole control, not per row —
+# it cannot grow for the expanded row and shrink for the rest. Reserving no space and letting
+# the inline content paint over the row beneath is the wrong answer the brief calls out by
+# name. The only correct answer under this constraint is the other one: TemplateSize is fixed
+# at 276, tall enough for the header (72px) plus the inline document area (196px, internally
+# scrollable past ~3 rows) plus a gap, on every row, expanded or not. The consequence is
+# visible and accepted: a collapsed row still carries ~200px of blank space beneath its header
+# card, so the list is sparser and takes more scrolling to browse than a flat list would. The
+# alternative — a flat outer list plus a single detail panel below it keyed off varExpandedModel
+# instead of ThisItem — would avoid the reserved space, but the brief pins galModelDocs.Visible
+# to ThisItem.ID specifically, which only resolves for a control nested inside the row template,
+# so that alternative was not available here.
+Screens:
+  scrCatalogue:
+    Properties:
+      Fill: =AppTheme.Bg
+    Children:
+      - conRoot:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
+            Y: =0
+            Width: =ContentWidth
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - lblTitle:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Text: ="Catalogue"
+                  Font: =AppFont
+                  Size: =AppType.Title
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppTheme.Fg
+            - txtSearch:
+                Control: Classic/TextInput
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 48
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =44
+                  Default: =""
+                  HintText: ="Search models"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Fill: =AppTheme.Surface
+                  Color: =AppTheme.Fg
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - galModels:
+                Control: Gallery
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 104
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =Parent.Height - (Gutter + 104) - Gutter
+                  TemplateSize: =276
+                  TemplatePadding: =12
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_Products,
+                            Active = true,
+                            StartsWith(Title, Trim(txtSearch.Text))
+                        ),
+                        "Product Type",
+                        SortOrder.Ascending,
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: =Set(varExpandedModel, ThisItem.ID)
+                Children:
+                  - rectModelCard:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter
+                        Y: =0
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =72
+                        Fill: =AppTheme.Surface
+                        BorderColor: =AppTheme.Line
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblModelTitle:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =10
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =20
+                        Text: =ThisItem.Title
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppTheme.Fg
+                  - lblModelType:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =32
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =16
+                        Text: =ThisItem.'Product Type'.Value
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                  - lblStandardCaption:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =50
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
+                        Height: =18
+                        Text: ="Standard"
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Color: =AppTheme.Muted
+                  - lblStandard:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.25)
+                        Y: =50
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
+                        Height: =18
+                        Text: =Coalesce(ThisItem.'Current Standard Version', "no standard set")
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        FontWeight: =FontWeight.Semibold
+                        Color: =If(IsBlank(ThisItem.'Current Standard Version'), AppTheme.Faint, AppTheme.Fg)
+                  - lblDocCount:
+                      Control: Label
+                      Properties:
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
+                        Y: =50
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
+                        Height: =18
+                        Align: =Align.Right
+                        Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer.Value))) & " documents"
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                  - galModelDocs:
+                      Control: Gallery
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        X: =Gutter
+                        Y: =80
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =196
+                        TemplateSize: =52
+                        TemplatePadding: =6
+                        ShowScrollbar: =true
+                        Visible: =varExpandedModel = ThisItem.ID
+                        Items: |
+                          =SortByColumns(
+                              Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer.Value)),
+                              "Section",
+                              SortOrder.Ascending,
+                              "Title",
+                              SortOrder.Ascending
+                          )
+                        OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
+                      Children:
+                        - rectDocRow:
+                            Control: Rectangle
+                            Properties:
+                              X: =Gutter
+                              Y: =0
+                              Width: =Parent.TemplateWidth - (Gutter * 2)
+                              Height: =44
+                              Fill: =AppTheme.Surface
+                              BorderColor: =AppTheme.LineSoft
+                              BorderThickness: =1
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblDocTitle:
+                            Control: Label
+                            Properties:
+                              X: =Gutter
+                              Y: =4
+                              Width: =Parent.TemplateWidth - (Gutter * 2)
+                              Height: =18
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
+                              Text: =ThisItem.Title
+                        - lblDocMeta:
+                            Control: Label
+                            Properties:
+                              X: =Gutter
+                              Y: =22
+                              Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.6
+                              Height: =16
+                              Font: =AppFont
+                              Size: =AppType.Micro
+                              Color: =AppTheme.Muted
+                              Text: =ThisItem.Section.Value & "  •  " & ThisItem.'Reference Type'.Value
+                        - lblDocChecked:
+                            Control: Label
+                            Properties:
+                              X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
+                              Y: =22
+                              Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
+                              Height: =16
+                              Align: =Align.Right
+                              Font: =AppFont
+                              Size: =AppType.Micro
+                              Text: |
+                                =If(
+                                    IsBlank(ThisItem.'Last Checked'),
+                                    "never checked",
+                                    DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                                    "not checked in " & DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) & " months",
+                                    "checked " & Text(ThisItem.'Last Checked', "dd mmm yyyy")
+                                )
+                              Color: |
+                                =If(
+                                    IsBlank(ThisItem.'Last Checked'),
+                                    AppTheme.Muted,
+                                    DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
+                                    AppTheme.Warn,
+                                    AppTheme.Ok
+                                )
+                  - lblNoModelDocs:
+                      Control: Label
+                      Properties:
+                        X: =Gutter
+                        Y: =80
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =40
+                        Align: =Align.Center
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                        Text: ="No universal documents are on file for this model."
+                        Visible: =And(varExpandedModel = ThisItem.ID, CountRows(galModelDocs.AllItems) = 0)
+            - lblNoModels:
+                Control: Label
+                Properties:
+                  X: =Gutter
+                  Y: =Gutter + 104
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No models match your search."
+                  Visible: =CountRows(galModels.AllItems) = 0
