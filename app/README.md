@@ -148,20 +148,35 @@ paste-validation risk, so it is deliberately not what this kit does.
   control names within or across screens.
 - Every property value carries the required leading `=`.
 - Every column reference — quoted display names and every `ThisItem.`, `varCustomer.`,
-  `varSolution.`, `varComponent.`, `RefRec.` and `Map.` field — was checked against the field XML
-  and header rows in `TB_*.csv`. No mismatches.
+  `varSolution.` and `varComponent.` field — was checked against the field XML and header rows in
+  `TB_*.csv`. No mismatches.
 - Every `Reference Type` choice value is routed to exactly one of the two reference galleries:
   13 values, none unrouted, none duplicated.
+- No formula introduces a local name, and no inline scalar contains `: `. Both are checked, and
+  both have broken a paste before.
 
-Not verified: whether your environment's Studio accepts these exact `Control:` identifiers, and
-whether `Customer.Id = varCustomer.ID` delegates against SharePoint. Both need a live environment.
+## Confirmed on a live environment
 
-Two things are asserted rather than verified, because the exports do not carry the evidence:
+All three screens pasted and validated in Studio. That settles what the exports could not:
 
-- **`TB_CustomerGuides` types.** That export has no `ListSchema` block, so `'Guide Type'` and
-  `'Document Status '` are assumed to be Choice columns and `'Document URL'` a Hyperlink. If one is
-  plain text, drop the `.Value` from that reference in `scrSolutionDetails.pa.yaml`.
+- The `Control:` identifiers in this kit are accepted as written.
+- `TB_CustomerGuides` really does use Choice for `'Guide Type'` and `'Document Status '`, and a
+  Hyperlink for `'Document URL'` — a `.Value` against a text column would have failed validation.
+  The trailing space in `'Document Status '` is real and required.
+- The lookup shape `LookUp(TB_ProductReferences, ID = <row>.'Product Reference'.Id).<column>`
+  validates both inside `Items` and inside a gallery child.
+
+## Still outstanding
+
 - **`TB_CustomerSolutions.'Deployment Status'` choices.** The list still carries the default
   `Choice 1 / Choice 2 / Choice 3`. The badge is written against the vocabulary already configured
-  on `TB_SoftwareInstallations`; until the solutions list matches, the badge renders the raw
-  placeholder in neutral gray. Nothing errors — it just looks wrong.
+  on `TB_SoftwareInstallations` — `Current Standard`, `Installed`, `Upgrade Planned`,
+  `Upgrade Required`, `Retired`, `Unknown`. Until the solutions list matches, the badge renders the
+  raw placeholder in neutral gray. Nothing errors; it just looks wrong.
+- **The lists are empty.** The exports carry one sample row on `TB_Customers` and no rows at all on
+  the other six, so the app opens on a single customer card and every screen below it is blank.
+  Nothing about the drill-down, the section tabs, the Open buttons or the component filter can be
+  judged until there is data behind them.
+- **Delegation.** Every parent/child filter compares a lookup's `.Id` and both reference galleries
+  resolve a `LookUp` per row, none of which SharePoint delegates. Fine at these volumes against the
+  2000-row limit; revisit if any list grows past it.
