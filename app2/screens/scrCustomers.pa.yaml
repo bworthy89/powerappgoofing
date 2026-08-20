@@ -130,7 +130,7 @@ Screens:
                                   )
                               ) > 0,
                               AppTheme.NeutralLight,
-                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID)) = 0,
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID, Status.Value <> "Retired")) = 0,
                               AppTheme.NeutralLight,
                               AppTheme.OkLight
                           )
@@ -183,7 +183,7 @@ Screens:
                                       IsBlank('Installed Version')
                                   )
                               ) & " not recorded",
-                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID)) = 0,
+                              CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID, Status.Value <> "Retired")) = 0,
                               "nothing recorded",
                               "all on standard"
                           )
