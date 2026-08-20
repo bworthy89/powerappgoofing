@@ -1,0 +1,4 @@
+- lblBad:
+    Control: Label
+    Properties:
+      Text: =ThisItem.'Product: Reference Type'.Value
