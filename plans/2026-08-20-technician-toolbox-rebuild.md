@@ -411,7 +411,7 @@ If(
             IsBlank('Installed Version')
         )
     ) & " not recorded",
-    CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID)) = 0,
+    CountRows(Filter(TB_Installations, Customer.Id = ThisItem.ID, Status.Value <> "Retired")) = 0,
     "nothing recorded",
     "all on standard"
 )
@@ -566,11 +566,18 @@ Version pair, side by side, separator is `=` or `≠` and never an arrow:
 If(
     IsBlank(varInstallation.'Installed Version'),
     "",
+    IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'),
+    "",
     varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
     "=",
     "≠"
 )
 ```
+
+The second branch matters: with no catalogue standard there is nothing to compare against, so the
+separator must be blank. Without it, an installed version against a blank standard renders `≠` and
+claims the machine is off standard when no standard exists — and it contradicts the badge beside it,
+which correctly goes invisible.
 
 `galUnits.Items`:
 
@@ -617,8 +624,13 @@ If(
 
 `lblException.Text`: `=If(IsBlank(ThisItem.Customer.Value), "", "this customer")`
 
-`galDocs.OnSelect`: `=Launch(ThisItem.URL)`
-`galDocs.DisplayMode`: `=If(IsBlank(ThisItem.URL), DisplayMode.Disabled, DisplayMode.Edit)`
+`galDocs.OnSelect`: `=If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))`
+
+A row with no URL must be visible but inert. **Do not put `DisplayMode` on the Gallery** —
+`Gallery.DisplayMode` is a single value evaluated at screen scope, where `ThisItem` does not exist.
+`OnSelect` is the documented exception that IS row-scoped, so the tap is guarded there, and the row
+is dimmed through a template child: `lblDocTitle.Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint,
+AppTheme.Fg)`.
 
 - [ ] **Step 2: Run the harness**
 
@@ -714,17 +726,24 @@ SortByColumns(
 
 `lblStandard.Text`: `=Coalesce(ThisItem.'Current Standard Version', "no standard set")` — this is the screen that lets you audit the catalogue's own accuracy while populating it.
 
-Selecting a model expands it inline rather than navigating. A seventh screen would carry no
+Selecting a model reveals its documents without navigating. A seventh screen would carry no
 information this one cannot show, and the screen count stays at six.
 
-`galModels.OnSelect`: `=Set(varExpandedModel, ThisItem.ID)`
-`galModelDocs.Visible`: `=varExpandedModel = ThisItem.ID`
+**`galModelDocs` is a SIBLING of `galModels`, not nested inside its row template.** `TemplateSize`
+is a single scalar for a whole gallery, so a nested document list forces every row — expanded or
+not — to reserve the expanded height. On a phone that leaves roughly two models visible out of
+thirty-eight, which defeats a browse screen. A flat sibling filtered by the selected id costs less
+Power Fx, keeps the model list dense, and removes the gallery-inside-a-gallery construct entirely.
 
-Inline `galModelDocs.Items`:
+`galModels.OnSelect`: `=Set(varExpandedModel, ThisItem.ID)`
+`galModels.TemplateSize`: `=72`
+`galModelDocs.Visible`: `=!IsBlank(varExpandedModel) && varExpandedModel <> 0`
+
+`galModelDocs.Items`:
 
 ```powerfx
 SortByColumns(
-    Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer.Value)),
+    Filter(TB_References, Product.Id = varExpandedModel, IsBlank(Customer.Value)),
     "Section",
     SortOrder.Ascending,
     "Title",
@@ -819,8 +838,10 @@ Responsive: `conDashboard.LayoutDirection` is `=If(IsNarrow, LayoutDirection.Ver
 
 ```powerfx
 // galCustomers.OnSelect in Task 3 gains:
+RemoveIf(colRecent, Id = ThisItem.ID);
 Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
-ClearCollect(colRecent, FirstN(Sort(Distinct(colRecent, Id), At, SortOrder.Descending), 3));
+If(CountRows(colRecent) > 3,
+   RemoveIf(colRecent, At = First(Sort(colRecent, At, SortOrder.Ascending)).At));
 SaveData(colRecent, "recent")
 
 // App.OnStart gains:
