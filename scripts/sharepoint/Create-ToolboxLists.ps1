@@ -320,10 +320,17 @@ Nothing has been changed.
 
 Write-Host "Step 0 — legacy check" -ForegroundColor White
 
+# Identify OUR list positively, and treat anything else as legacy.
+#
+# The reverse test - looking for a legacy-only column such as CustomerCode - fails
+# dangerously: one false negative and the script skips list creation, then adds the
+# new columns to the legacy list. Asking "is this ours?" fails safely instead, because
+# an unrecognised list stops the run rather than being written to.
 $legacyCustomersIsOld = $false
 if (Test-ListExists -Title 'TB_Customers') {
-    # The old list carries columns the new one does not. Customer Code is a reliable tell.
-    $legacyCustomersIsOld = $null -ne (Get-PnPField -List 'TB_Customers' -Identity 'CustomerCode' -ErrorAction SilentlyContinue)
+    $isOurs = Test-FieldExists -List 'TB_Customers' -InternalName 'TBSupportNotes'
+    $legacyCustomersIsOld = -not $isOurs
+    if ($isOurs) { Write-Skip "TB_Customers is already the rebuilt list" }
 }
 
 if ($legacyCustomersIsOld) {
@@ -334,7 +341,8 @@ if ($legacyCustomersIsOld) {
         }
     } else {
         throw @"
-TB_Customers already exists and looks like the legacy list (it has a CustomerCode column).
+TB_Customers already exists and is not the rebuilt list - it has no TBSupportNotes column,
+so it is either the legacy list or something else this script did not create.
 
 Re-run with -RenameLegacyCustomers to rename it to TB_Customers_Legacy, or rename it
 yourself first. Nothing has been changed.
