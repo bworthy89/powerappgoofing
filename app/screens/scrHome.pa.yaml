@@ -339,7 +339,7 @@ Screens:
                   # screen has no customer in context, so a customer-specific reference here
                   # would surface one customer's private procedure to every technician who
                   # types a matching word — a real disclosure problem, not a hypothetical one.
-                  Items: =Filter(TB_References, Trim(txtSearch.Text) in Title, Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0))
+                  Items: =Filter(TB_References, Trim(txtSearch.Text) in Title, Customer = Blank())
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - lblSrchDocTitle:

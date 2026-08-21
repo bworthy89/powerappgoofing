@@ -139,7 +139,7 @@ Screens:
                         Filter(
                             TB_Installations,
                             Customer.Id = varCustomer.ID,
-                            Or(IsBlank(Parent.Value), IsBlank(Parent.Id), Parent.Id = 0),
+                            Parent = Blank(),
                             Status.Value <> "Retired"
                         ),
                         "Title",
@@ -405,7 +405,7 @@ Screens:
 #     Filter(
 #         TB_Installations,
 #         Customer.Id = varCustomer.ID,
-#         !Or(IsBlank(Parent.Value), IsBlank(Parent.Id), Parent.Id = 0),
+#         !Parent = Blank(),
 #         Status.Value <> "Retired",
 #         LookUp(TB_Installations, ID = Parent.Id).Status.Value <> "Retired"
 #     )

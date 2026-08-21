@@ -54,24 +54,25 @@ child Studio generates - labels, images, icons, rectangles - carries `OnSelect: 
 It applies to labels too, not only to shapes. A nested gallery keeps its own `OnSelect`; only leaf
 controls forward to the parent.
 
-## An empty SharePoint lookup has three shapes
+## Testing whether a SharePoint lookup is empty
 
-`IsBlank(Parent.Value)` alone is not a reliable test for "this lookup is empty". Depending on how
-the item was written, an empty lookup presents as a blank record, a blank `.Value`, or an `.Id` of
-`0` - and grid-view paste and `Add-PnPListItem` take different write paths, so a test that works
-after one can silently fail after the other. The failure is invisible: the filter returns nothing
-and the gallery renders empty with no error.
-
-Every blank-lookup test in these screens therefore reads:
+Use `Column = Blank()`, comparing the column itself:
 
 ```powerfx
-Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0)
+Filter(TB_Installations, Customer.Id = varCustomer.ID, Parent = Blank())
 ```
 
-This matters most for two clauses. `Parent` is what distinguishes a solution from a unit on
-`scrCustomerOverview` - get it wrong and the customer appears to run nothing. And the blank
-`Customer` half of the reference filter is what makes a document universal - get it wrong and every
-document disappears.
+Microsoft's SharePoint delegation notes state it directly: *"A filter using `IsBlank(CustomerId)`
+will not delegate to SharePoint. However, `Filter(..., CustomerId = Blank())` will delegate."* So
+the comparison form is both correct and delegable, where `IsBlank` is neither.
+
+Do **not** reach into the lookup - `IsBlank(Parent.Value)`, `Parent.Id = 0` and similar are guesses
+about how an empty lookup is represented, they vary by how the item was written, and reading `.Id`
+off a blank lookup can poison the whole expression so the filter silently returns nothing.
+
+This matters twice over. `Parent` is what distinguishes a solution from a unit - get it wrong and a
+customer appears to run nothing at all. And a blank `Customer` is what makes a reference universal -
+get it wrong and every document disappears.
 
 ## Responsive layout: how to test it, and how to not break it
 
