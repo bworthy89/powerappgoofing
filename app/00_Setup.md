@@ -53,3 +53,22 @@ child Studio generates - labels, images, icons, rectangles - carries `OnSelect: 
 
 It applies to labels too, not only to shapes. A nested gallery keeps its own `OnSelect`; only leaf
 controls forward to the parent.
+
+## An empty SharePoint lookup has three shapes
+
+`IsBlank(Parent.Value)` alone is not a reliable test for "this lookup is empty". Depending on how
+the item was written, an empty lookup presents as a blank record, a blank `.Value`, or an `.Id` of
+`0` - and grid-view paste and `Add-PnPListItem` take different write paths, so a test that works
+after one can silently fail after the other. The failure is invisible: the filter returns nothing
+and the gallery renders empty with no error.
+
+Every blank-lookup test in these screens therefore reads:
+
+```powerfx
+Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0)
+```
+
+This matters most for two clauses. `Parent` is what distinguishes a solution from a unit on
+`scrCustomerOverview` - get it wrong and the customer appears to run nothing. And the blank
+`Customer` half of the reference filter is what makes a document universal - get it wrong and every
+document disappears.

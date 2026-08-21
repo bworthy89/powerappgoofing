@@ -231,7 +231,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
                         Height: =18
                         Align: =Align.Right
-                        Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer.Value))) & " documents"
+                        Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0))) & " documents"
                         Font: =AppFont
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
@@ -262,7 +262,7 @@ Screens:
                   Visible: =!IsBlank(varExpandedModel) && varExpandedModel <> 0
                   Items: |
                     =SortByColumns(
-                        Filter(TB_References, Product.Id = varExpandedModel, IsBlank(Customer.Value)),
+                        Filter(TB_References, Product.Id = varExpandedModel, Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0)),
                         "Title",
                         SortOrder.Ascending
                     )

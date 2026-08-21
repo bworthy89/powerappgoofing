@@ -348,7 +348,7 @@ Screens:
                             TB_References,
                             Product.Id = varInstallation.Product.Id,
                             Section.Value = "Documentation",
-                            Or(IsBlank(Customer.Value), Customer.Id = varCustomer.ID)
+                            Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0, Customer.Id = varCustomer.ID)
                         ),
                         "Featured",
                         SortOrder.Descending
@@ -514,7 +514,7 @@ Screens:
                             TB_References,
                             Product.Id = varInstallation.Product.Id,
                             Section.Value = "Firmware & Downloads",
-                            Or(IsBlank(Customer.Value), Customer.Id = varCustomer.ID)
+                            Or(IsBlank(Customer.Value), IsBlank(Customer.Id), Customer.Id = 0, Customer.Id = varCustomer.ID)
                         ),
                         "Featured",
                         SortOrder.Descending
