@@ -114,6 +114,22 @@ Screens:
                     SaveData(colRecent, "recent");
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
                 Children:
+                  # A Label with a Fill, not a Rectangle: the archived kit used Labels for
+                  # every coloured surface in a gallery template, and its rows were clickable.
+                  # A Rectangle is a shape with its own OnSelect and swallows the tap. This
+                  # also gives the row a full-width clickable surface - empty template area
+                  # does not respond to clicks in Power Apps.
+                  - lblCard:
+                      Control: Label
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =80
+                        Text: =""
+                        Fill: =AppTheme.Surface
+                        BorderColor: =AppTheme.LineSoft
+                        BorderThickness: =1
                   - lblName:
                       Control: Label
                       Properties:
@@ -138,8 +154,9 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
                   - rectChip:
-                      Control: Rectangle
+                      Control: Label
                       Properties:
+                        Text: =""
                         X: =Gutter
                         Y: =60
                         Width: =Gutter * 8
