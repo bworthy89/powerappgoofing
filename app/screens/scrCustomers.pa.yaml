@@ -122,6 +122,7 @@ Screens:
                   - lblCard:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
                         Width: =Parent.TemplateWidth
@@ -133,6 +134,7 @@ Screens:
                   - lblName:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =12
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -145,6 +147,7 @@ Screens:
                   - lblDesc:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =36
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -156,6 +159,7 @@ Screens:
                   - rectChip:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         Text: =""
                         X: =Gutter
                         Y: =60
@@ -191,6 +195,7 @@ Screens:
                   - lblChip:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =60
                         Width: =Gutter * 8

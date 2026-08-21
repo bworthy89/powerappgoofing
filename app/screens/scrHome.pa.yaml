@@ -176,6 +176,7 @@ Screens:
                   - lblSrchCustName:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -188,6 +189,7 @@ Screens:
                   - lblSrchCustDesc:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -234,6 +236,7 @@ Screens:
                   - lblSrchProdName:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -246,6 +249,7 @@ Screens:
                   - lblSrchProdMeta:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -297,6 +301,7 @@ Screens:
                   - lblSrchDocTitle:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -309,6 +314,7 @@ Screens:
                   - lblSrchDocMeta:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)

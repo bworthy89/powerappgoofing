@@ -143,6 +143,7 @@ Screens:
                   - rectModelCard:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -153,6 +154,7 @@ Screens:
                   - lblModelTitle:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =10
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -165,6 +167,7 @@ Screens:
                   - lblModelType:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -176,6 +179,7 @@ Screens:
                   - lblStandardCaption:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =50
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
@@ -187,6 +191,7 @@ Screens:
                   - lblStandard:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.25)
                         Y: =50
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
@@ -199,6 +204,7 @@ Screens:
                   - lblDocCount:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
                         Y: =50
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
@@ -244,6 +250,7 @@ Screens:
                   - rectDocRow:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -254,6 +261,7 @@ Screens:
                   - lblDocTitle:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -266,6 +274,7 @@ Screens:
                   - lblDocMeta:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =22
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.6
@@ -277,6 +286,7 @@ Screens:
                   - lblDocChecked:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
                         Y: =22
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4

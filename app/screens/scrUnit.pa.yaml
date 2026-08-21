@@ -358,6 +358,7 @@ Screens:
                   - rectDocsRow:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -368,6 +369,7 @@ Screens:
                   - lblDocsTitle:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -380,6 +382,7 @@ Screens:
                   - lblDocsType:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
@@ -391,6 +394,7 @@ Screens:
                   - lblDocsException:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
@@ -403,6 +407,7 @@ Screens:
                   - lblDocsChecked:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
@@ -510,6 +515,7 @@ Screens:
                   - rectFirmwareRow:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -520,6 +526,7 @@ Screens:
                   - lblFirmwareTitle:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -532,6 +539,7 @@ Screens:
                   - lblFirmwareType:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
@@ -543,6 +551,7 @@ Screens:
                   - lblFirmwareException:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
@@ -555,6 +564,7 @@ Screens:
                   - lblFirmwareChecked:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
                         Y: =24
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35

@@ -40,3 +40,16 @@ use nested `Sort()` calls, which take an expression and so can reach `.Value`:
 last. Untested against Studio.
 
 `scripts/verify_yaml.py` now catches both mistakes.
+
+## Every control in a gallery template needs `OnSelect: =Select(Parent)`
+
+Controls inside a gallery's row template do **not** pass their clicks up to the gallery. Without
+`Select(Parent)` the row shows, but does not highlight on hover and does not respond to a tap, and
+`Gallery.OnSelect` never fires. There is no error - the screen simply looks finished and does
+nothing.
+
+This is not a workaround. Insert a blank vertical gallery in Studio and read its Code view: every
+child Studio generates - labels, images, icons, rectangles - carries `OnSelect: =Select(Parent)`.
+
+It applies to labels too, not only to shapes. A nested gallery keeps its own `OnSelect`; only leaf
+controls forward to the parent.

@@ -151,6 +151,7 @@ Screens:
                   - rectCard:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
@@ -161,6 +162,7 @@ Screens:
                   - lblModel:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =14
                         Width: =Parent.TemplateWidth - (Gutter * 4)
@@ -173,6 +175,7 @@ Screens:
                   - lblVersion:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =38
                         Width: =Parent.TemplateWidth - (Gutter * 4)
@@ -186,6 +189,7 @@ Screens:
                   - rectCurrency:
                       Control: Rectangle
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =64
                         Width: =Gutter * 9
@@ -205,6 +209,7 @@ Screens:
                   - lblCurrency:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =64
                         Width: =Gutter * 9
@@ -229,6 +234,7 @@ Screens:
                   - lblStatus:
                       Control: Label
                       Properties:
+                        OnSelect: =Select(Parent)
                         X: =(Gutter * 2) + (Gutter * 9) + 8
                         Y: =64
                         Width: =Parent.TemplateWidth - (Gutter * 4) - (Gutter * 9) - 8
@@ -270,6 +276,7 @@ Screens:
                         - lblUnitLine:
                             Control: Label
                             Properties:
+                              OnSelect: =Select(Parent)
                               X: =Gutter
                               Y: =4
                               Width: =Parent.TemplateWidth - (Gutter * 2)
