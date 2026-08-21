@@ -80,8 +80,8 @@ Screens:
                   Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =Parent.Height - (Gutter + 140) - Gutter
-                  TemplateSize: =122
-                  TemplatePadding: =0
+                  TemplateSize: =130
+                  TemplatePadding: =8
                   ShowScrollbar: =true
                   Items: |
                     =SortByColumns(
@@ -290,6 +290,8 @@ Screens:
                   - galCustomersHit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0

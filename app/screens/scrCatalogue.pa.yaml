@@ -126,7 +126,7 @@ Screens:
                         Parent.Height - (Gutter + 140) - Gutter,
                         Parent.Height - (Gutter + 140) - (Gutter * 2) - 240
                     )
-                  TemplateSize: =72
+                  TemplateSize: =92
                   TemplatePadding: =8
                   ShowScrollbar: =true
                   Items: |
@@ -148,7 +148,7 @@ Screens:
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =72
+                        Height: =92
                         BorderThickness: =1
                         Text: =""
                         Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
@@ -168,7 +168,7 @@ Screens:
                         X: =Gutter
                         Y: =0
                         Width: =4
-                        Height: =72
+                        Height: =92
                         Text: =""
                         Fill: =AppTheme.Primary
                         BorderThickness: =0
@@ -207,9 +207,11 @@ Screens:
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
-                        Y: =50
-                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
-                        Height: =18
+                        Y: =52
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.3
+                        Wrap: =false
+                        AutoHeight: =false
+                        Height: =16
                         Text: ="Standard"
                         Font: =AppFont
                         Size: =AppType.Micro
@@ -220,10 +222,10 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
-                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.25)
-                        Y: =50
-                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.35
-                        Height: =18
+                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.3)
+                        Y: =52
+                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.7
+                        Height: =16
                         Text: =Coalesce(ThisItem.'Current Standard Version', "no standard set")
                         Font: =AppFont
                         Size: =AppType.Small
@@ -235,10 +237,10 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
-                        X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
-                        Y: =50
-                        Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
-                        Height: =18
+                        X: =Gutter
+                        Y: =70
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =16
                         Align: =Align.Right
                         Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer))) & " documents"
                         Font: =AppFont
@@ -251,6 +253,8 @@ Screens:
                   - galModelsHit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -379,6 +383,8 @@ Screens:
                   - galModelDocsHit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0

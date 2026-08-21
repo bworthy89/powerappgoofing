@@ -455,6 +455,8 @@ Screens:
                   - galDocsHitUnit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -646,6 +648,8 @@ Screens:
                   - galFirmwareHitUnit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0

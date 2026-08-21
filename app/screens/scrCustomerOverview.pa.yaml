@@ -270,6 +270,16 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
                         Text: =If(ThisItem.Status.Value = "In Service", "", Lower(ThisItem.Status.Value))
+                  - rectUnitsDividerOvw:
+                      Control: Rectangle
+                      Properties:
+                        X: =Gutter * 2
+                        Y: =94
+                        Width: =Parent.TemplateWidth - (Gutter * 4)
+                        Height: =1
+                        Fill: =AppTheme.Line
+                        OnSelect: =Select(Parent)
+
                   - galUnitsOvw:
                       Control: Gallery
                       Variant: Vertical
@@ -299,13 +309,33 @@ Screens:
                           =Set(varInstallation, ThisItem);
                           Navigate(scrUnit, ScreenTransition.Cover)
                       Children:
+                        - rectUnitRowOvw:
+                            Control: Classic/Button
+                            Properties:
+                              OnSelect: =Select(Parent)
+                              X: =0
+                              Y: =0
+                              Width: =Parent.TemplateWidth
+                              Height: =Parent.TemplateHeight
+                              Text: =""
+                              Fill: =AppTheme.Sunken
+                              HoverFill: =AppTheme.PrimaryLight
+                              PressedFill: =AppTheme.PrimaryLight
+                              BorderThickness: =0
+                              FocusedBorderThickness: =2
+                              FocusedBorderColor: =AppTheme.Primary
+                              RadiusTopLeft: =4
+                              RadiusTopRight: =4
+                              RadiusBottomLeft: =4
+                              RadiusBottomRight: =4
+
                         - lblUnitLineOvw:
                             Control: Label
                             Properties:
                               OnSelect: =Select(Parent)
                               X: =Gutter
                               Y: =4
-                              Width: =Parent.TemplateWidth - (Gutter * 2)
+                              Width: =Parent.TemplateWidth - (Gutter * 2) - 16
                               Height: =20
                               Font: =AppFont
                               Size: =AppType.Small
@@ -345,9 +375,26 @@ Screens:
                   # rows previously needed a precise click. Transparent fills keep it
                   # invisible while carrying the hover and pressed feedback.
                         # Full-item hit target for the nested unit rows, same reason as the others.
+                        - lblUnitChevOvw:
+                            Control: Label
+                            Properties:
+                              Text: ="›"
+                              X: =Parent.TemplateWidth - 20
+                              Y: =4
+                              Width: =16
+                              Height: =20
+                              Size: =AppType.Small
+                              Align: =Align.Center
+                              Color: =AppTheme.Faint
+                              Wrap: =false
+                              AutoHeight: =false
+                              OnSelect: =Select(Parent)
+
                         - galUnitsHitOvw:
                             Control: Classic/Button
                             Properties:
+                              FocusedBorderThickness: =2
+                              FocusedBorderColor: =AppTheme.Primary
                               OnSelect: =Select(Parent)
                               X: =0
                               Y: =0
@@ -363,6 +410,8 @@ Screens:
                   - galSolutionsHit:
                       Control: Classic/Button
                       Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
