@@ -100,6 +100,10 @@ BACK = {"Appearance": "ButtonAppearance.Subtle",
 SEARCH = {"Type": "TextInputType.Search"}
 
 
+# Icon is a plain string, so a wrong name renders nothing and the compiler says
+# nothing - "Documents" and "AddUser" both silently produced text-only tiles.
+# The two that worked, People and Settings, are both in the Segoe Fluent Icons
+# list, so names are taken from there rather than invented.
 def tile(icon):
     return {"Appearance": "ButtonAppearance.Secondary",
             "Icon": f'"{icon}"',
@@ -115,12 +119,16 @@ EXTRA = {
     "txtSearchCat": SEARCH,
     "txtSearchHome": SEARCH,
     "btnTileCustomers": tile("People"),
-    "btnTileCatalogue": tile("Documents"),
+    "btnTileCatalogue": tile("Document"),
     "btnTileAdmin": tile("Settings"),
-    "btnTileOnboard": tile("AddUser"),
+    "btnTileOnboard": tile("Add"),
     "btnRecent1": {"Appearance": "ButtonAppearance.Subtle"},
     "btnRecent2": {"Appearance": "ButtonAppearance.Subtle"},
     "btnRecent3": {"Appearance": "ButtonAppearance.Subtle"},
+    # wave 3
+    "btnBackOvw": BACK,
+    "btnBackSol": BACK,
+    "btnBackUnit": BACK,
 }
 
 # Values replaced outright, where the modern control changes what the text
@@ -128,6 +136,13 @@ EXTRA = {
 OVERRIDE = {
     "btnBackCus": {"Text": '"Home"'},
     "btnBackCat": {"Text": '"Home"'},
+    "btnBackOvw": {"Text": '"Customers"'},
+    "btnBackSol": {"Text": '"Overview"'},
+    "btnBackUnit": {"Text": '"Solution"'},
+    # Corrected after the first push rendered these text-only: neither
+    # "Documents" nor "AddUser" is a real Fluent name.
+    "btnTileCatalogue": {"Icon": '"Document"'},
+    "btnTileOnboard": {"Icon": '"Add"'},
 }
 
 
@@ -181,7 +196,11 @@ def convert(src, extra=None, keep_classic=None):
                 ctype, tline = cm.group(1).strip(), j
             break
 
-        target = CONTROL_MAP.get(ctype)
+        # A control that is already the modern type is still processed, so
+        # EXTRA / OVERRIDE / DEFAULTS re-apply. Without this the tool is
+        # one-shot: once app/screens holds converted YAML, correcting an icon
+        # name or adding a property silently does nothing.
+        target = CONTROL_MAP.get(ctype) or (ctype if ctype in ALLOWED else None)
 
         # A Classic/Button with no text of its own is not a button, it is a
         # painted surface - a card back, a row background, a transparent hit

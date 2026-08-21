@@ -697,7 +697,7 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Secondary
-                  Icon: ="Documents"
+                  Icon: ="Document"
                   Layout: =ButtonLayout.IconBefore
                   X: =btnTileCustomers.X + btnTileCustomers.Width + Gutter
                   Y: =btnTileCustomers.Y
@@ -746,7 +746,7 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Secondary
-                  Icon: ="AddUser"
+                  Icon: ="Add"
                   Layout: =ButtonLayout.IconBefore
                   X: =btnTileAdmin.X + btnTileAdmin.Width + Gutter
                   Y: =btnTileCustomers.Y

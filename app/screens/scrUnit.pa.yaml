@@ -91,21 +91,20 @@ Screens:
             Fill: =AppTheme.Bg
           Children:
             - btnBackUnit:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
                   X: =Gutter
                   Y: =Gutter
                   Width: =Gutter * 10
                   Height: =28
-                  Text: ="<  Solution"
+                  Text: ="Solution"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Fill: =AppTheme.Bg
-                  HoverFill: =AppTheme.Sunken
-                  PressedFill: =AppTheme.Sunken
                   Color: =AppTheme.Primary
-                  HoverColor: =AppTheme.PrimaryDark
                   BorderThickness: =0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -115,8 +114,10 @@ Screens:
                     =Set(varInstallation, LookUp(TB_Installations, ID = varInstallation.'Parent'.Id));
                     Navigate(scrSolution, ScreenTransition.CoverRight)
             - lblCrumb:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 36
                   Width: =Parent.Width - (Gutter * 2)
@@ -131,8 +132,10 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Color: =AppTheme.Muted
             - lblTitleUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 58
                   Width: =Parent.Width - (Gutter * 2)
@@ -141,10 +144,11 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - lblSubtitleUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 94
                   Width: =Parent.Width - (Gutter * 2)
@@ -168,8 +172,10 @@ Screens:
                   BorderThickness: =1
                 Children:
                   - lblVersionHeadingUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
@@ -180,8 +186,10 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblInstalledUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.4
@@ -192,10 +200,11 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                   - lblSeparatorUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.4)
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.2
@@ -217,8 +226,10 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblStandardUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.6)
@@ -231,7 +242,6 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                   - rectCurrencyUnit:
                       Control: Rectangle
                       Properties:
@@ -252,8 +262,10 @@ Screens:
                               AppTheme.WarnLight
                           )
                   - lblCurrencyUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =72
                         Width: =Gutter * 9
@@ -263,7 +275,6 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                         Visible: =!IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version')
                         Text: |
                           =If(
@@ -289,8 +300,10 @@ Screens:
                   Visible: =!IsBlank(varInstallation.'Config Notes')
                 Children:
                   - lblConfigHeadingUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
@@ -301,8 +314,10 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblConfigNotesUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =32
                         Width: =Parent.Width - (Gutter * 2)
@@ -310,10 +325,11 @@ Screens:
                         Text: =varInstallation.'Config Notes'
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
             - lblDocsHeadingUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: |
                     =If(
@@ -327,7 +343,6 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - galDocsUnit:
                 Control: Gallery
                 Variant: Vertical
@@ -378,8 +393,10 @@ Screens:
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
                   - lblDocsTitleUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -393,8 +410,10 @@ Screens:
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
                   - lblDocsTypeUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -407,8 +426,10 @@ Screens:
                         Color: =AppTheme.Muted
                         Text: =ThisItem.'Reference Type'.Value
                   - lblDocsExceptionUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -422,8 +443,10 @@ Screens:
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
                   - lblDocsCheckedUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
                         Y: =24
@@ -470,8 +493,10 @@ Screens:
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoDocsUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: |
                     =If(
@@ -488,8 +513,10 @@ Screens:
                   Text: ="No documentation is on file for this unit."
                   Visible: =CountRows(galDocsUnit.AllItems) = 0
             - lblFirmwareHeadingUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =If(scrUnit.Size >= ScreenSize.Medium, galDocsUnit.X + galDocsUnit.Width + Gutter, Gutter)
                   Y: =If(scrUnit.Size >= ScreenSize.Medium, lblDocsHeadingUnit.Y, galDocsUnit.Y + galDocsUnit.Height + Gutter)
                     =If(
@@ -503,7 +530,6 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - galFirmwareUnit:
                 Control: Gallery
                 Variant: Vertical
@@ -571,8 +597,10 @@ Screens:
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
                   - lblFirmwareTitleUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -586,8 +614,10 @@ Screens:
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
                   - lblFirmwareTypeUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -600,8 +630,10 @@ Screens:
                         Color: =AppTheme.Muted
                         Text: =ThisItem.'Reference Type'.Value
                   - lblFirmwareExceptionUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -615,8 +647,10 @@ Screens:
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
                   - lblFirmwareCheckedUnit:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.65)
                         Y: =24
@@ -663,8 +697,10 @@ Screens:
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoFirmwareUnit:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: |
                     =If(

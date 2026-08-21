@@ -24,21 +24,20 @@ Screens:
             Fill: =AppTheme.Bg
           Children:
             - btnBackOvw:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
                   X: =Gutter
                   Y: =Gutter
                   Width: =Gutter * 10
                   Height: =28
-                  Text: ="<  Customers"
+                  Text: ="Customers"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Fill: =AppTheme.Bg
-                  HoverFill: =AppTheme.Sunken
-                  PressedFill: =AppTheme.Sunken
                   Color: =AppTheme.Primary
-                  HoverColor: =AppTheme.PrimaryDark
                   BorderThickness: =0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -46,8 +45,10 @@ Screens:
                   RadiusBottomRight: =6
                   OnSelect: =Navigate(scrCustomers, ScreenTransition.CoverRight)
             - lblTitleOvw:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 36
                   Width: =Parent.Width - (Gutter * 2)
@@ -56,7 +57,6 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - conSupportNotes:
                 Control: GroupContainer
                 Variant: ManualLayout
@@ -71,8 +71,10 @@ Screens:
                   Visible: =!IsBlank(varCustomer.'Support Notes')
                 Children:
                   - lblSupportNotesHeading:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
@@ -83,8 +85,10 @@ Screens:
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblSupportNotes:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         X: =Gutter
                         Y: =32
                         Width: =Parent.Width - (Gutter * 2)
@@ -92,10 +96,11 @@ Screens:
                         Text: =varCustomer.'Support Notes'
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
             - lblSolutionsHeading:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: |
                     =If(
@@ -109,7 +114,6 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - galSolutions:
                 Control: Gallery
                 Variant: Vertical
@@ -170,8 +174,10 @@ Screens:
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
                   - rectCardRail:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
@@ -182,23 +188,26 @@ Screens:
                         BorderThickness: =0
                         Visible: =ThisItem.IsSelected
                   - lblModel:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =14
                         Width: =Parent.TemplateWidth - (Gutter * 4)
-                        Height: =22
+                        Height: =23
                         Text: =LookUp(TB_Products, ID = ThisItem.Product.Id).Title
                         Font: =AppFont
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                   - lblVersion:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =38
@@ -231,8 +240,10 @@ Screens:
                               AppTheme.WarnLight
                           )
                   - lblCurrencyOvw:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =64
@@ -243,7 +254,6 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                         Visible: =!IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version')
                         Text: |
                           =If(
@@ -256,8 +266,10 @@ Screens:
                               "standard " & LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'
                           )
                   - lblStatus:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -330,8 +342,10 @@ Screens:
                               RadiusBottomRight: =4
 
                         - lblUnitLineOvw:
-                            Control: Label
+                            Control: ModernText
                             Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
                               OnSelect: =Select(Parent)
                               X: =Gutter
                               Y: =4
@@ -376,8 +390,10 @@ Screens:
                   # invisible while carrying the hover and pressed feedback.
                         # Full-item hit target for the nested unit rows, same reason as the others.
                         - lblUnitChevOvw:
-                            Control: Label
+                            Control: ModernText
                             Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
                               Text: ="›"
                               X: =Parent.TemplateWidth - 20
                               Y: =4
@@ -425,8 +441,10 @@ Screens:
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoSolutions:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: |
                     =If(
