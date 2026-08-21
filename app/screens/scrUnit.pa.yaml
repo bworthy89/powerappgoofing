@@ -448,6 +448,25 @@ Screens:
                               AppTheme.Warn,
                               AppTheme.Ok
                           )
+                  # Full-item hit target, LAST so it sits on top of the labels. A button
+                  # behind them leaves only the uncovered margins clickable, which is why
+                  # rows previously needed a precise click. Transparent fills keep it
+                  # invisible while carrying the hover and pressed feedback.
+                  - galDocsHit:
+                      Control: Classic/Button
+                      Properties:
+                      OnSelect: =Select(Parent)
+                      X: =0
+                      Y: =0
+                      Width: =Parent.TemplateWidth
+                      Height: =Parent.TemplateHeight
+                      Text: =""
+                      Fill: =RGBA(0, 0, 0, 0)
+                      HoverFill: =RGBA(0, 0, 0, 0.04)
+                      PressedFill: =RGBA(0, 87, 184, 0.10)
+                      BorderThickness: =0
+                      HoverBorderColor: =RGBA(0, 0, 0, 0)
+                      PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoDocs:
                 Control: Label
                 Properties:
@@ -620,6 +639,25 @@ Screens:
                               AppTheme.Warn,
                               AppTheme.Ok
                           )
+                  # Full-item hit target, LAST so it sits on top of the labels. A button
+                  # behind them leaves only the uncovered margins clickable, which is why
+                  # rows previously needed a precise click. Transparent fills keep it
+                  # invisible while carrying the hover and pressed feedback.
+                  - galFirmwareHit:
+                      Control: Classic/Button
+                      Properties:
+                      OnSelect: =Select(Parent)
+                      X: =0
+                      Y: =0
+                      Width: =Parent.TemplateWidth
+                      Height: =Parent.TemplateHeight
+                      Text: =""
+                      Fill: =RGBA(0, 0, 0, 0)
+                      HoverFill: =RGBA(0, 0, 0, 0.04)
+                      PressedFill: =RGBA(0, 87, 184, 0.10)
+                      BorderThickness: =0
+                      HoverBorderColor: =RGBA(0, 0, 0, 0)
+                      PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoFirmware:
                 Control: Label
                 Properties:

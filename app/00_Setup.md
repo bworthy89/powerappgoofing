@@ -110,3 +110,20 @@ Every data-bound label in a gallery template therefore states both explicitly:
 proportion. Multi-column lists therefore need a card wide enough for their longest realistic
 content, not just a column count that looks good on a wide monitor. The thresholds here start at
 `ScreenSize.Large` rather than `Medium` for exactly that reason.
+
+## Make the whole gallery item clickable
+
+From Microsoft's Gallery reference: *"If clicking anywhere in a gallery item should select it...
+adding a Button control with its OnSelect property set to `Select(Parent)`."*
+
+The important part is **where** that button sits. A button behind the labels only receives clicks
+on the margins the labels do not cover, so a row appears to need a precisely aimed click. The hit
+target must be the **last child in the template**, on top of everything, with a transparent `Fill`.
+
+Every gallery here therefore ends with a `<gallery>Hit` button: full template width and height,
+`Fill: =RGBA(0, 0, 0, 0)`, and translucent `HoverFill` and `PressedFill` so it carries the feedback
+as well as the hit area.
+
+One constraint: a hit target must never cover a **nested** gallery, or it blocks the inner rows the
+way the labels were blocking the outer ones. `galSolutions`' hit target is height-limited to 100 so
+it stops above the units gallery inside it.
