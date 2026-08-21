@@ -80,7 +80,7 @@ Screens:
                   Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =Parent.Height - (Gutter + 140) - Gutter
-                  TemplateSize: =104
+                  TemplateSize: =122
                   TemplatePadding: =0
                   ShowScrollbar: =true
                   Items: |
@@ -135,7 +135,7 @@ Screens:
                         X: =0
                         Y: =0
                         Width: =Parent.TemplateWidth
-                        Height: =96
+                        Height: =114
                         Text: =""
                         Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
                         HoverFill: =AppTheme.Sunken
@@ -157,7 +157,7 @@ Screens:
                         X: =0
                         Y: =0
                         Width: =4
-                        Height: =96
+                        Height: =114
                         Text: =""
                         Fill: =AppTheme.Primary
                         BorderThickness: =0
@@ -184,7 +184,7 @@ Screens:
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
-                        Y: =36
+                        Y: =38
                         Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =36
                         Text: =Coalesce(ThisItem.Description, "No description")
@@ -197,7 +197,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         Text: =""
                         X: =Gutter
-                        Y: =60
+                        Y: =80
                         Width: =Gutter * 8
                         Height: =22
                         BorderThickness: =0
@@ -232,7 +232,7 @@ Screens:
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
-                        Y: =60
+                        Y: =80
                         Width: =Gutter * 8
                         Height: =22
                         Align: =Align.Center

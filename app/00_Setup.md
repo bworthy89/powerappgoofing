@@ -48,14 +48,39 @@ Every screen that has ever worked in this app was created once. Every screen tha
 banner had been overwritten. A throwaway probe screen and a diagnostic screen, both pushed once,
 never errored.
 
+### A compile mirrors the directory
+
+`compile_canvas` is a **mirror**, not a merge. Screens present in the directory are written;
+**screens absent from it are deleted from the app.** Pushing a directory containing one screen
+does not update that screen and leave the rest alone — it deletes every other screen in the app.
+
+Confirmed the hard way: a directory holding only `scrCustomers.pa.yaml` was compiled against an
+app with six screens. Afterwards `sync_canvas` returned three files, and `_EditorState` read:
+
+```yaml
+EditorState:
+  ScreensOrder:
+    - scrCustomers
+```
+
+The other five were gone. This is the same behaviour `sync_canvas` has in the opposite direction,
+and it is easy to reason about the read path while forgetting the write path.
+
 ### The rule
 
-- **Push each screen exactly once.**
-- **To change a screen, delete it in Studio's Tree view first**, then push it as a new screen.
-  Deleting from the Tree view is a Studio-side operation and involves no push.
-- **Never compile with a partially-updated workspace** hoping to touch only one file. A compile
-  writes every screen in the directory, so it overwrites — and therefore corrupts — every screen
-  that already exists.
+These two facts together — a push mirrors the directory, and overwriting a screen corrupts it —
+leave exactly one safe procedure:
+
+1. **Delete every screen** in Studio's Tree view. (Add a blank screen first if Studio will not
+   leave the app empty; the push mirrors it away.)
+2. **Push the complete set** of screens in a single compile, so all of them are fresh creations.
+3. **Verify with `sync_canvas`** that the control counts match what you pushed.
+
+There is no incremental single-screen path. Do not go looking for one; it was tested and it
+deletes the rest of the app.
+
+The practical consequence is that a deployment cycle is all-or-nothing, which suits batching
+several changes together and suits rapid visual iteration badly. Budget accordingly.
 
 ### Two related mechanics, both of which mimic this bug
 
