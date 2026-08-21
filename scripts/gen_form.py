@@ -224,5 +224,20 @@ for k, v in [("Text","varEditError"),("Color","RGBA(176, 0, 32, 1)"),("Font","Ap
              ("X","Gutter + 176"),("Y","Parent.Height - Gutter - 44"),
              ("Visible","!IsBlank(varEditError)")]: prop(o, k, v, q)
 
-open(r"E:\Papp\tt2\scrEditForm.pa.yaml", "w", encoding="utf-8", newline="").write(o.getvalue())
+
+# The generators emit classic controls; modernize.py owns the single mapping to
+# their Fluent equivalents, so regenerating never silently reverts a screen.
+import importlib.util as _ilu, os as _os
+_spec = _ilu.spec_from_file_location(
+    "modernize", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "modernize.py"))
+_mz = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_mz)
+
+def _modern(src):
+    src, rep = _mz.modernize_source(src)
+    for line in rep:
+        print(line)
+    return src
+
+
+open(r"E:\Papp\tt2\scrEditForm.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(o.getvalue()))
 print("wrote scrEditForm.pa.yaml")

@@ -197,5 +197,20 @@ def gen_admin():
         prop(o, k, v, q)
     return o.getvalue()
 
-open(r"E:\Papp\tt2\scrAdmin.pa.yaml", "w", encoding="utf-8", newline="").write(gen_admin())
+
+# The generators emit classic controls; modernize.py owns the single mapping to
+# their Fluent equivalents, so regenerating never silently reverts a screen.
+import importlib.util as _ilu, os as _os
+_spec = _ilu.spec_from_file_location(
+    "modernize", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "modernize.py"))
+_mz = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_mz)
+
+def _modern(src):
+    src, rep = _mz.modernize_source(src)
+    for line in rep:
+        print(line)
+    return src
+
+
+open(r"E:\Papp\tt2\scrAdmin.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(gen_admin()))
 print("wrote scrAdmin.pa.yaml")

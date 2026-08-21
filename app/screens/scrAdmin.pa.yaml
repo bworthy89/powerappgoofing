@@ -17,27 +17,26 @@ Screens:
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
             - btnBackAdm:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
                   Color: =AppTheme.Primary
-                  Fill: =AppTheme.Bg
                   Font: =AppFont
                   Height: =28
-                  HoverColor: =AppTheme.PrimaryDark
-                  HoverFill: =AppTheme.Sunken
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
                   Size: =AppType.Small
-                  Text: ="<  Home"
+                  Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
                   Y: =Gutter
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblTitleAdm:
-                Control: Label
+                Control: ModernText
                 Properties:
-                  Color: =AppTheme.Fg
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Font: =AppFont
                   FontWeight: =FontWeight.Bold
                   Height: =36
@@ -49,14 +48,13 @@ Screens:
                   X: =Gutter
                   Y: =Gutter + 34
             - btnListCust:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =If(varAdminList = "Cust", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Customers"
-                  Fill: =If(varAdminList = "Cust", AppTheme.Primary, AppTheme.Surface)
                   Color: =If(varAdminList = "Cust", AppTheme.OnPrimary, AppTheme.Fg)
-                  HoverFill: =If(varAdminList = "Cust", AppTheme.PrimaryDark, AppTheme.Sunken)
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Height: =34
@@ -68,17 +66,14 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Set(varAdminList, "Cust")
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - btnListProd:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =If(varAdminList = "Prod", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Products"
-                  Fill: =If(varAdminList = "Prod", AppTheme.Primary, AppTheme.Surface)
                   Color: =If(varAdminList = "Prod", AppTheme.OnPrimary, AppTheme.Fg)
-                  HoverFill: =If(varAdminList = "Prod", AppTheme.PrimaryDark, AppTheme.Sunken)
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Height: =34
@@ -90,17 +85,14 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Set(varAdminList, "Prod")
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - btnListInst:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =If(varAdminList = "Inst", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Installations"
-                  Fill: =If(varAdminList = "Inst", AppTheme.Primary, AppTheme.Surface)
                   Color: =If(varAdminList = "Inst", AppTheme.OnPrimary, AppTheme.Fg)
-                  HoverFill: =If(varAdminList = "Inst", AppTheme.PrimaryDark, AppTheme.Sunken)
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Height: =34
@@ -112,17 +104,14 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Set(varAdminList, "Inst")
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - btnListRef:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =If(varAdminList = "Ref", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="References"
-                  Fill: =If(varAdminList = "Ref", AppTheme.Primary, AppTheme.Surface)
                   Color: =If(varAdminList = "Ref", AppTheme.OnPrimary, AppTheme.Fg)
-                  HoverFill: =If(varAdminList = "Ref", AppTheme.PrimaryDark, AppTheme.Sunken)
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Height: =34
@@ -134,19 +123,16 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Set(varAdminList, "Ref")
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - txtSearchAdm:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
+                  Type: =TextInputType.Search
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
                   Default: =""
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Height: =40
-                  HintText: ="Search"
+                  Placeholder: ="Search"
                   Size: =AppType.Body
                   Width: =ContentWidth - (Gutter * 2) - 130
                   X: =Gutter
@@ -156,14 +142,14 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - btnAddNew:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
+                  Icon: ="Add"
+                  Layout: =ButtonLayout.IconBefore
                   Font: =AppFont
                   Size: =AppType.Small
-                  Text: ="+  Add new"
-                  Fill: =AppTheme.Ok
-                  Color: =AppTheme.OnPrimary
-                  HoverFill: =AppTheme.Primary
+                  Text: ="Add new"
                   BorderThickness: =0
                   Height: =40
                   Width: =118
@@ -182,8 +168,6 @@ Screens:
                         "Ref", Set(varRecRef, Defaults(TB_References))
                     );
                     Navigate(scrEditForm, ScreenTransition.Cover)
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - galAdmCust:
                 Control: Gallery
                 Variant: Vertical
@@ -204,8 +188,9 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - btnRowCust:
-                      Control: Classic/Button
+                      Control: ModernButton
                       Properties:
+                        Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Description, "no description")
                         OnSelect: |
@@ -215,10 +200,6 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.PrimaryLight
-                        PressedFill: =AppTheme.PrimaryLight
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
@@ -230,8 +211,6 @@ Screens:
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
-                        FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
             - galAdmProd:
                 Control: Gallery
                 Variant: Vertical
@@ -252,8 +231,9 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - btnRowProd:
-                      Control: Classic/Button
+                      Control: ModernButton
                       Properties:
+                        Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.'Product Type'.Value, "no type") & "  |  standard " & Coalesce(ThisItem.'Current Standard Version', "not set")
                         OnSelect: |
@@ -263,10 +243,6 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.PrimaryLight
-                        PressedFill: =AppTheme.PrimaryLight
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
@@ -278,8 +254,6 @@ Screens:
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
-                        FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
             - galAdmInst:
                 Control: Gallery
                 Variant: Vertical
@@ -300,8 +274,9 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - btnRowInst:
-                      Control: Classic/Button
+                      Control: ModernButton
                       Properties:
+                        Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.'Parent'), "  |  SOLUTION", "  |  unit of " & ThisItem.'Parent'.Value)
                         OnSelect: |
@@ -311,10 +286,6 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.PrimaryLight
-                        PressedFill: =AppTheme.PrimaryLight
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
@@ -326,8 +297,6 @@ Screens:
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
-                        FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
             - galAdmRef:
                 Control: Gallery
                 Variant: Vertical
@@ -348,8 +317,9 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - btnRowRef:
-                      Control: Classic/Button
+                      Control: ModernButton
                       Properties:
+                        Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")
                         OnSelect: |
@@ -359,10 +329,6 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Fg
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.PrimaryLight
-                        PressedFill: =AppTheme.PrimaryLight
                         BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
@@ -374,11 +340,11 @@ Screens:
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
-                        FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
             - lblAdmEmpty:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Align: =Align.Center
                   Color: =AppTheme.Muted
                   Font: =AppFont

@@ -15,27 +15,26 @@ Screens:
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
             - btnWizCancel:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
                   Color: =AppTheme.Primary
-                  Fill: =AppTheme.Bg
                   Font: =AppFont
                   Height: =28
-                  HoverColor: =AppTheme.PrimaryDark
-                  HoverFill: =AppTheme.Sunken
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
                   Size: =AppType.Small
-                  Text: ="<  Home"
+                  Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
                   Y: =Gutter
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblWizTitle:
-                Control: Label
+                Control: ModernText
                 Properties:
-                  Color: =AppTheme.Fg
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Font: =AppFont
                   FontWeight: =FontWeight.Bold
                   Height: =36
@@ -47,8 +46,10 @@ Screens:
                   X: =Gutter
                   Y: =Gutter + 34
             - lblWizStep:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Small
@@ -61,8 +62,10 @@ Screens:
                   X: =Gutter
                   Y: =Gutter + 72
             - lblCapCustName:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Customer name"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -76,11 +79,11 @@ Screens:
                   Y: =112
                   Visible: =varWizStep = 1
             - txtWizCustName:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =""
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -88,8 +91,6 @@ Screens:
                   Visible: =varWizStep = 1
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   RadiusTopLeft: =6
@@ -97,8 +98,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapCustDesc:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Description"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -112,11 +115,11 @@ Screens:
                   Y: =184
                   Visible: =varWizStep = 1
             - txtWizCustDesc:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =""
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -124,8 +127,6 @@ Screens:
                   Visible: =varWizStep = 1
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   RadiusTopLeft: =6
@@ -133,8 +134,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapCustNotes:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Support notes"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -148,11 +151,11 @@ Screens:
                   Y: =280
                   Visible: =varWizStep = 1
             - txtWizCustNotes:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =""
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -160,8 +163,6 @@ Screens:
                   Visible: =varWizStep = 1
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   RadiusTopLeft: =6
@@ -169,8 +170,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapWizCustActive:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Active"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -197,8 +200,9 @@ Screens:
                   TrueFill: =AppTheme.Ok
                   FalseFill: =AppTheme.Faint
             - btnWizStep1Next:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
                   OnSelect: |
                     =IfError(
                         Set(varWizCust,
@@ -216,8 +220,6 @@ Screens:
                         Set(varWizError, FirstError.Message)
                     )
                   Text: ="Create customer  >"
-                  Fill: =AppTheme.Primary
-                  HoverFill: =AppTheme.PrimaryDark
                   Width: =210
                   X: =Gutter
                   Y: =Parent.Height - Gutter - 44
@@ -226,17 +228,16 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
                   Height: =44
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblCapWizSolProduct:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Product"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -268,8 +269,10 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolVersion:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Installed software version"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -304,8 +307,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblHintWizSolVersion:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =If(IsBlank(ddWizSolProduct.Selected), "The software build running on the machine, not the model number.", "Standard for " & ddWizSolProduct.Selected.Value & " is " & Coalesce(LookUp(TB_Products, ID = ddWizSolProduct.Selected.Id, 'Current Standard Version'), "not recorded"))
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -318,8 +323,10 @@ Screens:
                   Y: =244
                   Visible: =varWizStep = 2
             - lblCapWizSolStatus:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Status"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -351,8 +358,10 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolNotes:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Config notes"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -387,8 +396,12 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - btnWizAddSolution:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
+                  BasePaletteColor: =AppTheme.Ok
+                  Icon: ="Add"
+                  Layout: =ButtonLayout.IconBefore
                   OnSelect: |
                     =IfError(
                         Patch(TB_Installations, Defaults(TB_Installations),
@@ -410,8 +423,6 @@ Screens:
                         Set(varWizError, FirstError.Message)
                     )
                   Text: ="+  Add solution"
-                  Fill: =AppTheme.Ok
-                  HoverFill: =AppTheme.Primary
                   Width: =190
                   X: =Gutter
                   Y: =444
@@ -420,14 +431,11 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
                   Height: =44
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - galWizSolutions:
                 Control: Gallery
                 Variant: Vertical
@@ -444,11 +452,12 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - lblWizSolRow:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Text: |
                           =ThisItem.Title & "   " & Coalesce(ThisItem.'Installed Version', "no version")
-                        Color: =AppTheme.Fg
                         Font: =AppFont
                         Size: =AppType.Small
                         Wrap: =false
@@ -460,8 +469,10 @@ Screens:
                         Width: =Parent.TemplateWidth
                         Height: =36
             - lblWizSolCount:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =If(CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 0, "No solutions added yet.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 1, "1 solution added.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) & " solutions added.")
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -475,12 +486,11 @@ Screens:
                   Y: =456
                   Visible: =varWizStep = 2
             - btnWizStep2Next:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
                   Text: |
                     ="Next: what is attached  >"
-                  Fill: =AppTheme.Primary
-                  HoverFill: =AppTheme.PrimaryDark
                   Width: =260
                   X: =ContentWidth - Gutter - 260
                   Y: =Parent.Height - Gutter - 44
@@ -490,17 +500,16 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
                   Height: =44
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblCapWizUnitParent:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Which solution are these attached to"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -541,8 +550,10 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
             - lblWizNoSolutions:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="No solutions on this customer yet - go back a step and add one."
                   Color: =RGBA(176, 0, 32, 1)
                   Font: =AppFont
@@ -555,8 +566,10 @@ Screens:
                   Y: =112
                   Visible: =varWizStep = 3 && CountRows(Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Usually attached to a " & varWizSolProdName & "  -  tick what is on site")
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -570,8 +583,10 @@ Screens:
                   Y: =188
                   Visible: =varWizStep = 3
             - lblWizAddedHead:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Already added"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -618,27 +633,31 @@ Screens:
                         Height: =44
                         Width: =Parent.TemplateWidth - 128
                   - lblWizCompId:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Text: =ThisItem.ID
                         Visible: =false
                         X: =0
                         Y: =0
                         Width: =1
-                        Height: =1
+                        Height: =15
                         Font: =AppFont
                         Size: =AppType.Micro
                         Wrap: =false
                         AutoHeight: =false
                   - lblWizCompName:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Text: =ThisItem.Title
                         Visible: =false
                         X: =0
                         Y: =0
                         Width: =1
-                        Height: =1
+                        Height: =15
                         Font: =AppFont
                         Size: =AppType.Micro
                         Wrap: =false
@@ -665,8 +684,10 @@ Screens:
                         RadiusBottomLeft: =6
                         RadiusBottomRight: =6
             - lblWizCompEmpty:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a solution above and its usual components appear here.", "Nothing is catalogued under the " & Coalesce(varWizFamily, "?") & " family yet. Add these units from Admin, Installations.")
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -694,11 +715,12 @@ Screens:
                   ShowScrollbar: =true
                 Children:
                   - lblWizUnitRow:
-                      Control: Label
+                      Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Text: |
                           =ThisItem.Title & "   under " & Coalesce(ThisItem.'Parent'.Value, "?")
-                        Color: =AppTheme.Fg
                         Font: =AppFont
                         Size: =AppType.Small
                         Wrap: =false
@@ -710,8 +732,10 @@ Screens:
                         Width: =Parent.TemplateWidth
                         Height: =36
             - lblCapWizUnitStatus:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Status for the ticked units"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -743,8 +767,12 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
             - btnWizAddUnits:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
+                  BasePaletteColor: =AppTheme.Ok
+                  Icon: ="Add"
+                  Layout: =ButtonLayout.IconBefore
                   OnSelect: |
                     =IfError(
                         ForAll(
@@ -772,8 +800,6 @@ Screens:
                         Set(varWizError, FirstError.Message)
                     )
                   Text: =If(CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) = 1, "+  Add 1 ticked unit", "+  Add " & CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) & " ticked units")
-                  Fill: =AppTheme.Ok
-                  HoverFill: =AppTheme.Primary
                   Width: =260
                   X: =Gutter + 280
                   Y: =Parent.Height - Gutter - 94
@@ -782,23 +808,19 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
                   Height: =44
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - btnWizFinish:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
                   OnSelect: |
                     =Set(varCustomer, varWizCust);
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
                   Text: ="Finish"
-                  Fill: =AppTheme.Primary
-                  HoverFill: =AppTheme.PrimaryDark
                   Width: =190
                   X: =ContentWidth - Gutter - 190
                   Y: =Parent.Height - Gutter - 44
@@ -807,17 +829,16 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
                   Height: =44
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblWizError:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =varWizError
                   Color: =RGBA(176, 0, 32, 1)
                   Font: =AppFont

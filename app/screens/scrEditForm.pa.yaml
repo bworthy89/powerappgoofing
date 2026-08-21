@@ -17,27 +17,26 @@ Screens:
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
             - btnBackEdit:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="Cancel"
+                  Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
                   Color: =AppTheme.Primary
-                  Fill: =AppTheme.Bg
                   Font: =AppFont
                   Height: =28
-                  HoverColor: =AppTheme.PrimaryDark
-                  HoverFill: =AppTheme.Sunken
                   OnSelect: =Navigate(scrAdmin, ScreenTransition.CoverRight)
                   Size: =AppType.Small
-                  Text: ="<  Cancel"
+                  Text: ="Cancel"
                   Width: =Gutter * 8
                   X: =Gutter
                   Y: =Gutter
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblTitleEdit:
-                Control: Label
+                Control: ModernText
                 Properties:
-                  Color: =AppTheme.Fg
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Font: =AppFont
                   FontWeight: =FontWeight.Bold
                   Height: =36
@@ -49,8 +48,10 @@ Screens:
                   X: =Gutter
                   Y: =Gutter + 34
             - lblCapTitleCust:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Name"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -64,15 +65,13 @@ Screens:
                   Y: =120
                   Visible: =varAdminList = "Cust"
             - txtTitleCust:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecCust.Title)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -85,8 +84,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapDescriptionCust:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Description"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -100,15 +101,13 @@ Screens:
                   Y: =192
                   Visible: =varAdminList = "Cust"
             - txtDescriptionCust:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecCust.Description)
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =64
@@ -121,8 +120,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapSupportNotesCust:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Support notes"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -136,15 +137,13 @@ Screens:
                   Y: =288
                   Visible: =varAdminList = "Cust"
             - txtSupportNotesCust:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecCust.'Support Notes')
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =64
@@ -157,8 +156,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapActiveCust:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Active"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -185,8 +186,10 @@ Screens:
                   TrueFill: =AppTheme.Ok
                   FalseFill: =AppTheme.Faint
             - lblCapTitleProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Model"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -200,15 +203,13 @@ Screens:
                   Y: =120
                   Visible: =varAdminList = "Prod"
             - txtTitleProd:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecProd.Title)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -221,8 +222,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapProductTypeProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Product type"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -254,8 +257,10 @@ Screens:
                   Y: =210
                   Visible: =varAdminList = "Prod"
             - lblCapFamilyProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Family"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -287,8 +292,10 @@ Screens:
                   Y: =282
                   Visible: =varAdminList = "Prod"
             - lblCapStdVersionProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Current standard version"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -302,15 +309,13 @@ Screens:
                   Y: =336
                   Visible: =varAdminList = "Prod"
             - txtStdVersionProd:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecProd.'Current Standard Version')
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -323,8 +328,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapDescriptionProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Description"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -338,15 +345,13 @@ Screens:
                   Y: =408
                   Visible: =varAdminList = "Prod"
             - txtDescriptionProd:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecProd.Description)
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =64
@@ -359,8 +364,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapActiveProd:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Active"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -387,8 +394,10 @@ Screens:
                   TrueFill: =AppTheme.Ok
                   FalseFill: =AppTheme.Faint
             - lblCapTitleInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Name"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -402,15 +411,13 @@ Screens:
                   Y: =120
                   Visible: =varAdminList = "Inst"
             - txtTitleInst:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecInst.Title)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -423,8 +430,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapCustomerInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Customer"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -456,8 +465,10 @@ Screens:
                   Y: =210
                   Visible: =varAdminList = "Inst"
             - lblCapProductInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Product"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -489,8 +500,10 @@ Screens:
                   Y: =282
                   Visible: =varAdminList = "Inst"
             - lblCapParentInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Parent solution (blank = this IS a solution)"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -522,8 +535,10 @@ Screens:
                   Y: =354
                   Visible: =varAdminList = "Inst"
             - lblCapInstVersionInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Installed version"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -537,15 +552,13 @@ Screens:
                   Y: =408
                   Visible: =varAdminList = "Inst"
             - txtInstVersionInst:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecInst.'Installed Version')
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -558,8 +571,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapStatusInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Status"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -591,8 +606,10 @@ Screens:
                   Y: =498
                   Visible: =varAdminList = "Inst"
             - lblCapConfigNotesInst:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Config notes"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -606,15 +623,13 @@ Screens:
                   Y: =552
                   Visible: =varAdminList = "Inst"
             - txtConfigNotesInst:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecInst.'Config Notes')
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
+                  Type: =TextInputType.Multiline
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =64
@@ -627,8 +642,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapTitleRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Title"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -642,15 +659,13 @@ Screens:
                   Y: =120
                   Visible: =varAdminList = "Ref"
             - txtTitleRef:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecRef.Title)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -663,8 +678,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapProductRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Product"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -696,8 +713,10 @@ Screens:
                   Y: =210
                   Visible: =varAdminList = "Ref"
             - lblCapCustomerRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Customer (blank = applies to all customers)"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -729,8 +748,10 @@ Screens:
                   Y: =282
                   Visible: =varAdminList = "Ref"
             - lblCapSectionRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Section"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -762,8 +783,10 @@ Screens:
                   Y: =354
                   Visible: =varAdminList = "Ref"
             - lblCapRefTypeRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Reference type"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -795,8 +818,10 @@ Screens:
                   Y: =426
                   Visible: =varAdminList = "Ref"
             - lblCapURLRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="URL"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -810,15 +835,13 @@ Screens:
                   Y: =480
                   Visible: =varAdminList = "Ref"
             - txtURLRef:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecRef.URL)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -831,8 +854,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapVersionRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Version"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -846,15 +871,13 @@ Screens:
                   Y: =552
                   Visible: =varAdminList = "Ref"
             - txtVersionRef:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
                   Default: =If(varAdminNew, "", varRecRef.Version)
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -867,8 +890,10 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
             - lblCapFeaturedRef:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: ="Featured"
                   Color: =AppTheme.Muted
                   Font: =AppFont
@@ -895,8 +920,11 @@ Screens:
                   TrueFill: =AppTheme.Ok
                   FalseFill: =AppTheme.Faint
             - btnSaveEdit:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Primary
+                  Icon: ="Save"
+                  Layout: =ButtonLayout.IconBefore
                   OnSelect: |
                     =IfError(
                         If(varAdminList = "Cust",
@@ -960,9 +988,6 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   Text: ="Save"
-                  Fill: =AppTheme.Primary
-                  Color: =AppTheme.OnPrimary
-                  HoverFill: =AppTheme.PrimaryDark
                   BorderThickness: =0
                   Height: =44
                   Width: =160
@@ -972,11 +997,11 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
             - lblEditError:
-                Control: Label
+                Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   Text: =varEditError
                   Color: =RGBA(176, 0, 32, 1)
                   Font: =AppFont

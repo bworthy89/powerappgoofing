@@ -73,7 +73,16 @@ THEME_DEFAULT = {
 # Converting them does not degrade gracefully, it erases the card.
 # Normally empty: the empty-Text rule in is_surface() identifies painted
 # surfaces on its own. This is the escape hatch for anything it misjudges.
-KEEP_CLASSIC = {}
+KEEP_CLASSIC = {
+    # ModernTextInput has no Reset property, and Reset(control) is unverified
+    # against it. These three are cleared after a write - the first two by
+    # Reset() in the Add-solution button, the third by a Reset property bound to
+    # varWizCompReset because it lives inside a gallery. Converting them would
+    # compile clean and quietly stop the form clearing itself.
+    "txtWizSolVersion": "cleared by Reset() after adding a solution",
+    "txtWizSolNotes": "cleared by Reset() after adding a solution",
+    "txtWizCompVersion": "Reset property binding, inside a gallery",
+}
 
 # Per-control extras keyed by control name: properties to add after conversion.
 # Appearance replaces the Fill that gets dropped, so a converted button is not
@@ -90,8 +99,14 @@ KEEP_CLASSIC = {}
 # gutter down its right edge. It reads as a stray grey bar and does not scroll,
 # because there is almost nothing to scroll. Zeroing the padding restores the
 # Label's fit without touching any of the heights the layout depends on.
+# ModernButton defaults to ButtonAppearance.Primary - a solid brand-coloured
+# button. Every converted button has just had its Fill dropped, so without a
+# fallback a quiet list row or a secondary action silently becomes the loudest
+# thing on the screen. Secondary is the safe landing place; anything that should
+# be Primary says so explicitly in EXTRA, which is applied first and wins.
 DEFAULTS = {
     "ModernText": {"PaddingTop": "0", "PaddingBottom": "0"},
+    "ModernButton": {"Appearance": "ButtonAppearance.Secondary"},
 }
 
 BACK = {"Appearance": "ButtonAppearance.Subtle",
@@ -104,6 +119,15 @@ SEARCH = {"Type": "TextInputType.Search"}
 # nothing - "Documents" and "AddUser" both silently produced text-only tiles.
 # The two that worked, People and Settings, are both in the Segoe Fluent Icons
 # list, so names are taken from there rather than invented.
+def tab(key):
+    """The admin list buttons carried their selected state in Fill, which
+    ModernButton does not have. Appearance carries it instead - Primary for the
+    active list, Secondary for the rest - so the indicator survives rather than
+    being silently dropped as decoration."""
+    return {"Appearance": f'If(varAdminList = "{key}", '
+                          "ButtonAppearance.Primary, ButtonAppearance.Secondary)"}
+
+
 def tile(icon):
     return {"Appearance": "ButtonAppearance.Secondary",
             "Icon": f'"{icon}"',
@@ -125,6 +149,32 @@ EXTRA = {
     "btnRecent1": {"Appearance": "ButtonAppearance.Subtle"},
     "btnRecent2": {"Appearance": "ButtonAppearance.Subtle"},
     "btnRecent3": {"Appearance": "ButtonAppearance.Subtle"},
+    # wave 4
+    "btnBackAdm": BACK,
+    "btnBackEdit": {"Appearance": "ButtonAppearance.Subtle",
+                    "Icon": '"Cancel"', "Layout": "ButtonLayout.IconBefore"},
+    "btnSaveEdit": {"Appearance": "ButtonAppearance.Primary",
+                    "Icon": '"Save"', "Layout": "ButtonLayout.IconBefore"},
+    "btnAddNew": {"Appearance": "ButtonAppearance.Primary",
+                  "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
+    "txtSearchAdm": SEARCH,
+    "btnListCust": tab("Cust"),
+    "btnListProd": tab("Prod"),
+    "btnListInst": tab("Inst"),
+    "btnListRef": tab("Ref"),
+    # The wizard's green "add" buttons read as a different kind of action from
+    # the blue "next" ones. BasePaletteColor keeps that distinction, which a
+    # bare Appearance would have flattened.
+    "btnWizStep1Next": {"Appearance": "ButtonAppearance.Primary"},
+    "btnWizStep2Next": {"Appearance": "ButtonAppearance.Primary"},
+    "btnWizFinish": {"Appearance": "ButtonAppearance.Primary"},
+    "btnWizAddSolution": {"Appearance": "ButtonAppearance.Primary",
+                          "BasePaletteColor": "AppTheme.Ok",
+                          "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
+    "btnWizAddUnits": {"Appearance": "ButtonAppearance.Primary",
+                       "BasePaletteColor": "AppTheme.Ok",
+                       "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
+    "btnWizCancel": BACK,
     # wave 3
     "btnBackOvw": BACK,
     "btnBackSol": BACK,
@@ -143,6 +193,10 @@ OVERRIDE = {
     # "Documents" nor "AddUser" is a real Fluent name.
     "btnTileCatalogue": {"Icon": '"Document"'},
     "btnTileOnboard": {"Icon": '"Add"'},
+    "btnBackAdm": {"Text": '"Home"'},
+    "btnBackEdit": {"Text": '"Cancel"'},
+    "btnAddNew": {"Text": '"Add new"'},
+    "btnWizCancel": {"Text": '"Home"'},
 }
 
 
@@ -151,7 +205,11 @@ def indent_of(line):
 
 
 def is_surface(lines, tline):
-    """True when the control at tline declares an empty Text.
+    """True when the control at tline has no text of its own.
+
+    Empty Text or no Text at all - both mean the control is a painted surface
+    with labels sitting on top, not a button. The admin galleries' row
+    backgrounds declare no Text whatsoever.
 
     Scans only this control's own Properties block, stopping at the next
     sibling, so a nested child's Text is never mistaken for the parent's.
@@ -167,9 +225,12 @@ def is_surface(lines, tline):
     for k in range(j + 1, len(lines)):
         if lines[k].strip() and indent_of(lines[k]) <= pind:
             break
-        if re.match(rf"^\s{{{pind + 2}}}Text:\s*=\"\"\s*$", lines[k]):
-            return True
-    return False
+        if re.match(rf"^\s{{{pind + 2}}}Text:", lines[k]):
+            # Has a Text of its own - a surface only if that text is empty.
+            # Matches the key, not "Text: =", so a block scalar ("Text: |")
+            # counts as having text rather than falling through to True.
+            return bool(re.match(rf"^\s{{{pind + 2}}}Text:\s*=\"\"\s*$", lines[k]))
+    return True
 
 
 def convert(src, extra=None, keep_classic=None):
@@ -279,7 +340,7 @@ def convert(src, extra=None, keep_classic=None):
             seen.add(newkey)
             out.extend(block)
 
-        for k, v in list(DEFAULTS.get(target, {}).items()) + list(extra.get(name, {}).items()):
+        for k, v in list(extra.get(name, {}).items()) + list(DEFAULTS.get(target, {}).items()):
             if k in seen:
                 continue
             out.insert(added_at, f"{' ' * (pind + 2)}{k}: ={v}")
@@ -346,6 +407,13 @@ def fix_text_heights(src):
                 report.append(f"  height        {name} {hv} -> {need} (size {px}, line {LINE_HEIGHT[px]})")
         i = end
     return "\n".join(lines), report
+
+
+def modernize_source(src):
+    """convert() then fix_text_heights(), for generators to call inline."""
+    src, rep = convert(src)
+    src, hrep = fix_text_heights(src)
+    return src, rep + hrep
 
 
 if __name__ == "__main__":
