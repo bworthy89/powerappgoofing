@@ -124,6 +124,12 @@ def check_file(path):
            or re.search(r"\bParent\s*=\s*Blank\(\)", code):
             findings.append((n, f"reserved word Parent used as a column - qualify with ThisRecord.Parent: {stripped[:50]}"))
 
+        # 1d. a nested LookUp reaching the outer row by bare column name. LookUp opens
+        #     its own record scope, so an unqualified outer column fails with
+        #     "Name isn't valid". Reach outward with Table[@Field].
+        if re.search(r"LookUp\([A-Za-z_]\w*,\s*ID\s*=\s*(?!ThisItem\.)(?!var)(?!\w+\[@)[A-Z]\w*\.", _code_only(line)):
+            findings.append((n, f"nested LookUp reaches the outer row by bare name - use Table[@Field]: {stripped[:50]}"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):

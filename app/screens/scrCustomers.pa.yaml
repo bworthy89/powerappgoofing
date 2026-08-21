@@ -209,8 +209,8 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
-                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
-                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                      !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                   )
                               ) > 0,
                               AppTheme.WarnLight,
@@ -249,8 +249,8 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
-                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
-                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                      !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                   )
                               ) > 0,
                               CountRows(
@@ -259,8 +259,8 @@ Screens:
                                       Customer.Id = ThisItem.ID,
                                       Status.Value <> "Retired",
                                       !IsBlank('Installed Version'),
-                                      !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
-                                      'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                      !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
+                                      'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                   )
                               ) & " off standard",
                               CountRows(

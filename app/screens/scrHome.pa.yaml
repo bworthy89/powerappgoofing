@@ -466,8 +466,8 @@ Screens:
                                         TB_Installations,
                                         Status.Value <> "Retired",
                                         !IsBlank('Installed Version'),
-                                        !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
-                                        'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                        !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
+                                        'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                     )
                                 )
                         - lblBacklogCaption:
@@ -521,7 +521,7 @@ Screens:
                                                   TB_Installations,
                                                   Status.Value <> "Retired",
                                                   !IsBlank('Installed Version'),
-                                                  'Installed Version' = LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                                  'Installed Version' = LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                               )
                                           ) / Max(CountRows(Filter(TB_Installations, Status.Value <> "Retired")), 1)
                                       )
@@ -540,8 +540,8 @@ Screens:
                                                   TB_Installations,
                                                   Status.Value <> "Retired",
                                                   !IsBlank('Installed Version'),
-                                                  !IsBlank(LookUp(TB_Products, ID = Product.Id).'Current Standard Version'),
-                                                  'Installed Version' <> LookUp(TB_Products, ID = Product.Id).'Current Standard Version'
+                                                  !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
+                                                  'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
                                               )
                                           ) / Max(CountRows(Filter(TB_Installations, Status.Value <> "Retired")), 1)
                                       )

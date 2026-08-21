@@ -172,3 +172,29 @@ collides there.
 word as a column name will keep catching people.
 
 `scripts/verify_yaml.py` now flags any unqualified use.
+
+## A nested LookUp cannot see the outer row by bare column name
+
+`LookUp` opens its own record scope. Inside
+`Filter(TB_Installations, ..., LookUp(TB_Products, ID = Product.Id)...)` the innermost scope is
+`TB_Products`, which has no `Product` column, so the bare reference to the outer row fails with
+*"Name isn't valid. 'Product' isn't recognized."*
+
+The documented disambiguation for a nested record scope is `Table[@FieldName]`:
+
+```powerfx
+Filter(
+    TB_Installations,
+    Status.Value <> "Retired",
+    'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
+)
+```
+
+`ThisRecord` does not help here - it also refers to the innermost scope. The `@` operator is what
+reaches outward.
+
+Note the distinction from `ThisItem.Product.Id`, which is fine: `ThisItem` is a gallery row, not a
+record scope, so nothing shadows it.
+
+This is the same trap recorded in `tasks/lessons.md` from the previous generation, where a nested
+`LookUp` reaching the outer row implicitly produced three consecutive failed pastes.
