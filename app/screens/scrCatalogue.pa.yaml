@@ -251,18 +251,18 @@ Screens:
                   - galModelsHit:
                       Control: Classic/Button
                       Properties:
-                      OnSelect: =Select(Parent)
-                      X: =0
-                      Y: =0
-                      Width: =Parent.TemplateWidth
-                      Height: =Parent.TemplateHeight
-                      Text: =""
-                      Fill: =RGBA(0, 0, 0, 0)
-                      HoverFill: =RGBA(0, 0, 0, 0.04)
-                      PressedFill: =RGBA(0, 87, 184, 0.10)
-                      BorderThickness: =0
-                      HoverBorderColor: =RGBA(0, 0, 0, 0)
-                      PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Text: =""
+                        Fill: =RGBA(0, 0, 0, 0)
+                        HoverFill: =RGBA(0, 0, 0, 0.04)
+                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        BorderThickness: =0
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblDocsHeading:
                 Control: Label
                 Properties:
@@ -379,18 +379,18 @@ Screens:
                   - galModelDocsHit:
                       Control: Classic/Button
                       Properties:
-                      OnSelect: =Select(Parent)
-                      X: =0
-                      Y: =0
-                      Width: =Parent.TemplateWidth
-                      Height: =Parent.TemplateHeight
-                      Text: =""
-                      Fill: =RGBA(0, 0, 0, 0)
-                      HoverFill: =RGBA(0, 0, 0, 0.04)
-                      PressedFill: =RGBA(0, 87, 184, 0.10)
-                      BorderThickness: =0
-                      HoverBorderColor: =RGBA(0, 0, 0, 0)
-                      PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Text: =""
+                        Fill: =RGBA(0, 0, 0, 0)
+                        HoverFill: =RGBA(0, 0, 0, 0.04)
+                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        BorderThickness: =0
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoModelDocs:
                 Control: Label
                 Properties:

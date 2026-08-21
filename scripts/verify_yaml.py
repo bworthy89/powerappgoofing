@@ -97,8 +97,23 @@ def check_file(path):
     except yaml.YAMLError as exc:
         findings.append((0, f"YAML does not parse: {exc}"))
 
+    _props_indent = None
     for n, line in enumerate(text.splitlines(), 1):
         stripped = line.strip()
+
+        # 1b. a property sitting at the same indent as its own Properties: line.
+        #     Valid YAML, but Studio rejects it with
+        #     "PA1001 ... Property 'X' not found on type ControlInstance" because the key
+        #     lands on the control node instead of inside Properties.
+        if _props_indent is not None:
+            ind = len(line) - len(line.lstrip())
+            if line.strip() and ind <= _props_indent:
+                if re.match(r"^\s*\w+:", line) and not re.match(r"^\s*(Control|Variant|Properties|Children):", line.strip() and line):
+                    if ind == _props_indent:
+                        findings.append((n, f"property sits level with Properties: instead of inside it: {stripped[:55]}"))
+                _props_indent = None
+        if re.match(r"^\s*Properties:\s*$", line):
+            _props_indent = len(line) - len(line.lstrip())
 
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)

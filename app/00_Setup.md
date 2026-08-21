@@ -127,3 +127,20 @@ as well as the hit area.
 One constraint: a hit target must never cover a **nested** gallery, or it blocks the inner rows the
 way the labels were blocking the outer ones. `galSolutions`' hit target is height-limited to 100 so
 it stops above the units gallery inside it.
+
+## `PA1001 ... Property 'X' not found on type 'ControlInstance'`
+
+This means a property key landed on the control node instead of inside its `Properties:` block -
+level with `Properties:` rather than indented under it. The file is still valid YAML, so nothing
+catches it until Studio refuses the paste.
+
+The nesting Studio expects, with the indents this kit uses:
+
+```yaml
+- btnExample:            # control node
+    Control: Classic/Button
+    Properties:          # + 4 from the control node
+      OnSelect: =Select(Parent)   # + 2 from Properties
+```
+
+`scripts/verify_yaml.py` now checks this.
