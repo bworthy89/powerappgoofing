@@ -148,7 +148,14 @@ def check_file(path):
         #    "Invalid argument type. Expecting one of: Text, Number, ... ViewValue".
         for choice in CHOICE_COLUMNS:
             pattern = r"\." + re.escape(choice) + r"(?!\.Value)(?![\w'])"
-            if re.search(pattern, _code_only(line)):
+            code = _code_only(line)
+            if re.search(pattern, code):
+                # Choices() is the exception: it takes the choice column itself
+                # and returns its option set. Choices(X.'Product Type').Value
+                # would be wrong. Anything else touching a choice column as a
+                # scalar still needs .Value.
+                if re.search(r"Choices\(\s*\w+" + re.escape("." + choice), code):
+                    continue
                 findings.append((n, f"choice column {choice} used without .Value: {stripped[:60]}"))
 
         # 3. locally-introduced names (skip YAML comments and string literals)
