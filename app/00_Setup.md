@@ -387,3 +387,76 @@ record scope, so nothing shadows it.
 
 This is the same trap recorded in `tasks/lessons.md` from the previous generation, where a nested
 `LookUp` reaching the outer row implicitly produced three consecutive failed pastes.
+
+
+## Reading a gallery's rows back out with `ForAll`
+
+Ticking checkboxes in a gallery and then writing one record per ticked row is the
+documented bulk pattern, but it has one rule that is easy to get wrong:
+
+> The disambiguation operator can't be used on the Gallery's items. Instead, you can store a
+> label within the gallery and reference it for comparison.
+>
+> -- [Create or update bulk records](https://learn.microsoft.com/power-apps/maker/canvas-apps/create-update-records-bulk)
+
+So this does **not** work, even though `As` is fine everywhere else:
+
+```powerfx
+ForAll(Filter(galComponents.AllItems, chkPick.Value = true) As Row,
+    Patch(TB_Installations, Defaults(TB_Installations), { Title: Row.Title })
+)
+```
+
+Inside the `ForAll` scope you address the template's controls **by name**, and any value you
+need from the underlying row has to be parked in a control first:
+
+```powerfx
+ForAll(Filter(galComponents.AllItems, chkPick.Value = true),
+    Patch(TB_Installations, Defaults(TB_Installations),
+        {
+            Title: varCust.Title & " - " & lblCompName.Text,
+            Product: LookUp(Choices(TB_Installations.Product), Id = Value(lblCompId.Text))
+        }
+    )
+)
+```
+
+`lblCompId` and `lblCompName` are 1x1 `Visible: =false` labels in the template holding
+`ThisItem.ID` and `ThisItem.Title`. Labels stringify, so a numeric key needs `Value()` on the
+way back. `scrOnboard`'s step 3 is built this way.
+
+## Clearing controls that live inside a gallery
+
+`Reset(control)` cannot reach into a gallery:
+
+> You cannot reset controls that are within a **Gallery** or **Edit form** control from outside
+> those controls. [...] Toggling the **Reset** property can be done [...] from a variable with
+> `Reset = MyVar` and toggling `MyVar` with the formula
+> `Button.OnSelect = Set( MyVar, true ); Set( MyVar, false )`.
+>
+> -- [Reset function](https://learn.microsoft.com/power-platform/power-fx/reference/function-reset)
+
+`Reset(Gallery)` is not the answer either - it rewinds the gallery's own selection and scroll,
+and the docs are explicit that it "does not recursively reset all the children".
+
+So every control in the template that needs clearing binds `Reset: =varSomethingReset`, and the
+button that consumed their values ends with `Set(varSomethingReset, true); Set(varSomethingReset, false)`.
+The pair runs in one behaviour formula and the controls still observe the transition.
+
+## Suggesting related records instead of asking for them
+
+`TB_Products` carries a `Family` on every row, and within a family exactly one row has
+`'Product Type' = "Solution"` while the rest are its components. That is enough to stop asking
+the technician which recyclers hang off a CI 300X - pick the solution, and the candidates are
+`Filter(TB_Products, Family.Value = varFamily, 'Product Type'.Value <> "Solution", Active = true)`.
+
+Two things this has to get right:
+
+- The family comes from the *installation*, not the dropdown: the parent picker yields a
+  `TB_Installations` id, so `OnChange` walks id -> `Product.Id` -> `TB_Products.Family.Value`
+  and parks it in a variable. Doing that walk inline in the gallery's `Items` works but is
+  unreadable and re-evaluates constantly.
+- A family with no solution row (Retail and Self Service, today) suggests nothing. That is a
+  legitimate state, not a bug, so it gets an empty-state label that distinguishes "you have not
+  picked a solution yet" from "this family has no components catalogued" - otherwise the blank
+  panel reads as a failure and sends someone debugging.

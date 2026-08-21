@@ -89,7 +89,7 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),
 q = ctrl(o, "lblWizStep", "Label", c)
 steps = ('Switch(varWizStep, 1, "Step 1 of 3  -  the customer", '
          '2, "Step 2 of 3  -  its solutions", '
-         '3, "Step 3 of 3  -  units under each solution", "")')
+         '3, "Step 3 of 3  -  what is attached to each solution", "")')
 for k, v in [("Color","AppTheme.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Height","20"),("Wrap","false"),("AutoHeight","false"),
@@ -115,12 +115,28 @@ def textin(name, y, vis, multiline=False, default='""'):
                  ("Y",str(y)),("Visible",vis)] + FIELD + RADIUS: prop(o, k, v, q)
     return h
 
-def dropdown(name, items, y, vis):
+def dropdown(name, items, y, vis, onchange=None, width=None):
     q = ctrl(o, name, "Classic/DropDown", c)
     o.write(f"{q}Items: |\n{q}  ={items}\n")
+    if onchange: blk(o, "OnChange", onchange, q)
     for k, v in [("Default",'""'),("AllowEmptySelection","true"),
-                 ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
+                 ("Height","40"),("Width",width or "ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y",str(y)),("Visible",vis)] + FIELD: prop(o, k, v, q)
+
+def hint(name, text, y, vis):
+    q = ctrl(o, name, "Label", c)
+    for k, v in [("Text",text),("Color","AppTheme.Muted"),("Font","AppFont"),
+                 ("Size","AppType.Micro"),("Wrap","false"),("AutoHeight","false"),
+                 ("Height","16"),("Width","ContentWidth - (Gutter * 2)"),
+                 ("X","Gutter"),("Y",str(y)),("Visible",vis)]: prop(o, k, v, q)
+
+def standard_hint(dd):
+    """"Standard for CI 300X is K38" - what the catalogue says should be there."""
+    return ('If(IsBlank(' + dd + '.Selected), '
+            '"The software build running on the machine, not the model number.", '
+            '"Standard for " & ' + dd + '.Selected.Value & " is " & '
+            'Coalesce(LookUp(TB_Products, ID = ' + dd + ".Selected.Id, "
+            '\'Current Standard Version\'), "not recorded"))')
 
 # ---- step 1: the customer ----------------------------------------------
 V1 = "varWizStep = 1"
@@ -166,8 +182,14 @@ V2 = "varWizStep = 2"
 y = 112
 caption("lblCapWizSolProduct", "Product", y, V2)
 dropdown("ddWizSolProduct", "Choices(TB_Installations.Product)", y + 18, V2); y += 72
-caption("lblCapWizSolVersion", "Installed version", y, V2)
-textin("txtWizSolVersion", y + 18, V2); y += 72
+
+# "Installed version" read as a hardware revision to the first person who used
+# this. Name the field for what it holds, and print the catalogued standard
+# underneath so there is something to compare against.
+caption("lblCapWizSolVersion", "Installed software version", y, V2)
+textin("txtWizSolVersion", y + 18, V2)
+hint("lblHintWizSolVersion", standard_hint("ddWizSolProduct"), y + 60, V2); y += 92
+
 caption("lblCapWizSolStatus", "Status", y, V2)
 dropdown("ddWizSolStatus", "Choices(TB_Installations.Status)", y + 18, V2); y += 72
 caption("lblCapWizSolNotes", "Config notes", y, V2)
@@ -216,61 +238,117 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small")
              ("Width","Parent.TemplateWidth"),("Height","36")]: prop(o, k, v, r)
 
 q = ctrl(o, "btnWizStep2Next", "Classic/Button", c)
-for k, v in [("Text",'"Next: units  >"'),("Fill","AppTheme.Primary"),
-             ("HoverFill","AppTheme.PrimaryDark"),("Width","190"),
-             ("X","ContentWidth - Gutter - 190"),
+for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
+             ("HoverFill","AppTheme.PrimaryDark"),("Width","260"),
+             ("X","ContentWidth - Gutter - 260"),
              ("Y","Parent.Height - Gutter - 44"),
              ("OnSelect","Set(varWizStep, 3)"),("Visible",V2)] + BTN:
     prop(o, k, v, q)
 
-# ---- step 3: units ------------------------------------------------------
+# ---- step 3: components under a solution --------------------------------
+# The technician should not have to remember that a CI 300X carries an
+# RBW 100, a CI CS and a CI DV. TB_Products already records that: every
+# product carries a Family, and within a family exactly one row is the
+# solution ('Product Type' = "Solution") while the rest are its components.
+# Picking the solution is therefore enough to propose the candidate list,
+# and the technician only ticks what is actually on site.
+#
+# The proposal is a suggestion, not a constraint. A family with no solution
+# row (Retail and Self Service, today) proposes nothing, so that case gets an
+# explicit empty state rather than a blank panel.
 V3 = "varWizStep = 3"
+HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
+RX   = f"(Gutter + {HALF} + 24)"
+CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
+        "'Product Type'.Value <> \"Solution\", Active = true)")
+
 y = 112
-caption("lblCapWizUnitParent", "Belongs to which solution", y, V3)
+caption("lblCapWizUnitParent", "Which solution are these attached to", y, V3)
 dropdown("ddWizUnitParent",
          "Filter(Choices(TB_Installations.'Parent') As Opt, "
          "CountRows(Filter(TB_Installations, ID = Opt.Id, "
          "Customer.Id = varWizCust.ID, IsBlank('Parent'))) > 0)",
-         y + 18, V3); y += 72
-caption("lblCapWizUnitProduct", "Product", y, V3)
-dropdown("ddWizUnitProduct", "Choices(TB_Installations.Product)", y + 18, V3); y += 72
-caption("lblCapWizUnitVersion", "Installed version", y, V3)
-textin("txtWizUnitVersion", y + 18, V3); y += 72
-caption("lblCapWizUnitStatus", "Status", y, V3)
-dropdown("ddWizUnitStatus", "Choices(TB_Installations.Status)", y + 18, V3); y += 72
+         y + 18, V3,
+         onchange=[
+             "Set(varWizSolProdId,",
+             "    LookUp(TB_Installations, ID = ddWizUnitParent.Selected.Id, Product.Id));",
+             "Set(varWizFamily,",
+             "    LookUp(TB_Products, ID = varWizSolProdId, Family.Value));",
+             "Set(varWizSolProdName,",
+             "    LookUp(TB_Products, ID = varWizSolProdId, Title))"])
+y += 76
 
-q = ctrl(o, "btnWizAddUnit", "Classic/Button", c)
-blk(o, "OnSelect", [
-    "IfError(",
-    "    Patch(TB_Installations, Defaults(TB_Installations),",
-    "        {",
-    '            Title: varWizCust.Title & " - " & ddWizUnitProduct.Selected.Value,',
-    "            Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),",
-    "            Product: ddWizUnitProduct.Selected,",
-    "            'Parent': ddWizUnitParent.Selected,",
-    "            'Installed Version': txtWizUnitVersion.Text,",
-    "            Status: { Value: ddWizUnitStatus.Selected.Value }",
-    "        }",
-    "    );",
-    '    Set(varWizError, "");',
-    "    Reset(txtWizUnitVersion);",
-    "    Reset(ddWizUnitProduct),",
-    "    Set(varWizError, FirstError.Message)",
-    ")"], q)
-for k, v in [("Text",'"+  Add unit"'),("Fill","AppTheme.Ok"),
-             ("HoverFill","AppTheme.Primary"),("Width","190"),
-             ("X","Gutter"),("Y",str(y)),
-             ("Visible",f"{V3} && !IsBlank(ddWizUnitParent.Selected) "
-                        "&& !IsBlank(ddWizUnitProduct.Selected)")] + BTN:
-    prop(o, k, v, q)
+q = ctrl(o, "lblWizCompHead", "Label", c)
+head = ('If(IsBlank(ddWizUnitParent.Selected), "", '
+        '"Usually attached to a " & varWizSolProdName & "  -  tick what is on site")')
+for k, v in [("Text",head),("Color","AppTheme.Muted"),("Font","AppFont"),
+             ("Size","AppType.Micro"),("FontWeight","FontWeight.Semibold"),
+             ("Wrap","false"),("AutoHeight","false"),("Height","16"),
+             ("Width",HALF),("X","Gutter"),("Y",str(y)),("Visible",V3)]: prop(o, k, v, q)
+
+q = ctrl(o, "lblWizAddedHead", "Label", c)
+for k, v in [("Text",'"Already added"'),("Color","AppTheme.Muted"),
+             ("Font","AppFont"),("Size","AppType.Micro"),
+             ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
+             ("AutoHeight","false"),("Height","16"),("Width",HALF),
+             ("X",RX),("Y",str(y)),("Visible",V3)]: prop(o, k, v, q)
+y += 22
+
+GALH = f"Parent.Height - {y} - Gutter - 120"
+
+q = ctrl(o, "galWizComponents", "Gallery", c, "Vertical")
+o.write(f"{q}Items: |\n{q}  ={CAND}\n")
+for k, v in [("Visible",V3),("X","Gutter"),("Y",str(y)),("Width",HALF),
+             ("Height",GALH),("TemplateSize","48"),("TemplatePadding","4"),
+             ("ShowScrollbar","true")]: prop(o, k, v, q)
+o.write(f"{q[:-2]}Children:\n")
+
+r = ctrl(o, "chkWizComp", "Classic/CheckBox", q)
+o.write(f'{r}Text: |\n{r}  =ThisItem.Title & "   " '
+        f'& ThisItem.\'Product Type\'.Value\n')
+for k, v in [("Default","false"),("Reset","varWizCompReset"),
+             ("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small"),
+             ("Fill","AppTheme.Sunken"),("CheckmarkFill","AppTheme.Primary"),
+             ("CheckboxBorderColor","AppTheme.Line"),("PaddingLeft","8"),
+             ("X","0"),("Y","2"),("Height","44"),
+             ("Width","Parent.TemplateWidth - 128")]: prop(o, k, v, r)
+
+# Two carrier labels. ForAll over a gallery's AllItems cannot use the
+# disambiguation operator to reach the underlying row, so the documented
+# pattern is to park each needed value in a control and read that control
+# by name inside the loop.
+# https://learn.microsoft.com/power-apps/maker/canvas-apps/create-update-records-bulk
+for nm, txt in [("lblWizCompId", "ThisItem.ID"), ("lblWizCompName", "ThisItem.Title")]:
+    r = ctrl(o, nm, "Label", q)
+    for k, v in [("Text",txt),("Visible","false"),("X","0"),("Y","0"),
+                 ("Width","1"),("Height","1"),("Font","AppFont"),
+                 ("Size","AppType.Micro"),("Wrap","false"),
+                 ("AutoHeight","false")]: prop(o, k, v, r)
+
+r = ctrl(o, "txtWizCompVersion", "Classic/TextInput", q)
+for k, v in [("Default","ThisItem.'Current Standard Version'"),
+             ("Reset","varWizCompReset"),
+             ("Mode","TextMode.SingleLine"),("HintText",'"software"'),
+             ("X","Parent.TemplateWidth - 124"),("Y","2"),
+             ("Height","40"),("Width","120")] + FIELD + RADIUS: prop(o, k, v, r)
+
+# Empty state. Two distinct causes, and conflating them sends the technician
+# hunting for a bug that is really just an unpicked dropdown.
+q = ctrl(o, "lblWizCompEmpty", "Label", c)
+empty = ('If(IsBlank(ddWizUnitParent.Selected), '
+         '"Pick a solution above and its usual components appear here.", '
+         '"Nothing is catalogued under the " & Coalesce(varWizFamily, "?") & '
+         '" family yet. Add these units from Admin, Installations.")')
+for k, v in [("Text",empty),("Color","AppTheme.Muted"),("Font","AppFont"),
+             ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
+             ("Height","80"),("Width",HALF),("X","Gutter"),("Y",str(y + 8)),
+             ("Visible",f"{V3} && CountRows({CAND}) = 0")]: prop(o, k, v, q)
 
 q = ctrl(o, "galWizUnits", "Gallery", c, "Vertical")
 o.write(f"{q}Items: |\n{q}  =Filter(TB_Installations, "
         f"Customer.Id = varWizCust.ID, !IsBlank('Parent'))\n")
-for k, v in [("Visible",V3),("X","Gutter"),("Y",str(y + 60)),
-             ("Width","ContentWidth - (Gutter * 2)"),
-             ("Height",f"Parent.Height - {y + 60} - Gutter - 60"),
-             ("TemplateSize","36"),("TemplatePadding","4"),
+for k, v in [("Visible",V3),("X",RX),("Y",str(y)),("Width",HALF),
+             ("Height",GALH),("TemplateSize","36"),("TemplatePadding","4"),
              ("ShowScrollbar","true")]: prop(o, k, v, q)
 o.write(f"{q[:-2]}Children:\n")
 r = ctrl(o, "lblWizUnitRow", "Label", q)
@@ -280,6 +358,51 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small")
              ("Wrap","false"),("AutoHeight","false"),("PaddingLeft","10"),
              ("Fill","AppTheme.Sunken"),("X","0"),("Y","0"),
              ("Width","Parent.TemplateWidth"),("Height","36")]: prop(o, k, v, r)
+
+# ---- one status for the whole ticked batch
+caption("lblCapWizUnitStatus", "Status for the ticked units",
+        "Parent.Height - Gutter - 112", V3)
+q = ctrl(o, "ddWizUnitStatus", "Classic/DropDown", c)
+o.write(f"{q}Items: |\n{q}  =Choices(TB_Installations.Status)\n")
+for k, v in [("Default",'""'),("AllowEmptySelection","true"),("Height","40"),
+             ("Width","260"),("X","Gutter"),
+             ("Y","Parent.Height - Gutter - 94"),
+             ("Visible",V3)] + FIELD: prop(o, k, v, q)
+
+TICKED = "Filter(galWizComponents.AllItems, chkWizComp.Value = true)"
+q = ctrl(o, "btnWizAddUnits", "Classic/Button", c)
+# Set/Set on varWizCompReset unticks every box afterwards. Reset() cannot
+# reach into a gallery from outside it; toggling a variable bound to the
+# controls' Reset property is the documented alternative.
+# https://learn.microsoft.com/power-platform/power-fx/reference/function-reset
+blk(o, "OnSelect", [
+    "IfError(",
+    "    ForAll(",
+    f"        {TICKED},",
+    "        Patch(TB_Installations, Defaults(TB_Installations),",
+    "            {",
+    '                Title: varWizCust.Title & " - " & lblWizCompName.Text,',
+    "                Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),",
+    "                Product: LookUp(Choices(TB_Installations.Product),",
+    "                                Id = Value(lblWizCompId.Text)),",
+    "                'Parent': ddWizUnitParent.Selected,",
+    "                'Installed Version': txtWizCompVersion.Text,",
+    "                Status: { Value: ddWizUnitStatus.Selected.Value }",
+    "            }",
+    "        )",
+    "    );",
+    '    Set(varWizError, "");',
+    "    Set(varWizCompReset, true);",
+    "    Set(varWizCompReset, false),",
+    "    Set(varWizError, FirstError.Message)",
+    ")"], q)
+addtxt = ('If(CountRows(' + TICKED + ') = 1, "+  Add 1 ticked unit", '
+          '"+  Add " & CountRows(' + TICKED + ') & " ticked units")')
+for k, v in [("Text",addtxt),("Fill","AppTheme.Ok"),
+             ("HoverFill","AppTheme.Primary"),("Width","260"),
+             ("X","Gutter + 280"),("Y","Parent.Height - Gutter - 94"),
+             ("Visible",f"{V3} && CountRows({TICKED}) > 0")] + BTN:
+    prop(o, k, v, q)
 
 q = ctrl(o, "btnWizFinish", "Classic/Button", c)
 blk(o, "OnSelect", [

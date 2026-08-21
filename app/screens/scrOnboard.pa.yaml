@@ -56,7 +56,7 @@ Screens:
                   Height: =20
                   Wrap: =false
                   AutoHeight: =false
-                  Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  its solutions", 3, "Step 3 of 3  -  units under each solution", "")
+                  Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  its solutions", 3, "Step 3 of 3  -  what is attached to each solution", "")
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =Gutter + 72
@@ -270,7 +270,7 @@ Screens:
             - lblCapWizSolVersion:
                 Control: Label
                 Properties:
-                  Text: ="Installed version"
+                  Text: ="Installed software version"
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
@@ -303,6 +303,20 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
+            - lblHintWizSolVersion:
+                Control: Label
+                Properties:
+                  Text: =If(IsBlank(ddWizSolProduct.Selected), "The software build running on the machine, not the model number.", "Standard for " & ddWizSolProduct.Selected.Value & " is " & Coalesce(LookUp(TB_Products, ID = ddWizSolProduct.Selected.Id, 'Current Standard Version'), "not recorded"))
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =244
+                  Visible: =varWizStep = 2
             - lblCapWizSolStatus:
                 Control: Label
                 Properties:
@@ -316,7 +330,7 @@ Screens:
                   Height: =16
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =256
+                  Y: =276
                   Visible: =varWizStep = 2
             - ddWizSolStatus:
                 Control: Classic/DropDown
@@ -328,7 +342,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =274
+                  Y: =294
                   Visible: =varWizStep = 2
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
@@ -349,7 +363,7 @@ Screens:
                   Height: =16
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =328
+                  Y: =348
                   Visible: =varWizStep = 2
             - txtWizSolNotes:
                 Control: Classic/TextInput
@@ -360,7 +374,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =346
+                  Y: =366
                   Visible: =varWizStep = 2
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
@@ -398,7 +412,7 @@ Screens:
                   HoverFill: =AppTheme.Primary
                   Width: =190
                   X: =Gutter
-                  Y: =424
+                  Y: =444
                   Visible: =varWizStep = 2 && !IsBlank(ddWizSolProduct.Selected)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -420,9 +434,9 @@ Screens:
                     =Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))
                   Visible: =varWizStep = 2
                   X: =Gutter
-                  Y: =484
+                  Y: =504
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - 484 - Gutter - 60
+                  Height: =Parent.Height - 504 - Gutter - 60
                   TemplateSize: =36
                   TemplatePadding: =4
                   ShowScrollbar: =true
@@ -447,11 +461,11 @@ Screens:
                 Control: Classic/Button
                 Properties:
                   Text: |
-                    ="Next: units  >"
+                    ="Next: what is attached  >"
                   Fill: =AppTheme.Primary
                   HoverFill: =AppTheme.PrimaryDark
-                  Width: =190
-                  X: =ContentWidth - Gutter - 190
+                  Width: =260
+                  X: =ContentWidth - Gutter - 260
                   Y: =Parent.Height - Gutter - 44
                   OnSelect: =Set(varWizStep, 3)
                   Visible: =varWizStep = 2
@@ -470,7 +484,7 @@ Screens:
             - lblCapWizUnitParent:
                 Control: Label
                 Properties:
-                  Text: ="Belongs to which solution"
+                  Text: ="Which solution are these attached to"
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
@@ -487,6 +501,13 @@ Screens:
                 Properties:
                   Items: |
                     =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = varWizCust.ID, IsBlank('Parent'))) > 0)
+                  OnChange: |
+                    =Set(varWizSolProdId,
+                        LookUp(TB_Installations, ID = ddWizUnitParent.Selected.Id, Product.Id));
+                    Set(varWizFamily,
+                        LookUp(TB_Products, ID = varWizSolProdId, Family.Value));
+                    Set(varWizSolProdName,
+                        LookUp(TB_Products, ID = varWizSolProdId, Title))
                   Default: =""
                   AllowEmptySelection: =true
                   Height: =40
@@ -500,10 +521,10 @@ Screens:
                   Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
-            - lblCapWizUnitProduct:
+            - lblWizCompHead:
                 Control: Label
                 Properties:
-                  Text: ="Product"
+                  Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Usually attached to a " & varWizSolProdName & "  -  tick what is on site")
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
@@ -511,136 +532,119 @@ Screens:
                   Wrap: =false
                   AutoHeight: =false
                   Height: =16
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =Gutter
-                  Y: =184
+                  Y: =188
                   Visible: =varWizStep = 3
-            - ddWizUnitProduct:
-                Control: Classic/DropDown
+            - lblWizAddedHead:
+                Control: Label
+                Properties:
+                  Text: ="Already added"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
+                  X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
+                  Y: =188
+                  Visible: =varWizStep = 3
+            - galWizComponents:
+                Control: Gallery
+                Variant: Vertical
                 Properties:
                   Items: |
-                    =Choices(TB_Installations.Product)
-                  Default: =""
-                  AllowEmptySelection: =true
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =202
+                    =Filter(TB_Products, Family.Value = varWizFamily, 'Product Type'.Value <> "Solution", Active = true)
                   Visible: =varWizStep = 3
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - lblCapWizUnitVersion:
+                  X: =Gutter
+                  Y: =210
+                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
+                  Height: =Parent.Height - 210 - Gutter - 120
+                  TemplateSize: =48
+                  TemplatePadding: =4
+                  ShowScrollbar: =true
+                Children:
+                  - chkWizComp:
+                      Control: Classic/CheckBox
+                      Properties:
+                        Text: |
+                          =ThisItem.Title & "   " & ThisItem.'Product Type'.Value
+                        Default: =false
+                        Reset: =varWizCompReset
+                        Color: =AppTheme.Fg
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Fill: =AppTheme.Sunken
+                        CheckmarkFill: =AppTheme.Primary
+                        CheckboxBorderColor: =AppTheme.Line
+                        PaddingLeft: =8
+                        X: =0
+                        Y: =2
+                        Height: =44
+                        Width: =Parent.TemplateWidth - 128
+                  - lblWizCompId:
+                      Control: Label
+                      Properties:
+                        Text: =ThisItem.ID
+                        Visible: =false
+                        X: =0
+                        Y: =0
+                        Width: =1
+                        Height: =1
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Wrap: =false
+                        AutoHeight: =false
+                  - lblWizCompName:
+                      Control: Label
+                      Properties:
+                        Text: =ThisItem.Title
+                        Visible: =false
+                        X: =0
+                        Y: =0
+                        Width: =1
+                        Height: =1
+                        Font: =AppFont
+                        Size: =AppType.Micro
+                        Wrap: =false
+                        AutoHeight: =false
+                  - txtWizCompVersion:
+                      Control: Classic/TextInput
+                      Properties:
+                        Default: =ThisItem.'Current Standard Version'
+                        Reset: =varWizCompReset
+                        Mode: =TextMode.SingleLine
+                        HintText: ="software"
+                        X: =Parent.TemplateWidth - 124
+                        Y: =2
+                        Height: =40
+                        Width: =120
+                        BorderColor: =AppTheme.Line
+                        BorderThickness: =1
+                        Color: =AppTheme.Fg
+                        Fill: =AppTheme.Surface
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+            - lblWizCompEmpty:
                 Control: Label
                 Properties:
-                  Text: ="Installed version"
+                  Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a solution above and its usual components appear here.", "Nothing is catalogued under the " & Coalesce(varWizFamily, "?") & " family yet. Add these units from Admin, Installations.")
                   Color: =AppTheme.Muted
                   Font: =AppFont
-                  Size: =AppType.Micro
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
+                  Size: =AppType.Small
+                  Wrap: =true
                   AutoHeight: =false
-                  Height: =16
-                  Width: =ContentWidth - (Gutter * 2)
+                  Height: =80
+                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =Gutter
-                  Y: =256
-                  Visible: =varWizStep = 3
-            - txtWizUnitVersion:
-                Control: Classic/TextInput
-                Properties:
-                  Default: =""
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =274
-                  Visible: =varWizStep = 3
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapWizUnitStatus:
-                Control: Label
-                Properties:
-                  Text: ="Status"
-                  Color: =AppTheme.Muted
-                  Font: =AppFont
-                  Size: =AppType.Micro
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =16
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =328
-                  Visible: =varWizStep = 3
-            - ddWizUnitStatus:
-                Control: Classic/DropDown
-                Properties:
-                  Items: |
-                    =Choices(TB_Installations.Status)
-                  Default: =""
-                  AllowEmptySelection: =true
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =346
-                  Visible: =varWizStep = 3
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - btnWizAddUnit:
-                Control: Classic/Button
-                Properties:
-                  OnSelect: |
-                    =IfError(
-                        Patch(TB_Installations, Defaults(TB_Installations),
-                            {
-                                Title: varWizCust.Title & " - " & ddWizUnitProduct.Selected.Value,
-                                Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),
-                                Product: ddWizUnitProduct.Selected,
-                                'Parent': ddWizUnitParent.Selected,
-                                'Installed Version': txtWizUnitVersion.Text,
-                                Status: { Value: ddWizUnitStatus.Selected.Value }
-                            }
-                        );
-                        Set(varWizError, "");
-                        Reset(txtWizUnitVersion);
-                        Reset(ddWizUnitProduct),
-                        Set(varWizError, FirstError.Message)
-                    )
-                  Text: ="+  Add unit"
-                  Fill: =AppTheme.Ok
-                  HoverFill: =AppTheme.Primary
-                  Width: =190
-                  X: =Gutter
-                  Y: =400
-                  Visible: =varWizStep = 3 && !IsBlank(ddWizUnitParent.Selected) && !IsBlank(ddWizUnitProduct.Selected)
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  BorderThickness: =0
-                  Color: =AppTheme.OnPrimary
-                  Height: =44
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  FocusedBorderThickness: =2
-                  FocusedBorderColor: =AppTheme.Primary
+                  Y: =218
+                  Visible: =varWizStep = 3 && CountRows(Filter(TB_Products, Family.Value = varWizFamily, 'Product Type'.Value <> "Solution", Active = true)) = 0
             - galWizUnits:
                 Control: Gallery
                 Variant: Vertical
@@ -648,10 +652,10 @@ Screens:
                   Items: |
                     =Filter(TB_Installations, Customer.Id = varWizCust.ID, !IsBlank('Parent'))
                   Visible: =varWizStep = 3
-                  X: =Gutter
-                  Y: =460
-                  Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - 460 - Gutter - 60
+                  X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
+                  Y: =210
+                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
+                  Height: =Parent.Height - 210 - Gutter - 120
                   TemplateSize: =36
                   TemplatePadding: =4
                   ShowScrollbar: =true
@@ -672,6 +676,82 @@ Screens:
                         Y: =0
                         Width: =Parent.TemplateWidth
                         Height: =36
+            - lblCapWizUnitStatus:
+                Control: Label
+                Properties:
+                  Text: ="Status for the ticked units"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =Parent.Height - Gutter - 112
+                  Visible: =varWizStep = 3
+            - ddWizUnitStatus:
+                Control: Classic/DropDown
+                Properties:
+                  Items: |
+                    =Choices(TB_Installations.Status)
+                  Default: =""
+                  AllowEmptySelection: =true
+                  Height: =40
+                  Width: =260
+                  X: =Gutter
+                  Y: =Parent.Height - Gutter - 94
+                  Visible: =varWizStep = 3
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Color: =AppTheme.Fg
+                  Fill: =AppTheme.Surface
+                  Font: =AppFont
+                  Size: =AppType.Body
+            - btnWizAddUnits:
+                Control: Classic/Button
+                Properties:
+                  OnSelect: |
+                    =IfError(
+                        ForAll(
+                            Filter(galWizComponents.AllItems, chkWizComp.Value = true),
+                            Patch(TB_Installations, Defaults(TB_Installations),
+                                {
+                                    Title: varWizCust.Title & " - " & lblWizCompName.Text,
+                                    Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),
+                                    Product: LookUp(Choices(TB_Installations.Product),
+                                                    Id = Value(lblWizCompId.Text)),
+                                    'Parent': ddWizUnitParent.Selected,
+                                    'Installed Version': txtWizCompVersion.Text,
+                                    Status: { Value: ddWizUnitStatus.Selected.Value }
+                                }
+                            )
+                        );
+                        Set(varWizError, "");
+                        Set(varWizCompReset, true);
+                        Set(varWizCompReset, false),
+                        Set(varWizError, FirstError.Message)
+                    )
+                  Text: =If(CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) = 1, "+  Add 1 ticked unit", "+  Add " & CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) & " ticked units")
+                  Fill: =AppTheme.Ok
+                  HoverFill: =AppTheme.Primary
+                  Width: =260
+                  X: =Gutter + 280
+                  Y: =Parent.Height - Gutter - 94
+                  Visible: =varWizStep = 3 && CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) > 0
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  BorderThickness: =0
+                  Color: =AppTheme.OnPrimary
+                  Height: =44
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  FocusedBorderThickness: =2
+                  FocusedBorderColor: =AppTheme.Primary
             - btnWizFinish:
                 Control: Classic/Button
                 Properties:
