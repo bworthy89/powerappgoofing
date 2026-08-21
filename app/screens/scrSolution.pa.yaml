@@ -502,14 +502,14 @@ Screens:
             - lblFirmwareHeading:
                 Control: Label
                 Properties:
-                  X: =If(scrSolution.Size >= ScreenSize.Medium, galFirmware.X, Gutter)
+                  X: =If(scrSolution.Size >= ScreenSize.Medium, galDocs.X + galDocs.Width + Gutter, Gutter)
                   Y: =If(scrSolution.Size >= ScreenSize.Medium, lblDocsHeading.Y, galDocs.Y + galDocs.Height + Gutter)
                     =If(
                         IsBlank(varInstallation.'Config Notes'),
                         Gutter + 100 + 112 + Gutter,
                         Gutter + 100 + 112 + Gutter + 92 + Gutter
                     ) + 32 + 160 + Gutter + 32 + 180 + Gutter
-                  Width: =If(scrSolution.Size >= ScreenSize.Medium, galFirmware.Width, Parent.Width - (Gutter * 2))
+                  Width: =If(scrSolution.Size >= ScreenSize.Medium, (Parent.Width - (Gutter * 3)) / 2, Parent.Width - (Gutter * 2))
                   Height: =24
                   Text: ="Firmware & Downloads"
                   Font: =AppFont
@@ -520,14 +520,14 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =If(scrSolution.Size >= ScreenSize.Medium, galDocs.X + galDocs.Width + Gutter, Gutter)
+                  X: =lblFirmwareHeading.X
                   Y: =lblFirmwareHeading.Y + lblFirmwareHeading.Height + 8
                     =If(
                         IsBlank(varInstallation.'Config Notes'),
                         Gutter + 100 + 112 + Gutter,
                         Gutter + 100 + 112 + Gutter + 92 + Gutter
                     ) + 32 + 160 + Gutter + 32 + 180 + Gutter + 32
-                  Width: =If(scrSolution.Size >= ScreenSize.Medium, (Parent.Width - (Gutter * 3)) / 2, Parent.Width - (Gutter * 2))
+                  Width: =lblFirmwareHeading.Width
                   # Floored at 0: conRoot is fixed-height with no scroll idiom proven
                   # anywhere in this kit (GroupContainer here is always ManualLayout — see
                   # scrHome's note on why AutoLayout was rejected as unverified), so a
