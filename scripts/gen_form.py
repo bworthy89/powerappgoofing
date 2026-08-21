@@ -37,9 +37,8 @@ def patch_value(L, f):
     if k == "bool":                  return f"{n}.Value"
     if k == "choice":                return f"{{ Value: {n}.Selected.Value }}"
     if k == "lookup":
-        rec = ("{ '@odata.type': \"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference\", "
-               f"Id: {n}.Selected.ID, Value: {n}.Selected.Title }}")
-        return f"If(IsBlank({n}.Selected), Blank(), {rec})"
+        # Choices() already returns records in the shape the lookup accepts.
+        return f"If(IsBlank({n}.Selected), Blank(), {n}.Selected)"
     raise ValueError(k)
 
 # Default shown in the input when editing an existing record
@@ -51,15 +50,32 @@ def default_expr(L, f):
     if k == "choice":                return f'If(varAdminNew, "", {v}.{n}.Value)'
     if k == "lookup":                return f'If(varAdminNew, "", {v}.{n}.Value)'
 
+def default_items_expr(L, f):
+    """ComboBox preselection for edit mode.
+
+    DefaultSelectedItems takes a Table, and a SharePoint lookup projects as
+    {Id, Value} -- which is not a row of the target list -- so the row has to be
+    fetched back by Id rather than handed over directly.
+    """
+    v, n, t = var(L), f["n"], f["target"]
+    return f"If(varAdminNew, Blank(), Filter({t}, ID = {v}.{n}.Id))"
+
 def items_expr(L, f):
     if f["kind"] == "choice":
         return f"Choices({L['source']}.{f['n']})"
     if f.get("parent"):
-        # only top-level installations belonging to the customer chosen above.
-        # IsBlank('Parent') is the runtime-verified form - see app/00_Setup.md.
-        return ("Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, "
-                "IsBlank('Parent'))")
-    return f"Sort({f['target']}, Title, SortOrder.Ascending)"
+        # Choices() gives lookup-shaped {Id, Value} records but carries no other
+        # columns, so the customer scoping has to be applied by intersecting on
+        # Id with the rows that qualify. IsBlank('Parent') is the runtime-verified
+        # form - see app/00_Setup.md.
+        # Choices() yields {Id, Value} and carries no other columns, so the
+        # customer scoping is applied by asking, for each option, whether a
+        # qualifying row exists. "As Opt" names the outer scope so Opt.Id is not
+        # shadowed by TB_Installations' own columns in the inner Filter.
+        return ("Filter(Choices(TB_Installations.'Parent') As Opt, "
+                "CountRows(Filter(TB_Installations, ID = Opt.Id, "
+                "Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)")
+    return f"Choices({L['source']}.{f['n']})"
 
 # ------------------------------------------------------------------ generate
 o = io.StringIO()
@@ -124,7 +140,34 @@ for L in LISTS:
                            ("X","Gutter"),("Y",str(y+18)),("Visible",vis),
                            ("TrueFill","AppTheme.Ok"),("FalseFill","AppTheme.Faint")]: prop(o, kk, vv, i)
             h = 36
+        elif k == "choice":
+            i = ctrl(o, nm, "Classic/DropDown", c)
+            o.write(f"{i}Items: |\n{i}  ={items_expr(L,f)}\n")
+            for kk, vv in [("Default",default_expr(L,f)),
+                           ("AllowEmptySelection","true"),
+                           ("BorderColor","AppTheme.Line"),("BorderThickness","1"),
+                           ("Color","AppTheme.Fg"),("Fill","AppTheme.Surface"),
+                           ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),
+                           ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
+                           ("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
         else:
+            # Lookups use a Drop down with an explicit Value column.
+            #
+            # Per the Drop down control reference: "Items - The source of data
+            # that contains the items that appear in the control. If the source
+            # has multiple columns, set the control's Value property to the
+            # column of data that you want to show." A SharePoint list is always
+            # multi-column, so without Value the control has no display column
+            # and renders an empty list.
+            #
+            # Note describe_control does not return Value among Classic/DropDown's
+            # input properties, though the documentation lists it as a key one.
+            #
+            # ComboBox was tried and abandoned: Studio seeds it with a SearchItems
+            # default of Search(ComboBoxSample, ..., "Value1"), a sample source
+            # that does not exist here, and that property cannot be overridden
+            # from YAML ("Unknown property 'SearchItems'"). IsSearchable: =false
+            # does not stop it being evaluated either.
             i = ctrl(o, nm, "Classic/DropDown", c)
             o.write(f"{i}Items: |\n{i}  ={items_expr(L,f)}\n")
             for kk, vv in [("Default",default_expr(L,f)),

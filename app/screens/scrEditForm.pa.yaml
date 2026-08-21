@@ -441,7 +441,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(TB_Customers, Title, SortOrder.Ascending)
+                    =Choices(TB_Installations.Customer)
                   Default: =If(varAdminNew, "", varRecInst.Customer.Value)
                   AllowEmptySelection: =true
                   BorderColor: =AppTheme.Line
@@ -474,7 +474,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(TB_Products, Title, SortOrder.Ascending)
+                    =Choices(TB_Installations.Product)
                   Default: =If(varAdminNew, "", varRecInst.Product.Value)
                   AllowEmptySelection: =true
                   BorderColor: =AppTheme.Line
@@ -507,7 +507,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'))
+                    =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
                   Default: =If(varAdminNew, "", varRecInst.'Parent'.Value)
                   AllowEmptySelection: =true
                   BorderColor: =AppTheme.Line
@@ -681,7 +681,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(TB_Products, Title, SortOrder.Ascending)
+                    =Choices(TB_References.Product)
                   Default: =If(varAdminNew, "", varRecRef.Product.Value)
                   AllowEmptySelection: =true
                   BorderColor: =AppTheme.Line
@@ -714,7 +714,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(TB_Customers, Title, SortOrder.Ascending)
+                    =Choices(TB_References.Customer)
                   Default: =If(varAdminNew, "", varRecRef.Customer.Value)
                   AllowEmptySelection: =true
                   BorderColor: =AppTheme.Line
@@ -928,9 +928,9 @@ Screens:
                                 If(varAdminNew, Defaults(TB_Installations), varRecInst),
                                 {
                                     Title: txtTitleInst.Text,
-                                    Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerInst.Selected.ID, Value: ddCustomerInst.Selected.Title }),
-                                    Product: If(IsBlank(ddProductInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductInst.Selected.ID, Value: ddProductInst.Selected.Title }),
-                                    'Parent': If(IsBlank(ddParentInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddParentInst.Selected.ID, Value: ddParentInst.Selected.Title }),
+                                    Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), ddCustomerInst.Selected),
+                                    Product: If(IsBlank(ddProductInst.Selected), Blank(), ddProductInst.Selected),
+                                    'Parent': If(IsBlank(ddParentInst.Selected), Blank(), ddParentInst.Selected),
                                     'Installed Version': txtInstVersionInst.Text,
                                     Status: { Value: ddStatusInst.Selected.Value },
                                     'Config Notes': txtConfigNotesInst.Text
@@ -942,8 +942,8 @@ Screens:
                                 If(varAdminNew, Defaults(TB_References), varRecRef),
                                 {
                                     Title: txtTitleRef.Text,
-                                    Product: If(IsBlank(ddProductRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductRef.Selected.ID, Value: ddProductRef.Selected.Title }),
-                                    Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerRef.Selected.ID, Value: ddCustomerRef.Selected.Title }),
+                                    Product: If(IsBlank(ddProductRef.Selected), Blank(), ddProductRef.Selected),
+                                    Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), ddCustomerRef.Selected),
                                     Section: { Value: ddSectionRef.Selected.Value },
                                     'Reference Type': { Value: ddRefTypeRef.Selected.Value },
                                     URL: txtURLRef.Text,
