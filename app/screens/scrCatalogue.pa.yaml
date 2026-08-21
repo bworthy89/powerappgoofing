@@ -116,7 +116,7 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  WrapCount: =Switch(scrCatalogue.Size, ScreenSize.Small, 1, ScreenSize.Medium, 2, 3)
+                  WrapCount: =Switch(scrCatalogue.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 2)
                   X: =Gutter
                   Y: =Gutter + 140
                   Width: =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 3)) * 0.55, Parent.Width - (Gutter * 2))
@@ -176,6 +176,8 @@ Screens:
                   - lblModelTitle:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =10
@@ -189,6 +191,8 @@ Screens:
                   - lblModelType:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
@@ -213,6 +217,8 @@ Screens:
                   - lblStandard:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.25)
                         Y: =50
@@ -226,6 +232,8 @@ Screens:
                   - lblDocCount:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.6)
                         Y: =50
@@ -292,6 +300,8 @@ Screens:
                   - lblDocTitle:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
@@ -305,6 +315,8 @@ Screens:
                   - lblDocMeta:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =22

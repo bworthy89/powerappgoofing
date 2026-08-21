@@ -114,7 +114,7 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  WrapCount: =Switch(scrCustomerOverview.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, 2)
+                  WrapCount: =Switch(scrCustomerOverview.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 1, 2)
                   X: =Gutter
                   Y: |
                     =If(
@@ -184,6 +184,8 @@ Screens:
                   - lblModel:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter * 2
                         Y: =14
@@ -256,6 +258,8 @@ Screens:
                   - lblStatus:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =(Gutter * 2) + (Gutter * 9) + 8
                         Y: =64

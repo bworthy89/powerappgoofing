@@ -158,6 +158,8 @@ Screens:
                   - lblStandard:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.6)
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.4
@@ -419,6 +421,8 @@ Screens:
                   - lblDocsTitle:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
@@ -432,6 +436,8 @@ Screens:
                   - lblDocsType:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =24
@@ -444,6 +450,8 @@ Screens:
                   - lblDocsException:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
                         Y: =24
@@ -585,6 +593,8 @@ Screens:
                   - lblFirmwareTitle:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =4
@@ -598,6 +608,8 @@ Screens:
                   - lblFirmwareType:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =24
@@ -610,6 +622,8 @@ Screens:
                   - lblFirmwareException:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.4)
                         Y: =24

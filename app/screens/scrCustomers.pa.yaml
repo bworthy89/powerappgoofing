@@ -75,12 +75,12 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  WrapCount: =Switch(scrCustomers.Size, ScreenSize.Small, 1, ScreenSize.Medium, 2, 3)
+                  WrapCount: =Switch(scrCustomers.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 3)
                   X: =Gutter
                   Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =Parent.Height - (Gutter + 140) - Gutter
-                  TemplateSize: =88
+                  TemplateSize: =104
                   TemplatePadding: =0
                   ShowScrollbar: =true
                   Items: |
@@ -135,7 +135,7 @@ Screens:
                         X: =0
                         Y: =0
                         Width: =Parent.TemplateWidth
-                        Height: =80
+                        Height: =96
                         Text: =""
                         Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
                         HoverFill: =AppTheme.Sunken
@@ -157,7 +157,7 @@ Screens:
                         X: =0
                         Y: =0
                         Width: =4
-                        Height: =80
+                        Height: =96
                         Text: =""
                         Fill: =AppTheme.Primary
                         BorderThickness: =0
@@ -165,6 +165,8 @@ Screens:
                   - lblName:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =12
@@ -178,11 +180,13 @@ Screens:
                   - lblDesc:
                       Control: Label
                       Properties:
+                        Wrap: =true
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =36
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =20
+                        Height: =36
                         Text: =Coalesce(ThisItem.Description, "No description")
                         Font: =AppFont
                         Size: =AppType.Small

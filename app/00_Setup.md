@@ -92,3 +92,21 @@ decision in the app at once.
 
 Also required, and set in step 0 above: **Scale to fit off.** With it on, the app renders at a fixed
 design size and scales to fit, so `App.Width` never changes and no responsive formula can fire.
+
+## Label text: `Wrap` and `AutoHeight` are not optional
+
+Microsoft's Label reference: **`AutoHeight` false truncates the text to the assigned height**, and
+that is the default. `Wrap` decides whether text flows onto a second line. Leave both unset and a
+label silently clips - and it only shows up once something makes the control narrower, such as a
+gallery with more than one column.
+
+Every data-bound label in a gallery template therefore states both explicitly:
+
+- One-line identifiers - titles, types, versions, status - use `Wrap: =false`. They end at the edge
+  rather than wrapping into a second line that the fixed height then cuts in half.
+- Descriptions use `Wrap: =true` with a height sized for two lines.
+
+`WrapCount` on a gallery divides the gallery's width, so `Parent.TemplateWidth` shrinks in
+proportion. Multi-column lists therefore need a card wide enough for their longest realistic
+content, not just a column count that looks good on a wide monitor. The thresholds here start at
+`ScreenSize.Large` rather than `Medium` for exactly that reason.

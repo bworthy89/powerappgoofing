@@ -176,6 +176,8 @@ Screens:
                   - lblSrchCustName:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
@@ -189,11 +191,13 @@ Screens:
                   - lblSrchCustDesc:
                       Control: Label
                       Properties:
+                        Wrap: =true
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =18
+                        Height: =34
                         Text: =Coalesce(ThisItem.Description, "No description")
                         Font: =AppFont
                         Size: =AppType.Small
@@ -236,6 +240,8 @@ Screens:
                   - lblSrchProdName:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
@@ -301,6 +307,8 @@ Screens:
                   - lblSrchDocTitle:
                       Control: Label
                       Properties:
+                        Wrap: =false
+                        AutoHeight: =false
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =8
