@@ -1,0 +1,30 @@
+# Glory Blue - a modern theme for canvas apps.
+#
+# Paste this in Studio: app authoring menu -> Themes -> Add a theme -> Paste theme.
+# Requires Settings -> Updates -> New -> "Modern controls and themes" set to On.
+#
+# Modern controls and themes carry NO premium licence requirement - Microsoft's own
+# documentation states none, and it is a settings toggle rather than a licence gate.
+# Verified 2026-08-21.
+#
+# Once applied, App.Theme is readable from Power Fx: App.Theme.Colors.Primary,
+# App.Theme.Font. That makes the theme a second source of truth alongside AppTheme in
+# 01_App_Properties.md, so adopt one or the other rather than both. AppTheme stays the
+# authority until this theme is proven in Studio.
+#
+# BasePaletteColor is the placeholder Glory blue. It is NOT a confirmed brand value -
+# replace it with the real hex from the brand guide and the whole 16-slot ramp regenerates.
+
+Themes:
+  Glory Blue:
+    Font: "'Lato', 'Segoe UI', 'Open Sans', sans-serif"
+    BasePaletteColor: '#0057B8'
+    HueTorsion: 0
+    Vibrancy: -10
+    ColorOverrides:
+      Base: '#0057B8'
+      Darker10: '#004A9E'
+      Darker20: '#003D82'
+      Lighter10: '#2E7BD0'
+      Lighter20: '#9EC4EA'
+      Lighter30: '#E7F0FA'
