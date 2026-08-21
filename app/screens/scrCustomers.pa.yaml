@@ -42,6 +42,8 @@ Screens:
             - lblTitleCus:
                 Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 36
                   Width: =Parent.Width - (Gutter * 2)
@@ -150,6 +152,8 @@ Screens:
                   - lblAccent:
                       Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -162,6 +166,8 @@ Screens:
                   - lblName:
                       Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =false
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -176,6 +182,8 @@ Screens:
                   - lblDesc:
                       Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         Wrap: =true
                         AutoHeight: =false
                         OnSelect: =Select(Parent)
@@ -190,6 +198,8 @@ Screens:
                   - rectChip:
                       Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         Text: =""
                         X: =Gutter
@@ -226,6 +236,8 @@ Screens:
                   - lblChip:
                       Control: ModernText
                       Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =80
@@ -302,6 +314,8 @@ Screens:
             - lblNoCustomers:
                 Control: ModernText
                 Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)

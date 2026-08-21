@@ -71,17 +71,9 @@ THEME_DEFAULT = {
 # Controls that must stay classic, by name, with the reason. These are painted
 # surfaces: they rely on Fill/HoverFill/PressedFill, which no modern control has.
 # Converting them does not degrade gracefully, it erases the card.
-KEEP_CLASSIC = {
-    "btnCard": "card surface - needs Fill/HoverFill/PressedFill",
-    "galCustomersHit": "transparent hit target - needs Fill/HoverFill/PressedFill",
-    "btnSolCard": "card surface - needs Fill/HoverFill/PressedFill",
-    "btnSolHit": "transparent hit target - needs Fill/HoverFill/PressedFill",
-    "btnUnitRow": "row surface - needs Fill/HoverFill/PressedFill",
-    "btnUnitHit": "transparent hit target - needs Fill/HoverFill/PressedFill",
-    "btnDocRow": "row surface - needs Fill/HoverFill/PressedFill",
-    "btnTile": "tile surface - needs Fill/HoverFill/PressedFill",
-    "btnTileHit": "transparent hit target - needs Fill/HoverFill/PressedFill",
-}
+# Normally empty: the empty-Text rule in is_surface() identifies painted
+# surfaces on its own. This is the escape hatch for anything it misjudges.
+KEEP_CLASSIC = {}
 
 # Per-control extras keyed by control name: properties to add after conversion.
 # Appearance replaces the Fill that gets dropped, so a converted button is not
@@ -89,22 +81,80 @@ KEEP_CLASSIC = {
 # is a compile error; Icon is a plain string, so a wrong name renders nothing -
 # but the button keeps its text, which is why the "<" is dropped from the label
 # only where an icon actually replaces it.
+# Applied to every converted control of a type, unless the source already set
+# the property.
+#
+# ModernText carries Fluent's default vertical padding; a classic Label had
+# none. On a control sized to its text - a 22px row for 14pt type - content
+# plus padding overflows by a pixel or two and the control renders an overflow
+# gutter down its right edge. It reads as a stray grey bar and does not scroll,
+# because there is almost nothing to scroll. Zeroing the padding restores the
+# Label's fit without touching any of the heights the layout depends on.
+DEFAULTS = {
+    "ModernText": {"PaddingTop": "0", "PaddingBottom": "0"},
+}
+
+BACK = {"Appearance": "ButtonAppearance.Subtle",
+        "Icon": '"ChevronLeft"',
+        "Layout": "ButtonLayout.IconBefore"}
+SEARCH = {"Type": "TextInputType.Search"}
+
+
+def tile(icon):
+    return {"Appearance": "ButtonAppearance.Secondary",
+            "Icon": f'"{icon}"',
+            "Layout": "ButtonLayout.IconBefore"}
+
+
 EXTRA = {
-    "btnBackCus": {"Appearance": "ButtonAppearance.Subtle",
-                   "Icon": '"ChevronLeft"',
-                   "Layout": "ButtonLayout.IconBefore"},
-    "txtSearchCus": {"Type": "TextInputType.Search"},
+    # wave 1
+    "btnBackCus": BACK,
+    "txtSearchCus": SEARCH,
+    # wave 2
+    "btnBackCat": BACK,
+    "txtSearchCat": SEARCH,
+    "txtSearchHome": SEARCH,
+    "btnTileCustomers": tile("People"),
+    "btnTileCatalogue": tile("Documents"),
+    "btnTileAdmin": tile("Settings"),
+    "btnTileOnboard": tile("AddUser"),
+    "btnRecent1": {"Appearance": "ButtonAppearance.Subtle"},
+    "btnRecent2": {"Appearance": "ButtonAppearance.Subtle"},
+    "btnRecent3": {"Appearance": "ButtonAppearance.Subtle"},
 }
 
 # Values replaced outright, where the modern control changes what the text
 # should say.
 OVERRIDE = {
     "btnBackCus": {"Text": '"Home"'},
+    "btnBackCat": {"Text": '"Home"'},
 }
 
 
 def indent_of(line):
     return len(line) - len(line.lstrip())
+
+
+def is_surface(lines, tline):
+    """True when the control at tline declares an empty Text.
+
+    Scans only this control's own Properties block, stopping at the next
+    sibling, so a nested child's Text is never mistaken for the parent's.
+    """
+    j = tline + 1
+    while j < len(lines) and lines[j].strip() != "Properties:":
+        if re.match(r"^\s*- \w+:\s*$", lines[j]):
+            return False
+        j += 1
+    if j >= len(lines):
+        return False
+    pind = indent_of(lines[j])
+    for k in range(j + 1, len(lines)):
+        if lines[k].strip() and indent_of(lines[k]) <= pind:
+            break
+        if re.match(rf"^\s{{{pind + 2}}}Text:\s*=\"\"\s*$", lines[k]):
+            return True
+    return False
 
 
 def convert(src, extra=None, keep_classic=None):
@@ -132,9 +182,20 @@ def convert(src, extra=None, keep_classic=None):
             break
 
         target = CONTROL_MAP.get(ctype)
-        if target is None or name in keep_classic:
-            if name in keep_classic and target:
-                report.append(f"  KEPT CLASSIC  {name} ({ctype}) - {keep_classic[name]}")
+
+        # A Classic/Button with no text of its own is not a button, it is a
+        # painted surface - a card back, a row background, a transparent hit
+        # target with labels sitting on top. Those depend on Fill/HoverFill/
+        # PressedFill, which no modern control has, so converting them erases
+        # the surface instead of restyling it. A button that carries its own
+        # Text is a real button and converts fine.
+        reason = keep_classic.get(name)
+        if reason is None and ctype == "Classic/Button" and is_surface(lines, tline):
+            reason = "empty Text - painted surface, needs Fill/HoverFill"
+
+        if target is None or reason:
+            if reason and target:
+                report.append(f"  KEPT CLASSIC  {name} ({ctype}) - {reason}")
             out.append(line); i += 1; continue
 
         # Emit through the Control: line, rewritten.
@@ -199,11 +260,12 @@ def convert(src, extra=None, keep_classic=None):
             seen.add(newkey)
             out.extend(block)
 
-        for k, v in extra.get(name, {}).items():
+        for k, v in list(DEFAULTS.get(target, {}).items()) + list(extra.get(name, {}).items()):
             if k in seen:
                 continue
             out.insert(added_at, f"{' ' * (pind + 2)}{k}: ={v}")
             added_at += 1
+            seen.add(k)
             report.append(f"  ADDED         {name}.{k} = {v}")
 
     return "\n".join(out), report
