@@ -517,12 +517,16 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)
+                    =Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), "Title"), Title, SortOrder.Ascending)
                   OnChange: |
-                    =Set(varWizSolProdName,
-                        LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Title));
+                    =Set(varWizParent,
+                        LookUp(TB_Installations,
+                            Customer.Id = varWizCust.ID && IsBlank('Parent')
+                            && Title = ddWizUnitParent.Selected.Title));
+                    Set(varWizSolProdName,
+                        LookUp(TB_Products, ID = varWizParent.Product.Id, Title));
                     Set(varWizFamily,
-                        LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Family.Value))
+                        LookUp(TB_Products, ID = varWizParent.Product.Id, Family.Value))
                   Default: =""
                   AllowEmptySelection: =true
                   Height: =40
@@ -549,7 +553,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =112
-                  Visible: =varWizStep = 3 && CountRows(Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)) = 0
+                  Visible: =varWizStep = 3 && CountRows(Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), "Title"), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
                 Control: Label
                 Properties:
@@ -756,7 +760,7 @@ Screens:
                                           Id: Value(lblWizCompId.Text), Value: lblWizCompName.Text },
                                     'Parent':
                                         { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
-                                          Id: ddWizUnitParent.Selected.ID, Value: ddWizUnitParent.Selected.Title },
+                                          Id: varWizParent.ID, Value: varWizParent.Title },
                                     'Installed Version': txtWizCompVersion.Text,
                                     Status: If(IsBlank(ddWizUnitStatus.Selected), Blank(), { Value: ddWizUnitStatus.Selected.Value })
                                 }

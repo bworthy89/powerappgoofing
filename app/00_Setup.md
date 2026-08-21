@@ -527,3 +527,45 @@ theorising about the app.
 Related: a required column turns a silently-blank value into a hard write failure, so
 `Get-PnPField -List <list> | Select InternalName, Required` is worth running before
 assuming a blank is harmless.
+
+## A `Classic/DropDown` renders blank unless its `Items` is single-column
+
+The docs are unambiguous about the rule:
+
+> **Items** - The source of data that contains the items that appear in the control. If the
+> source has multiple columns, set the control's **Value** property to the column of data
+> that you want to show.
+>
+> -- [Drop down control](https://learn.microsoft.com/power-apps/maker/canvas-apps/controls/control-drop-down)
+
+But `Value` is the property this environment rejects as unknown - the contradiction already
+recorded further up this file. So a multi-column `Items` can *never* render here: the control
+has no way to be told which column to show, and it shows nothing.
+
+The failure is quiet and misleading. The control still selects, `OnChange` still fires, and
+everything downstream still works - it is only the closed dropdown's caption that is empty. On
+`scrOnboard` this looked like "the picker is broken" while the component list it drove was
+filling in correctly right below it.
+
+Two ways out, both fine:
+
+- **`Choices()`** returns `{Id, Value}`, and the control displays `Value` without being asked.
+  This is why every dropdown on `scrEditForm` renders. Use it whenever the target rows existed
+  when the app loaded.
+- **`ShowColumns(..., "Title")`** pins `Items` to one column, so there is nothing to guess at.
+  Needed when the rows may have been created during this session, since `Choices()` cannot see
+  those. `.Selected` then carries only that column, so resolve the full row once in `OnChange`:
+
+```powerfx
+Set(varWizParent,
+    LookUp(TB_Installations,
+        Customer.Id = varWizCust.ID && IsBlank('Parent')
+        && Title = ddWizUnitParent.Selected.Title))
+```
+
+`LookUp` takes one condition and an optional result column, so the predicates join with `&&` -
+commas would be read as the result argument. `Filter` is the one that takes several.
+
+The remaining sharp edge is that this resolves by title. Within one customer's top-level
+installations titles are `"<customer> - <product>"`, so a customer with two of the same solution
+would have both units attach to the first. Worth knowing; not worth a schema change yet.

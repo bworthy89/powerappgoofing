@@ -287,8 +287,13 @@ for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
 # row (Retail and Self Service, today) proposes nothing, so that case gets an
 # explicit empty state rather than a blank panel.
 V3 = "varWizStep = 3"
-PARENTS = ("Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
-           "IsBlank('Parent')), Title, SortOrder.Ascending)")
+# A Classic/DropDown shows a named column only if its Value property says
+# which one -- and this environment rejects Value as an unknown property (see
+# app/00_Setup.md). A single-column Items needs no Value, so ShowColumns pins
+# it to Title and the control has nothing to guess at.
+PARENTS = ("Sort(ShowColumns(Filter(TB_Installations, "
+           "Customer.Id = varWizCust.ID, IsBlank('Parent')), \"Title\"), "
+           "Title, SortOrder.Ascending)")
 HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
 RX   = f"(Gutter + {HALF} + 24)"
 CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
@@ -302,10 +307,16 @@ caption("lblCapWizUnitParent", "Which solution are these attached to", y, V3)
 # TB_Installations record, so its columns are reachable directly.
 dropdown("ddWizUnitParent", PARENTS, y + 18, V3,
          onchange=[
+             # Selected is now just { Title }, so resolve the row once and keep
+             # it. LookUp takes ONE condition, hence && rather than commas.
+             "Set(varWizParent,",
+             "    LookUp(TB_Installations,",
+             "        Customer.Id = varWizCust.ID && IsBlank('Parent')",
+             "        && Title = ddWizUnitParent.Selected.Title));",
              "Set(varWizSolProdName,",
-             "    LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Title));",
+             "    LookUp(TB_Products, ID = varWizParent.Product.Id, Title));",
              "Set(varWizFamily,",
-             "    LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Family.Value))"])
+             "    LookUp(TB_Products, ID = varWizParent.Product.Id, Family.Value))"])
 y += 76
 
 q = ctrl(o, "lblWizNoSolutions", "Label", c)
@@ -425,8 +436,7 @@ blk(o, "OnSelect", [
     "                Product:",
     ] + spref("                    ", "Value(lblWizCompId.Text)", "lblWizCompName.Text") + [
     "                'Parent':",
-    ] + spref("                    ", "ddWizUnitParent.Selected.ID",
-              "ddWizUnitParent.Selected.Title") + [
+    ] + spref("                    ", "varWizParent.ID", "varWizParent.Title") + [
     "                'Installed Version': txtWizCompVersion.Text,",
     "                Status: If(IsBlank(ddWizUnitStatus.Selected), Blank(), "
     "{ Value: ddWizUnitStatus.Selected.Value })",
