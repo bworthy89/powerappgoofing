@@ -290,9 +290,11 @@ V3 = "varWizStep = 3"
 # A Classic/DropDown shows a named column only if its Value property says
 # which one -- and this environment rejects Value as an unknown property (see
 # app/00_Setup.md). A single-column Items needs no Value, so ShowColumns pins
-# it to Title and the control has nothing to guess at.
+# it to Title and the control has nothing to guess at. Column names are
+# identifiers, not quoted strings -- the quoted form was retired in 3.24042
+# and this compiler answers it with "Expected identifier name".
 PARENTS = ("Sort(ShowColumns(Filter(TB_Installations, "
-           "Customer.Id = varWizCust.ID, IsBlank('Parent')), \"Title\"), "
+           "Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), "
            "Title, SortOrder.Ascending)")
 HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
 RX   = f"(Gutter + {HALF} + 24)"

@@ -552,7 +552,7 @@ Two ways out, both fine:
 - **`Choices()`** returns `{Id, Value}`, and the control displays `Value` without being asked.
   This is why every dropdown on `scrEditForm` renders. Use it whenever the target rows existed
   when the app loaded.
-- **`ShowColumns(..., "Title")`** pins `Items` to one column, so there is nothing to guess at.
+- **`ShowColumns(..., Title)`** pins `Items` to one column, so there is nothing to guess at.
   Needed when the rows may have been created during this session, since `Choices()` cannot see
   those. `.Selected` then carries only that column, so resolve the full row once in `OnChange`:
 
@@ -569,3 +569,17 @@ commas would be read as the result argument. `Filter` is the one that takes seve
 The remaining sharp edge is that this resolves by title. Within one customer's top-level
 installations titles are `"<customer> - <product>"`, so a customer with two of the same solution
 would have both units attach to the first. Worth knowing; not worth a schema change yet.
+
+Column names in `ShowColumns` / `DropColumns` / `RenameColumns` / `AddColumns` are **identifiers,
+not quoted strings**. The quoted form was retired in version 3.24042 and this compiler answers it
+with `Expected identifier name` followed by a cascade of `'Title' isn't recognized` and
+`has some invalid arguments` - four errors from one pair of quotes.
+
+The compiler also confirmed the diagnosis on the way past, with a warning on the *old*
+multi-column `Items`:
+
+> The columns produced by this rule are all nested tables and/or records, however the property
+> expects at least some columns of simple values (such as text, or numbers).
+
+That is the blank dropdown stated outright. Worth grepping the warning list for, since it is easy
+to lose among ninety delegation notices.

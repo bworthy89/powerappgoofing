@@ -517,7 +517,7 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), "Title"), Title, SortOrder.Ascending)
+                    =Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), Title, SortOrder.Ascending)
                   OnChange: |
                     =Set(varWizParent,
                         LookUp(TB_Installations,
@@ -553,7 +553,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =112
-                  Visible: =varWizStep = 3 && CountRows(Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), "Title"), Title, SortOrder.Ascending)) = 0
+                  Visible: =varWizStep = 3 && CountRows(Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
                 Control: Label
                 Properties:
