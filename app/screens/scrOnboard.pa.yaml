@@ -394,10 +394,12 @@ Screens:
                         Patch(TB_Installations, Defaults(TB_Installations),
                             {
                                 Title: varWizCust.Title & " - " & ddWizSolProduct.Selected.Value,
-                                Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),
+                                Customer:
+                                    { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
+                                      Id: varWizCust.ID, Value: varWizCust.Title },
                                 Product: ddWizSolProduct.Selected,
                                 'Installed Version': txtWizSolVersion.Text,
-                                Status: { Value: ddWizSolStatus.Selected.Value },
+                                Status: If(IsBlank(ddWizSolStatus.Selected), Blank(), { Value: ddWizSolStatus.Selected.Value }),
                                 'Config Notes': txtWizSolNotes.Text
                             }
                         );
@@ -457,6 +459,21 @@ Screens:
                         Y: =0
                         Width: =Parent.TemplateWidth
                         Height: =36
+            - lblWizSolCount:
+                Control: Label
+                Properties:
+                  Text: =If(CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 0, "No solutions added yet.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 1, "1 solution added.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) & " solutions added.")
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =20
+                  Width: =360
+                  X: =Gutter + 210
+                  Y: =456
+                  Visible: =varWizStep = 2
             - btnWizStep2Next:
                 Control: Classic/Button
                 Properties:
@@ -500,14 +517,12 @@ Screens:
                 Control: Classic/DropDown
                 Properties:
                   Items: |
-                    =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = varWizCust.ID, IsBlank('Parent'))) > 0)
+                    =Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)
                   OnChange: |
-                    =Set(varWizSolProdId,
-                        LookUp(TB_Installations, ID = ddWizUnitParent.Selected.Id, Product.Id));
+                    =Set(varWizSolProdName,
+                        LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Title));
                     Set(varWizFamily,
-                        LookUp(TB_Products, ID = varWizSolProdId, Family.Value));
-                    Set(varWizSolProdName,
-                        LookUp(TB_Products, ID = varWizSolProdId, Title))
+                        LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Family.Value))
                   Default: =""
                   AllowEmptySelection: =true
                   Height: =40
@@ -521,6 +536,20 @@ Screens:
                   Fill: =AppTheme.Surface
                   Font: =AppFont
                   Size: =AppType.Body
+            - lblWizNoSolutions:
+                Control: Label
+                Properties:
+                  Text: ="No solutions on this customer yet - go back a step and add one."
+                  Color: =RGBA(176, 0, 32, 1)
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Wrap: =true
+                  AutoHeight: =false
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =112
+                  Visible: =varWizStep = 3 && CountRows(Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
                 Control: Label
                 Properties:
@@ -719,12 +748,17 @@ Screens:
                             Patch(TB_Installations, Defaults(TB_Installations),
                                 {
                                     Title: varWizCust.Title & " - " & lblWizCompName.Text,
-                                    Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),
-                                    Product: LookUp(Choices(TB_Installations.Product),
-                                                    Id = Value(lblWizCompId.Text)),
-                                    'Parent': ddWizUnitParent.Selected,
+                                    Customer:
+                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
+                                          Id: varWizCust.ID, Value: varWizCust.Title },
+                                    Product:
+                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
+                                          Id: Value(lblWizCompId.Text), Value: lblWizCompName.Text },
+                                    'Parent':
+                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
+                                          Id: ddWizUnitParent.Selected.ID, Value: ddWizUnitParent.Selected.Title },
                                     'Installed Version': txtWizCompVersion.Text,
-                                    Status: { Value: ddWizUnitStatus.Selected.Value }
+                                    Status: If(IsBlank(ddWizUnitStatus.Selected), Blank(), { Value: ddWizUnitStatus.Selected.Value })
                                 }
                             )
                         );

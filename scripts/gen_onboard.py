@@ -123,6 +123,22 @@ def dropdown(name, items, y, vis, onchange=None, width=None):
                  ("Height","40"),("Width",width or "ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y",str(y)),("Visible",vis)] + FIELD: prop(o, k, v, q)
 
+ODATA = "'@odata.type': \"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference\","
+
+def spref(indent, idexpr, valexpr, tail=","):
+    """The literal record shape a SharePoint lookup column accepts.
+
+    Choices() is the documented way to fill a lookup *dropdown*, but its result
+    is a cached snapshot of the target list taken when the app loaded. A
+    customer created moments earlier in this same wizard is not in it, so
+    LookUp(Choices(...), Id = varWizCust.ID) returns blank -- and Customer is a
+    required column, so the Patch fails and nothing is written at all.
+    Building the reference by hand from a record we already hold sidesteps the
+    cache entirely. This is what scripts/gen_form.py does.
+    """
+    return [f"{indent}{{ {ODATA}",
+            f"{indent}  Id: {idexpr}, Value: {valexpr} }}{tail}"]
+
 def hint(name, text, y, vis):
     q = ctrl(o, name, "Label", c)
     for k, v in [("Text",text),("Color","AppTheme.Muted"),("Font","AppFont"),
@@ -201,10 +217,12 @@ blk(o, "OnSelect", [
     "    Patch(TB_Installations, Defaults(TB_Installations),",
     "        {",
     '            Title: varWizCust.Title & " - " & ddWizSolProduct.Selected.Value,',
-    "            Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),",
+    "            Customer:",
+    ] + spref("                ", "varWizCust.ID", "varWizCust.Title") + [
     "            Product: ddWizSolProduct.Selected,",
     "            'Installed Version': txtWizSolVersion.Text,",
-    "            Status: { Value: ddWizSolStatus.Selected.Value },",
+    "            Status: If(IsBlank(ddWizSolStatus.Selected), Blank(), "
+    "{ Value: ddWizSolStatus.Selected.Value }),",
     "            'Config Notes': txtWizSolNotes.Text",
     "        }",
     "    );",
@@ -237,6 +255,18 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small")
              ("Fill","AppTheme.Sunken"),("X","0"),("Y","0"),
              ("Width","Parent.TemplateWidth"),("Height","36")]: prop(o, k, v, r)
 
+q = ctrl(o, "lblWizSolCount", "Label", c)
+SOLN = ("CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
+        "IsBlank('Parent')))")
+solcount = (f'If({SOLN} = 0, "No solutions added yet.", '
+            f'{SOLN} = 1, "1 solution added.", '
+            f'{SOLN} & " solutions added.")')
+for k, v in [("Text",solcount),("Color","AppTheme.Muted"),("Font","AppFont"),
+             ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
+             ("Wrap","false"),("AutoHeight","false"),("Height","20"),
+             ("Width","360"),("X","Gutter + 210"),("Y",str(y + 12)),
+             ("Visible",V2)]: prop(o, k, v, q)
+
 q = ctrl(o, "btnWizStep2Next", "Classic/Button", c)
 for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
              ("HoverFill","AppTheme.PrimaryDark"),("Width","260"),
@@ -257,6 +287,8 @@ for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
 # row (Retail and Self Service, today) proposes nothing, so that case gets an
 # explicit empty state rather than a blank panel.
 V3 = "varWizStep = 3"
+PARENTS = ("Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
+           "IsBlank('Parent')), Title, SortOrder.Ascending)")
 HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
 RX   = f"(Gutter + {HALF} + 24)"
 CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
@@ -264,19 +296,25 @@ CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
 
 y = 112
 caption("lblCapWizUnitParent", "Which solution are these attached to", y, V3)
-dropdown("ddWizUnitParent",
-         "Filter(Choices(TB_Installations.'Parent') As Opt, "
-         "CountRows(Filter(TB_Installations, ID = Opt.Id, "
-         "Customer.Id = varWizCust.ID, IsBlank('Parent'))) > 0)",
-         y + 18, V3,
+# Real rows, not Choices(). A solution added on step 2 seconds ago is in the
+# table's local cache the moment Patch returns, but it is NOT in the Choices()
+# snapshot -- which is why this dropdown came up empty. Selected is therefore a
+# TB_Installations record, so its columns are reachable directly.
+dropdown("ddWizUnitParent", PARENTS, y + 18, V3,
          onchange=[
-             "Set(varWizSolProdId,",
-             "    LookUp(TB_Installations, ID = ddWizUnitParent.Selected.Id, Product.Id));",
-             "Set(varWizFamily,",
-             "    LookUp(TB_Products, ID = varWizSolProdId, Family.Value));",
              "Set(varWizSolProdName,",
-             "    LookUp(TB_Products, ID = varWizSolProdId, Title))"])
+             "    LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Title));",
+             "Set(varWizFamily,",
+             "    LookUp(TB_Products, ID = ddWizUnitParent.Selected.Product.Id, Family.Value))"])
 y += 76
+
+q = ctrl(o, "lblWizNoSolutions", "Label", c)
+for k, v in [("Text",'"No solutions on this customer yet - go back a step and add one."'),
+             ("Color","RGBA(176, 0, 32, 1)"),("Font","AppFont"),
+             ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
+             ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
+             ("X","Gutter"),("Y",str(y - 76)),
+             ("Visible",f"{V3} && CountRows({PARENTS}) = 0")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizCompHead", "Label", c)
 head = ('If(IsBlank(ddWizUnitParent.Selected), "", '
@@ -382,12 +420,16 @@ blk(o, "OnSelect", [
     "        Patch(TB_Installations, Defaults(TB_Installations),",
     "            {",
     '                Title: varWizCust.Title & " - " & lblWizCompName.Text,',
-    "                Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID),",
-    "                Product: LookUp(Choices(TB_Installations.Product),",
-    "                                Id = Value(lblWizCompId.Text)),",
-    "                'Parent': ddWizUnitParent.Selected,",
+    "                Customer:",
+    ] + spref("                    ", "varWizCust.ID", "varWizCust.Title") + [
+    "                Product:",
+    ] + spref("                    ", "Value(lblWizCompId.Text)", "lblWizCompName.Text") + [
+    "                'Parent':",
+    ] + spref("                    ", "ddWizUnitParent.Selected.ID",
+              "ddWizUnitParent.Selected.Title") + [
     "                'Installed Version': txtWizCompVersion.Text,",
-    "                Status: { Value: ddWizUnitStatus.Selected.Value }",
+    "                Status: If(IsBlank(ddWizUnitStatus.Selected), Blank(), "
+    "{ Value: ddWizUnitStatus.Selected.Value })",
     "            }",
     "        )",
     "    );",

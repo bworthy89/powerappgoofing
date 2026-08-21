@@ -460,3 +460,70 @@ Two things this has to get right:
   legitimate state, not a bug, so it gets an empty-state label that distinguishes "you have not
   picked a solution yet" from "this family has no components catalogued" - otherwise the blank
   panel reads as a failure and sends someone debugging.
+
+
+## `Choices()` is a snapshot, so it cannot see a record you just created
+
+This one silently wrote nothing at all for two builds of the wizard, and the
+symptom appeared a whole step away from the cause.
+
+`Choices(TB_Installations.Customer)` is the documented way to populate a lookup
+*dropdown*, and it is correct for that. But its result is a cached snapshot of the
+target list, taken when the app loads. A customer the wizard created ten seconds
+earlier on step 1 is **not in it**. So:
+
+```powerfx
+Customer: LookUp(Choices(TB_Installations.Customer), Id = varWizCust.ID)   -- Blank()
+```
+
+`Customer` and `Product` are `required=True` on `TB_Installations`, so the `Patch`
+was rejected outright and no installation row was ever written. Step 3's solution
+picker then had nothing to list, which is where it was finally noticed.
+
+Two rules fall out of this:
+
+**Writing a lookup — build the record, don't look it up.** When you already hold the
+target record, construct the reference literally. `scripts/gen_form.py` has always
+done this, which is why the admin form never had the bug:
+
+```powerfx
+Customer:
+    { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
+      Id: varWizCust.ID, Value: varWizCust.Title }
+```
+
+**Reading rows back — filter the table, not `Choices()`.** `Patch` updates the data
+source's local cache, so a `Filter` over the table sees the new row immediately:
+
+```powerfx
+Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')),
+     Title, SortOrder.Ascending)
+```
+
+A dropdown fed this way yields a real `TB_Installations` record from `.Selected`, not
+a `{Id, Value}` choice record - so it is `.Selected.ID` (the list column) rather than
+`.Selected.Id`, and related columns like `.Selected.Product.Id` are reachable directly
+without a second `LookUp`.
+
+The earlier entry above still stands: `Choices()` remains the right answer for a
+dropdown over a *stable* list, which is why the product and status pickers keep using
+it. The distinction is whether the rows can have been created during this session.
+
+### How to catch this class of bug quickly
+
+`IfError` was already wrapped around the `Patch` and `varWizError` was already bound to
+a label, and it still went unnoticed - the error surfaces on the step you are leaving,
+and it is easy to walk past. Querying the list directly settled it in one command:
+
+```powershell
+Get-PnPListItem -List TB_Installations -PageSize 200 |
+    ForEach-Object { '{0,4}  {1}' -f $_['ID'], $_['Title'] }
+```
+
+Ten rows, all of them seed data, no wizard output at all. That is a far stronger signal
+than reasoning about the formula, and it takes under a minute. Check the data before
+theorising about the app.
+
+Related: a required column turns a silently-blank value into a hard write failure, so
+`Get-PnPField -List <list> | Select InternalName, Required` is worth running before
+assuming a blank is harmless.
