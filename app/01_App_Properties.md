@@ -53,9 +53,13 @@ AppType = {
     Micro:    10
 };
 
-IsNarrow = App.Width < 640;
+// Aligned to the platform's own breakpoint table, App.SizeBreakpoints, whose first
+// entry is 600 by default. Screens use Screen.Size for layout decisions; these two
+// exist because a named formula cannot reference a screen, and gutters are needed
+// app-wide.
+IsNarrow = App.Width < First(App.SizeBreakpoints).Value;
 
-Gutter = If(App.Width < 640, 16, 24);
+Gutter = If(App.Width < First(App.SizeBreakpoints).Value, 16, 24);
 
 ContentWidth = Min(App.Width - (Gutter * 2), 1100)
 ```
@@ -95,6 +99,18 @@ IfError(LoadData(colRecent, "recent", true), Blank())
 > 2026-08-20.
 ```
 
+## App.SizeBreakpoints
+
+The platform's breakpoint table. Left at the tablet/web default; stated explicitly so it is
+version-controlled rather than implicit.
+
+```powerfx
+[600, 900, 1200]
+```
+
+`Screen.Size` is derived from it: below 600 is `ScreenSize.Small` (phone), then `Medium`
+(tablet portrait), `Large` (tablet landscape), `ExtraLarge` (desktop).
+
 ## App.StartScreen
 
 ```powerfx
@@ -127,3 +143,24 @@ Paste the same record into `App.OnStart` wrapped in `Set(AppTheme, {...})`, then
 App in Tree view and choose **Run OnStart**. `IsNarrow` must then become
 `Set(varNarrow, App.Width < 640)` and every screen reference changes to `varNarrow`, which
 will not react to resizing — a real downgrade. Prefer Formulas.
+
+
+## Testing responsive behaviour
+
+**The Studio authoring canvas does not respond to sizing formulas.** Microsoft's documentation
+states it plainly: to test responsive behaviour, save and publish the app, then open it in browser
+windows of different sizes or on a real device. Resizing inside the editor shows nothing moving no
+matter how correct the formulas are.
+
+Two further rules from the same documentation, both easy to violate by accident:
+
+- **Dragging a control in the canvas editor overwrites its `X`, `Y`, `Width` and `Height` formulas
+  with constants.** Once a screen is laid out by formula, position it by editing formulas, never by
+  dragging. This is how a responsive screen silently becomes a fixed one.
+- Inside a gallery template use `Parent.TemplateWidth` and `Parent.TemplateHeight`, not
+  `Parent.Width`/`Parent.Height`, which refer to the whole gallery.
+
+Layout decisions inside a screen should use `Screen.Size` against the `ScreenSize` constants rather
+than raw pixel comparisons - for example `Parent.Size >= ScreenSize.Medium` for a control that
+should not appear on a phone. That reads against the app's own breakpoint table, so changing
+`App.SizeBreakpoints` moves every layout decision at once.

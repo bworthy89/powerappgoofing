@@ -72,3 +72,23 @@ This matters most for two clauses. `Parent` is what distinguishes a solution fro
 `scrCustomerOverview` - get it wrong and the customer appears to run nothing. And the blank
 `Customer` half of the reference filter is what makes a document universal - get it wrong and every
 document disappears.
+
+## Responsive layout: how to test it, and how to not break it
+
+**The Studio authoring canvas does not respond to sizing formulas.** Microsoft's documentation says
+so directly: to test responsive behaviour, save and publish the app, then open it in browser windows
+of different sizes or on a real device. Resizing inside the editor shows nothing moving, however
+correct the formulas are - which reads exactly like a broken layout.
+
+**Dragging a control in the editor overwrites its `X`, `Y`, `Width` and `Height` formulas with
+constants.** A screen laid out by formula must be adjusted by editing formulas, never by dragging.
+This is the most common way a responsive app quietly becomes a fixed one, and nothing warns you.
+
+Layout decisions use `Screen.Size` against the `ScreenSize` constants - `Small` (phone), `Medium`
+(tablet portrait), `Large` (tablet landscape), `ExtraLarge` (desktop) - rather than raw pixel
+comparisons. `Screen.Size` is derived from `App.SizeBreakpoints`, set explicitly to the platform
+default `[600, 900, 1200]` in `01_App_Properties.md`, so changing that one table moves every layout
+decision in the app at once.
+
+Also required, and set in step 0 above: **Scale to fit off.** With it on, the app renders at a fixed
+design size and scales to fit, so `App.Width` never changes and no responsive formula can fire.

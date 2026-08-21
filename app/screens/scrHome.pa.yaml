@@ -69,7 +69,7 @@
 # this workaround invites.
 #
 # conDashboard collapses to one column below the breakpoint the same proven way as
-# every other responsive element on this screen: ManualLayout with an If(IsNarrow, ...)
+# every other responsive element on this screen: ManualLayout with an If(scrHome.Size = ScreenSize.Small, ...)
 # on each card's X/Y/Width, exactly like the support-notes branch in
 # scrCustomerOverview and the expanded-model branch in scrCatalogue. An AutoLayout
 # GroupContainer (Variant: AutoLayout, formula-driven LayoutDirection) was tried first
@@ -351,7 +351,7 @@ Screens:
                   Width: =Parent.Width - (Gutter * 2)
                   Height: |
                     =If(
-                        IsNarrow,
+                        scrHome.Size = ScreenSize.Small,
                         cardBacklog.Height + Gutter + cardCustomerCount.Height + Gutter + cardModelCount.Height,
                         cardBacklog.Height
                     )
@@ -366,7 +366,7 @@ Screens:
                         # flush-left anchor for its first card, not a hard-coded position.
                         X: =0
                         Y: =0
-                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.5)
+                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.5)
                         Height: =190
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line
@@ -498,10 +498,10 @@ Screens:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
-                        X: =If(IsNarrow, 0, cardBacklog.X + cardBacklog.Width + Gutter)
-                        Y: =If(IsNarrow, cardBacklog.Y + cardBacklog.Height + Gutter, 0)
-                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
-                        Height: =If(IsNarrow, 96, cardBacklog.Height)
+                        X: =If(scrHome.Size = ScreenSize.Small, 0, cardBacklog.X + cardBacklog.Width + Gutter)
+                        Y: =If(scrHome.Size = ScreenSize.Small, cardBacklog.Y + cardBacklog.Height + Gutter, 0)
+                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
+                        Height: =If(scrHome.Size = ScreenSize.Small, 96, cardBacklog.Height)
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line
                         BorderThickness: =1
@@ -535,10 +535,10 @@ Screens:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
-                        X: =If(IsNarrow, 0, cardCustomerCount.X + cardCustomerCount.Width + Gutter)
-                        Y: =If(IsNarrow, cardCustomerCount.Y + cardCustomerCount.Height + Gutter, 0)
-                        Width: =If(IsNarrow, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
-                        Height: =If(IsNarrow, 96, cardBacklog.Height)
+                        X: =If(scrHome.Size = ScreenSize.Small, 0, cardCustomerCount.X + cardCustomerCount.Width + Gutter)
+                        Y: =If(scrHome.Size = ScreenSize.Small, cardCustomerCount.Y + cardCustomerCount.Height + Gutter, 0)
+                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
+                        Height: =If(scrHome.Size = ScreenSize.Small, 96, cardBacklog.Height)
                         Fill: =AppTheme.Surface
                         BorderColor: =AppTheme.Line
                         BorderThickness: =1
@@ -632,7 +632,7 @@ Screens:
                 Properties:
                   X: =Gutter
                   Y: =lblRecentHeading.Y + lblRecentHeading.Height + 4
-                  Width: =If(IsNarrow, Parent.Width - (Gutter * 2), (Parent.Width - (Gutter * 4)) / 3)
+                  Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width - (Gutter * 2), (Parent.Width - (Gutter * 4)) / 3)
                   Height: =56
                   Font: =AppFont
                   Size: =AppType.Small
@@ -658,8 +658,8 @@ Screens:
             - btnRecent2:
                 Control: Classic/Button
                 Properties:
-                  X: =If(IsNarrow, Gutter, btnRecent1.X + btnRecent1.Width + Gutter)
-                  Y: =If(IsNarrow, btnRecent1.Y + btnRecent1.Height + 8, btnRecent1.Y)
+                  X: =If(scrHome.Size = ScreenSize.Small, Gutter, btnRecent1.X + btnRecent1.Width + Gutter)
+                  Y: =If(scrHome.Size = ScreenSize.Small, btnRecent1.Y + btnRecent1.Height + 8, btnRecent1.Y)
                   Width: =btnRecent1.Width
                   Height: =56
                   Font: =AppFont
@@ -683,8 +683,8 @@ Screens:
             - btnRecent3:
                 Control: Classic/Button
                 Properties:
-                  X: =If(IsNarrow, Gutter, btnRecent2.X + btnRecent2.Width + Gutter)
-                  Y: =If(IsNarrow, btnRecent2.Y + btnRecent2.Height + 8, btnRecent1.Y)
+                  X: =If(scrHome.Size = ScreenSize.Small, Gutter, btnRecent2.X + btnRecent2.Width + Gutter)
+                  Y: =If(scrHome.Size = ScreenSize.Small, btnRecent2.Y + btnRecent2.Height + 8, btnRecent1.Y)
                   Width: =btnRecent1.Width
                   Height: =56
                   Font: =AppFont
