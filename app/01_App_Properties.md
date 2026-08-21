@@ -57,9 +57,9 @@ AppType = {
 // entry is 600 by default. Screens use Screen.Size for layout decisions; these two
 // exist because a named formula cannot reference a screen, and gutters are needed
 // app-wide.
-IsNarrow = App.Width < First(App.SizeBreakpoints).Value;
+IsNarrow = App.Width < 640;
 
-Gutter = If(App.Width < First(App.SizeBreakpoints).Value, 16, 24);
+Gutter = If(App.Width < 640, 16, 24);
 
 ContentWidth = Min(App.Width - (Gutter * 2), 1100)
 ```

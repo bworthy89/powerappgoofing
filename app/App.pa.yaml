@@ -1,0 +1,45 @@
+App:
+  Properties:
+    Theme: =PowerAppsTheme
+    StartScreen: =scrHome
+    Formulas: |-
+      =AppTheme = {
+          Bg:            ColorValue("#F4F6F8"),
+          Surface:       ColorValue("#FFFFFF"),
+          Sunken:        ColorValue("#E7EBEF"),
+          Fg:            ColorValue("#14181C"),
+          FgSecondary:   ColorValue("#39424B"),
+          Muted:         ColorValue("#66727E"),
+          Faint:         ColorValue("#8C97A2"),
+          Line:          ColorValue("#DFE4E9"),
+          LineSoft:      ColorValue("#EBEEF1"),
+          Primary:       ColorValue("#0057B8"),
+          PrimaryDark:   ColorValue("#003D82"),
+          PrimaryLight:  ColorValue("#E7F0FA"),
+          OnPrimary:     ColorValue("#FFFFFF"),
+          Ok:            ColorValue("#17795E"),
+          OkLight:       ColorValue("#E2F2EC"),
+          Warn:          ColorValue("#9A6100"),
+          WarnLight:     ColorValue("#FBF0DC"),
+          Neutral:       ColorValue("#66727E"),
+          NeutralLight:  ColorValue("#EDF0F3")
+      };
+      AppFont = Font.'Lato';
+      AppType = {
+          Display:  32,
+          Title:    22,
+          Heading:  17,
+          Body:     14,
+          Small:    12,
+          Micro:    10
+      };
+      IsNarrow = App.Width < 640;
+      Gutter = If(App.Width < 640, 16, 24);
+      ContentWidth = Min(App.Width - (Gutter * 2), 1100)
+    OnStart: |-
+      =Set(varCustomer, Defaults(TB_Customers));
+      Set(varInstallation, Defaults(TB_Installations));
+      Set(varExpandedModel, 0);
+      ClearCollect(colRecent, {Id: 0, Name: "", At: Now()});
+      Clear(colRecent);
+      IfError(LoadData(colRecent, "recent", true), Blank())
