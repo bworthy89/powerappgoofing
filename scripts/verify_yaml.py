@@ -61,7 +61,14 @@ NON_COLUMN_QUOTED_TOKENS = {
 BANNED = [
     (r"\bAddColumns\s*\(", "AddColumns introduces a local name this environment rejects"),
     (r"\bWith\s*\(", "With introduces a local name this environment rejects"),
-    (r"(?i)\s+As\s+[A-Za-z_]", "As aliases are rejected by this environment"),
+    # "As" was banned by the previous generation of this app (see 73ef065,
+    # "Resolve references with one lookup shape and no local names"), citing a
+    # tasks/lessons.md that no longer exists on this branch. Re-tested against
+    # the live environment on 2026-08-21: scrEditForm's ddParentInst uses
+    #     Filter(Choices(TB_Installations.'Parent') As Opt, ...)
+    # which compiles clean AND scopes the dropdown correctly at runtime.
+    # Removed rather than left firing on every build.
+    # AddColumns and With remain banned - neither has been re-tested.
 ]
 
 

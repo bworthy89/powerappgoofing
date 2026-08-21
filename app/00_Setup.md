@@ -129,6 +129,56 @@ between a formula returning four rows and the gallery holding none — which is 
 deployment mechanism rather than the code. Reading YAML cannot do this; the values are only
 observable at runtime.
 
+## Three sources of truth, none complete
+
+`describe_control`, the Power Apps documentation, and the YAML compiler each know
+a different subset of what a control supports. Confirmed against the live
+environment on 2026-08-21 while building the admin forms:
+
+| Property | describe_control | Documentation | YAML compiler |
+|---|---|---|---|
+| `Classic/DropDown.Value` | not listed | "a key property" | `Unknown property` |
+| `Classic/ComboBox.SearchItems` | not listed | not covered | `Unknown property`, yet reports errors *against* it |
+
+`SearchItems` is the sharper trap. Studio seeds every new `Classic/ComboBox` with
+a default of `Search(ComboBoxSample, ..., "Value1")` -- a sample data source that
+does not exist in this app -- so five ComboBoxes produced fifteen errors about a
+property none of them set. It cannot be overridden from YAML, and
+`IsSearchable: =false` does not stop it being evaluated. **`Classic/ComboBox` is
+therefore unusable through this pipeline**, however well it fits the job.
+
+### Lookup dropdowns must use `Choices()`
+
+Because `Value` cannot be set, the display column has to come from the shape of
+`Items` itself. A raw SharePoint table has no designated display column, so a
+Drop down bound to `Sort(TB_Customers, Title, SortOrder.Ascending)` renders an
+empty list. The documented form is:
+
+```powerfx
+Choices(TB_Installations.Customer)
+```
+
+`Choices()` returns a table already shaped for that lookup. It also removes the
+need to hand-build the write: its records are exactly what the lookup accepts, so
+`Patch` takes `.Selected` directly rather than a
+`'@odata.type': "#...SPListExpandedReference"` literal.
+
+To scope such a dropdown, note that `Choices()` carries only `{Id, Value}` --
+no other columns to filter on. Ask per option whether a qualifying row exists,
+naming the outer scope so its `Id` is not shadowed:
+
+```powerfx
+Filter(Choices(TB_Installations.'Parent') As Opt,
+       CountRows(Filter(TB_Installations,
+                        ID = Opt.Id,
+                        Customer.Id = ddCustomerInst.Selected.Id,
+                        IsBlank('Parent'))) > 0)
+```
+
+`ShowColumns(..., "ID")` was tried first and rejected with *"Expected identifier
+name"*. **`As` works here** and is verified at runtime, despite the previous
+generation of this app having banned it.
+
 ## Control property support, confirmed against Studio
 
 Studio's paste validator rejects `RadiusTopLeft` / `RadiusTopRight` / `RadiusBottomLeft` /
