@@ -19,21 +19,20 @@ Screens:
             Fill: =AppTheme.Bg
           Children:
             - btnBackCus:
-                Control: Classic/Button
+                Control: ModernButton
                 Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
                   X: =Gutter
                   Y: =Gutter
                   Width: =Gutter * 10
                   Height: =28
-                  Text: ="<  Home"
+                  Text: ="Home"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Fill: =AppTheme.Bg
-                  HoverFill: =AppTheme.Sunken
-                  PressedFill: =AppTheme.Sunken
                   Color: =AppTheme.Primary
-                  HoverColor: =AppTheme.PrimaryDark
                   BorderThickness: =0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -41,7 +40,7 @@ Screens:
                   RadiusBottomRight: =6
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
             - lblTitleCus:
-                Control: Label
+                Control: ModernText
                 Properties:
                   X: =Gutter
                   Y: =Gutter + 36
@@ -51,20 +50,18 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
-                  Color: =AppTheme.Fg
             - txtSearchCus:
-                Control: Classic/TextInput
+                Control: ModernTextInput
                 Properties:
+                  Type: =TextInputType.Search
                   X: =Gutter
                   Y: =Gutter + 84
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
-                  HintText: ="Search customers"
+                  Placeholder: ="Search customers"
                   Font: =AppFont
                   Size: =AppType.Body
-                  Fill: =AppTheme.Surface
-                  Color: =AppTheme.Fg
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   RadiusTopLeft: =6
@@ -151,7 +148,7 @@ Screens:
                   # A 4px accent rail on the selected row - the same device the design deck
                   # uses to mark the lead row, and the same one Studio's browse gallery uses.
                   - lblAccent:
-                      Control: Label
+                      Control: ModernText
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =0
@@ -163,7 +160,7 @@ Screens:
                         BorderThickness: =0
                         Visible: =ThisItem.IsSelected
                   - lblName:
-                      Control: Label
+                      Control: ModernText
                       Properties:
                         Wrap: =false
                         AutoHeight: =false
@@ -176,9 +173,8 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Body
                         FontWeight: =If(ThisItem.IsSelected, FontWeight.Bold, FontWeight.Semibold)
-                        Color: =AppTheme.Fg
                   - lblDesc:
-                      Control: Label
+                      Control: ModernText
                       Properties:
                         Wrap: =true
                         AutoHeight: =false
@@ -192,7 +188,7 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
                   - rectChip:
-                      Control: Label
+                      Control: ModernText
                       Properties:
                         OnSelect: =Select(Parent)
                         Text: =""
@@ -228,7 +224,7 @@ Screens:
                               AppTheme.OkLight
                           )
                   - lblChip:
-                      Control: Label
+                      Control: ModernText
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
@@ -240,7 +236,6 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Fg
                         Text: |
                           =If(
                               CountRows(
@@ -305,7 +300,7 @@ Screens:
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
             - lblNoCustomers:
-                Control: Label
+                Control: ModernText
                 Properties:
                   X: =Gutter
                   Y: =Gutter + 140
