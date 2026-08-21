@@ -285,7 +285,7 @@ Screens:
                   ShowScrollbar: =true
                   Items: |
                     =SortByColumns(
-                        Filter(TB_Installations, Parent.Id = varInstallation.ID, Status.Value <> "Retired"),
+                        Filter(TB_Installations, ThisRecord.Parent.Id = varInstallation.ID, Status.Value <> "Retired"),
                         "Title",
                         SortOrder.Ascending
                     )

@@ -145,3 +145,30 @@ The nesting Studio expects, with the indents this kit uses:
 ```
 
 `scripts/verify_yaml.py` now checks this.
+
+## `Parent` is a reserved word, and one of our columns is called Parent
+
+In Power Fx `Parent` means the **parent control** - `Parent.Width`, `Parent.TemplateWidth`. The
+`Parent` column on `TB_Installations` collides with it. Inside a record scope such as
+`Filter(TB_Installations, ...)`, an unqualified `Parent` resolves to the *control*, which has no
+`.Value` or `.Id`, so the expression errors.
+
+The failure gives you nothing to work with: **the control renders blank.** No error banner, no red
+marker at runtime. A gallery shows no rows and a label shows no text, including its literal strings.
+
+Always qualify it:
+
+```powerfx
+Filter(TB_Installations, Customer.Id = varCustomer.ID, IsBlank(ThisRecord.Parent.Value))
+Filter(TB_Installations, ThisRecord.Parent.Id = varInstallation.ID)
+```
+
+`varInstallation.Parent.Id` needs no qualification - a variable is not a record scope, so nothing
+collides there.
+
+**Worth fixing at the source.** Renaming the SharePoint column from `Parent` to something like
+`Parent Solution` removes the trap permanently. It means updating the column in SharePoint,
+`Create-ToolboxLists.ps1`, the seed CSVs and importer, and every formula above - but a reserved
+word as a column name will keep catching people.
+
+`scripts/verify_yaml.py` now flags any unqualified use.

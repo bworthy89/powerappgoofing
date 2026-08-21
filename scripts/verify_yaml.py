@@ -115,6 +115,15 @@ def check_file(path):
         if re.match(r"^\s*Properties:\s*$", line):
             _props_indent = len(line) - len(line.lstrip())
 
+        # 1c. the reserved word Parent used as a column. In Power Fx Parent means the
+        #     parent CONTROL, so a column of that name must be reached through
+        #     ThisRecord inside a record scope. Unqualified, it resolves to the control,
+        #     the expression errors, and the control renders blank with no error shown.
+        code = _code_only(line)
+        if re.search(r"(?<!ThisRecord\.)(?<!varInstallation\.)\bParent\.(Value|Id)\b", code) \
+           or re.search(r"\bParent\s*=\s*Blank\(\)", code):
+            findings.append((n, f"reserved word Parent used as a column - qualify with ThisRecord.Parent: {stripped[:50]}"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):
