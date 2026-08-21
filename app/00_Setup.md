@@ -15,6 +15,95 @@ Site: `https://gloryglobal.sharepoint.com/sites/techtips/toolbox`
 **Settings → General → Data row limit:** raise to **2000**. Filtering on a lookup's `.Id`
 is not delegable against SharePoint, so the client must be able to pull the whole set.
 
+## Pushing screens: one push per screen, and never over an existing one
+
+This is the most expensive thing in this file. It cost a full day to find, it is invisible
+to every validator, and nothing in Microsoft's documentation mentions it.
+
+**Overwriting an existing screen through a coauthoring push corrupts that screen.** Creating a
+screen that did not exist before is clean. The corrupted screen renders its galleries empty and
+Studio shows a red banner reading:
+
+```
+The named object '19' could not be found in the runtime.
+```
+
+The number varies — `15`, `19`, `185` were all observed — and it is an internal object id, not
+anything you will find in your YAML. Orphaned objects are left behind when a screen is replaced
+in place rather than created.
+
+### How it was proven
+
+`scrCustomers` had been pushed roughly six times while diagnostics were added and removed. It
+showed the banner and an empty gallery. The same file was copied to `scrCustomersFresh`, every
+control renamed with an `F` suffix so the names stayed unique, and pushed **once**. Both screens
+then sat side by side in the same app, with identical logic against identical data:
+
+| Screen | Times pushed | Result |
+|---|---|---|
+| `scrCustomers` | ~6 | empty gallery, `'19'` banner |
+| `scrCustomersFresh` | 1 | four customer cards, no error |
+
+Every screen that has ever worked in this app was created once. Every screen that showed the
+banner had been overwritten. A throwaway probe screen and a diagnostic screen, both pushed once,
+never errored.
+
+### The rule
+
+- **Push each screen exactly once.**
+- **To change a screen, delete it in Studio's Tree view first**, then push it as a new screen.
+  Deleting from the Tree view is a Studio-side operation and involves no push.
+- **Never compile with a partially-updated workspace** hoping to touch only one file. A compile
+  writes every screen in the directory, so it overwrites — and therefore corrupts — every screen
+  that already exists.
+
+### Two related mechanics, both of which mimic this bug
+
+**The Studio tab must be open, with coauthoring on, at the moment you compile.** `compile_canvas`
+validates against the authoring service *and separately* applies changes through the live
+coauthoring session. With the tab closed, validation passes, `0 errors` is reported, warnings come
+back naming controls in your files — and **nothing is written to the app**. You then look at older
+content and reasonably conclude the push broke something.
+
+**Always verify with `sync_canvas` after a push.** It reads back what the server actually holds,
+which is the only trustworthy answer to "did that land?". Checking control counts per screen takes
+seconds and catches a silently-discarded push immediately:
+
+```
+sync_canvas <a scratch directory>      # server -> local, overwrites that directory
+grep -c '^\s*Control:' scr*.pa.yaml    # compare against what you pushed
+```
+
+`sync_canvas` **replaces the target directory**; it does not merge. Never point it at a directory
+holding work that is not also in git.
+
+### Why this wasted so much time
+
+An empty gallery is produced by all three of these, and they are visually identical:
+
+1. a genuine formula bug,
+2. a push that never landed because the tab was closed,
+3. a screen corrupted by being overwritten.
+
+Only the first is in the YAML, and it is the only one any validator can see. `compile_canvas`
+reported `0 errors`, `scripts/verify_yaml.py` reported `0 findings`, and the SharePoint data was
+correct — all true, all simultaneously, while the screen showed nothing.
+
+**When a screen renders blank, instrument it before reading it.** Drop a Label on the screen whose
+`Text` prints the intermediate values, and push once:
+
+```powerfx
+="all=" & CountRows(TB_Customers)
+  & "  filtered=" & CountRows(Filter(TB_Customers, Active = true))
+  & "  sorted=" & CountRows(SortByColumns(Filter(TB_Customers, Active = true), "Title", SortOrder.Ascending))
+  & "  galAll=" & CountRows(galCustomers.AllItems)
+```
+
+That single label eliminated five suspects in one round trip and localised the fault to the gap
+between a formula returning four rows and the gallery holding none — which is what pointed at the
+deployment mechanism rather than the code. Reading YAML cannot do this; the values are only
+observable at runtime.
+
 ## Control property support, confirmed against Studio
 
 Studio's paste validator rejects `RadiusTopLeft` / `RadiusTopRight` / `RadiusBottomLeft` /
@@ -73,6 +162,31 @@ off a blank lookup can poison the whole expression so the filter silently return
 This matters twice over. `Parent` is what distinguishes a solution from a unit - get it wrong and a
 customer appears to run nothing at all. And a blank `Customer` is what makes a reference universal -
 get it wrong and every document disappears.
+
+> **Correction, confirmed against the tenant on 2026-08-21.** The `Column = Blank()` form above
+> **does not compile**. The authoring service rejects it:
+>
+> ```
+> Incompatible types for comparison. These types can't be compared: Record, Blank.
+> ```
+>
+> A SharePoint lookup projects as a Record, and a Record cannot be compared to Blank. Microsoft's
+> delegation note quoted above is about a scalar `<Name>Id` field, which this connector does not
+> surface here.
+>
+> Use **`IsBlank(Column)`** — testing the column itself, never a projection off it:
+>
+> ```powerfx
+> Filter(TB_Installations, Customer.Id = varCustomer.ID, IsBlank('Parent'))
+> Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer))
+> ```
+>
+> This keeps the principle the section is really about — do not reach into a blank lookup — while
+> satisfying the type checker. The cost is that these filters are no longer delegable, which is
+> immaterial at 10 installations and 21 references but would matter past 500 rows.
+>
+> Note the trap: `IsBlank(Parent.Value)` and `IsBlank(Customer.Id)` both compile cleanly and both
+> silently return nothing. Compiling is not evidence of correctness here.
 
 ## Responsive layout: how to test it, and how to not break it
 
