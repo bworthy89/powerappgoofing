@@ -15,7 +15,13 @@ spec = importlib.util.spec_from_file_location(
 g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
 LISTS, fid = g.LISTS, g.fid
 
-def prop(o, k, v, ind): o.write(f"{ind}{k}: ={v}\n")
+def prop(o, k, v, ind):
+    # A ": " inside a Power Fx value terminates the YAML key when written
+    # inline. Emit those as block scalars. See gen_onboard.py for the full note.
+    if ": " in v:
+        o.write(f"{ind}{k}: |\n{ind}  ={v}\n")
+    else:
+        o.write(f"{ind}{k}: ={v}\n")
 def blk(o, k, lines, ind):
     o.write(f"{ind}{k}: |\n")
     for i, l in enumerate(lines):

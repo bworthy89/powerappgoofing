@@ -644,7 +644,7 @@ Screens:
                 Properties:
                   X: =Gutter
                   Y: =conDashboard.Y + conDashboard.Height + Gutter
-                  Width: =(Parent.Width - (Gutter * 4)) / 3
+                  Width: =(Parent.Width - (Gutter * 5)) / 4
                   Height: =72
                   Text: ="Customers"
                   Font: =AppFont
@@ -713,6 +713,34 @@ Screens:
                     =Set(varAdminList, "Cust");
                     Set(varAdminNew, false);
                     Navigate(scrAdmin, ScreenTransition.Cover)
+            - btnTileOnboard:
+                Control: Classic/Button
+                Properties:
+                  X: =btnTileAdmin.X + btnTileAdmin.Width + Gutter
+                  Y: =btnTileCustomers.Y
+                  Width: =btnTileCustomers.Width
+                  Height: =72
+                  Text: ="New customer"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Fill: =AppTheme.Surface
+                  HoverFill: =AppTheme.PrimaryLight
+                  PressedFill: =AppTheme.PrimaryLight
+                  Color: =AppTheme.Primary
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  FocusedBorderThickness: =2
+                  FocusedBorderColor: =AppTheme.Primary
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+                  OnSelect: |
+                    =Set(varWizStep, 1);
+                    Set(varWizError, "");
+                    Navigate(scrOnboard, ScreenTransition.Cover)
             - lblRecentHeading:
                 Control: Label
                 Properties:

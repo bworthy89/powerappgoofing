@@ -54,7 +54,12 @@ def fid(f):
 
 # ------------------------------------------------------------------ emitters
 def prop(o, k, v, ind):
-    o.write(f"{ind}{k}: ={v}\n")
+    # A ": " inside a Power Fx value terminates the YAML key when written
+    # inline. Emit those as block scalars. See gen_onboard.py for the full note.
+    if ": " in v:
+        o.write(f"{ind}{k}: |\n{ind}  ={v}\n")
+    else:
+        o.write(f"{ind}{k}: ={v}\n")
 
 def ctrl(o, name, control, ind, variant=None):
     o.write(f"{ind}- {name}:\n{ind}    Control: {control}\n")
