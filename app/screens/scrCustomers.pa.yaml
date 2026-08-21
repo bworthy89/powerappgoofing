@@ -75,6 +75,7 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
+                  WrapCount: =Switch(scrCustomers.Size, ScreenSize.Small, 1, ScreenSize.Medium, 2, 3)
                   X: =Gutter
                   Y: =Gutter + 140
                   Width: =Parent.Width - (Gutter * 2)

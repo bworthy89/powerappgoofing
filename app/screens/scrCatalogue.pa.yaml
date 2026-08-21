@@ -116,9 +116,10 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
+                  WrapCount: =Switch(scrCatalogue.Size, ScreenSize.Small, 1, ScreenSize.Medium, 2, 3)
                   X: =Gutter
                   Y: =Gutter + 140
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 3)) * 0.55, Parent.Width - (Gutter * 2))
                   Height: |
                     =If(
                         IsBlank(varExpandedModel) || varExpandedModel = 0,
@@ -252,10 +253,10 @@ Screens:
                 Control: Gallery
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
-                  X: =Gutter
-                  Y: =Parent.Height - Gutter - 208
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =208
+                  X: =If(scrCatalogue.Size >= ScreenSize.Large, galModels.X + galModels.Width + Gutter, Gutter)
+                  Y: =If(scrCatalogue.Size >= ScreenSize.Large, galModels.Y, Parent.Height - Gutter - 208)
+                  Width: =If(scrCatalogue.Size >= ScreenSize.Large, Parent.Width - (galModels.X + galModels.Width + (Gutter * 2)), Parent.Width - (Gutter * 2))
+                  Height: =If(scrCatalogue.Size >= ScreenSize.Large, galModels.Height, 208)
                   TemplateSize: =52
                   TemplatePadding: =6
                   ShowScrollbar: =true
