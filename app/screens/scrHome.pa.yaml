@@ -8,14 +8,14 @@
 #
 # Two mutually exclusive regions share the same Y origin (contentY, realised below as
 # lblSearchCustomersHead.Y): the three search-result galleries, visible only while
-# txtSearch has at least two characters, and the dashboard (currency card, the two count
+# txtSearchHome has at least two characters, and the dashboard (currency card, the two count
 # tiles, the two entry tiles, and the recently-viewed row), visible the rest of the time.
 # Every control in the dashboard region repeats
-# "Len(Trim(txtSearch.Text)) < 2" in its own Visible so the two regions never render on
+# "Len(Trim(txtSearchHome.Text)) < 2" in its own Visible so the two regions never render on
 # top of each other — the same repeated-guard idiom scrCatalogue uses across
 # lblDocsHeading / galModelDocs / lblNoModelDocs.
 #
-# All vertical positions below txtSearch are chained through cross-control property
+# All vertical positions below txtSearchHome are chained through cross-control property
 # references (controlName.Y, controlName.Height, controlName.Visible) rather than by
 # repeating the arithmetic that produces them. This environment forbids locally
 # introduced names (no With/As/AddColumns), but a formula in one control reading a
@@ -30,7 +30,7 @@
 # With), so this is three separate, independently-scrolling galleries stacked with
 # cumulative offsets, each Visible only once the search has two characters and that
 # gallery actually has rows. Customers and products match StartsWith(Title, ...);
-# documents match Trim(txtSearch.Text) in Title, exactly as briefed. Search rows are
+# documents match Trim(txtSearchHome.Text) in Title, exactly as briefed. Search rows are
 # deliberately lighter than the full browse rows in scrCustomers/scrCatalogue (no
 # currency chip) — this is a way-finder, not a second copy of those screens, and every
 # extra TB_Installations query here would be one more place the retired-row exclusion
@@ -102,7 +102,7 @@ Screens:
     Properties:
       Fill: =AppTheme.Bg
     Children:
-      - conRoot:
+      - conRootHome:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
@@ -112,7 +112,7 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - lblTitle:
+            - lblTitleHome:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -124,11 +124,11 @@ Screens:
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - txtSearch:
+            - txtSearchHome:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
-                  Y: =lblTitle.Y + lblTitle.Height + Gutter
+                  Y: =lblTitleHome.Y + lblTitleHome.Height + Gutter
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =44
                   Default: =""
@@ -147,7 +147,7 @@ Screens:
                 Control: Label
                 Properties:
                   X: =Gutter
-                  Y: =txtSearch.Y + txtSearch.Height + Gutter
+                  Y: =txtSearchHome.Y + txtSearchHome.Height + Gutter
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =20
                   Text: ="Customers"
@@ -158,7 +158,7 @@ Screens:
                   Visible: =galSearchCustomers.Visible
             - galSearchCustomers:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   X: =Gutter
                   Y: =lblSearchCustomersHead.Y + lblSearchCustomersHead.Height + 4
@@ -167,8 +167,8 @@ Screens:
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
-                  Visible: =Len(Trim(txtSearch.Text)) >= 2 && CountRows(Self.AllItems) > 0
-                  Items: =Filter(TB_Customers, Active = true, StartsWith(Title, Trim(txtSearch.Text)))
+                  Visible: =Len(Trim(txtSearchHome.Text)) >= 2 && CountRows(Self.AllItems) > 0
+                  Items: =Filter(TB_Customers, Active = true, StartsWith(Title, Trim(txtSearchHome.Text)))
                   OnSelect: |
                     =Set(varCustomer, ThisItem);
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
@@ -241,7 +241,7 @@ Screens:
                   Visible: =galSearchProducts.Visible
             - galSearchProducts:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   X: =Gutter
                   Y: =lblSearchProductsHead.Y + lblSearchProductsHead.Height + 4
@@ -250,8 +250,8 @@ Screens:
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
-                  Visible: =Len(Trim(txtSearch.Text)) >= 2 && CountRows(Self.AllItems) > 0
-                  Items: =Filter(TB_Products, Active = true, StartsWith(Title, Trim(txtSearch.Text)))
+                  Visible: =Len(Trim(txtSearchHome.Text)) >= 2 && CountRows(Self.AllItems) > 0
+                  Items: =Filter(TB_Products, Active = true, StartsWith(Title, Trim(txtSearchHome.Text)))
                   OnSelect: |
                     =Set(varExpandedModel, ThisItem.ID);
                     Navigate(scrCatalogue, ScreenTransition.Cover)
@@ -324,7 +324,7 @@ Screens:
                   Visible: =galSearchDocs.Visible
             - galSearchDocs:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   X: =Gutter
                   Y: =lblSearchDocsHead.Y + lblSearchDocsHead.Height + 4
@@ -333,13 +333,13 @@ Screens:
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
-                  Visible: =Len(Trim(txtSearch.Text)) >= 2 && CountRows(Self.AllItems) > 0
+                  Visible: =Len(Trim(txtSearchHome.Text)) >= 2 && CountRows(Self.AllItems) > 0
                   # IsBlank(Customer.Value) restricts this search to universal documents only,
                   # the same reasoning scrCatalogue documents at its own document panel: this
                   # screen has no customer in context, so a customer-specific reference here
                   # would surface one customer's private procedure to every technician who
                   # types a matching word — a real disclosure problem, not a hypothetical one.
-                  Items: =Filter(TB_References, Trim(txtSearch.Text) in Title, Customer = Blank())
+                  Items: =Filter(TB_References, Trim(txtSearchHome.Text) in Title, IsBlank(Customer))
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - lblSrchDocTitle:
@@ -403,7 +403,7 @@ Screens:
                   Color: =AppTheme.Muted
                   Text: ="No matches for this search."
                   Visible: |
-                    =Len(Trim(txtSearch.Text)) >= 2 &&
+                    =Len(Trim(txtSearchHome.Text)) >= 2 &&
                     CountRows(galSearchCustomers.AllItems) = 0 &&
                     CountRows(galSearchProducts.AllItems) = 0 &&
                     CountRows(galSearchDocs.AllItems) = 0
@@ -421,7 +421,7 @@ Screens:
                         cardBacklog.Height
                     )
                   Fill: =AppTheme.Bg
-                  Visible: =Len(Trim(txtSearch.Text)) < 2
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
                 Children:
                   - cardBacklog:
                       Control: GroupContainer
@@ -654,7 +654,7 @@ Screens:
                   RadiusTopRight: =8
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearch.Text)) < 2
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
                   OnSelect: =Navigate(scrCustomers, ScreenTransition.Cover)
             - btnTileCatalogue:
                 Control: Classic/Button
@@ -677,7 +677,7 @@ Screens:
                   RadiusTopRight: =8
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearch.Text)) < 2
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
                   OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
             - lblRecentHeading:
                 Control: Label
@@ -691,7 +691,7 @@ Screens:
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Muted
-                  Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) > 0
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) > 0
             - btnRecent1:
                 Control: Classic/Button
                 Properties:
@@ -716,7 +716,7 @@ Screens:
                   # write: Collect appends, so the most recently viewed customer is
                   # wherever it landed in insertion order, not necessarily position 1.
                   Text: =If(CountRows(colRecent) >= 1, Index(Sort(colRecent, At, SortOrder.Descending), 1).Name, "")
-                  Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 1
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 1
                   OnSelect: |
                     =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 1).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
@@ -741,7 +741,7 @@ Screens:
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
                   Text: =If(CountRows(colRecent) >= 2, Index(Sort(colRecent, At, SortOrder.Descending), 2).Name, "")
-                  Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 2
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 2
                   OnSelect: |
                     =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 2).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
@@ -766,7 +766,7 @@ Screens:
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
                   Text: =If(CountRows(colRecent) >= 3, Index(Sort(colRecent, At, SortOrder.Descending), 3).Name, "")
-                  Visible: =Len(Trim(txtSearch.Text)) < 2 && CountRows(colRecent) >= 3
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 3
                   OnSelect: |
                     =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 3).Id));
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)

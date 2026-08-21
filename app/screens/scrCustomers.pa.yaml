@@ -8,7 +8,7 @@ Screens:
     Properties:
       Fill: =AppTheme.Bg
     Children:
-      - conRoot:
+      - conRootCus:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
@@ -18,7 +18,7 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - btnBack:
+            - btnBackCus:
                 Control: Classic/Button
                 Properties:
                   X: =Gutter
@@ -40,7 +40,7 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
-            - lblTitle:
+            - lblTitleCus:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -52,7 +52,7 @@ Screens:
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - txtSearch:
+            - txtSearchCus:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
@@ -73,7 +73,7 @@ Screens:
                   RadiusBottomRight: =6
             - galCustomers:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   WrapCount: =Switch(scrCustomers.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 3)
                   X: =Gutter
@@ -88,7 +88,7 @@ Screens:
                         Filter(
                             TB_Customers,
                             Active = true,
-                            StartsWith(Title, Trim(txtSearch.Text))
+                            StartsWith(Title, Trim(txtSearchCus.Text))
                         ),
                         "Title",
                         SortOrder.Ascending

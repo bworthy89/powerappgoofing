@@ -21,13 +21,13 @@
 # "LookUp(TB_Products, ID = varInstallation.Product.Id)" is resolving the unit own model.
 # Inheriting the parent solution standard instead would silently compare, say, a note
 # recycler against a cash machine catalogue version, so this screen never reads anything
-# through varInstallation.Parent except in the breadcrumb, where the parent is exactly
+# through varInstallation.'Parent' except in the breadcrumb, where the parent is exactly
 # what is being described.
 #
 # Version pair uses = or ≠ only — never a directional arrow, never "upgrade to". ≠ is
 # U+2260 and may not render in the Power Apps mobile player; if it shows as a box in
-# Studio, substitute the literal string "vs" for "≠" in lblSeparator.Text below.
-# lblSeparator (and rectCurrency/lblCurrency beside it) both branch on FOUR states, and
+# Studio, substitute the literal string "vs" for "≠" in lblSeparatorUnit.Text below.
+# lblSeparatorUnit (and rectCurrencyUnit/lblCurrencyUnit beside it) both branch on FOUR states, and
 # must agree with each other in all four:
 #   1. installed version blank            -> separator "",  badge "not recorded" (neutral)
 #   2. catalogue standard blank           -> separator "",  badge hidden entirely
@@ -44,13 +44,13 @@
 #
 # lblChecked and lblException are named per the brief as a role, not a literal single
 # control — each gallery needs its own instance, so they appear here as
-# lblDocsChecked/lblDocsException and lblFirmwareChecked/lblFirmwareException, with the
+# lblDocsCheckedUnit/lblDocsExceptionUnit and lblFirmwareCheckedUnit/lblFirmwareExceptionUnit, with the
 # brief's formulas carried over unchanged (both read ThisItem, generic to whichever
 # gallery hosts them).
 #
 # lblCrumb.Text nests a LookUp inside a LookUp's ID= predicate: the outer LookUp needs
 # the parent solution's Product.Id, which only exists on the parent's own row, which
-# itself is only reachable via a LookUp on varInstallation.Parent.Id. This is two genuine
+# itself is only reachable via a LookUp on varInstallation.'Parent'.Id. This is two genuine
 # hops (installation -> installation, then installation -> product) so the nesting is
 # structural, not incidental — Studio is expected to accept it, but nobody here can
 # confirm that in the actual designer.
@@ -58,7 +58,7 @@
 # FALLBACK if Studio rejects the nested LookUp below (apply in minutes, no With/As/
 # AddColumns needed): split lblCrumb into two label controls.
 #   1. Add a helper label, e.g. lblCrumbParentProductId, anywhere on the canvas, with
-#      Text: =LookUp(TB_Installations, ID = varInstallation.Parent.Id).Product.Id
+#      Text: =LookUp(TB_Installations, ID = varInstallation.'Parent'.Id).Product.Id
 #      (SharePoint list item IDs are plain integers, so this round-trips through a Text
 #      property safely — unlike a GUID, which would not.)
 #   2. Change lblCrumb's middle segment from the nested LookUp to:
@@ -80,7 +80,7 @@ Screens:
     Properties:
       Fill: =AppTheme.Bg
     Children:
-      - conRoot:
+      - conRootUnit:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
@@ -90,7 +90,7 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - btnBack:
+            - btnBackUnit:
                 Control: Classic/Button
                 Properties:
                   X: =Gutter
@@ -112,7 +112,7 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: |
-                    =Set(varInstallation, LookUp(TB_Installations, ID = varInstallation.Parent.Id));
+                    =Set(varInstallation, LookUp(TB_Installations, ID = varInstallation.'Parent'.Id));
                     Navigate(scrSolution, ScreenTransition.CoverRight)
             - lblCrumb:
                 Control: Label
@@ -123,14 +123,14 @@ Screens:
                   Height: =18
                   Text: |
                     =varCustomer.Title & "  ›  " &
-                    LookUp(TB_Products, ID = LookUp(TB_Installations, ID = varInstallation.Parent.Id).Product.Id).Title &
+                    LookUp(TB_Products, ID = LookUp(TB_Installations, ID = varInstallation.'Parent'.Id).Product.Id).Title &
                     "  ›  " &
                     Lower(LookUp(TB_Products, ID = varInstallation.Product.Id).'Product Type'.Value)
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
                   Color: =AppTheme.Muted
-            - lblTitle:
+            - lblTitleUnit:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -142,7 +142,7 @@ Screens:
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - lblSubtitle:
+            - lblSubtitleUnit:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -155,7 +155,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Color: =AppTheme.Muted
-            - conVersion:
+            - conVersionUnit:
                 Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
@@ -167,7 +167,7 @@ Screens:
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                 Children:
-                  - lblVersionHeading:
+                  - lblVersionHeadingUnit:
                       Control: Label
                       Properties:
                         X: =Gutter
@@ -179,7 +179,7 @@ Screens:
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
-                  - lblInstalled:
+                  - lblInstalledUnit:
                       Control: Label
                       Properties:
                         X: =Gutter
@@ -193,7 +193,7 @@ Screens:
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Fg
-                  - lblSeparator:
+                  - lblSeparatorUnit:
                       Control: Label
                       Properties:
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.4)
@@ -216,7 +216,7 @@ Screens:
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
-                  - lblStandard:
+                  - lblStandardUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -232,7 +232,7 @@ Screens:
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Fg
-                  - rectCurrency:
+                  - rectCurrencyUnit:
                       Control: Rectangle
                       Properties:
                         X: =Gutter
@@ -251,7 +251,7 @@ Screens:
                               AppTheme.OkLight,
                               AppTheme.WarnLight
                           )
-                  - lblCurrency:
+                  - lblCurrencyUnit:
                       Control: Label
                       Properties:
                         X: =Gutter
@@ -275,7 +275,7 @@ Screens:
                               "on standard",
                               "standard " & LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'
                           )
-            - conConfigNotes:
+            - conConfigNotesUnit:
                 Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
@@ -288,7 +288,7 @@ Screens:
                   BorderThickness: =1
                   Visible: =!IsBlank(varInstallation.'Config Notes')
                 Children:
-                  - lblConfigHeading:
+                  - lblConfigHeadingUnit:
                       Control: Label
                       Properties:
                         X: =Gutter
@@ -300,7 +300,7 @@ Screens:
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
-                  - lblConfigNotes:
+                  - lblConfigNotesUnit:
                       Control: Label
                       Properties:
                         X: =Gutter
@@ -311,7 +311,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         Color: =AppTheme.Fg
-            - lblDocsHeading:
+            - lblDocsHeadingUnit:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -328,9 +328,9 @@ Screens:
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - galDocs:
+            - galDocsUnit:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   X: =Gutter
                   Y: |
@@ -350,14 +350,14 @@ Screens:
                             TB_References,
                             Product.Id = varInstallation.Product.Id,
                             Section.Value = "Documentation",
-                            Or(Customer = Blank(), Customer.Id = varCustomer.ID)
+                            Or(IsBlank(Customer), Customer.Id = varCustomer.ID)
                         ),
-                        "Featured",
+                        "TBFeatured",
                         SortOrder.Descending
                     )
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
-                  - rectDocsRow:
+                  - rectDocsRowUnit:
                       Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
@@ -377,7 +377,7 @@ Screens:
                         RadiusTopRight: =8
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
-                  - lblDocsTitle:
+                  - lblDocsTitleUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -392,7 +392,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
-                  - lblDocsType:
+                  - lblDocsTypeUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -406,7 +406,7 @@ Screens:
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
                         Text: =ThisItem.'Reference Type'.Value
-                  - lblDocsException:
+                  - lblDocsExceptionUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -421,7 +421,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
-                  - lblDocsChecked:
+                  - lblDocsCheckedUnit:
                       Control: Label
                       Properties:
                         OnSelect: =Select(Parent)
@@ -452,7 +452,7 @@ Screens:
                   # behind them leaves only the uncovered margins clickable, which is why
                   # rows previously needed a precise click. Transparent fills keep it
                   # invisible while carrying the hover and pressed feedback.
-                  - galDocsHit:
+                  - galDocsHitUnit:
                       Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
@@ -467,7 +467,7 @@ Screens:
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-            - lblNoDocs:
+            - lblNoDocsUnit:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -484,12 +484,12 @@ Screens:
                   Size: =AppType.Small
                   Color: =AppTheme.Muted
                   Text: ="No documentation is on file for this unit."
-                  Visible: =CountRows(galDocs.AllItems) = 0
-            - lblFirmwareHeading:
+                  Visible: =CountRows(galDocsUnit.AllItems) = 0
+            - lblFirmwareHeadingUnit:
                 Control: Label
                 Properties:
-                  X: =If(scrUnit.Size >= ScreenSize.Medium, galDocs.X + galDocs.Width + Gutter, Gutter)
-                  Y: =If(scrUnit.Size >= ScreenSize.Medium, lblDocsHeading.Y, galDocs.Y + galDocs.Height + Gutter)
+                  X: =If(scrUnit.Size >= ScreenSize.Medium, galDocsUnit.X + galDocsUnit.Width + Gutter, Gutter)
+                  Y: =If(scrUnit.Size >= ScreenSize.Medium, lblDocsHeadingUnit.Y, galDocsUnit.Y + galDocsUnit.Height + Gutter)
                     =If(
                         IsBlank(varInstallation.'Config Notes'),
                         Gutter + 122 + 112 + Gutter,
@@ -502,19 +502,19 @@ Screens:
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - galFirmware:
+            - galFirmwareUnit:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
-                  X: =lblFirmwareHeading.X
-                  Y: =lblFirmwareHeading.Y + lblFirmwareHeading.Height + 8
+                  X: =lblFirmwareHeadingUnit.X
+                  Y: =lblFirmwareHeadingUnit.Y + lblFirmwareHeadingUnit.Height + 8
                     =If(
                         IsBlank(varInstallation.'Config Notes'),
                         Gutter + 122 + 112 + Gutter,
                         Gutter + 122 + 112 + Gutter + 92 + Gutter
                     ) + 32 + 180 + Gutter + 32
-                  Width: =lblFirmwareHeading.Width
-                  # Floored at 0: conRoot is fixed-height with no scroll idiom proven
+                  Width: =lblFirmwareHeadingUnit.Width
+                  # Floored at 0: conRootUnit is fixed-height with no scroll idiom proven
                   # anywhere in this kit (GroupContainer here is always ManualLayout — see
                   # scrHome's note on why AutoLayout was rejected as unverified), so a
                   # negative height would clip rather than degrade. The gallery's own
@@ -541,14 +541,14 @@ Screens:
                             TB_References,
                             Product.Id = varInstallation.Product.Id,
                             Section.Value = "Firmware & Downloads",
-                            Or(Customer = Blank(), Customer.Id = varCustomer.ID)
+                            Or(IsBlank(Customer), Customer.Id = varCustomer.ID)
                         ),
-                        "Featured",
+                        "TBFeatured",
                         SortOrder.Descending
                     )
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
-                  - rectFirmwareRow:
+                  - rectFirmwareRowUnit:
                       Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
@@ -568,7 +568,7 @@ Screens:
                         RadiusTopRight: =8
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
-                  - lblFirmwareTitle:
+                  - lblFirmwareTitleUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -583,7 +583,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
-                  - lblFirmwareType:
+                  - lblFirmwareTypeUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -597,7 +597,7 @@ Screens:
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
                         Text: =ThisItem.'Reference Type'.Value
-                  - lblFirmwareException:
+                  - lblFirmwareExceptionUnit:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -612,7 +612,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
-                  - lblFirmwareChecked:
+                  - lblFirmwareCheckedUnit:
                       Control: Label
                       Properties:
                         OnSelect: =Select(Parent)
@@ -643,7 +643,7 @@ Screens:
                   # behind them leaves only the uncovered margins clickable, which is why
                   # rows previously needed a precise click. Transparent fills keep it
                   # invisible while carrying the hover and pressed feedback.
-                  - galFirmwareHit:
+                  - galFirmwareHitUnit:
                       Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
@@ -658,7 +658,7 @@ Screens:
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-            - lblNoFirmware:
+            - lblNoFirmwareUnit:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -675,4 +675,4 @@ Screens:
                   Size: =AppType.Small
                   Color: =AppTheme.Muted
                   Text: ="No firmware or downloads are on file for this unit."
-                  Visible: =CountRows(galFirmware.AllItems) = 0
+                  Visible: =CountRows(galFirmwareUnit.AllItems) = 0

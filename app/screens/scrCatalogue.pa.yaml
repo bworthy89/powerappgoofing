@@ -24,7 +24,7 @@
 # ThisItem.ID = varExpandedModel, AppTheme.Surface otherwise. Exactly one row is ever tinted,
 # because varExpandedModel holds exactly one ID.
 #
-# lblStandard.Text is Coalesce(ThisItem.'Current Standard Version', "no standard set") with
+# lblStandardCat.Text is Coalesce(ThisItem.'Current Standard Version', "no standard set") with
 # no comparison alongside it — this screen has no installed version to compare against, only
 # the catalogue's own claim of what standard is. Showing "no standard set" rather than hiding
 # the row is deliberate: this is the screen that lets the maintainer audit the catalogue while
@@ -49,7 +49,7 @@ Screens:
     Properties:
       Fill: =AppTheme.Bg
     Children:
-      - conRoot:
+      - conRootCat:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
@@ -59,7 +59,7 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - btnBack:
+            - btnBackCat:
                 Control: Classic/Button
                 Properties:
                   X: =Gutter
@@ -81,7 +81,7 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
-            - lblTitle:
+            - lblTitleCat:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -93,7 +93,7 @@ Screens:
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Fg
-            - txtSearch:
+            - txtSearchCat:
                 Control: Classic/TextInput
                 Properties:
                   X: =Gutter
@@ -114,7 +114,7 @@ Screens:
                   RadiusBottomRight: =6
             - galModels:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   WrapCount: =Switch(scrCatalogue.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 2)
                   X: =Gutter
@@ -134,7 +134,7 @@ Screens:
                         Filter(
                             TB_Products,
                             Active = true,
-                            StartsWith(Title, Trim(txtSearch.Text))
+                            StartsWith(Title, Trim(txtSearchCat.Text))
                         ),
                         "Title",
                         SortOrder.Ascending
@@ -214,7 +214,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
-                  - lblStandard:
+                  - lblStandardCat:
                       Control: Label
                       Properties:
                         Wrap: =false
@@ -240,7 +240,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
                         Height: =18
                         Align: =Align.Right
-                        Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, Customer = Blank())) & " documents"
+                        Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer))) & " documents"
                         Font: =AppFont
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
@@ -263,7 +263,7 @@ Screens:
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-            - lblDocsHeading:
+            - lblDocsHeadingCat:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -278,7 +278,7 @@ Screens:
                   Visible: =!IsBlank(varExpandedModel) && varExpandedModel <> 0
             - galModelDocs:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   X: =If(scrCatalogue.Size >= ScreenSize.Large, galModels.X + galModels.Width + Gutter, Gutter)
                   Y: =If(scrCatalogue.Size >= ScreenSize.Large, galModels.Y, Parent.Height - Gutter - 208)
@@ -290,7 +290,7 @@ Screens:
                   Visible: =!IsBlank(varExpandedModel) && varExpandedModel <> 0
                   Items: |
                     =SortByColumns(
-                        Filter(TB_References, Product.Id = varExpandedModel, Customer = Blank()),
+                        Filter(TB_References, Product.Id = varExpandedModel, IsBlank(Customer)),
                         "Title",
                         SortOrder.Ascending
                     )

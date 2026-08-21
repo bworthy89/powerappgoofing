@@ -6,14 +6,14 @@
 # (child TB_Installations rows) previewed in a gallery nested inside the card. Selecting
 # a solution card sets varInstallation and hands off to scrSolution.
 #
-# Known risk: galUnits.Items (inside the galSolutions template) reaches the outer row via
+# Known risk: galUnitsOvw.Items (inside the galSolutions template) reaches the outer row via
 # ThisItem.ID. If Studio rejects that, see the fallback note at the bottom of this file.
 Screens:
   scrCustomerOverview:
     Properties:
       Fill: =AppTheme.Bg
     Children:
-      - conRoot:
+      - conRootOvw:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
@@ -23,7 +23,7 @@ Screens:
             Height: =Parent.Height
             Fill: =AppTheme.Bg
           Children:
-            - btnBack:
+            - btnBackOvw:
                 Control: Classic/Button
                 Properties:
                   X: =Gutter
@@ -45,7 +45,7 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Navigate(scrCustomers, ScreenTransition.CoverRight)
-            - lblTitle:
+            - lblTitleOvw:
                 Control: Label
                 Properties:
                   X: =Gutter
@@ -112,7 +112,7 @@ Screens:
                   Color: =AppTheme.Fg
             - galSolutions:
                 Control: Gallery
-                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Variant: Vertical
                 Properties:
                   WrapCount: =Switch(scrCustomerOverview.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 1, 2)
                   X: =Gutter
@@ -139,7 +139,7 @@ Screens:
                         Filter(
                             TB_Installations,
                             Customer.Id = varCustomer.ID,
-                            IsBlank(ThisRecord.Parent.Value),
+                            IsBlank(ThisRecord.'Parent'),
                             Status.Value <> "Retired"
                         ),
                         "Title",
@@ -210,7 +210,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
-                  - rectCurrency:
+                  - rectCurrencyOvw:
                       Control: Rectangle
                       Properties:
                         OnSelect: =Select(Parent)
@@ -230,7 +230,7 @@ Screens:
                               AppTheme.OkLight,
                               AppTheme.WarnLight
                           )
-                  - lblCurrency:
+                  - lblCurrencyOvw:
                       Control: Label
                       Properties:
                         OnSelect: =Select(Parent)
@@ -270,9 +270,9 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppTheme.Muted
                         Text: =If(ThisItem.Status.Value = "In Service", "", Lower(ThisItem.Status.Value))
-                  - galUnits:
+                  - galUnitsOvw:
                       Control: Gallery
-                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Variant: Vertical
                       Properties:
                         X: =Gutter * 2
                         Y: =100
@@ -283,11 +283,11 @@ Screens:
                         ShowScrollbar: =true
                         Items: |
                           =SortByColumns(
-                              Filter(TB_Installations, ThisRecord.Parent.Id = ThisItem.ID, Status.Value <> "Retired"),
+                              Filter(TB_Installations, ThisRecord.'Parent'.Id = ThisItem.ID, Status.Value <> "Retired"),
                               "Title",
                               SortOrder.Ascending
                           )
-                        # galUnits fills 128 of the card's 240px — over half — and a nested
+                        # galUnitsOvw fills 128 of the card's 240px — over half — and a nested
                         # Gallery captures its own taps rather than bubbling them to
                         # galSolutions.OnSelect. Without its own OnSelect this region looks
                         # tappable and silently does nothing. varInstallation here is set to
@@ -299,7 +299,7 @@ Screens:
                           =Set(varInstallation, ThisItem);
                           Navigate(scrUnit, ScreenTransition.Cover)
                       Children:
-                        - lblUnitLine:
+                        - lblUnitLineOvw:
                             Control: Label
                             Properties:
                               OnSelect: =Select(Parent)
@@ -345,7 +345,7 @@ Screens:
                   # rows previously needed a precise click. Transparent fills keep it
                   # invisible while carrying the hover and pressed feedback.
                         # Full-item hit target for the nested unit rows, same reason as the others.
-                        - galUnitsHit:
+                        - galUnitsHitOvw:
                             Control: Classic/Button
                             Properties:
                               OnSelect: =Select(Parent)
@@ -395,32 +395,32 @@ Screens:
                   Visible: =CountRows(galSolutions.AllItems) = 0
 
 # --- Fallback note (do not paste — reference only) ---
-# If Studio rejects galUnits.Items reaching the outer row through ThisItem.ID, switch to
-# the pre-chosen fallback: pull galUnits out from under galSolutions entirely and make it
-# a flat, non-nested gallery placed as its own sibling of galSolutions inside conRoot,
+# If Studio rejects galUnitsOvw.Items reaching the outer row through ThisItem.ID, switch to
+# the pre-chosen fallback: pull galUnitsOvw out from under galSolutions entirely and make it
+# a flat, non-nested gallery placed as its own sibling of galSolutions inside conRootOvw,
 # scrolling the whole customer's units in one list rather than one list per card. Its
 # Items formula changes from
-#     Filter(TB_Installations, ThisRecord.Parent.Id = ThisItem.ID, Status.Value <> "Retired")
+#     Filter(TB_Installations, ThisRecord.'Parent'.Id = ThisItem.ID, Status.Value <> "Retired")
 # to
 #     Filter(
 #         TB_Installations,
 #         Customer.Id = varCustomer.ID,
-#         !IsBlank(ThisRecord.Parent.Value),
+#         !IsBlank(ThisRecord.'Parent'),
 #         Status.Value <> "Retired",
 #         LookUp(TB_Installations, ID = Parent.Id).Status.Value <> "Retired"
 #     )
 # The last clause is required, not cosmetic: in the live nested version a child of a
 # retired solution never renders, because retired solutions are already excluded from
-# galSolutions.Items and their nested galUnits never gets a chance to run. The flat
+# galSolutions.Items and their nested galUnitsOvw never gets a chance to run. The flat
 # fallback has no such parent row to inherit exclusion from, so without this clause a
 # unit whose own Status is not "Retired" but whose PARENT is would render — and the
 # label lookup below would print that retired parent's title with no indication it is
 # retired. Filtering it out here means the label lookup never has to special-case it.
-# lblUnitLine's Text formula gains a leading segment naming which solution the unit
+# lblUnitLineOvw's Text formula gains a leading segment naming which solution the unit
 # belongs to, since the card grouping is gone. TB_Installations.Title is never read
 # directly anywhere in this kit (a maintainer-facing row label, not shown by any screen —
 # the Product lookup already supplies the model name), so the leading segment is composed
 # the same way the rest of this line already is, through the parent's Product:
-#     LookUp(TB_Products, ID = LookUp(TB_Installations, ID = ThisItem.Parent.Id).Product.Id).Title & "  ▸  " & ...
+#     LookUp(TB_Products, ID = LookUp(TB_Installations, ID = ThisItem.'Parent'.Id).Product.Id).Title & "  ▸  " & ...
 # Neither LookUp is a locally-introduced name — TB_Installations and TB_Products are base
 # lists, not aliases — so this stays inside the "no local names" rule.
