@@ -469,7 +469,7 @@ Screens:
                               X: =Gutter
                               Y: =16
                               Width: =Parent.Width - (Gutter * 2)
-                              Height: =14
+                              Height: =15
                               Text: ="BACKLOG"
                               Font: =AppFont
                               Size: =AppType.Micro

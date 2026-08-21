@@ -185,7 +185,7 @@ Screens:
                         X: =Gutter
                         Y: =10
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =20
+                        Height: =21
                         Text: =ThisItem.Title
                         Font: =AppFont
                         Size: =AppType.Body
@@ -201,7 +201,7 @@ Screens:
                         X: =Gutter
                         Y: =32
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =16
+                        Height: =17
                         Text: =ThisItem.'Product Type'.Value
                         Font: =AppFont
                         Size: =AppType.Small
@@ -233,7 +233,7 @@ Screens:
                         X: =Gutter + ((Parent.TemplateWidth - (Gutter * 2)) * 0.3)
                         Y: =52
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.7
-                        Height: =16
+                        Height: =17
                         Text: =Coalesce(ThisItem.'Current Standard Version', "no standard set")
                         Font: =AppFont
                         Size: =AppType.Small
@@ -250,7 +250,7 @@ Screens:
                         X: =Gutter
                         Y: =70
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =16
+                        Height: =17
                         Align: =Align.Right
                         Text: =CountRows(Filter(TB_References, Product.Id = ThisItem.ID, IsBlank(Customer))) & " documents"
                         Font: =AppFont

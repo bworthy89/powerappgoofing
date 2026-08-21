@@ -271,9 +271,69 @@ def convert(src, extra=None, keep_classic=None):
     return "\n".join(out), report
 
 
+APPTYPE = {"AppType.Display": 32, "AppType.Title": 22, "AppType.Heading": 17,
+           "AppType.Body": 14, "AppType.Small": 12, "AppType.Micro": 10}
+
+# Fluent 2's type ramp pairs each font size with a fixed line height. It is a
+# lookup, not a ratio - guessing a ratio either misses the tight rows or pads
+# ones that were never broken. The +1 is because a box exactly equal to the line
+# height still renders the gutter; 16px of text in a 16px box was the case that
+# showed bars on the Catalogue screen, while 22px for 14pt type never did.
+LINE_HEIGHT = {10: 14, 12: 16, 14: 20, 17: 22, 22: 28, 32: 40}
+
+
+def fix_text_heights(src):
+    """Raise any ModernText box that is shorter than its own line of text.
+
+    Zeroing the padding was not the whole story. A classic Label clipped
+    whatever did not fit; ModernText renders an overflow gutter instead, so a
+    box sized flush to the glyphs - 16px for 12pt - shows a grey bar down its
+    right edge. The screens written with generous rows never showed it; the
+    tightly packed ones do.
+
+    Runs over ModernText directly rather than as part of conversion, so it can
+    be re-applied to files that were converted earlier.
+    """
+    lines, report = src.split("\n"), []
+    i = 0
+    while i < len(lines):
+        m = re.match(r"^(\s*)- ([A-Za-z_]\w*):\s*$", lines[i])
+        if not m or not re.match(r"^\s*Control: ModernText\s*$", lines[i + 1] if i + 1 < len(lines) else ""):
+            i += 1; continue
+        name = m.group(2)
+        j = i + 1
+        while j < len(lines) and lines[j].strip() != "Properties:":
+            j += 1
+        if j >= len(lines):
+            i += 1; continue
+        pind, end = indent_of(lines[j]), j + 1
+        while end < len(lines) and (not lines[end].strip() or indent_of(lines[end]) > pind):
+            end += 1
+
+        block = lines[j + 1:end]
+        def find(k):
+            for n, l in enumerate(block):
+                mm = re.match(rf"^\s{{{pind + 2}}}{k}:\s*=(.*)$", l)
+                if mm:
+                    return n, mm.group(1).strip()
+            return None, None
+        hn, hv = find("Height")
+        _, sv = find("Size")
+        px = APPTYPE.get(sv)
+        if hn is not None and hv and hv.isdigit() and px in LINE_HEIGHT:
+            need = LINE_HEIGHT[px] + 1
+            if int(hv) < need:
+                lines[j + 1 + hn] = re.sub(r"=\d+\s*$", f"={need}", block[hn])
+                report.append(f"  height        {name} {hv} -> {need} (size {px}, line {LINE_HEIGHT[px]})")
+        i = end
+    return "\n".join(lines), report
+
+
 if __name__ == "__main__":
     src = open(sys.argv[1], encoding="utf-8").read()
     dst, rep = convert(src)
+    dst, hrep = fix_text_heights(dst)
+    rep += hrep
     open(sys.argv[2], "w", encoding="utf-8", newline="").write(dst)
     print("\n".join(rep) if rep else "  (no changes)")
     print(f"\n{len(rep)} change(s)")
