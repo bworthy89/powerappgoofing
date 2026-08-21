@@ -14,7 +14,7 @@ Nothing else will resolve until `AppTheme` exists.
 > | Dropdown reads | Paste this block | Contains `Set(`? |
 > |---|---|---|
 > | `Formulas` | AppTheme, AppFont, AppType, IsNarrow, Gutter, ContentWidth (see below) | No |
-> | `OnStart` | Set(varCustomer, Defaults(TB_Customers)); Set(varInstallation, Defaults(TB_Installations)); Set(varExpandedModel, 0); ClearCollect(colRecent, {Id: 0, Name: "", At: Now()}); Clear(colRecent); LoadData(colRecent, "recent", true) | Yes |
+> | `OnStart` | Set(varCustomer, Defaults(TB_Customers)); Set(varInstallation, Defaults(TB_Installations)); Set(varExpandedModel, 0); ClearCollect(colRecent, {Id: 0, Name: "", At: Now()}); Clear(colRecent); IfError(LoadData(colRecent, "recent", true), Blank()) | Yes |
 > | `StartScreen` | scrHome | No |
 
 ## App.Formulas
@@ -74,7 +74,7 @@ Set(varInstallation, Defaults(TB_Installations));
 Set(varExpandedModel, 0);
 ClearCollect(colRecent, {Id: 0, Name: "", At: Now()});
 Clear(colRecent);
-LoadData(colRecent, "recent", true)
+IfError(LoadData(colRecent, "recent", true), Blank())
 
 > **Why `Defaults()` and not `Blank()`.** `Set(varCustomer, Blank())` leaves the variable with no
 > type, and Studio rejects it: *"No type found for variable 'varCustomer'. Ensure that it is Set to
@@ -86,7 +86,11 @@ LoadData(colRecent, "recent", true)
 > has never seen - Studio rejects it with *"Name isn't valid. 'colRecent' isn't recognized."* The
 > `ClearCollect` declares the shape (`Id` number, `Name` text, `At` datetime, matching what
 > `scrCustomers` writes), `Clear` empties it so the placeholder row never reaches the screen, and
-> `LoadData` then fills it from the device. The third argument `true` means "ignore a missing file",
+> `LoadData` then fills it from the device. Both calls are wrapped in `IfError` because
+> **`SaveData` and `LoadData` are not supported in a web browser** - only in the Power Apps mobile
+> player. Unwrapped, a technician previewing in a browser gets *"There was a problem saving your
+> data. Data cannot be saved when running in a web browser."* every time they open a customer.
+> `IfError` keeps the feature working on a phone and silently does nothing on the web. The third argument `true` means "ignore a missing file",
 > which is what makes the first run on a new device work. Confirmed against the real tenant on
 > 2026-08-20.
 ```

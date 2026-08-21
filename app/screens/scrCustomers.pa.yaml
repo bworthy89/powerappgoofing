@@ -111,7 +111,7 @@ Screens:
                     Collect(colRecent, {Id: ThisItem.ID, Name: ThisItem.Title, At: Now()});
                     If(CountRows(colRecent) > 3,
                        RemoveIf(colRecent, At = First(Sort(colRecent, At, SortOrder.Ascending)).At));
-                    SaveData(colRecent, "recent");
+                    IfError(SaveData(colRecent, "recent"), Blank());
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
                 Children:
                   # A Label with a Fill, not a Rectangle: the archived kit used Labels for

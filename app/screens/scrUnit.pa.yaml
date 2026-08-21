@@ -356,16 +356,25 @@ Screens:
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - rectDocsRow:
-                      Control: Rectangle
+                      Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =48
-                        Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
+                        Text: =""
+                        Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
+                        HoverFill: =AppTheme.Sunken
+                        PressedFill: =AppTheme.PrimaryLight
+                        BorderColor: =If(ThisItem.IsSelected, AppTheme.Primary, AppTheme.LineSoft)
+                        HoverBorderColor: =AppTheme.Line
+                        PressedBorderColor: =AppTheme.Primary
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
                   - lblDocsTitle:
                       Control: Label
                       Properties:
@@ -513,16 +522,25 @@ Screens:
                   OnSelect: =If(!IsBlank(ThisItem.URL), Launch(ThisItem.URL))
                 Children:
                   - rectFirmwareRow:
-                      Control: Rectangle
+                      Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =48
-                        Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.LineSoft
                         BorderThickness: =1
+                        Text: =""
+                        Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
+                        HoverFill: =AppTheme.Sunken
+                        PressedFill: =AppTheme.PrimaryLight
+                        BorderColor: =If(ThisItem.IsSelected, AppTheme.Primary, AppTheme.LineSoft)
+                        HoverBorderColor: =AppTheme.Line
+                        PressedBorderColor: =AppTheme.Primary
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
                   - lblFirmwareTitle:
                       Control: Label
                       Properties:

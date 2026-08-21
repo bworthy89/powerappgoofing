@@ -149,16 +149,37 @@ Screens:
                     Navigate(scrSolution, ScreenTransition.Cover)
                 Children:
                   - rectCard:
-                      Control: Rectangle
+                      Control: Classic/Button
                       Properties:
                         OnSelect: =Select(Parent)
                         X: =Gutter
                         Y: =0
                         Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =240
-                        Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.Line
                         BorderThickness: =1
+                        Text: =""
+                        Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
+                        HoverFill: =AppTheme.Sunken
+                        PressedFill: =AppTheme.PrimaryLight
+                        BorderColor: =If(ThisItem.IsSelected, AppTheme.Primary, AppTheme.LineSoft)
+                        HoverBorderColor: =AppTheme.Line
+                        PressedBorderColor: =AppTheme.Primary
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - rectCardRail:
+                      Control: Label
+                      Properties:
+                        OnSelect: =Select(Parent)
+                        X: =Gutter
+                        Y: =0
+                        Width: =4
+                        Height: =240
+                        Text: =""
+                        Fill: =AppTheme.Primary
+                        BorderThickness: =0
+                        Visible: =ThisItem.IsSelected
                   - lblModel:
                       Control: Label
                       Properties:
