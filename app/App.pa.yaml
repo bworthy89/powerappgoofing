@@ -42,5 +42,5 @@ App:
       Set(varExpandedModel, 0);
       Set(varIsAdmin,
           !IsBlank(LookUp(TB_Admins,
-              Lower(Person.Email) = Lower(User().Email)
+              (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))
               && Status.Value = "Approved")))

@@ -62,7 +62,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: |
-                    =Switch(Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, ""),
+                    =Switch(Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, ""),
                         "Pending", "Your request is waiting for an admin to approve it. You will not see anything change until they do.",
                         "Approved", "You have admin access. If the Admin button is still missing, press Check again - the app reads your role once at startup.",
                         "Denied", "Your request was not approved. Speak to an admin if you think that is wrong.",
@@ -83,8 +83,8 @@ Screens:
                   PaddingTop: =4
                   PaddingBottom: =4
                   Text: |
-                    ="Status: " & Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "")
-                  Visible: =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") <> ""
+                    ="Status: " & Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "")
+                  Visible: =Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") <> ""
                   X: =Gutter
                   Y: =Gutter + 168
                   Width: =200
@@ -94,7 +94,7 @@ Screens:
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
                   Fill: |
-                    =Switch(Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, ""),
+                    =Switch(Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, ""),
                         "Approved", AppTheme.OkLight,
                         "Denied", AppTheme.WarnLight,
                         AppTheme.NeutralLight
@@ -120,7 +120,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  Visible: =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") = ""
+                  Visible: =Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") = ""
                   OnSelect: |
                     =IfError(
                         Patch(TB_Admins, Defaults(TB_Admins),
@@ -160,11 +160,11 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   Visible: |
-                    =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") = "Approved"
+                    =Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") = "Approved"
                   OnSelect: |
                     =Set(varIsAdmin,
                         !IsBlank(LookUp(TB_Admins,
-                            Lower(Person.Email) = Lower(User().Email)
+                            (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))
                             && Status.Value = "Approved")));
                     If(varIsAdmin, Navigate(scrHome, ScreenTransition.CoverRight))
             - lblReqError:

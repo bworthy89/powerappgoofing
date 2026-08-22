@@ -677,3 +677,64 @@ it clears the value while keeping a schema, so downstream `.Product.Id` still ty
 
 An empty screen with a clean compile is the signature of this class of bug. Check what
 gates visibility before looking at anything else.
+
+## `User().Email` is the UPN; a SharePoint Person column stores the mail attribute
+
+They are not the same value, and in a tenant that sets them differently, matching a
+signed-in user against a Person column by email silently matches nobody.
+
+Measured on the Glory tenant:
+
+```
+User().Email      worthyb@us.glory-global.com
+Person.Email      Bakari.Worthy@us.glory-global.com
+Person.Claims     i:0#.f|membership|worthyb@us.glory-global.com
+```
+
+`User().Email` returns the **UPN**. SharePoint's Person column exposes `.Email` from the
+directory's **mail** attribute, which many organisations set to `firstname.lastname` while
+the UPN is a shorter sign-in name. `.Claims` is built from the login name, so it carries the
+UPN and is the field that matches.
+
+Nothing reports the mismatch. The row is there, the status is right, and the lookup returns
+blank - so an approved admin is told to request access. It reads like the approval did not
+save.
+
+Match on claims, with email as a fallback for tenants where the two agree:
+
+```powerfx
+LookUp(TB_Admins,
+    (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email)
+     || Lower(Person.Email) = Lower(User().Email))
+    && Status.Value = "Approved")
+```
+
+Prefer the exact claims comparison over `EndsWith(Person.Claims, User().Email)`. EndsWith
+looks tidier and would also match a *different* user whose address is a suffix of this one.
+
+The prefix `i:0#.f|membership|` applies to member accounts in SharePoint Online. Entra B2B
+guests are encoded differently, so an external user would need the fallback - or their own
+case - if this app ever admits one.
+
+When writing a Person column with `Patch`, construct the same shape:
+
+```powerfx
+Person: { '@odata.type': "#Microsoft.Azure.ActiveDirectory.Connectors.Model.GraphUser",
+          Claims: "i:0#.f|membership|" & Lower(User().Email),
+          DisplayName: User().FullName,
+          Email: User().Email,
+          Department: "", JobTitle: "", Picture: "" }
+```
+
+### How this was found
+
+Four counters on a label, printed on screen:
+
+```
+me: worthyb@us.glory-global.com | rows: 1 | approved: 1 | match: 0 | isAdmin: false
+```
+
+`rows` and `approved` proved the data was right, `match` proved the comparison was wrong, and
+`isAdmin` ruled out a stale variable. One label separated four candidate causes in a single
+look, and it is the same technique that settled the blank-screen and empty-wizard bugs.
+Reach for it second, not tenth.
