@@ -8,10 +8,14 @@
 #
 # Two mutually exclusive regions share the same Y origin (realised below as
 # lblSearchCustomersHead.Y): the three search-result galleries, visible only while
-# txtSearchHome has at least two characters, and the customer list, visible the rest of
-# the time. This screen absorbed scrCustomers — the customer is how technicians come in,
-# so home is the list rather than a menu standing in front of it. See
-# plans/2026-08-21-home-as-customer-list-design.md.
+# txtSearchHome has at least two characters, and the action cards, visible the rest of
+# the time.
+#
+# Home shows no data. A first attempt made it the customer list, which read as a
+# dashboard - efficient for someone who already knows the app, silent for anyone who
+# does not. It now names three things a technician can do and explains each, and the
+# customer list is back on its own screen. That costs one extra tap to reach a site, and
+# is the deliberate trade. See plans/2026-08-21-home-as-customer-list-design.md.
 # Every control in the dashboard region repeats
 # "Len(Trim(txtSearchHome.Text)) < 2" in its own Visible so the two regions never render on
 # top of each other — the same repeated-guard idiom scrCatalogue uses across
@@ -103,58 +107,14 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter
-                  Width: =Parent.Width - (Gutter * 2) - If(IsNarrow, 160, 420)
+                  Width: =Parent.Width - (Gutter * 2) - If(IsNarrow, 60, 130)
                   Height: =40
                   Text: ="Technician Toolbox"
                   Font: =AppFont
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
-            # Secondary destinations. They sit in the header rather than as tiles in the
-            # body: the customer list is what this screen is for, and four large tiles
-            # competed with it. A bottom bar was rejected - it would have given Admin
-            # equal billing with the customer list.
-            - btnTileCatalogue:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  Icon: ="Document"
-                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
-                  Text: ="Catalogue"
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderThickness: =0
-                  Height: =32
-                  Width: =If(IsNarrow, 44, 120)
-                  X: =btnTileOnboard.X - 8 - If(IsNarrow, 44, 120)
-                  Y: =Gutter + 4
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
-            - btnTileOnboard:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  Icon: ="Add"
-                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
-                  Text: ="New customer"
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderThickness: =0
-                  Height: =32
-                  Width: =If(IsNarrow, 44, 150)
-                  X: =btnTileAdmin.X - 8 - If(IsNarrow, 44, 150)
-                  Y: =Gutter + 4
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Navigate(scrOnboard, ScreenTransition.Cover)
+            # Admin sits in the header, not on a card. It is not a technician task, and a
+            # card would say it was.
             - btnTileAdmin:
                 Control: ModernButton
                 Properties:
@@ -165,7 +125,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
+                  Color: =AppTheme.Muted
                   BorderThickness: =0
                   Height: =32
                   Width: =If(IsNarrow, 44, 110)
@@ -482,113 +442,258 @@ Screens:
                     CountRows(galSearchCustomers.AllItems) = 0 &&
                     CountRows(galSearchProducts.AllItems) = 0 &&
                     CountRows(galSearchDocs.AllItems) = 0
-            # The customer list, in the slot the KPI cards used to occupy and inheriting
-            # their visibility rule: this shows while the search box is empty, and the
-            # three result galleries take over from two characters onward. Because it is
-            # hidden while searching, it needs no StartsWith of its own.
-            - galCustomers:
-                Control: Gallery
-                Variant: Vertical
-                Properties:
-                  Items: |
-                    =SortByColumns(Filter(TB_Customers, Active = true), "Title", SortOrder.Ascending)
-                  OnSelect: |
-                    =Set(varCustomer, ThisItem);
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
-                  WrapCount: =Switch(scrHome.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 3)
-                  X: =Gutter
-                  Y: =lblSearchCustomersHead.Y
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =Parent.Height - lblSearchCustomersHead.Y - Gutter
-                  TemplateSize: =96
-                  TemplatePadding: =8
-                  ShowScrollbar: =true
-                Children:
-                  - btnCard:
-                      Control: Classic/Button
-                      Properties:
-                        OnSelect: =Select(Parent)
-                        X: =0
-                        Y: =0
-                        Width: =Parent.TemplateWidth
-                        Height: =80
-                        Text: =""
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.Sunken
-                        PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =AppTheme.LineSoft
-                        HoverBorderColor: =AppTheme.Line
-                        PressedBorderColor: =AppTheme.Primary
-                        BorderThickness: =1
-                        RadiusTopLeft: =8
-                        RadiusTopRight: =8
-                        RadiusBottomLeft: =8
-                        RadiusBottomRight: =8
-                  - lblName:
-                      Control: ModernText
-                      Properties:
-                        PaddingTop: =0
-                        PaddingBottom: =0
-                        OnSelect: =Select(Parent)
-                        X: =Gutter
-                        Y: =12
-                        Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =22
-                        Text: =ThisItem.Title
-                        Font: =AppFont
-                        Size: =AppType.Body
-                        FontWeight: =FontWeight.Semibold
-                        Wrap: =false
-                        AutoHeight: =false
-                  - lblDesc:
-                      Control: ModernText
-                      Properties:
-                        PaddingTop: =0
-                        PaddingBottom: =0
-                        OnSelect: =Select(Parent)
-                        X: =Gutter
-                        Y: =38
-                        Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =34
-                        Text: =Coalesce(ThisItem.Description, "No description")
-                        Font: =AppFont
-                        Size: =AppType.Small
-                        Color: =AppTheme.Muted
-                        Wrap: =true
-                        AutoHeight: =false
-                  - galCustomersHit:
-                      Control: Classic/Button
-                      Properties:
-                        OnSelect: =Select(Parent)
-                        FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
-                        X: =0
-                        Y: =0
-                        Width: =Parent.TemplateWidth
-                        Height: =Parent.TemplateHeight
-                        Text: =""
-                        Fill: =RGBA(0, 0, 0, 0)
-                        HoverFill: =RGBA(0, 0, 0, 0.04)
-                        PressedFill: =RGBA(0, 87, 184, 0.10)
-                        BorderThickness: =0
-                        HoverBorderColor: =RGBA(0, 0, 0, 0)
-                        PressedBorderColor: =RGBA(0, 0, 0, 0)
-            - lblNoCustomersHome:
+            # The heading that makes this a home screen rather than a list: it names the
+            # question the cards below answer.
+            - lblPromptHome:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="No customers yet. Add one from New customer."
-                  Color: =AppTheme.Muted
+                  Text: ="What do you need?"
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =26
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActCustomers:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y + 38
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =88
+                  Fill: =AppTheme.Surface
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.PrimaryLight
+                  BorderColor: =AppTheme.LineSoft
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - icoActCustomers:
+                Control: ModernIcon
+                Properties:
+                  Icon: ="People"
+                  IconColor: =AppTheme.Primary
+                  IconStyle: =IconStyle.Outline
+                  X: =Gutter + 20
+                  Y: =lblSearchCustomersHead.Y + 38 + 28
+                  Width: =32
+                  Height: =32
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActCustomersTitle:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Find a customer"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 38 + 22
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =24
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActCustomersDesc:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="See what a site runs, and its documents"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 38 + 48
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =20
                   Font: =AppFont
                   Size: =AppType.Small
-                  Align: =Align.Center
-                  Wrap: =true
+                  Color: =AppTheme.Muted
+                  Wrap: =false
                   AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActCustomersHit:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  OnSelect: =Navigate(scrCustomers, ScreenTransition.Cover)
                   X: =Gutter
-                  Y: =lblSearchCustomersHead.Y + 40
+                  Y: =lblSearchCustomersHead.Y + 38
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =40
-                  Visible: |
-                    =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(Filter(TB_Customers, Active = true)) = 0
+                  Height: =88
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0.04)
+                  PressedFill: =RGBA(0, 87, 184, 0.10)
+                  BorderThickness: =0
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderThickness: =2
+                  FocusedBorderColor: =AppTheme.Primary
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActCatalogue:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y + 138
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =88
+                  Fill: =AppTheme.Surface
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.PrimaryLight
+                  BorderColor: =AppTheme.LineSoft
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - icoActCatalogue:
+                Control: ModernIcon
+                Properties:
+                  Icon: ="Document"
+                  IconColor: =AppTheme.Primary
+                  IconStyle: =IconStyle.Outline
+                  X: =Gutter + 20
+                  Y: =lblSearchCustomersHead.Y + 138 + 28
+                  Width: =32
+                  Height: =32
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActCatalogueTitle:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Browse the catalogue"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 138 + 22
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =24
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActCatalogueDesc:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Manuals, guides and standard versions"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 138 + 48
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =20
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActCatalogueHit:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y + 138
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =88
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0.04)
+                  PressedFill: =RGBA(0, 87, 184, 0.10)
+                  BorderThickness: =0
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderThickness: =2
+                  FocusedBorderColor: =AppTheme.Primary
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActOnboard:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y + 238
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =88
+                  Fill: =AppTheme.Surface
+                  HoverFill: =AppTheme.Sunken
+                  PressedFill: =AppTheme.PrimaryLight
+                  BorderColor: =AppTheme.LineSoft
+                  BorderThickness: =1
+                  RadiusTopLeft: =8
+                  RadiusTopRight: =8
+                  RadiusBottomLeft: =8
+                  RadiusBottomRight: =8
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - icoActOnboard:
+                Control: ModernIcon
+                Properties:
+                  Icon: ="Add"
+                  IconColor: =AppTheme.Primary
+                  IconStyle: =IconStyle.Outline
+                  X: =Gutter + 20
+                  Y: =lblSearchCustomersHead.Y + 238 + 28
+                  Width: =32
+                  Height: =32
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActOnboardTitle:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Add a customer"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 238 + 22
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =24
+                  Font: =AppFont
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - lblActOnboardDesc:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Set up a new site and its equipment"
+                  X: =Gutter + 72
+                  Y: =lblSearchCustomersHead.Y + 238 + 48
+                  Width: =Parent.Width - (Gutter * 2) - 96
+                  Height: =20
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+            - btnActOnboardHit:
+                Control: Classic/Button
+                Properties:
+                  Text: =""
+                  OnSelect: =Navigate(scrOnboard, ScreenTransition.Cover)
+                  X: =Gutter
+                  Y: =lblSearchCustomersHead.Y + 238
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =88
+                  Fill: =RGBA(0, 0, 0, 0)
+                  HoverFill: =RGBA(0, 0, 0, 0.04)
+                  PressedFill: =RGBA(0, 87, 184, 0.10)
+                  BorderThickness: =0
+                  HoverBorderColor: =RGBA(0, 0, 0, 0)
+                  PressedBorderColor: =RGBA(0, 0, 0, 0)
+                  FocusedBorderThickness: =2
+                  FocusedBorderColor: =AppTheme.Primary
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2

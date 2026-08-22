@@ -1,0 +1,195 @@
+# Screen — Customers
+# The simplest screen in the rebuild: a searchable gallery of customers, each row
+# showing a three-state currency summary (off standard / not recorded / all on standard).
+# Selecting a row sets varCustomer and hands off to scrCustomerOverview. If this pastes
+# and renders, the data path and formula idioms are proven for every later screen.
+Screens:
+  scrCustomers:
+    Properties:
+      Fill: =AppTheme.Bg
+    Children:
+      - conRootCus:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
+            Y: =0
+            Width: =ContentWidth
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - btnBackCus:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
+                  X: =Gutter
+                  Y: =Gutter
+                  Width: =Gutter * 10
+                  Height: =28
+                  Text: ="Home"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderThickness: =0
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
+            - lblTitleCus:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  X: =Gutter
+                  Y: =Gutter + 36
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Text: ="Customers"
+                  Font: =AppFont
+                  Size: =AppType.Title
+                  FontWeight: =FontWeight.Bold
+            - txtSearchCus:
+                Control: ModernTextInput
+                Properties:
+                  Type: =TextInputType.Search
+                  X: =Gutter
+                  Y: =Gutter + 84
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =44
+                  Default: =""
+                  Placeholder: ="Search customers"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - galCustomers:
+                Control: Gallery
+                Variant: Vertical
+                Properties:
+                  WrapCount: =Switch(scrCustomers.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 3)
+                  X: =Gutter
+                  Y: =Gutter + 140
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =Parent.Height - (Gutter + 140) - Gutter
+                  TemplateSize: =96
+                  TemplatePadding: =8
+                  ShowScrollbar: =true
+                  Items: |
+                    =SortByColumns(
+                        Filter(
+                            TB_Customers,
+                            Active = true,
+                            StartsWith(Title, Trim(txtSearchCus.Text))
+                        ),
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  OnSelect: |
+                    =Set(varCustomer, ThisItem);
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
+                Children:
+                  # A Label with a Fill, not a Rectangle: the archived kit used Labels for
+                  # every coloured surface in a gallery template, and its rows were clickable.
+                  # A Rectangle is a shape with its own OnSelect and swallows the tap. This
+                  # also gives the row a full-width clickable surface - empty template area
+                  # does not respond to clicks in Power Apps.
+                  # The card is a Classic/Button, not a Label. Three reasons, all deliberate:
+                  # it is the only control that accepts corner radius, so the rounded cards in
+                  # the design survive; it has HoverFill and PressedFill, which no Label or
+                  # Rectangle has; and its OnSelect forwards the tap to the gallery.
+                  #
+                  # No selected state: tapping navigates away, so there is nothing left
+                  # on screen for it to mark. Hover and pressed feedback live on the
+                  # transparent hit target below.
+                  - btnCard:
+                      Control: Classic/Button
+                      Properties:
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =80
+                        Text: =""
+                        Fill: =AppTheme.Surface
+                        HoverFill: =AppTheme.Sunken
+                        PressedFill: =AppTheme.PrimaryLight
+                        BorderColor: =AppTheme.LineSoft
+                        HoverBorderColor: =AppTheme.Line
+                        PressedBorderColor: =AppTheme.Primary
+                        BorderThickness: =1
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblName:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        Wrap: =false
+                        AutoHeight: =false
+                        OnSelect: =Select(Parent)
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        FontWeight: =FontWeight.Semibold
+                  - lblDesc:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        Wrap: =true
+                        AutoHeight: =false
+                        OnSelect: =Select(Parent)
+                        X: =Gutter
+                        Y: =38
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =36
+                        Text: =Coalesce(ThisItem.Description, "No description")
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                  - galCustomersHit:
+                      Control: Classic/Button
+                      Properties:
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Text: =""
+                        Fill: =RGBA(0, 0, 0, 0)
+                        HoverFill: =RGBA(0, 0, 0, 0.04)
+                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        BorderThickness: =0
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+            - lblNoCustomers:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  X: =Gutter
+                  Y: =Gutter + 140
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppTheme.Muted
+                  Text: ="No customers match your search."
+                  Visible: =CountRows(galCustomers.AllItems) = 0

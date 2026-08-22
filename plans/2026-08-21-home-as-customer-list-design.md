@@ -132,3 +132,39 @@ Compile clean, then: home lists active customers only; two characters swaps to g
 results; tapping a customer opens the overview and the back link returns home; Catalogue,
 New customer and Admin are all reachable; narrow width collapses the navigation to icons.
 Warning count should fall from 93 to roughly 85.
+
+---
+
+## Revision: action-led, not a list
+
+**Built, deployed, and judged wrong.** Making home the customer list removed the KPI
+numbers but left a grid of cards, which still read as a dashboard: *"we need a home page
+that guides the user on what to do."*
+
+The mistake was treating "not a dashboard" as a subtraction problem. Stripping the screen
+to a bare list is efficient for someone who already knows the app and says nothing to
+anyone who does not. A home screen has to answer *what is this, and where do I start*.
+
+Home now shows no data at all. It names three things a technician can do, each with a line
+explaining it:
+
+| card | goes to | line |
+| --- | --- | --- |
+| Find a customer | `scrCustomers` | See what a site runs, and its documents |
+| Browse the catalogue | `scrCatalogue` | Manuals, guides and standard versions |
+| Add a customer | `scrOnboard` | Set up a new site and its equipment |
+
+Admin stays a subtle header button - it is not a technician task, and a card would say it
+was.
+
+`scrCustomers` comes back, keeping the improvements made while it was merged: no status
+chips, no selected-state styling, no `colRecent`. Nine screens again. Finding a site costs
+one extra tap, which is the deliberate trade for a home that explains itself.
+
+### One deviation from the agreed sketch
+
+The sketch put the search box *below* the action cards. It is above them instead. The
+results have to appear somewhere, and they reuse the slot the cards occupy - that is what
+makes the swap free. With the box underneath, results would have rendered above the thing
+being typed into, in roughly 300px of space that three 170px galleries cannot fit. Above
+the cards, the box never moves and results get the full remaining height.
