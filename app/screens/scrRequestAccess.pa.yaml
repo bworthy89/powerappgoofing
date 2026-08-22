@@ -65,7 +65,7 @@ Screens:
                     =Switch(Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, ""),
                         "Pending", "Your request is waiting for an admin to approve it. You will not see anything change until they do.",
                         "Approved", "You have admin access. If the Admin button is still missing, press Check again - the app reads your role once at startup.",
-                        "Denied", "Your request was not approved. Speak to an admin if you think that is wrong.",
+                        "Denied", "Your request was not approved. You can ask again below if that was a mistake.",
                         "Admin covers editing customers, models, installations and documents, and setting up a new site. Request it and an admin will be asked to approve."
                     )
                   X: =Gutter
@@ -120,9 +120,10 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  Visible: =Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") = ""
+                  Visible: =Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") <> "Pending" && Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") <> "Approved"
                   OnSelect: |
                     =IfError(
+                        If(IsBlank(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email)))),
                         Patch(TB_Admins, Defaults(TB_Admins),
                             {
                                 Title: User().FullName,
@@ -135,6 +136,8 @@ Screens:
                                           Picture: "" },
                                 Status: { Value: "Pending" }
                             }
+                        ),
+                        Patch(TB_Admins, LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))), { Status: { Value: "Pending" } })
                         );
                         Set(varReqError, "");
                         Notify("Request sent. An admin will be asked to approve it.", NotificationType.Success),
