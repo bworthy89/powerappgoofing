@@ -632,3 +632,48 @@ it forced: `Selected` now returns the whole record, so `scrOnboard`'s solution p
 duplicate-title edge case documented earlier is gone with it.
 
 The classic entry above still stands for any `Classic/DropDown` that remains.
+
+## Screen state belongs in `OnVisible`, not in the button that navigates
+
+`scrOnboard` renders three steps on one screen, each gated on `varWizStep`. Nothing on the
+screen ever set that variable to 1 - the calling button did, as part of its `OnSelect`:
+
+```powerfx
+Set(varWizStep, 1);
+Set(varWizError, "");
+Navigate(scrOnboard, ScreenTransition.Cover)
+```
+
+When home was redesigned and that button was rewritten, the two `Set` lines went with it.
+The wizard then opened with `varWizStep` blank, `varWizStep = 1` was false for every
+control on step 1, and the screen rendered **completely empty**. It compiled clean, because
+nothing is wrong with any individual formula.
+
+The fix is not to restore the `Set` on the new caller - that is the same arrangement, still
+one rewrite away from breaking again, and by then there may be several callers to keep in
+step. The screen initialises itself:
+
+```yaml
+  scrOnboard:
+    Properties:
+      OnVisible: |
+        =Set(varWizStep, 1);
+        Set(varWizError, "");
+        Set(varWizParent, Defaults(TB_Installations));
+        ...
+```
+
+The distinction worth holding on to:
+
+- **Screen-internal state** - a step counter, an error line, a scratch selection - is the
+  screen's own business. Reset it in `OnVisible`. No caller can forget what it never had to
+  remember, and re-entering mid-flow starts clean instead of resuming stale state.
+- **Parameters** - `varCustomer` before `scrCustomerOverview`, `varAdminNew` and
+  `varRec<List>` before `scrEditForm`, `varInstallation` before `scrUnit` - genuinely differ
+  per invocation, so they belong on the caller.
+
+`Defaults(TB_Installations)` rather than `Blank()` for the record, matching `App.OnStart`:
+it clears the value while keeping a schema, so downstream `.Product.Id` still type-checks.
+
+An empty screen with a clean compile is the signature of this class of bug. Check what
+gates visibility before looking at anything else.

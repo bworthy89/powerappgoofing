@@ -4,6 +4,12 @@ Screens:
   scrOnboard:
     Properties:
       Fill: =AppTheme.Bg
+      OnVisible: |
+        =Set(varWizStep, 1);
+        Set(varWizError, "");
+        Set(varWizParent, Defaults(TB_Installations));
+        Set(varWizFamily, "");
+        Set(varWizSolProdName, "")
     Children:
       - conRootWiz:
           Control: GroupContainer
