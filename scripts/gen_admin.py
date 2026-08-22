@@ -129,6 +129,26 @@ def gen_admin():
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
         prop(o, k, v, q)
 
+    # The wizard, reachable only from here. "Add new" creates a bare customer
+    # row through scrEditForm; this walks the whole site - customer, its
+    # solutions, and the components under them - in one pass. Only meaningful
+    # on the Customers list, so it hides on the other three.
+    q = ctrl(o, "btnGuidedSetup", "Classic/Button", c)
+    for k, v in [("Font","AppFont"),("Size","AppType.Small"),
+                 ("Text",'"Guided setup"'),
+                 ("Tooltip",'"Add a customer with its solutions and components"'),
+                 ("Fill","AppTheme.Surface"),("Color","AppTheme.Primary"),
+                 ("HoverFill","AppTheme.Sunken"),("BorderColor","AppTheme.Line"),
+                 ("BorderThickness","1"),
+                 ("Height","40"),("Width","150"),
+                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","Gutter + 126"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
+                 ("Visible",'varAdminList = "Cust"'),
+                 ("OnSelect","Navigate(scrOnboard, ScreenTransition.Cover)"),
+                 ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
+        prop(o, k, v, q)
+
     q = ctrl(o, "btnAddNew", "Classic/Button", c)
     for k, v in [("Font","AppFont"),("Size","AppType.Small"),("Text",'"+  Add new"'),
                  ("Fill","AppTheme.Ok"),("Color","AppTheme.OnPrimary"),

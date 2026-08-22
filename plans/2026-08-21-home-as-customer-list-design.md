@@ -168,3 +168,16 @@ results have to appear somewhere, and they reuse the slot the cards occupy - tha
 makes the swap free. With the box underneath, results would have rendered above the thing
 being typed into, in roughly 300px of space that three 170px galleries cannot fit. Above
 the cards, the box never moves and results get the full remaining height.
+
+### Revision: Add a customer leaves home
+
+Setting up a customer is an administrative job, not something a technician does on
+arrival, so home is down to two cards: Find a customer, and Browse the catalogue.
+
+The premise needed one correction before acting on it. Home's card was the **only** route
+into `scrOnboard` - Admin's `+ Add new` goes to `scrEditForm`, which creates a bare
+customer row rather than walking the site's solutions and components. Removing the card
+alone would have orphaned the wizard.
+
+`scrAdmin` now carries a `Guided setup` button beside `+ Add new`, visible only while the
+Customers list is selected, since it means nothing on the other three.
