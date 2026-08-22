@@ -726,6 +726,31 @@ Person: { '@odata.type': "#Microsoft.Azure.ActiveDirectory.Connectors.Model.Grap
           Department: "", JobTitle: "", Picture: "" }
 ```
 
+### `User().FullName` is a display name, not a first and last name
+
+Same tenant, same diagnostic: `Worthy, Bakari (Watertown)`. Surname first, then the given
+name, then a site. Taking the first word to greet someone gets you "Worthy," and taking the
+last gets you "(Watertown)".
+
+`Match` with a named submatch reads both orders without knowing which it has:
+
+```powerfx
+Coalesce(
+    Match(User().FullName, ",\s*(?<fn>[^\s(,]+)").fn,
+    Match(User().FullName, "^\s*(?<fn>[^\s(,]+)").fn,
+    "there")
+```
+
+Comma first, because a comma means surname-first and the given name follows it. No comma
+means the first token already is the given name. `Match` returns blank when nothing matches,
+so `Coalesce` walks the cases in order and lands on a neutral word rather than showing
+nobody's name.
+
+Not `Split`. Its own reference page documents the result column as `Value` in the examples
+table and uses `.Result` in the substring example two sections later, and that page also
+recommends `Match` for this. An ambiguity between two column names is exactly what cost a
+deployment cycle on `ShowColumns`.
+
 ### How this was found
 
 Four counters on a label, printed on screen:

@@ -479,7 +479,8 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="What do you need?"
+                  Text: |
+                    ="Hi " & Coalesce(Match(User().FullName, ",\s*(?<fn>[^\s(,]+)").fn, Match(User().FullName, "^\s*(?<fn>[^\s(,]+)").fn, "there") & ", what do you need?"
                   X: =Gutter
                   Y: =lblSearchCustomersHead.Y
                   Width: =Parent.Width - (Gutter * 2)
