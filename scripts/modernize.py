@@ -154,6 +154,7 @@ EXTRA = {
     "btnAddNew": {"Appearance": "ButtonAppearance.Primary",
                   "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
     "txtSearchAdm": SEARCH,
+    "btnRequest": {"Appearance": "ButtonAppearance.Primary"},
     "btnGuidedSetup": {"Appearance": "ButtonAppearance.Outline",
                        "Icon": '"People"', "Layout": "ButtonLayout.IconBefore"},
     "btnListCust": tab("Cust"),

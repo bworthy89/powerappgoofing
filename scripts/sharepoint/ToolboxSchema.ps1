@@ -94,10 +94,11 @@ $Schema = [ordered]@{
     }
 
     'TB_Admins' = @{
-        Description = 'Who may reach the Admin section. Empty means everyone.'
+        Description = 'Access requests and approvals. No approved rows means everyone is an admin.'
         TitleLabel  = 'Name'
         Fields      = @(
             @{ Display = 'Person'; Internal = 'TBPerson'; Type = 'User' }
+            @{ Display = 'Status'; Internal = 'TBStatus'; Type = 'Choice'; Choices = @('Pending','Approved','Denied'); Default = 'Pending' }
         )
     }
 
@@ -128,5 +129,5 @@ $ViewFields = @{
     'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes')
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
     'TB_SolutionUnits' = @('Title','TBSolution','TBUnit','TBStandard')
-    'TB_Admins'        = @('Title','TBPerson')
+    'TB_Admins'        = @('Title','TBPerson','TBStatus')
 }

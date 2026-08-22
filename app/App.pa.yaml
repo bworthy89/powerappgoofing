@@ -41,5 +41,7 @@ App:
       Set(varInstallation, Defaults(TB_Installations));
       Set(varExpandedModel, 0);
       Set(varIsAdmin,
-          CountRows(TB_Admins) = 0
-          || !IsBlank(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email))))
+          CountRows(Filter(TB_Admins, Status.Value = "Approved")) = 0
+          || !IsBlank(LookUp(TB_Admins,
+               Lower(Person.Email) = Lower(User().Email)
+               && Status.Value = "Approved")))

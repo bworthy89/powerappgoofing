@@ -1,0 +1,157 @@
+# Screen - Request access
+# For anyone who is not an admin. It exists because the alternative is a person
+# asking a colleague which list to edit, which is how undocumented access
+# happens.
+#
+# The request writes a Pending row into TB_Admins with the signed-in identity, so
+# nobody can request on someone else's behalf by mistake. An admin approves it
+# from the Access tab on scrAdmin.
+#
+# Note that TB_Admins carries requests as well as approvals. varIsAdmin therefore
+# counts *approved* rows for its "nobody is set up yet, so everyone is an admin"
+# bootstrap - counting all rows would let the first pending request lock the
+# whole app.
+Screens:
+  scrRequestAccess:
+    Properties:
+      Fill: =AppTheme.Bg
+    Children:
+      - conRootReq:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
+            Y: =0
+            Width: =ContentWidth
+            Height: =Parent.Height
+            Fill: =AppTheme.Bg
+          Children:
+            - btnBackReq:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
+                  Text: ="Home"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderThickness: =0
+                  Height: =28
+                  Width: =Gutter * 10
+                  X: =Gutter
+                  Y: =Gutter
+                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
+            - lblTitleReq:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Admin access"
+                  X: =Gutter
+                  Y: =Gutter + 36
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Font: =AppFont
+                  Size: =AppType.Title
+                  FontWeight: =FontWeight.Bold
+            - lblReqBody:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: |
+                    =Switch(Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, ""),
+                        "Pending", "Your request is waiting for an admin to approve it. You will not see anything change until they do.",
+                        "Approved", "You already have admin access. If the Admin button is missing, close and reopen the app.",
+                        "Denied", "Your request was not approved. Speak to an admin if you think that is wrong.",
+                        "Admin covers editing customers, models, installations and documents, and setting up a new site. Request it and an admin will be asked to approve."
+                    )
+                  X: =Gutter
+                  Y: =Gutter + 88
+                  Width: =Min(Parent.Width - (Gutter * 2), 560)
+                  Height: =72
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Color: =AppTheme.FgSecondary
+                  Wrap: =true
+                  AutoHeight: =false
+            - lblReqStatus:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =4
+                  PaddingBottom: =4
+                  Text: |
+                    ="Status: " & Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "")
+                  Visible: =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") <> ""
+                  X: =Gutter
+                  Y: =Gutter + 168
+                  Width: =200
+                  Height: =26
+                  Align: =Align.Center
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Fill: |
+                    =Switch(Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, ""),
+                        "Approved", AppTheme.OkLight,
+                        "Denied", AppTheme.WarnLight,
+                        AppTheme.NeutralLight
+                    )
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - btnRequest:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Primary
+                  Text: ="Request admin access"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  BorderThickness: =0
+                  Height: =44
+                  Width: =240
+                  X: =Gutter
+                  Y: =Gutter + 168
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  Visible: =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") = ""
+                  OnSelect: |
+                    =IfError(
+                        Patch(TB_Admins, Defaults(TB_Admins),
+                            {
+                                Title: User().FullName,
+                                Person: { '@odata.type': "#Microsoft.Azure.ActiveDirectory.Connectors.Model.GraphUser",
+                                          Claims: "i:0#.f|membership|" & Lower(User().Email),
+                                          DisplayName: User().FullName,
+                                          Email: User().Email,
+                                          Department: "",
+                                          JobTitle: "",
+                                          Picture: "" },
+                                Status: { Value: "Pending" }
+                            }
+                        );
+                        Set(varReqError, ""),
+                        Set(varReqError, FirstError.Message)
+                    )
+            - lblReqError:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: =varReqError
+                  Color: =RGBA(176, 0, 32, 1)
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Wrap: =true
+                  AutoHeight: =false
+                  Visible: =!IsBlank(varReqError)
+                  X: =Gutter
+                  Y: =Gutter + 224
+                  Width: =Min(Parent.Width - (Gutter * 2), 560)
+                  Height: =44

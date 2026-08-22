@@ -11,6 +11,14 @@ import io, sys
 
 # ---------------------------------------------------------------- field spec
 # kind: text | note | choice | bool | lookup | url
+# The Access tab. Deliberately not a member of LISTS: it has no edit form, no
+# Add new, and its rows act rather than navigate, so every loop over LISTS would
+# need to except it. The label carries the pending count because nothing else
+# tells an admin a request is waiting.
+ACCESS = dict(key="Acc",
+              label='"Access" & If(CountRows(Filter(TB_Admins, Status.Value = "Pending")) > 0, "  (" & CountRows(Filter(TB_Admins, Status.Value = "Pending")) & ")", "")',
+              raw_label=True)
+
 LISTS = [
     dict(key="Cust", label="Customers", source="TB_Customers",
          deps="CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID))"
@@ -126,14 +134,14 @@ def gen_admin():
 
     # The tab bar divides by however many lists there are. It was hardcoded to
     # four, which silently pushed the fifth tab off the right edge.
-    TABW = f"(ContentWidth - (Gutter * 2) - {8 * (len(LISTS) - 1)}) / {len(LISTS)}"
+    TABW = f"(ContentWidth - (Gutter * 2) - {8 * len(LISTS)}) / {len(LISTS) + 1}"
 
     # list selector buttons
-    for i, L in enumerate(LISTS):
+    for i, L in enumerate(LISTS + [ACCESS]):
         q = ctrl(o, f"btnList{L['key']}", "Classic/Button", c)
         sel = f'varAdminList = "{L["key"]}"'
         for k, v in [("Font","AppFont"),("Size","AppType.Small"),
-                     ("Text",f'"{L["label"]}"'),
+                     ("Text", L["label"] if L.get("raw_label") else f'"{L["label"]}"'),
                      ("Fill",f'If({sel}, AppTheme.Primary, AppTheme.Surface)'),
                      ("Color",f'If({sel}, AppTheme.OnPrimary, AppTheme.Fg)'),
                      ("HoverFill",f'If({sel}, AppTheme.PrimaryDark, AppTheme.Sunken)'),
@@ -199,6 +207,7 @@ def gen_admin():
                  ("HoverFill","AppTheme.Primary"),("BorderThickness","0"),
                  ("Height","40"),("Width","118"),
                  ("X","ContentWidth - Gutter - 118"),("Y","Gutter + 126"),
+                 ("Visible",'varAdminList <> "Acc"'),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("OnSelect","PLACEHOLDER"),
@@ -251,6 +260,85 @@ def gen_admin():
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                      ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
             prop(o, k, v, r)
+
+    # ---- Access: approve or deny, in the row
+    VIS = 'varAdminList = "Acc"'
+    q = ctrl(o, "galAdmAcc", "Gallery", c, "Vertical")
+    # Pending first, so the thing needing a decision is at the top.
+    o.write(f"{q}Items: |\n"
+            f"{q}  =Sort(TB_Admins, If(Status.Value = \"Pending\", 0, 1), SortOrder.Ascending)\n")
+    for k, v in [("Visible",VIS),("X","Gutter"),("Y","Gutter + 180"),
+                 ("Width","ContentWidth - (Gutter * 2)"),
+                 ("Height","Parent.Height - (Gutter + 180) - Gutter"),
+                 ("TemplateSize","56"),("TemplatePadding","6"),
+                 ("ShowScrollbar","true")]:
+        prop(o, k, v, q)
+    o.write(f"{q[:-2]}Children:\n")
+
+    r = ctrl(o, "rectAccRow", "Classic/Button", q)
+    for k, v in [("Text",'""'),("X","0"),("Y","0"),
+                 ("Width","Parent.TemplateWidth"),("Height","50"),
+                 ("Fill","AppTheme.Surface"),("HoverFill","AppTheme.Surface"),
+                 ("BorderColor","AppTheme.LineSoft"),("BorderThickness","1"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
+        prop(o, k, v, r)
+
+    r = ctrl(o, "lblAccName", "Label", q)
+    o.write(f'{r}Text: |\n{r}  =Coalesce(ThisItem.Person.DisplayName, ThisItem.Title, "unknown")\n')
+    for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Body"),
+                 ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
+                 ("AutoHeight","false"),("X","Gutter"),("Y","6"),
+                 ("Width","Parent.TemplateWidth - 300"),("Height","20")]:
+        prop(o, k, v, r)
+
+    r = ctrl(o, "lblAccMeta", "Label", q)
+    o.write(f'{r}Text: |\n{r}  =Coalesce(ThisItem.Person.Email, "no email") & "   ·   " '
+            f'& ThisItem.Status.Value & "   ·   asked " & Text(ThisItem.Created, "d mmm")\n')
+    for k, v in [("Color","AppTheme.Muted"),("Font","AppFont"),("Size","AppType.Small"),
+                 ("Wrap","false"),("AutoHeight","false"),("X","Gutter"),("Y","26"),
+                 ("Width","Parent.TemplateWidth - 300"),("Height","18")]:
+        prop(o, k, v, r)
+
+    # Approve shows unless already approved; Deny unless already denied. Nothing
+    # is deleted - a denied row is a record that the question was asked.
+    r = ctrl(o, "btnAccApprove", "Classic/Button", q)
+    o.write(f'{r}OnSelect: |\n'
+            f'{r}  =Patch(TB_Admins, ThisItem, {{ Status: {{ Value: "Approved" }} }})\n')
+    for k, v in [("Text",'"Approve"'),("Font","AppFont"),("Size","AppType.Small"),
+                 ("FontWeight","FontWeight.Semibold"),
+                 ("Fill","AppTheme.Ok"),("Color","AppTheme.OnPrimary"),
+                 ("HoverFill","AppTheme.Primary"),("BorderThickness","0"),
+                 ("X","Parent.TemplateWidth - 200"),("Y","8"),
+                 ("Width","92"),("Height","34"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
+                 ("Visible",'ThisItem.Status.Value <> "Approved"')]:
+        prop(o, k, v, r)
+
+    r = ctrl(o, "btnAccDeny", "Classic/Button", q)
+    o.write(f'{r}OnSelect: |\n'
+            f'{r}  =Patch(TB_Admins, ThisItem, {{ Status: {{ Value: "Denied" }} }})\n')
+    for k, v in [("Text",'"Deny"'),("Font","AppFont"),("Size","AppType.Small"),
+                 ("FontWeight","FontWeight.Semibold"),
+                 ("Fill","AppTheme.Surface"),("Color","RGBA(176, 0, 32, 1)"),
+                 ("HoverFill","AppTheme.Sunken"),
+                 ("BorderColor","RGBA(176, 0, 32, 1)"),("BorderThickness","1"),
+                 ("X","Parent.TemplateWidth - 100"),("Y","8"),
+                 ("Width","92"),("Height","34"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
+                 ("Visible",'ThisItem.Status.Value <> "Denied"')]:
+        prop(o, k, v, r)
+
+    q = ctrl(o, "lblAccEmpty", "Label", c)
+    for k, v in [("Text",'"Nobody has requested access. While no request is approved, everyone is an admin."'),
+                 ("Align","Align.Center"),("Color","AppTheme.Muted"),("Font","AppFont"),
+                 ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
+                 ("X","Gutter"),("Y","Gutter + 200"),("Height","40"),
+                 ("Width","ContentWidth - (Gutter * 2)"),
+                 ("Visible",f'{VIS} && CountRows(TB_Admins) = 0')]:
+        prop(o, k, v, q)
 
     q = ctrl(o, "lblAdmEmpty", "Label", c)
     cond = " || ".join(

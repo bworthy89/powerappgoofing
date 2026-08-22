@@ -119,6 +119,31 @@ Screens:
                   FontWeight: =FontWeight.Bold
             # Admin sits in the header, not on a card. It is not a technician task, and a
             # card would say it was.
+            # Occupies the same slot as the Admin button, for whoever is not one. Home
+            # gains nothing new to look at, and the app never shows a door that will
+            # not open.
+            - btnRequestAccess:
+                Control: ModernButton
+                Properties:
+                  Visible: =!varIsAdmin
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="People"
+                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
+                  Text: ="Request access"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Muted
+                  BorderThickness: =0
+                  Height: =32
+                  Width: =If(IsNarrow, 44, 170)
+                  X: =Parent.Width - Gutter - If(IsNarrow, 44, 170)
+                  Y: =Gutter + 4
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrRequestAccess, ScreenTransition.Cover)
             - btnTileAdmin:
                 Control: ModernButton
                 Properties:
