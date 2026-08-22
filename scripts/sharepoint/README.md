@@ -1,13 +1,25 @@
 # Provisioning the Technician Toolbox lists
 
-Two scripts. One builds the four lists, one removes them so you can try again.
+Three scripts and a shared schema.
 
-> **These have never been run.** They were written without access to a SharePoint tenant and
-> could not be syntax-checked, because there is no PowerShell on the machine they were written
-> on. Treat the first run as a test, not a deployment. Use `-WhatIf` first, every time.
+| file | what it does |
+| --- | --- |
+| `ToolboxSchema.ps1` | The definition of the four lists. Dot-sourced by the others, so creation and verification cannot drift apart. |
+| `Create-ToolboxLists.ps1` | Builds the lists, columns, choices and default views. Idempotent. |
+| `Test-ToolboxSchema.ps1` | Read-only check that a site matches. Run it before pointing the app at anything. |
+| `Remove-ToolboxLists.ps1` | Removes them, so you can try again. |
+
+For a full install into another tenant, follow `deploy/README.md` instead - this file covers
+the SharePoint half only.
+
+> **Run and proven**, on 2026-08-21, against a real tenant: PowerShell 7 with
+> PnP.PowerShell 3.4.1, connecting interactively with `-ClientId`. They built all four lists
+> and 26 columns on the first attempt, and `Test-ToolboxSchema.ps1` now passes 22 checks
+> against the result.
 >
-> Cmdlet coverage was chosen to work on both PnP.PowerShell 1.12 (PowerShell 5.1) and 2.x
-> (PowerShell 7), but only the 1.12 path has been reasoned through in detail.
+> Still use `-WhatIf` first on a site that matters. The scripts are idempotent - they skip
+> anything that already exists - but a dry run is how you catch a wrong `-SiteUrl` before it
+> creates four lists somewhere unintended.
 
 ## What gets created
 
