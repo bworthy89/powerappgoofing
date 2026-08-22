@@ -168,23 +168,6 @@ def gen_admin():
     # row through scrEditForm; this walks the whole site - customer, its
     # solutions, and the components under them - in one pass. Only meaningful
     # on the Customers list, so it hides on the other three.
-    # Empty TB_Admins means everyone is an admin. That is deliberate - the
-    # alternative locks out the person who has to add the first row - but it
-    # should never be quiet about it.
-    q = ctrl(o, "lblAdminOpen", "Label", c)
-    for k, v in [("Text",'"Anyone can reach Admin: TB_Admins is empty. Add yourself to it to lock this down."'),
-                 ("Color","AppTheme.Warn"),("Fill","AppTheme.WarnLight"),
-                 ("Font","AppFont"),("Size","AppType.Small"),
-                 ("FontWeight","FontWeight.Semibold"),
-                 ("Align","Align.Center"),("Wrap","true"),("AutoHeight","false"),
-                 ("PaddingTop","6"),("PaddingBottom","6"),
-                 ("X","Gutter"),("Y","Gutter + 74"),("Height","28"),
-                 ("Width","ContentWidth - (Gutter * 2)"),
-                 ("Visible","CountRows(TB_Admins) = 0"),
-                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
-                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
-        prop(o, k, v, q)
-
     q = ctrl(o, "btnGuidedSetup", "Classic/Button", c)
     for k, v in [("Font","AppFont"),("Size","AppType.Small"),
                  ("Text",'"Guided setup"'),
@@ -332,7 +315,7 @@ def gen_admin():
         prop(o, k, v, r)
 
     q = ctrl(o, "lblAccEmpty", "Label", c)
-    for k, v in [("Text",'"Nobody has requested access. While no request is approved, everyone is an admin."'),
+    for k, v in [("Text",'"No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."'),
                  ("Align","Align.Center"),("Color","AppTheme.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
                  ("X","Gutter"),("Y","Gutter + 200"),("Height","40"),

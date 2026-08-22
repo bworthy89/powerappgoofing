@@ -181,30 +181,6 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-            - lblAdminOpen:
-                Control: ModernText
-                Properties:
-                  Text: |
-                    ="Anyone can reach Admin: TB_Admins is empty. Add yourself to it to lock this down."
-                  Color: =AppTheme.Warn
-                  Fill: =AppTheme.WarnLight
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Align: =Align.Center
-                  Wrap: =true
-                  AutoHeight: =false
-                  PaddingTop: =6
-                  PaddingBottom: =6
-                  X: =Gutter
-                  Y: =Gutter + 74
-                  Height: =28
-                  Width: =ContentWidth - (Gutter * 2)
-                  Visible: =CountRows(TB_Admins) = 0
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
             - btnGuidedSetup:
                 Control: ModernButton
                 Properties:
@@ -582,7 +558,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="Nobody has requested access. While no request is approved, everyone is an admin."
+                  Text: ="No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."
                   Align: =Align.Center
                   Color: =AppTheme.Muted
                   Font: =AppFont

@@ -19,34 +19,41 @@ Each row has Approve and Deny in the row itself.
 | --- | --- |
 | What roles? | Admin, or not. Everyone with app access is a technician - that is what access means. |
 | How is an admin told? | In the app only. The tab shows a count. |
+| Who is an admin before setup? | Nobody. The first one is seeded in SharePoint. |
 
 Email was considered and rejected: it needs the Office365Outlook connector, which is another
 connection to establish at import and the kind of thing a DLP policy blocks outright. The
 count on the tab is the substitute, and its weakness is honest - nobody is told, an admin has
 to open the app.
 
-## The bootstrap trap
+## Closed by default, and the trap that was nearly shipped
 
-`TB_Admins` previously meant "the admins", and the rule was *an empty list means everyone is
-an admin*, so nobody could be locked out before the first row existed.
-
-That list now carries requests as well as approvals, which breaks the rule in a way that is
-easy to miss and impossible to recover from inside the app: **one pending request makes the
-list non-empty and locks out everybody**, including whoever should approve it.
-
-So the check counts approved rows, not rows:
+Nobody has admin until a row says so:
 
 ```powerfx
 Set(varIsAdmin,
-    CountRows(Filter(TB_Admins, Status.Value = "Approved")) = 0
-    || !IsBlank(LookUp(TB_Admins,
-         Lower(Person.Email) = Lower(User().Email)
-         && Status.Value = "Approved")))
+    !IsBlank(LookUp(TB_Admins,
+        Lower(Person.Email) = Lower(User().Email)
+        && Status.Value = "Approved")))
 ```
 
-The property worth keeping is that the app is open until somebody is approved, and closes
-itself the moment the first admin exists. The first person to install it approves their own
-request, and from then on it is shut.
+**The first admin is seeded directly in SharePoint** - a row with Status `Approved` - before
+anyone opens the app. Everyone after that goes through the request flow. That is one manual
+step at install, and it has to be right or the first person is locked out of a screen only
+that screen can grant.
+
+The first version instead read *an empty list means everyone is an admin*, so nobody could be
+locked out before setup. That is defensible for a solo test and wrong for a rollout: during
+the window before the first approval, any technician who opened the app had Admin - which now
+contains delete.
+
+Worse, it very nearly shipped in a broken form. `TB_Admins` carries requests as well as
+approvals, so "empty list" had to become "no *approved* rows" - otherwise a single pending
+request would make the list non-empty and lock out everybody, including whoever should
+approve it. That was caught, fixed, and then removed entirely when the posture changed.
+Closed-by-default has no such clause to get wrong.
+
+A lockout is recoverable: the SharePoint list is editable outside the app.
 
 ## Why Access is not in the LISTS spec
 

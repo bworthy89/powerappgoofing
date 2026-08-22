@@ -69,7 +69,14 @@ carries an SDRB250 and an SDRC200 as standard, and can take an RCW-200 or a PWC-
 The guided setup reads it to pre-tick the standard build. Until it has rows every machine
 looks standalone, which is safe but silent.
 
-`TB_Admins` controls who can reach the Admin section. **While it is empty,
+`TB_Admins` controls who can reach the Admin section. **Nobody has admin until a row says
+so**, so seed yourself before anyone opens the app: one row, your name in Title, yourself in
+Person, Status **Approved**. Everyone after that requests access from inside the app and an
+admin approves it.
+
+Skip that step and the first person in has no way to grant themselves the screen that grants
+access. It is recoverable - the list is editable in SharePoint - but it is an awkward five
+minutes to discover on the day. **While it is empty,
 everyone can** - deliberately, since the alternative locks out whoever has to add the first
 row, and the Admin screen says so on screen while that is true. Add yourself to it once the
 app is running.
