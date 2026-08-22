@@ -115,11 +115,16 @@ def textin(name, y, vis, multiline=False, default='""'):
                  ("Y",str(y)),("Visible",vis)] + FIELD + RADIUS: prop(o, k, v, q)
     return h
 
-def dropdown(name, items, y, vis, onchange=None, width=None):
-    q = ctrl(o, name, "Classic/DropDown", c)
+def dropdown(name, items, y, vis, onchange=None, width=None,
+             display="ThisItem.Value"):
+    """ModernDropdown. ItemDisplayText names the column to show - the
+    property Classic/DropDown lacked, and the reason a multi-column Items
+    rendered blank and had to be reduced with ShowColumns. Selected returns
+    the whole record now, so the row behind a choice is reachable directly."""
+    q = ctrl(o, name, "ModernDropdown", c)
     o.write(f"{q}Items: |\n{q}  ={items}\n")
     if onchange: blk(o, "OnChange", onchange, q)
-    for k, v in [("Default",'""'),("AllowEmptySelection","true"),
+    for k, v in [("ItemDisplayText",display),
                  ("Height","40"),("Width",width or "ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y",str(y)),("Visible",vis)] + FIELD: prop(o, k, v, q)
 
@@ -164,11 +169,10 @@ for nm, cap, ml in [("txtWizCustName","Customer name",False),
     y += 18 + textin(nm, y + 18, V1, ml) + 14
 
 caption("lblCapWizCustActive", "Active", y, V1)
-q = ctrl(o, "tglWizCustActive", "Classic/Toggle", c)
+q = ctrl(o, "tglWizCustActive", "ModernToggle", c)
 for k, v in [("Default","true"),("Font","AppFont"),("Size","AppType.Body"),
              ("Height","36"),("Width","110"),("X","Gutter"),("Y",str(y+18)),
-             ("Visible",V1),("TrueFill","AppTheme.Ok"),
-             ("FalseFill","AppTheme.Faint")]: prop(o, k, v, q)
+             ("Visible",V1)]: prop(o, k, v, q)
 
 q = ctrl(o, "btnWizStep1Next", "Classic/Button", c)
 blk(o, "OnSelect", [
@@ -179,7 +183,7 @@ blk(o, "OnSelect", [
     "                Title: txtWizCustName.Text,",
     "                Description: txtWizCustDesc.Text,",
     "                'Support Notes': txtWizCustNotes.Text,",
-    "                Active: tglWizCustActive.Value",
+    "                Active: tglWizCustActive.Checked",
     "            }",
     "        )",
     "    );",
@@ -287,15 +291,11 @@ for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
 # row (Retail and Self Service, today) proposes nothing, so that case gets an
 # explicit empty state rather than a blank panel.
 V3 = "varWizStep = 3"
-# A Classic/DropDown shows a named column only if its Value property says
-# which one -- and this environment rejects Value as an unknown property (see
-# app/00_Setup.md). A single-column Items needs no Value, so ShowColumns pins
-# it to Title and the control has nothing to guess at. Column names are
-# identifiers, not quoted strings -- the quoted form was retired in 3.24042
-# and this compiler answers it with "Expected identifier name".
-PARENTS = ("Sort(ShowColumns(Filter(TB_Installations, "
-           "Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), "
-           "Title, SortOrder.Ascending)")
+# Full rows. The ShowColumns reduction that used to be here existed only
+# because a Classic/DropDown could not be told which column to display;
+# ModernDropdown's ItemDisplayText says so directly.
+PARENTS = ("Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
+           "IsBlank('Parent')), Title, SortOrder.Ascending)")
 HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
 RX   = f"(Gutter + {HALF} + 24)"
 CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
@@ -307,14 +307,11 @@ caption("lblCapWizUnitParent", "Which solution are these attached to", y, V3)
 # table's local cache the moment Patch returns, but it is NOT in the Choices()
 # snapshot -- which is why this dropdown came up empty. Selected is therefore a
 # TB_Installations record, so its columns are reachable directly.
-dropdown("ddWizUnitParent", PARENTS, y + 18, V3,
+dropdown("ddWizUnitParent", PARENTS, y + 18, V3, display="ThisItem.Title",
          onchange=[
-             # Selected is now just { Title }, so resolve the row once and keep
-             # it. LookUp takes ONE condition, hence && rather than commas.
-             "Set(varWizParent,",
-             "    LookUp(TB_Installations,",
-             "        Customer.Id = varWizCust.ID && IsBlank('Parent')",
-             "        && Title = ddWizUnitParent.Selected.Title));",
+             # Selected is the installation row itself now - nothing is matched
+             # back by title, and the duplicate-title edge case goes with it.
+             "Set(varWizParent, ddWizUnitParent.Selected);",
              "Set(varWizSolProdName,",
              "    LookUp(TB_Products, ID = varWizParent.Product.Id, Title));",
              "Set(varWizFamily,",
@@ -413,9 +410,9 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small")
 # ---- one status for the whole ticked batch
 caption("lblCapWizUnitStatus", "Status for the ticked units",
         "Parent.Height - Gutter - 112", V3)
-q = ctrl(o, "ddWizUnitStatus", "Classic/DropDown", c)
+q = ctrl(o, "ddWizUnitStatus", "ModernDropdown", c)
 o.write(f"{q}Items: |\n{q}  =Choices(TB_Installations.Status)\n")
-for k, v in [("Default",'""'),("AllowEmptySelection","true"),("Height","40"),
+for k, v in [("ItemDisplayText","ThisItem.Value"),("Height","40"),
              ("Width","260"),("X","Gutter"),
              ("Y","Parent.Height - Gutter - 94"),
              ("Visible",V3)] + FIELD: prop(o, k, v, q)

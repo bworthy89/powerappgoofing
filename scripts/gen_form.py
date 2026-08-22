@@ -40,7 +40,7 @@ def input_name(L, f): return {"text":"txt","note":"txt","url":"txt","choice":"dd
 def patch_value(L, f):
     n, k = input_name(L, f), f["kind"]
     if k in ("text", "note", "url"): return f"{n}.Text"
-    if k == "bool":                  return f"{n}.Value"
+    if k == "bool":                  return f"{n}.Checked"
     if k == "choice":                return f"{{ Value: {n}.Selected.Value }}"
     if k == "lookup":
         # Choices() already returns records in the shape the lookup accepts.
@@ -55,6 +55,18 @@ def default_expr(L, f):
     if k == "bool":                  return f"If(varAdminNew, false, {v}.{n})"
     if k == "choice":                return f'If(varAdminNew, "", {v}.{n}.Value)'
     if k == "lookup":                return f'If(varAdminNew, "", {v}.{n}.Value)'
+
+def default_record_expr(L, f):
+    """Preselection for a ModernDropdown, whose Default is a Record.
+
+    The classic control took the display Text, so an edit could just hand it
+    the stored value. A record has to be found in the same option set the
+    control is showing, hence the LookUp by Value.
+    """
+    v, n = var(L), f["n"]
+    return (f"If(varAdminNew, Blank(), "
+            f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value))")
+
 
 def default_items_expr(L, f):
     """ComboBox preselection for edit mode.
@@ -140,17 +152,18 @@ for L in LISTS:
                            ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                            ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]: prop(o, kk, vv, i)
         elif k == "bool":
-            i = ctrl(o, nm, "Classic/Toggle", c)
+            # TrueFill / FalseFill do not exist on ModernToggle - the theme
+            # paints it. Its output is Checked, which patch_value() reads.
+            i = ctrl(o, nm, "ModernToggle", c)
             for kk, vv in [("Default",default_expr(L,f)),("Font","AppFont"),
                            ("Size","AppType.Body"),("Height","36"),("Width","110"),
-                           ("X","Gutter"),("Y",str(y+18)),("Visible",vis),
-                           ("TrueFill","AppTheme.Ok"),("FalseFill","AppTheme.Faint")]: prop(o, kk, vv, i)
+                           ("X","Gutter"),("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
             h = 36
         elif k == "choice":
-            i = ctrl(o, nm, "Classic/DropDown", c)
+            i = ctrl(o, nm, "ModernDropdown", c)
             o.write(f"{i}Items: |\n{i}  ={items_expr(L,f)}\n")
-            for kk, vv in [("Default",default_expr(L,f)),
-                           ("AllowEmptySelection","true"),
+            for kk, vv in [("Default",default_record_expr(L,f)),
+                           ("ItemDisplayText","ThisItem.Value"),
                            ("BorderColor","AppTheme.Line"),("BorderThickness","1"),
                            ("Color","AppTheme.Fg"),("Fill","AppTheme.Surface"),
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),
@@ -174,10 +187,10 @@ for L in LISTS:
             # that does not exist here, and that property cannot be overridden
             # from YAML ("Unknown property 'SearchItems'"). IsSearchable: =false
             # does not stop it being evaluated either.
-            i = ctrl(o, nm, "Classic/DropDown", c)
+            i = ctrl(o, nm, "ModernDropdown", c)
             o.write(f"{i}Items: |\n{i}  ={items_expr(L,f)}\n")
-            for kk, vv in [("Default",default_expr(L,f)),
-                           ("AllowEmptySelection","true"),
+            for kk, vv in [("Default",default_record_expr(L,f)),
+                           ("ItemDisplayText","ThisItem.Value"),
                            ("BorderColor","AppTheme.Line"),("BorderThickness","1"),
                            ("Color","AppTheme.Fg"),("Fill","AppTheme.Surface"),
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),

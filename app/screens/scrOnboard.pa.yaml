@@ -187,7 +187,7 @@ Screens:
                   Y: =376
                   Visible: =varWizStep = 1
             - tglWizCustActive:
-                Control: Classic/Toggle
+                Control: ModernToggle
                 Properties:
                   Default: =true
                   Font: =AppFont
@@ -197,8 +197,6 @@ Screens:
                   X: =Gutter
                   Y: =394
                   Visible: =varWizStep = 1
-                  TrueFill: =AppTheme.Ok
-                  FalseFill: =AppTheme.Faint
             - btnWizStep1Next:
                 Control: ModernButton
                 Properties:
@@ -211,7 +209,7 @@ Screens:
                                     Title: txtWizCustName.Text,
                                     Description: txtWizCustDesc.Text,
                                     'Support Notes': txtWizCustNotes.Text,
-                                    Active: tglWizCustActive.Value
+                                    Active: tglWizCustActive.Checked
                                 }
                             )
                         );
@@ -251,12 +249,11 @@ Screens:
                   Y: =112
                   Visible: =varWizStep = 2
             - ddWizSolProduct:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Product)
-                  Default: =""
-                  AllowEmptySelection: =true
+                  ItemDisplayText: =ThisItem.Value
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -340,12 +337,11 @@ Screens:
                   Y: =276
                   Visible: =varWizStep = 2
             - ddWizSolStatus:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Status)
-                  Default: =""
-                  AllowEmptySelection: =true
+                  ItemDisplayText: =ThisItem.Value
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -523,21 +519,17 @@ Screens:
                   Y: =112
                   Visible: =varWizStep = 3
             - ddWizUnitParent:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
-                    =Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), Title, SortOrder.Ascending)
+                    =Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)
                   OnChange: |
-                    =Set(varWizParent,
-                        LookUp(TB_Installations,
-                            Customer.Id = varWizCust.ID && IsBlank('Parent')
-                            && Title = ddWizUnitParent.Selected.Title));
+                    =Set(varWizParent, ddWizUnitParent.Selected);
                     Set(varWizSolProdName,
                         LookUp(TB_Products, ID = varWizParent.Product.Id, Title));
                     Set(varWizFamily,
                         LookUp(TB_Products, ID = varWizParent.Product.Id, Family.Value))
-                  Default: =""
-                  AllowEmptySelection: =true
+                  ItemDisplayText: =ThisItem.Title
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
@@ -564,7 +556,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =112
-                  Visible: =varWizStep = 3 && CountRows(Sort(ShowColumns(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title), Title, SortOrder.Ascending)) = 0
+                  Visible: =varWizStep = 3 && CountRows(Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
                 Control: ModernText
                 Properties:
@@ -749,12 +741,11 @@ Screens:
                   Y: =Parent.Height - Gutter - 112
                   Visible: =varWizStep = 3
             - ddWizUnitStatus:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Status)
-                  Default: =""
-                  AllowEmptySelection: =true
+                  ItemDisplayText: =ThisItem.Value
                   Height: =40
                   Width: =260
                   X: =Gutter

@@ -583,3 +583,52 @@ multi-column `Items`:
 
 That is the blank dropdown stated outright. Worth grepping the warning list for, since it is easy
 to lose among ninety delegation notices.
+
+## Migrating to modern controls: the breaks a property filter cannot see
+
+`scripts/modernize.py` converts classic controls by filtering against the property list
+`describe_control` returns, and reports everything it drops. That catches styling changes
+cleanly - a `Classic/Button` paints itself with `Fill`/`HoverFill`, a `ModernButton` takes an
+`Appearance` enum - but it is blind to three classes of break, because the damage is not in the
+control's own properties.
+
+**Renamed output properties.** `ModernToggle` and `ModernCheckbox` expose `Checked`, where the
+classic controls exposed `Value`. Every `Patch` in the generators read `.Value`. The reference
+lives inside *another* control's formula, so the converter never sees it - the screen would have
+compiled clean and silently written nothing. The generators emit these controls directly for
+exactly this reason: the rename belongs next to the field spec that knows what the control means.
+
+**Retyped input properties.** `ModernDropdown.Default` is a **Record**; `Classic/DropDown.Default`
+was the display **Text**. Dropping it as unsupported would compile and quietly stop the edit form
+preselecting an existing record's value. The replacement finds the record in the same option set
+the control is showing:
+
+```powerfx
+If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value))
+```
+
+**Properties with no equivalent at all.** `ModernTextInput` and `ModernCheckbox` have no `Reset`.
+Three controls in the wizard are cleared after a write - two by `Reset()`, one by a `Reset`
+property bound to a variable because it sits inside a gallery. Those stay classic. There is no
+modern replacement, and converting them would have compiled clean and stopped the form clearing
+itself.
+
+**A default that is not neutral.** `ModernButton` defaults to `ButtonAppearance.Primary`. Every
+converted button has just had its `Fill` dropped, so with no fallback a quiet list row becomes the
+loudest thing on the screen. Nine buttons landed that way before a scan for `ModernButton` without
+an `Appearance` caught them. `Secondary` is now the fallback and `EXTRA` is applied first so
+explicit choices win.
+
+The general lesson: a conversion tool that only reads one control at a time cannot verify a
+migration. Grep the whole app for the old output property name, and scan for controls that came
+out of the conversion with a meaningful property missing entirely.
+
+### What `ModernDropdown` retires
+
+`ItemDisplayText` names the column to display, which is the property `Classic/DropDown` lacked
+in this environment. That removes the `ShowColumns` reduction recorded above *and* the workaround
+it forced: `Selected` now returns the whole record, so `scrOnboard`'s solution picker sets
+`varWizParent` to the installation row directly instead of matching it back by title. The
+duplicate-title edge case documented earlier is gone with it.
+
+The classic entry above still stands for any `Classic/DropDown` that remains.

@@ -173,7 +173,7 @@ Screens:
                   Y: =384
                   Visible: =varAdminList = "Cust"
             - tglActiveCust:
-                Control: Classic/Toggle
+                Control: ModernToggle
                 Properties:
                   Default: =If(varAdminNew, false, varRecCust.Active)
                   Font: =AppFont
@@ -183,8 +183,6 @@ Screens:
                   X: =Gutter
                   Y: =402
                   Visible: =varAdminList = "Cust"
-                  TrueFill: =AppTheme.Ok
-                  FalseFill: =AppTheme.Faint
             - lblCapTitleProd:
                 Control: ModernText
                 Properties:
@@ -239,12 +237,12 @@ Screens:
                   Y: =192
                   Visible: =varAdminList = "Prod"
             - ddProductTypeProd:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Products.'Product Type')
-                  Default: =If(varAdminNew, "", varRecProd.'Product Type'.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -274,12 +272,12 @@ Screens:
                   Y: =264
                   Visible: =varAdminList = "Prod"
             - ddFamilyProd:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Products.Family)
-                  Default: =If(varAdminNew, "", varRecProd.Family.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -381,7 +379,7 @@ Screens:
                   Y: =504
                   Visible: =varAdminList = "Prod"
             - tglActiveProd:
-                Control: Classic/Toggle
+                Control: ModernToggle
                 Properties:
                   Default: =If(varAdminNew, false, varRecProd.Active)
                   Font: =AppFont
@@ -391,8 +389,6 @@ Screens:
                   X: =Gutter
                   Y: =522
                   Visible: =varAdminList = "Prod"
-                  TrueFill: =AppTheme.Ok
-                  FalseFill: =AppTheme.Faint
             - lblCapTitleInst:
                 Control: ModernText
                 Properties:
@@ -447,12 +443,12 @@ Screens:
                   Y: =192
                   Visible: =varAdminList = "Inst"
             - ddCustomerInst:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Customer)
-                  Default: =If(varAdminNew, "", varRecInst.Customer.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -482,12 +478,12 @@ Screens:
                   Y: =264
                   Visible: =varAdminList = "Inst"
             - ddProductInst:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Product)
-                  Default: =If(varAdminNew, "", varRecInst.Product.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -517,12 +513,12 @@ Screens:
                   Y: =336
                   Visible: =varAdminList = "Inst"
             - ddParentInst:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
-                  Default: =If(varAdminNew, "", varRecInst.'Parent'.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -588,12 +584,12 @@ Screens:
                   Y: =480
                   Visible: =varAdminList = "Inst"
             - ddStatusInst:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_Installations.Status)
-                  Default: =If(varAdminNew, "", varRecInst.Status.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -695,12 +691,12 @@ Screens:
                   Y: =192
                   Visible: =varAdminList = "Ref"
             - ddProductRef:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_References.Product)
-                  Default: =If(varAdminNew, "", varRecRef.Product.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -730,12 +726,12 @@ Screens:
                   Y: =264
                   Visible: =varAdminList = "Ref"
             - ddCustomerRef:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_References.Customer)
-                  Default: =If(varAdminNew, "", varRecRef.Customer.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -765,12 +761,12 @@ Screens:
                   Y: =336
                   Visible: =varAdminList = "Ref"
             - ddSectionRef:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_References.Section)
-                  Default: =If(varAdminNew, "", varRecRef.Section.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -800,12 +796,12 @@ Screens:
                   Y: =408
                   Visible: =varAdminList = "Ref"
             - ddRefTypeRef:
-                Control: Classic/DropDown
+                Control: ModernDropdown
                 Properties:
                   Items: |
                     =Choices(TB_References.'Reference Type')
-                  Default: =If(varAdminNew, "", varRecRef.'Reference Type'.Value)
-                  AllowEmptySelection: =true
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value))
+                  ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppTheme.Line
                   BorderThickness: =1
                   Color: =AppTheme.Fg
@@ -907,7 +903,7 @@ Screens:
                   Y: =624
                   Visible: =varAdminList = "Ref"
             - tglFeaturedRef:
-                Control: Classic/Toggle
+                Control: ModernToggle
                 Properties:
                   Default: =If(varAdminNew, false, varRecRef.Featured)
                   Font: =AppFont
@@ -917,8 +913,6 @@ Screens:
                   X: =Gutter
                   Y: =642
                   Visible: =varAdminList = "Ref"
-                  TrueFill: =AppTheme.Ok
-                  FalseFill: =AppTheme.Faint
             - btnSaveEdit:
                 Control: ModernButton
                 Properties:
@@ -934,7 +928,7 @@ Screens:
                                     Title: txtTitleCust.Text,
                                     Description: txtDescriptionCust.Text,
                                     'Support Notes': txtSupportNotesCust.Text,
-                                    Active: tglActiveCust.Value
+                                    Active: tglActiveCust.Checked
                                 }
                             )
                         );
@@ -947,7 +941,7 @@ Screens:
                                     Family: { Value: ddFamilyProd.Selected.Value },
                                     'Current Standard Version': txtStdVersionProd.Text,
                                     Description: txtDescriptionProd.Text,
-                                    Active: tglActiveProd.Value
+                                    Active: tglActiveProd.Checked
                                 }
                             )
                         );
@@ -976,7 +970,7 @@ Screens:
                                     'Reference Type': { Value: ddRefTypeRef.Selected.Value },
                                     URL: txtURLRef.Text,
                                     Version: txtVersionRef.Text,
-                                    Featured: tglFeaturedRef.Value
+                                    Featured: tglFeaturedRef.Checked
                                 }
                             )
                         );
