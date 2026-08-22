@@ -98,6 +98,10 @@ want to exercise anyway.
 
 ## Step 2 - the app
 
+Two routes. Importing is fewer steps; pasting avoids the re-pointing problem in 2.3
+entirely, because the app is built against the target site's lists from the start. If the
+import gives trouble, follow `deploy/PASTE.md` instead of the rest of this section.
+
 `pac canvas download` needs a Dataverse organisation in the environment. The development
 environment has none, so the export is done through the maker portal.
 
