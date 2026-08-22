@@ -14,7 +14,7 @@ be pointed at lists that do not exist yet, so do the SharePoint half first.
 | --- | --- |
 | A SharePoint site | Site owner or better. A dedicated site is easier to permission than a subsite of something busy. |
 | An Entra app registration | For PnP.PowerShell. See below - this is the step most likely to need someone else. |
-| PowerShell 7.2 or later | `winget install Microsoft.PowerShell`. PnP.PowerShell 2.x and later refuse to load on Windows PowerShell 5.1. |
+| PowerShell 7.2 or later | `winget install Microsoft.PowerShell`. PnP.PowerShell 2.x and later refuse to load on Windows PowerShell 5.1, so **every command below runs in PowerShell 7**, not the blue Windows PowerShell window. |
 | Maker access to both environments | To export from development and import at work. |
 
 ### The Entra app registration
@@ -23,13 +23,25 @@ PnP.PowerShell 2.x removed the old `-UseWebLogin` route, so every connection now
 `-ClientId`. If you cannot register applications in the work tenant, this is the point to
 involve whoever can - it blocks everything else.
 
+Start PowerShell 7 first - type `pwsh`, or launch "PowerShell 7" from Start - and check
+before going further, because the failure mode is confusing:
+
 ```powershell
+$PSVersionTable.PSVersion        # must be 7.x
+
 Install-Module PnP.PowerShell -Scope CurrentUser
 Register-PnPEntraIDAppForInteractiveLogin `
     -ApplicationName "PnP Toolbox Provisioning" `
     -Tenant contoso.onmicrosoft.com `
     -Interactive
 ```
+
+> Running this in Windows PowerShell 5.1 reports
+> `The term 'Register-PnPEntraIDAppForInteractiveLogin' is not recognized`, which reads like
+> a wrong cmdlet name or an out-of-date module. It is neither - the module simply is not
+> there, and installing it into 5.1 will not help, because PnP.PowerShell 3.x requires
+> PowerShell 7. Check `$PSVersionTable.PSVersion` before believing any "not recognized"
+> error from these scripts.
 
 That prints a client id and asks an administrator to consent. Keep the id - every script
 below takes it.
