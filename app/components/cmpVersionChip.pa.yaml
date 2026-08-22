@@ -58,9 +58,18 @@ ComponentDefinitions:
     Children:
       # The tint is the fastest read on the screen. Radius 6 matches every other surface
       # in the app; this chip is meant to look native to it, not like a pasted-in widget.
+      #
+      # A ModernText with empty Text, not a Rectangle. Classic/Rectangle has no radius
+      # properties at all - it rejects RadiusTopLeft with PA2108 - so every rounded surface
+      # in this app is a ModernText or a button carrying Fill plus the four Radius keys.
+      # lblReqStatus on scrRequestAccess is the same pill, already proven in Studio.
       - recChipFill:
-          Control: Rectangle
+          Control: ModernText
           Properties:
+            Text: |-
+              =""
+            PaddingTop: =0
+            PaddingBottom: =0
             X: =0
             Y: =0
             Width: =Parent.Width

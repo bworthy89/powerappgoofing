@@ -820,3 +820,48 @@ row is live, and they respond to what the user is doing rather than to a default
 Sixteen instances across five screens. Worth grepping `IsSelected` after adding any gallery,
 because one card looking pre-selected reads as a bug in the data rather than in the styling -
 the reasonable assumption is "why is that one highlighted", not "all galleries do this".
+
+## `Rectangle` has no corner radius; a rounded surface is a `ModernText`
+
+`Classic/Rectangle` rejects all four radius keys:
+
+```
+PA2108 : Unknown property 'RadiusTopLeft' for control type 'Rectangle'.
+```
+
+and the same for `RadiusTopRight`, `RadiusBottomLeft`, `RadiusBottomRight`.
+
+This is easy to get wrong from a property census. 57 controls in this app carry
+`RadiusTopLeft: =6`, so radius looks universal — but every one of them is a `ModernButton`,
+`ModernTextInput`, `Classic/Button`, or `ModernText`. Not one is a `Rectangle`. The four
+Rectangles in the app (`rectCurrencySol`, `rectCurrencyUnit`, `rectCurrencyOvw`,
+`rectUnitsDividerOvw`) are all square blocks, which is why the omission never surfaced.
+
+**A rounded, filled surface is a `ModernText` with empty `Text`.** It takes `Fill`,
+`BorderColor`, `BorderThickness` and all four radius keys. `lblReqStatus` on
+`scrRequestAccess` is the proven instance — a status pill whose `Fill` switches on the
+request state.
+
+```yaml
+- recChipFill:
+    Control: ModernText
+    Properties:
+      Text: |-
+        =""
+      PaddingTop: =0
+      PaddingBottom: =0
+      Width: =Parent.Width
+      Height: =Parent.Height
+      Fill: =AppTheme.OkLight
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+```
+
+Set `PaddingTop`/`PaddingBottom` to 0 as on every other `ModernText`, or the empty string
+still reserves Fluent's default padding and the surface is taller than its `Height`.
+
+Corollary worth acting on separately: the three currency badges are square because they are
+Rectangles. Converting them to this pattern is what makes them look designed rather than
+drawn.
