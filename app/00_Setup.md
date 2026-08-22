@@ -903,3 +903,54 @@ The declarations themselves stay bare, because they are YAML keys rather than re
         PropertyKind: Input
         DataType: Text
 ```
+
+## Inline SVG and embedded images both work, and they are the way out of the control set
+
+Confirmed working in Studio 2026-08-22 on `scrHome`.
+
+### SVG as a data URI
+
+```yaml
+Image: |
+  ="data:image/svg+xml;utf8, " & EncodeUrl(
+      "<svg xmlns='http://www.w3.org/2000/svg' width='" & Round(Parent.Width - (Gutter * 2), 0) & "' height='104' viewBox='0 0 " & Round(Parent.Width - (Gutter * 2), 0) & " 104' preserveAspectRatio='none'>" &
+      "<path d='M0 0 H" & Round(Parent.Width - (Gutter * 2) - 18, 0) & " L" & Round(Parent.Width - (Gutter * 2), 0) & " 18 V104 H0 Z' fill='#171A21' stroke='#2A2F3A' stroke-width='1'/>" &
+      "<rect x='0' y='0' width='3' height='104' fill='#6A73E6'/>"
+  )
+```
+
+Rules that matter:
+
+- **Single quotes inside the SVG.** The formula is already double-quoted; escaping doubles
+  is possible but unreadable at this length.
+- **`EncodeUrl` is required** and handles the `#` in hex colours.
+- **`xmlns` is required.** Without it the image renders blank with no error.
+- **Keep `viewBox` equal to the rendered pixel size.** With `preserveAspectRatio='none'` a
+  mismatched viewBox stretches the artwork — a chamfer becomes a diagonal smear as the
+  window resizes. Interpolate the width into both the attributes and the path.
+- `Round(..., 0)` on every interpolated number. A fractional pixel in a path is legal SVG
+  but produces soft edges.
+
+**This is the only way to draw a shape the control set does not have.** Power Apps offers
+four independent corner radii and no chamfer, no gradient, no real shadow, no arbitrary
+polygon. Everything on that list is one SVG away.
+
+An `Image` has no `OnSelect`. A tappable SVG panel is two controls: the `Image`, then a
+transparent `Classic/Button` at the same X/Y/Width/Height on top of it.
+
+### A raster asset as base64
+
+```yaml
+Image: |
+  ="data:image/png;base64,iVBORw0KGgoAAAANSUhEUg..."
+```
+
+The Glory wordmark is a 4,025-character line built this way and it pastes and renders
+fine, so the practical ceiling is well above one logo. Extract, recolour and downscale
+before encoding — the source artwork was 602x590; the embedded copy is 200px wide.
+
+### Verifier interaction
+
+`verify_yaml.py` skips lines matching `SVG_MARKUP_RE`. SVG attributes are single-quoted,
+which is exactly the shape its quoted-token check treats as a SharePoint column name — one
+card background produced eleven false findings before the guard existed.
