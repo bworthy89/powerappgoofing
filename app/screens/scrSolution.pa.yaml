@@ -276,7 +276,8 @@ Screens:
                     )
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =24
-                  Text: ="Units"
+                  Text: |
+                    ="Units" & If(CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0, "   (" & CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) & " also attached, not on the model's list)", "")
                   Font: =AppFont
                   Size: =AppType.Heading
                   FontWeight: =FontWeight.Bold
@@ -297,14 +298,19 @@ Screens:
                   TemplatePadding: =4
                   ShowScrollbar: =true
                   Items: |
-                    =SortByColumns(
-                        Filter(TB_Installations, ThisRecord.'Parent'.Id = varInstallation.ID, Status.Value <> "Retired"),
-                        "Title",
+                    =Sort(
+                        Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id),
+                        Unit.Value,
                         SortOrder.Ascending
                     )
+                  # A row is a unit the model can take, so it may have nothing behind it.
+                  # Opening one only makes sense when something is installed.
                   OnSelect: |
-                    =Set(varInstallation, ThisItem);
-                    Navigate(scrUnit, ScreenTransition.Cover)
+                    =If(
+                        !IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)),
+                        Set(varInstallation, LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id));
+                        Navigate(scrUnit, ScreenTransition.Cover)
+                    )
                 Children:
                   - lblUnitLineSol:
                       Control: ModernText
@@ -318,34 +324,33 @@ Screens:
                         Height: =24
                         Font: =AppFont
                         Size: =AppType.Small
-                        # The "  —  " separator is itself conditional: when Installed Version
-                        # is set but the catalogue standard is blank, the badge segment below
-                        # evaluates to "" and an unconditional separator would dangle
-                        # ("RBW 100  —  "). Suppressed for exactly that case.
+                        # Category first, because the question being asked is usually
+                        # "do they have a scanner" rather than "what is an SC 200".
+                        # A row with nothing installed says so rather than going blank -
+                        # absent and uncatalogued have to look different.
                         Text: |
-                          =LookUp(TB_Products, ID = ThisItem.Product.Id).Title &
+                          =LookUp(TB_Products, ID = ThisItem.Unit.Id).'Product Type'.Value & "   " &
+                          ThisItem.Unit.Value & "   " &
                           If(
-                              !IsBlank(ThisItem.'Installed Version') && IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
-                              "",
-                              "  —  "
-                          ) &
-                          If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)),
                               "not recorded",
-                              IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
-                              "",
-                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
-                              "on standard",
-                              "standard " & LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'
-                          ) &
-                          If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
+                              IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'),
+                              "version not recorded",
+                              IsBlank(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'),
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version',
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' = LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version',
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' & "  ·  on standard",
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' & "  ·  standard " & LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'
+                          )
                         Color: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)),
+                              AppTheme.Faint,
+                              IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'),
                               AppTheme.Muted,
-                              IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
+                              IsBlank(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'),
                               AppTheme.Muted,
-                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' = LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version',
                               AppTheme.Ok,
                               AppTheme.Warn
                           )
@@ -388,8 +393,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Color: =AppTheme.Muted
-                  Text: ="No units are recorded for this solution."
-                  Visible: =CountRows(galUnitsSol.AllItems) = 0
+                  Text: ="No units are on file for this model. Add them under Admin, Solution units."
+                  Visible: =CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) = 0
             - lblDocsHeadingSol:
                 Control: ModernText
                 Properties:
