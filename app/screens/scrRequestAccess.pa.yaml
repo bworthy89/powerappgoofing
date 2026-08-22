@@ -64,7 +64,7 @@ Screens:
                   Text: |
                     =Switch(Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, ""),
                         "Pending", "Your request is waiting for an admin to approve it. You will not see anything change until they do.",
-                        "Approved", "You already have admin access. If the Admin button is missing, close and reopen the app.",
+                        "Approved", "You have admin access. If the Admin button is still missing, press Check again - the app reads your role once at startup.",
                         "Denied", "Your request was not approved. Speak to an admin if you think that is wrong.",
                         "Admin covers editing customers, models, installations and documents, and setting up a new site. Request it and an admin will be asked to approve."
                     )
@@ -136,9 +136,37 @@ Screens:
                                 Status: { Value: "Pending" }
                             }
                         );
-                        Set(varReqError, ""),
+                        Set(varReqError, "");
+                        Notify("Request sent. An admin will be asked to approve it.", NotificationType.Success),
                         Set(varReqError, FirstError.Message)
                     )
+            - btnRecheck:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Secondary
+                  Text: ="Check again"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =160
+                  X: =Gutter
+                  Y: =Gutter + 168
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  Visible: |
+                    =Coalesce(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email)).Status.Value, "") = "Approved"
+                  OnSelect: |
+                    =Set(varIsAdmin,
+                        !IsBlank(LookUp(TB_Admins,
+                            Lower(Person.Email) = Lower(User().Email)
+                            && Status.Value = "Approved")));
+                    If(varIsAdmin, Navigate(scrHome, ScreenTransition.CoverRight))
             - lblReqError:
                 Control: ModernText
                 Properties:
