@@ -70,7 +70,7 @@ o.write('Screens:\n  scrOnboard:\n    Properties:\n      Fill: =AppTheme.Bg\n'
         '        =Set(varWizStep, 1);\n'
         '        Set(varWizError, "");\n'
         '        Set(varWizParent, Defaults(TB_Installations));\n'
-        '        Set(varWizFamily, "");\n'
+        '        Clear(colWizFitted);\n'
         '        Set(varWizSolProdName, "")\n'
         '    Children:\n')
 ind = "      "
@@ -100,8 +100,8 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),
 
 q = ctrl(o, "lblWizStep", "Label", c)
 steps = ('Switch(varWizStep, 1, "Step 1 of 3  -  the customer", '
-         '2, "Step 2 of 3  -  its solutions", '
-         '3, "Step 3 of 3  -  what is attached to each solution", "")')
+         '2, "Step 2 of 3  -  the machines on site", '
+         '3, "Step 3 of 3  -  what is attached to each machine", "")')
 for k, v in [("Color","AppTheme.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Height","20"),("Wrap","false"),("AutoHeight","false"),
@@ -248,7 +248,7 @@ blk(o, "OnSelect", [
     "    Reset(ddWizSolProduct),",
     "    Set(varWizError, FirstError.Message)",
     ")"], q)
-for k, v in [("Text",'"+  Add solution"'),("Fill","AppTheme.Ok"),
+for k, v in [("Text",'"+  Add machine"'),("Fill","AppTheme.Ok"),
              ("HoverFill","AppTheme.Primary"),("Width","190"),
              ("X","Gutter"),("Y",str(y)),
              ("Visible",f"{V2} && !IsBlank(ddWizSolProduct.Selected)")] + BTN:
@@ -274,9 +274,9 @@ for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small")
 q = ctrl(o, "lblWizSolCount", "Label", c)
 SOLN = ("CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
         "IsBlank('Parent')))")
-solcount = (f'If({SOLN} = 0, "No solutions added yet.", '
-            f'{SOLN} = 1, "1 solution added.", '
-            f'{SOLN} & " solutions added.")')
+solcount = (f'If({SOLN} = 0, "No machines added yet.", '
+            f'{SOLN} = 1, "1 machine added.", '
+            f'{SOLN} & " machines added.")')
 for k, v in [("Text",solcount),("Color","AppTheme.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Wrap","false"),("AutoHeight","false"),("Height","20"),
@@ -291,17 +291,20 @@ for k, v in [("Text",'"Next: what is attached  >"'),("Fill","AppTheme.Primary"),
              ("OnSelect","Set(varWizStep, 3)"),("Visible",V2)] + BTN:
     prop(o, k, v, q)
 
-# ---- step 3: components under a solution --------------------------------
-# The technician should not have to remember that a CI 300X carries an
-# RBW 100, a CI CS and a CI DV. TB_Products already records that: every
-# product carries a Family, and within a family exactly one row is the
-# solution ('Product Type' = "Solution") while the rest are its components.
-# Picking the solution is therefore enough to propose the candidate list,
-# and the technician only ticks what is actually on site.
+# ---- step 3: units attached to a machine --------------------------------
+# TB_SolutionUnits records what attaches to what: one row per solution model
+# per unit model, with Standard marking the usual build. A CI 300X has four
+# rows - SDRB250 and SDRC200 standard, RCW-200 and PWC-10 not - so the normal
+# case arrives pre-ticked and the options sit beside it, offered rather than
+# assumed.
 #
-# The proposal is a suggestion, not a constraint. A family with no solution
-# row (Retail and Self Service, today) proposes nothing, so that case gets an
-# explicit empty state rather than a blank panel.
+# This replaces a guess. The old version filtered TB_Products by Family and
+# excluded 'Product Type' = "Solution", which meant a CI 300X proposed every
+# CashInfinity component ever catalogued, whether it fits one or not.
+#
+# A machine with no rows here is standalone - a financial recycler on its own
+# floor - and gets an empty state saying so, distinct from having added
+# everything already.
 V3 = "varWizStep = 3"
 # Full rows. The ShowColumns reduction that used to be here existed only
 # because a Classic/DropDown could not be told which column to display;
@@ -310,11 +313,24 @@ PARENTS = ("Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, "
            "IsBlank('Parent')), Title, SortOrder.Ascending)")
 HALF = "((ContentWidth - (Gutter * 2) - 24) / 2)"
 RX   = f"(Gutter + {HALF} + 24)"
-CAND = ("Filter(TB_Products, Family.Value = varWizFamily, "
-        "'Product Type'.Value <> \"Solution\", Active = true)")
+# Units on file for this machine's model, minus the ones already fitted to
+# this particular machine. colWizFitted is local, so the comparison costs no
+# delegation and no round trip; the Add button refreshes it, which makes ticked
+# units disappear as they are added.
+#
+# "As S" is not optional. Without it, Unit.Id inside the inner Filter is
+# ambiguous between the two scopes - the trap recorded in app/00_Setup.md.
+CAND = ("Filter(TB_SolutionUnits As S, "
+        "S.Solution.Id = varWizParent.Product.Id, "
+        "CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)")
+FITTED = ("ClearCollect(colWizFitted, Filter(TB_Installations, "
+          "'Parent'.Id = varWizParent.ID))")
+# Every unit on file for the model, regardless of what is fitted. Distinguishes
+# "this machine takes no units" from "you have added them all".
+ONFILE = ("Filter(TB_SolutionUnits, Solution.Id = varWizParent.Product.Id)")
 
 y = 112
-caption("lblCapWizUnitParent", "Which solution are these attached to", y, V3)
+caption("lblCapWizUnitParent", "Which machine are these attached to", y, V3)
 # Real rows, not Choices(). A solution added on step 2 seconds ago is in the
 # table's local cache the moment Patch returns, but it is NOT in the Choices()
 # snapshot -- which is why this dropdown came up empty. Selected is therefore a
@@ -326,12 +342,11 @@ dropdown("ddWizUnitParent", PARENTS, y + 18, V3, display="ThisItem.Title",
              "Set(varWizParent, ddWizUnitParent.Selected);",
              "Set(varWizSolProdName,",
              "    LookUp(TB_Products, ID = varWizParent.Product.Id, Title));",
-             "Set(varWizFamily,",
-             "    LookUp(TB_Products, ID = varWizParent.Product.Id, Family.Value))"])
+             f"{FITTED}"])
 y += 76
 
 q = ctrl(o, "lblWizNoSolutions", "Label", c)
-for k, v in [("Text",'"No solutions on this customer yet - go back a step and add one."'),
+for k, v in [("Text",'"No machines on this customer yet - go back a step and add one."'),
              ("Color","RGBA(176, 0, 32, 1)"),("Font","AppFont"),
              ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
              ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
@@ -340,7 +355,7 @@ for k, v in [("Text",'"No solutions on this customer yet - go back a step and ad
 
 q = ctrl(o, "lblWizCompHead", "Label", c)
 head = ('If(IsBlank(ddWizUnitParent.Selected), "", '
-        '"Usually attached to a " & varWizSolProdName & "  -  tick what is on site")')
+        '"Units for a " & varWizSolProdName & "  -  the standard build is ticked")')
 for k, v in [("Text",head),("Color","AppTheme.Muted"),("Font","AppFont"),
              ("Size","AppType.Micro"),("FontWeight","FontWeight.Semibold"),
              ("Wrap","false"),("AutoHeight","false"),("Height","16"),
@@ -364,9 +379,12 @@ for k, v in [("Visible",V3),("X","Gutter"),("Y",str(y)),("Width",HALF),
 o.write(f"{q[:-2]}Children:\n")
 
 r = ctrl(o, "chkWizComp", "Classic/CheckBox", q)
-o.write(f'{r}Text: |\n{r}  =ThisItem.Title & "   " '
-        f'& ThisItem.\'Product Type\'.Value\n')
-for k, v in [("Default","false"),("Reset","varWizCompReset"),
+o.write(f'{r}Text: |\n{r}  =ThisItem.Unit.Value & "   " '
+        f'& LookUp(TB_Products, ID = ThisItem.Unit.Id).\'Product Type\'.Value\n')
+# Standard units arrive ticked. Reset returns them to this default rather than
+# to false, which is why the gallery has to drop what is already fitted -
+# otherwise a second press of Add would attach the standard build twice.
+for k, v in [("Default","ThisItem.Standard"),("Reset","varWizCompReset"),
              ("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Small"),
              ("Fill","AppTheme.Sunken"),("CheckmarkFill","AppTheme.Primary"),
              ("CheckboxBorderColor","AppTheme.Line"),("PaddingLeft","8"),
@@ -378,7 +396,8 @@ for k, v in [("Default","false"),("Reset","varWizCompReset"),
 # pattern is to park each needed value in a control and read that control
 # by name inside the loop.
 # https://learn.microsoft.com/power-apps/maker/canvas-apps/create-update-records-bulk
-for nm, txt in [("lblWizCompId", "ThisItem.ID"), ("lblWizCompName", "ThisItem.Title")]:
+for nm, txt in [("lblWizCompId", "ThisItem.Unit.Id"),
+                ("lblWizCompName", "ThisItem.Unit.Value")]:
     r = ctrl(o, nm, "Label", q)
     for k, v in [("Text",txt),("Visible","false"),("X","0"),("Y","0"),
                  ("Width","1"),("Height","1"),("Font","AppFont"),
@@ -386,7 +405,7 @@ for nm, txt in [("lblWizCompId", "ThisItem.ID"), ("lblWizCompName", "ThisItem.Ti
                  ("AutoHeight","false")]: prop(o, k, v, r)
 
 r = ctrl(o, "txtWizCompVersion", "Classic/TextInput", q)
-for k, v in [("Default","ThisItem.'Current Standard Version'"),
+for k, v in [("Default","LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'"),
              ("Reset","varWizCompReset"),
              ("Mode","TextMode.SingleLine"),("HintText",'"software"'),
              ("X","Parent.TemplateWidth - 124"),("Y","2"),
@@ -395,10 +414,14 @@ for k, v in [("Default","ThisItem.'Current Standard Version'"),
 # Empty state. Two distinct causes, and conflating them sends the technician
 # hunting for a bug that is really just an unpicked dropdown.
 q = ctrl(o, "lblWizCompEmpty", "Label", c)
+# Three states, not two. "This machine takes no units" and "you have added
+# them all" both leave the list empty and mean opposite things.
 empty = ('If(IsBlank(ddWizUnitParent.Selected), '
-         '"Pick a solution above and its usual components appear here.", '
-         '"Nothing is catalogued under the " & Coalesce(varWizFamily, "?") & '
-         '" family yet. Add these units from Admin, Installations.")')
+         '"Pick a machine above and its units appear here.", '
+         f'CountRows({ONFILE}) = 0, '
+         '"A " & varWizSolProdName & " has no attached units on file. '
+         'If that is wrong, add them under Admin.", '
+         '"Everything on file for a " & varWizSolProdName & " is already added.")')
 for k, v in [("Text",empty),("Color","AppTheme.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
              ("Height","80"),("Width",HALF),("X","Gutter"),("Y",str(y + 8)),
@@ -455,6 +478,7 @@ blk(o, "OnSelect", [
     "        )",
     "    );",
     '    Set(varWizError, "");',
+    f"    {FITTED};",
     "    Set(varWizCompReset, true);",
     "    Set(varWizCompReset, false),",
     "    Set(varWizError, FirstError.Message)",

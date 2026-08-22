@@ -61,10 +61,15 @@ cd scripts\sharepoint
 `-WhatIf` first, every time. It prints what it would build without touching the site. When
 the output looks right, run it again without the switch.
 
-Five lists. `TB_Installations.Parent` is a lookup onto its own list, which is what lets a
+Six lists. `TB_Installations.Parent` is a lookup onto its own list, which is what lets a
 recycler hang off the machine it sits in.
 
-The fifth, `TB_Admins`, controls who can reach the Admin section. **While it is empty,
+`TB_SolutionUnits` records which unit models attach to which solution model - a CI 300X
+carries an SDRB250 and an SDRC200 as standard, and can take an RCW-200 or a PWC-10 as well.
+The guided setup reads it to pre-tick the standard build. Until it has rows every machine
+looks standalone, which is safe but silent.
+
+`TB_Admins` controls who can reach the Admin section. **While it is empty,
 everyone can** - deliberately, since the alternative locks out whoever has to add the first
 row, and the Admin screen says so on screen while that is true. Add yourself to it once the
 app is running.

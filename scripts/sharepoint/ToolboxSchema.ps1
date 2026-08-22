@@ -81,6 +81,18 @@ $Schema = [ordered]@{
         )
     }
 
+    'TB_SolutionUnits' = @{
+        Description = 'Which unit models attach to which solution model. Standard marks the usual build.'
+        TitleLabel  = 'Label'
+        Fields      = @(
+            @{ Display = 'Standard'; Internal = 'TBStandard'; Type = 'Boolean'; Default = '1' }
+        )
+        Lookups     = @(
+            @{ Display = 'Solution'; Internal = 'TBSolution'; Target = 'TB_Products'; Required = $true }
+            @{ Display = 'Unit';     Internal = 'TBUnit';     Target = 'TB_Products'; Required = $true }
+        )
+    }
+
     'TB_Admins' = @{
         Description = 'Who may reach the Admin section. Empty means everyone.'
         TitleLabel  = 'Name'
@@ -115,5 +127,6 @@ $ViewFields = @{
     'TB_Products'      = @('Title','TBProductType','TBFamily','TBStandardVersion','TBDescription','TBActive')
     'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes')
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
+    'TB_SolutionUnits' = @('Title','TBSolution','TBUnit','TBStandard')
     'TB_Admins'        = @('Title','TBPerson')
 }

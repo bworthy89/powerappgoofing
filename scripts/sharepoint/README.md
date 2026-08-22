@@ -29,9 +29,10 @@ the SharePoint half only.
 | `TB_Products` | The model catalogue — every solution model and every unit model | Title, Product Type, Family, Current Standard Version, Description, Active |
 | `TB_Installations` | What each customer runs, one row per customer per model | Title, Customer, Parent, Product, Installed Version, Status, Config Notes |
 | `TB_References` | Documents and firmware links, keyed to a model | Title, Product, Customer, Section, Reference Type, URL, Version, Featured, Last Checked |
+| `TB_SolutionUnits` | Which unit models attach to which solution model | Title, Solution, Unit, Standard |
 | `TB_Admins` | Who may reach the Admin section. Empty means everyone. | Title, Person |
 
-28 columns across five lists, including the `Title` column SharePoint provides on each.
+32 columns across six lists, including the `Title` column SharePoint provides on each.
 
 ## Prerequisites
 

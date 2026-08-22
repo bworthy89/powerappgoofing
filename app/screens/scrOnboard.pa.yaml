@@ -8,7 +8,7 @@ Screens:
         =Set(varWizStep, 1);
         Set(varWizError, "");
         Set(varWizParent, Defaults(TB_Installations));
-        Set(varWizFamily, "");
+        Clear(colWizFitted);
         Set(varWizSolProdName, "")
     Children:
       - conRootWiz:
@@ -63,7 +63,7 @@ Screens:
                   Height: =20
                   Wrap: =false
                   AutoHeight: =false
-                  Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  its solutions", 3, "Step 3 of 3  -  what is attached to each solution", "")
+                  Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  the machines on site", 3, "Step 3 of 3  -  what is attached to each machine", "")
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =Gutter + 72
@@ -424,7 +424,7 @@ Screens:
                         Reset(ddWizSolProduct),
                         Set(varWizError, FirstError.Message)
                     )
-                  Text: ="+  Add solution"
+                  Text: ="+  Add machine"
                   Width: =190
                   X: =Gutter
                   Y: =444
@@ -475,7 +475,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: =If(CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 0, "No solutions added yet.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 1, "1 solution added.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) & " solutions added.")
+                  Text: =If(CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 0, "No machines added yet.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 1, "1 machine added.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) & " machines added.")
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Small
@@ -512,7 +512,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="Which solution are these attached to"
+                  Text: ="Which machine are these attached to"
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
@@ -533,8 +533,7 @@ Screens:
                     =Set(varWizParent, ddWizUnitParent.Selected);
                     Set(varWizSolProdName,
                         LookUp(TB_Products, ID = varWizParent.Product.Id, Title));
-                    Set(varWizFamily,
-                        LookUp(TB_Products, ID = varWizParent.Product.Id, Family.Value))
+                    ClearCollect(colWizFitted, Filter(TB_Installations, 'Parent'.Id = varWizParent.ID))
                   ItemDisplayText: =ThisItem.Title
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
@@ -552,7 +551,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="No solutions on this customer yet - go back a step and add one."
+                  Text: ="No machines on this customer yet - go back a step and add one."
                   Color: =RGBA(176, 0, 32, 1)
                   Font: =AppFont
                   Size: =AppType.Small
@@ -568,7 +567,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Usually attached to a " & varWizSolProdName & "  -  tick what is on site")
+                  Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Units for a " & varWizSolProdName & "  -  the standard build is ticked")
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
@@ -602,7 +601,7 @@ Screens:
                 Variant: Vertical
                 Properties:
                   Items: |
-                    =Filter(TB_Products, Family.Value = varWizFamily, 'Product Type'.Value <> "Solution", Active = true)
+                    =Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)
                   Visible: =varWizStep = 3
                   X: =Gutter
                   Y: =210
@@ -616,8 +615,8 @@ Screens:
                       Control: Classic/CheckBox
                       Properties:
                         Text: |
-                          =ThisItem.Title & "   " & ThisItem.'Product Type'.Value
-                        Default: =false
+                          =ThisItem.Unit.Value & "   " & LookUp(TB_Products, ID = ThisItem.Unit.Id).'Product Type'.Value
+                        Default: =ThisItem.Standard
                         Reset: =varWizCompReset
                         Color: =AppTheme.Fg
                         Font: =AppFont
@@ -635,7 +634,7 @@ Screens:
                       Properties:
                         PaddingTop: =0
                         PaddingBottom: =0
-                        Text: =ThisItem.ID
+                        Text: =ThisItem.Unit.Id
                         Visible: =false
                         X: =0
                         Y: =0
@@ -650,7 +649,7 @@ Screens:
                       Properties:
                         PaddingTop: =0
                         PaddingBottom: =0
-                        Text: =ThisItem.Title
+                        Text: =ThisItem.Unit.Value
                         Visible: =false
                         X: =0
                         Y: =0
@@ -663,7 +662,7 @@ Screens:
                   - txtWizCompVersion:
                       Control: Classic/TextInput
                       Properties:
-                        Default: =ThisItem.'Current Standard Version'
+                        Default: =LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'
                         Reset: =varWizCompReset
                         Mode: =TextMode.SingleLine
                         HintText: ="software"
@@ -686,7 +685,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a solution above and its usual components appear here.", "Nothing is catalogued under the " & Coalesce(varWizFamily, "?") & " family yet. Add these units from Admin, Installations.")
+                  Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a machine above and its units appear here.", CountRows(Filter(TB_SolutionUnits, Solution.Id = varWizParent.Product.Id)) = 0, "A " & varWizSolProdName & " has no attached units on file. If that is wrong, add them under Admin.", "Everything on file for a " & varWizSolProdName & " is already added.")
                   Color: =AppTheme.Muted
                   Font: =AppFont
                   Size: =AppType.Small
@@ -696,7 +695,7 @@ Screens:
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =Gutter
                   Y: =218
-                  Visible: =varWizStep = 3 && CountRows(Filter(TB_Products, Family.Value = varWizFamily, 'Product Type'.Value <> "Solution", Active = true)) = 0
+                  Visible: =varWizStep = 3 && CountRows(Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)) = 0
             - galWizUnits:
                 Control: Gallery
                 Variant: Vertical
@@ -792,6 +791,7 @@ Screens:
                             )
                         );
                         Set(varWizError, "");
+                        ClearCollect(colWizFitted, Filter(TB_Installations, 'Parent'.Id = varWizParent.ID));
                         Set(varWizCompReset, true);
                         Set(varWizCompReset, false),
                         Set(varWizError, FirstError.Message)
