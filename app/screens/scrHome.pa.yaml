@@ -115,8 +115,9 @@ Screens:
                   Height: =40
                   Text: ="Technician Toolbox"
                   Font: =AppFont
-                  Size: =AppType.Title
-                  FontWeight: =FontWeight.Bold
+                  Size: =AppType.Heading
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Muted
             # Admin sits in the header, not on a card. It is not a technician task, and a
             # card would say it was.
             # Occupies the same slot as the Admin button, for whoever is not one. Home
@@ -135,7 +136,7 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Color: =AppTheme.Muted
                   BorderThickness: =0
-                  Height: =32
+                  Height: =44
                   Width: =If(IsNarrow, 44, 170)
                   X: =Parent.Width - Gutter - If(IsNarrow, 44, 170)
                   Y: =Gutter + 4
@@ -157,7 +158,7 @@ Screens:
                   FontWeight: =FontWeight.Semibold
                   Color: =AppTheme.Muted
                   BorderThickness: =0
-                  Height: =32
+                  Height: =44
                   Width: =If(IsNarrow, 44, 110)
                   X: =Parent.Width - Gutter - If(IsNarrow, 44, 110)
                   Y: =Gutter + 4
@@ -195,7 +196,7 @@ Screens:
                   Height: =20
                   Text: ="Customers"
                   Font: =AppFont
-                  Size: =AppType.Micro
+                  Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Muted
                   Visible: =galSearchCustomers.Visible
@@ -285,7 +286,7 @@ Screens:
                   Height: =20
                   Text: ="Models"
                   Font: =AppFont
-                  Size: =AppType.Micro
+                  Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Muted
                   Visible: =galSearchProducts.Visible
@@ -375,7 +376,7 @@ Screens:
                   Height: =20
                   Text: ="Documents"
                   Font: =AppFont
-                  Size: =AppType.Micro
+                  Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
                   Color: =AppTheme.Muted
                   Visible: =galSearchDocs.Visible
@@ -484,9 +485,9 @@ Screens:
                   X: =Gutter
                   Y: =lblSearchCustomersHead.Y
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =26
+                  Height: =41
                   Font: =AppFont
-                  Size: =AppType.Heading
+                  Size: =If(IsNarrow, AppType.Title, AppType.Display)
                   FontWeight: =FontWeight.Semibold
                   Wrap: =false
                   AutoHeight: =false
@@ -496,7 +497,7 @@ Screens:
                 Properties:
                   Text: =""
                   X: =Gutter
-                  Y: =lblSearchCustomersHead.Y + 38
+                  Y: =lblSearchCustomersHead.Y + 52
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =88
                   Fill: =AppTheme.Surface
@@ -516,7 +517,7 @@ Screens:
                   IconColor: =AppTheme.Primary
                   IconStyle: =IconStyle.Outline
                   X: =Gutter + 20
-                  Y: =lblSearchCustomersHead.Y + 38 + 28
+                  Y: =lblSearchCustomersHead.Y + 52 + 28
                   Width: =32
                   Height: =32
                   Visible: =Len(Trim(txtSearchHome.Text)) < 2
@@ -527,7 +528,7 @@ Screens:
                   PaddingBottom: =0
                   Text: ="Find a customer"
                   X: =Gutter + 72
-                  Y: =lblSearchCustomersHead.Y + 38 + 22
+                  Y: =lblSearchCustomersHead.Y + 52 + 22
                   Width: =Parent.Width - (Gutter * 2) - 96
                   Height: =24
                   Font: =AppFont
@@ -543,12 +544,12 @@ Screens:
                   PaddingBottom: =0
                   Text: ="See what a site runs, and its documents"
                   X: =Gutter + 72
-                  Y: =lblSearchCustomersHead.Y + 38 + 48
+                  Y: =lblSearchCustomersHead.Y + 52 + 48
                   Width: =Parent.Width - (Gutter * 2) - 96
-                  Height: =20
+                  Height: =22
                   Font: =AppFont
-                  Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Size: =AppType.Body
+                  Color: =AppTheme.FgSecondary
                   Wrap: =false
                   AutoHeight: =false
                   Visible: =Len(Trim(txtSearchHome.Text)) < 2
@@ -558,7 +559,7 @@ Screens:
                   Text: =""
                   OnSelect: =Navigate(scrCustomers, ScreenTransition.Cover)
                   X: =Gutter
-                  Y: =lblSearchCustomersHead.Y + 38
+                  Y: =lblSearchCustomersHead.Y + 52
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =88
                   Fill: =RGBA(0, 0, 0, 0)
@@ -575,7 +576,7 @@ Screens:
                 Properties:
                   Text: =""
                   X: =Gutter
-                  Y: =lblSearchCustomersHead.Y + 138
+                  Y: =lblSearchCustomersHead.Y + 152
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =88
                   Fill: =AppTheme.Surface
@@ -595,7 +596,7 @@ Screens:
                   IconColor: =AppTheme.Primary
                   IconStyle: =IconStyle.Outline
                   X: =Gutter + 20
-                  Y: =lblSearchCustomersHead.Y + 138 + 28
+                  Y: =lblSearchCustomersHead.Y + 152 + 28
                   Width: =32
                   Height: =32
                   Visible: =Len(Trim(txtSearchHome.Text)) < 2
@@ -606,7 +607,7 @@ Screens:
                   PaddingBottom: =0
                   Text: ="Browse the catalogue"
                   X: =Gutter + 72
-                  Y: =lblSearchCustomersHead.Y + 138 + 22
+                  Y: =lblSearchCustomersHead.Y + 152 + 22
                   Width: =Parent.Width - (Gutter * 2) - 96
                   Height: =24
                   Font: =AppFont
@@ -622,12 +623,12 @@ Screens:
                   PaddingBottom: =0
                   Text: ="Manuals, guides and standard versions"
                   X: =Gutter + 72
-                  Y: =lblSearchCustomersHead.Y + 138 + 48
+                  Y: =lblSearchCustomersHead.Y + 152 + 48
                   Width: =Parent.Width - (Gutter * 2) - 96
-                  Height: =20
+                  Height: =22
                   Font: =AppFont
-                  Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Size: =AppType.Body
+                  Color: =AppTheme.FgSecondary
                   Wrap: =false
                   AutoHeight: =false
                   Visible: =Len(Trim(txtSearchHome.Text)) < 2
@@ -637,7 +638,7 @@ Screens:
                   Text: =""
                   OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
                   X: =Gutter
-                  Y: =lblSearchCustomersHead.Y + 138
+                  Y: =lblSearchCustomersHead.Y + 152
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =88
                   Fill: =RGBA(0, 0, 0, 0)

@@ -8,14 +8,25 @@
 #
 # NO ColorOverrides. Studio rejects a 'Base' slot with
 #   PA1001 ... Property 'Base' not found on type ColorOverrides
-# even though Microsoft's own "corporate brand" sample in the canvas theming article uses
-# exactly that key. The palette documentation describes the 16 slots as running darker70
-# through lighter80; there is no Base slot, because the base IS BasePaletteColor. The
+# The canvas theming documentation DOES list Base as a valid ColorOverrides key, alongside
+# Lighter30..Lighter10 and Darker10..Darker40, so this is a documentation/compiler
+# disagreement rather than an invalid key. (An earlier version of this comment cited the
+# darker70..lighter80 ramp as proof no Base slot exists - that is the MODEL-DRIVEN palette,
+# a different feature, so the reasoning was wrong even though the rejection is real.)
+# Worth retrying after a platform update. The
 # generated ramp is also accessibility-optimised, which hand-picked overrides are not, so
 # seeding and letting it generate is the better default anyway.
 #
-# BasePaletteColor is the PLACEHOLDER Glory blue, not a confirmed brand value. Replace it
-# with the real hex from the brand guide and the whole ramp regenerates.
+# BasePaletteColor is Glory's brand indigo, established from two independent sources on
+# 2026-08-22: the logo artwork (glory-logo-602x590.jpg) is 97.6% #111986 by ink pixel, and
+# #111987 is the single most frequent hex in the site's stylesheet (16 occurrences). The
+# one-unit difference is JPEG compression; the CSS value is authoritative.
+#
+# This replaced #0057B8, which was invented. The two are not close - #0057B8 is a bright
+# azure, #111987 is nearly navy - so anything colour-matched against the old value by eye
+# needs re-checking rather than assuming it still reads correctly.
+#
+# Not from the brand guide. If Glory's guide names a different value, that wins over both.
 #
 # Once applied, App.Theme is readable from Power Fx - App.Theme.Colors.Primary, App.Theme.Font.
 # That makes it a second source of truth alongside AppTheme in 01_App_Properties.md, so adopt
@@ -24,6 +35,6 @@
 Themes:
   Glory Blue:
     Font: "'Lato', 'Segoe UI', 'Open Sans', sans-serif"
-    BasePaletteColor: '#0057B8'
+    BasePaletteColor: '#111987'
     HueTorsion: 0
     Vibrancy: -10

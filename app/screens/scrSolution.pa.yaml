@@ -56,7 +56,7 @@ Screens:
                   X: =Gutter
                   Y: =Gutter
                   Width: =Gutter * 10
-                  Height: =28
+                  Height: =44
                   Text: ="Overview"
                   Font: =AppFont
                   Size: =AppType.Small
@@ -89,13 +89,13 @@ Screens:
                   X: =Gutter
                   Y: =Gutter + 72
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =20
+                  Height: =22
                   Text: |
                     =LookUp(TB_Products, ID = varInstallation.Product.Id).Family.Value &
                     If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
                   Font: =AppFont
-                  Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Size: =AppType.Body
+                  Color: =AppTheme.FgSecondary
             - conVersionSol:
                 Control: GroupContainer
                 Variant: ManualLayout
@@ -116,10 +116,10 @@ Screens:
                         X: =Gutter
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
-                        Height: =16
+                        Height: =18
                         Text: ="SOFTWARE VERSION"
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblInstalledSol:
@@ -130,12 +130,12 @@ Screens:
                         X: =Gutter
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.4
-                        Height: =28
+                        Height: =29
                         Align: =Align.Left
                         VerticalAlign: =VerticalAlign.Middle
                         Text: =Coalesce(varInstallation.'Installed Version', "not recorded")
                         Font: =AppFont
-                        Size: =AppType.Heading
+                        Size: =AppType.Title
                         FontWeight: =FontWeight.Semibold
                   - lblSeparatorSol:
                       Control: ModernText
@@ -145,7 +145,7 @@ Screens:
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.4)
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.2
-                        Height: =28
+                        Height: =29
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
                         Text: |
@@ -159,7 +159,7 @@ Screens:
                               "≠"
                           )
                         Font: =AppFont
-                        Size: =AppType.Heading
+                        Size: =AppType.Title
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblStandardSol:
@@ -172,12 +172,12 @@ Screens:
                         X: =Gutter + ((Parent.Width - (Gutter * 2)) * 0.6)
                         Y: =34
                         Width: =(Parent.Width - (Gutter * 2)) * 0.4
-                        Height: =28
+                        Height: =29
                         Align: =Align.Right
                         VerticalAlign: =VerticalAlign.Middle
                         Text: =Coalesce(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version', "—")
                         Font: =AppFont
-                        Size: =AppType.Heading
+                        Size: =AppType.Title
                         FontWeight: =FontWeight.Semibold
                   - rectCurrencySol:
                       Control: Rectangle
@@ -210,7 +210,7 @@ Screens:
                         Align: =Align.Center
                         VerticalAlign: =VerticalAlign.Middle
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
                         Visible: =!IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version')
                         Text: |
@@ -244,10 +244,10 @@ Screens:
                         X: =Gutter
                         Y: =12
                         Width: =Parent.Width - (Gutter * 2)
-                        Height: =16
+                        Height: =18
                         Text: ="WHAT'S NON-STANDARD"
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         FontWeight: =FontWeight.Bold
                         Color: =AppTheme.Muted
                   - lblConfigNotesSol:
@@ -261,7 +261,7 @@ Screens:
                         Height: =52
                         Text: =varInstallation.'Config Notes'
                         Font: =AppFont
-                        Size: =AppType.Small
+                        Size: =AppType.Body
             - lblUnitsHeading:
                 Control: ModernText
                 Properties:
@@ -294,7 +294,7 @@ Screens:
                     ) + 32
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =160
-                  TemplateSize: =32
+                  TemplateSize: =48
                   TemplatePadding: =4
                   ShowScrollbar: =true
                   Items: |
@@ -323,7 +323,7 @@ Screens:
                         Width: =Parent.TemplateWidth - (Gutter * 2)
                         Height: =24
                         Font: =AppFont
-                        Size: =AppType.Small
+                        Size: =AppType.Body
                         # Category first, because the question being asked is usually
                         # "do they have a scanner" rather than "what is an SC 200".
                         # A row with nothing installed says so rather than going blank -
@@ -391,7 +391,7 @@ Screens:
                   Height: =40
                   Align: =Align.Center
                   Font: =AppFont
-                  Size: =AppType.Small
+                  Size: =AppType.Body
                   Color: =AppTheme.Muted
                   Text: ="No units are on file for this model. Add them under Admin, Solution units."
                   Visible: =CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) = 0
@@ -481,9 +481,9 @@ Screens:
                         X: =Gutter
                         Y: =4
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =20
+                        Height: =21
                         Font: =AppFont
-                        Size: =AppType.Small
+                        Size: =AppType.Body
                         FontWeight: =FontWeight.Semibold
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
@@ -500,7 +500,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
                         Height: =18
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         Color: =AppTheme.Muted
                         Text: |
                           =ThisItem.'Reference Type'.Value & "  ·  " &
@@ -518,7 +518,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
                         Height: =18
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
@@ -534,7 +534,7 @@ Screens:
                         Height: =18
                         Align: =Align.Right
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         Text: |
                           =If(
                               IsBlank(ThisItem.'Last Checked'),
@@ -588,7 +588,7 @@ Screens:
                   Height: =40
                   Align: =Align.Center
                   Font: =AppFont
-                  Size: =AppType.Small
+                  Size: =AppType.Body
                   Color: =AppTheme.Muted
                   Text: ="No documentation is on file for this system."
                   Visible: =CountRows(galDocsSol.AllItems) = 0
@@ -695,9 +695,9 @@ Screens:
                         X: =Gutter
                         Y: =4
                         Width: =Parent.TemplateWidth - (Gutter * 2)
-                        Height: =20
+                        Height: =21
                         Font: =AppFont
-                        Size: =AppType.Small
+                        Size: =AppType.Body
                         FontWeight: =FontWeight.Semibold
                         Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
                         Text: =ThisItem.Title
@@ -714,7 +714,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.4
                         Height: =18
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         Color: =AppTheme.Muted
                         Text: |
                           =ThisItem.'Reference Type'.Value & "  ·  " &
@@ -732,7 +732,7 @@ Screens:
                         Width: =(Parent.TemplateWidth - (Gutter * 2)) * 0.25
                         Height: =18
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
                         Color: =AppTheme.Primary
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
@@ -748,7 +748,7 @@ Screens:
                         Height: =18
                         Align: =Align.Right
                         Font: =AppFont
-                        Size: =AppType.Micro
+                        Size: =AppType.Small
                         Text: |
                           =If(
                               IsBlank(ThisItem.'Last Checked'),
@@ -802,7 +802,7 @@ Screens:
                   Height: =40
                   Align: =Align.Center
                   Font: =AppFont
-                  Size: =AppType.Small
+                  Size: =AppType.Body
                   Color: =AppTheme.Muted
                   Text: ="No firmware or downloads are on file for this system."
                   Visible: =CountRows(galFirmwareSol.AllItems) = 0

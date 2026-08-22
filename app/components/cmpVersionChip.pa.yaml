@@ -1,0 +1,145 @@
+# Component — Version chip
+#
+# The app's whole reason to exist is "is this machine on the current build?", and until now
+# that answer was a concatenated string inside a label:
+#
+#     SDRB250   3.4.1  ·  standard 3.6.0
+#
+# A technician scanning six units at a site had to read each line as prose. This makes the
+# answer a shape: a tinted pill whose colour, headline and verdict all say the same thing.
+#
+# FOUR states, not three. "No standard recorded on the product" is distinct from "no version
+# recorded on the machine" — the first is a gap in the catalogue, the second a gap in the
+# survey, and they are fixed by different people. Collapsing them into one grey blob is what
+# the old string did.
+#
+# Colour NEVER carries the state alone; every state also says it in words. That rule is
+# already honoured everywhere in this app and is the one accessibility rule most status
+# displays break.
+#
+# Contrast verified 2026-08-22, all against WCAG AA 4.5:1 for normal text:
+#   Warn  #9A6100 on WarnLight    #FBF0DC   4.55
+#   Ok    #17795E on OkLight      #E2F2EC   4.61
+#   Muted #66727E on NeutralLight #EDF0F3   4.30  <- FAILS, so this file uses #5A6570 (5.20)
+# The darkened grey is written literally rather than as AppTheme.Muted precisely because
+# AppTheme.Muted is the value that fails. Do not "tidy" it back to the theme token.
+#
+# AccessAppScope is true so the chip can read AppTheme. If the compiler rejects that, or
+# AppTheme resolves blank inside the component, the fix is mechanical: replace each
+# AppTheme.X below with its literal hex from App.pa.yaml. Nothing else about the component
+# depends on app scope.
+#
+# The version numbers are NOT tabular figures — Power Apps exposes no font-variant-numeric,
+# so 3.4.1 and 3.6.0 will not align digit-over-digit. Rendering them at 17pt semibold in a
+# tinted box is the available substitute for that alignment.
+
+ComponentDefinitions:
+  cmpVersionChip:
+    DefinitionType: CanvasComponent
+    Description: Shows an installed software version against the product's current standard, as a four-state tinted chip.
+    AccessAppScope: true
+    CustomProperties:
+      InstalledVersion:
+        PropertyKind: Input
+        DataType: Text
+        Description: The version actually on the machine. Blank means nobody has recorded one.
+        Default: |-
+          =""
+      StandardVersion:
+        PropertyKind: Input
+        DataType: Text
+        Description: The product's current standard version. Blank means the catalogue has no standard for this product.
+        Default: |-
+          =""
+    Properties:
+      Height: =44
+      Width: =190
+      Fill: =RGBA(0, 0, 0, 0)
+    Children:
+      # The tint is the fastest read on the screen. Radius 6 matches every other surface
+      # in the app; this chip is meant to look native to it, not like a pasted-in widget.
+      - recChipFill:
+          Control: Rectangle
+          Properties:
+            X: =0
+            Y: =0
+            Width: =Parent.Width
+            Height: =Parent.Height
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            Fill: |-
+              =If(
+                  IsBlank(InstalledVersion),
+                  AppTheme.NeutralLight,
+                  IsBlank(StandardVersion),
+                  AppTheme.NeutralLight,
+                  InstalledVersion = StandardVersion,
+                  AppTheme.OkLight,
+                  AppTheme.WarnLight
+              )
+
+      # The headline. When the machine is behind, it carries BOTH numbers and the direction
+      # between them, so the comparison needs no second glance. Every other state shows one
+      # number, or says plainly that there isn't one.
+      - lblChipVersion:
+          Control: ModernText
+          Properties:
+            X: =10
+            Y: =4
+            Width: =Parent.Width - 20
+            Height: =22
+            PaddingTop: =0
+            PaddingBottom: =0
+            Font: =AppFont
+            Size: =AppType.Heading
+            FontWeight: =FontWeight.Semibold
+            Wrap: =false
+            Text: |-
+              =If(
+                  IsBlank(InstalledVersion),
+                  "not recorded",
+                  IsBlank(StandardVersion),
+                  InstalledVersion,
+                  InstalledVersion = StandardVersion,
+                  InstalledVersion,
+                  InstalledVersion & "  →  " & StandardVersion
+              )
+            Color: |-
+              =If(
+                  IsBlank(InstalledVersion),
+                  ColorValue("#5A6570"),
+                  IsBlank(StandardVersion),
+                  ColorValue("#5A6570"),
+                  InstalledVersion = StandardVersion,
+                  AppTheme.Ok,
+                  AppTheme.Warn
+              )
+
+      # The verdict, in words. This is the line that makes the chip readable to someone who
+      # cannot distinguish the tints, and it is also the line that tells a technician what to
+      # DO — "update available" is an instruction, "3.4.1 ≠ 3.6.0" is a riddle.
+      - lblChipVerdict:
+          Control: ModernText
+          Properties:
+            X: =10
+            Y: =25
+            Width: =Parent.Width - 20
+            Height: =16
+            PaddingTop: =0
+            PaddingBottom: =0
+            Font: =AppFont
+            Size: =AppType.Small
+            Wrap: =false
+            Text: |-
+              =If(
+                  IsBlank(InstalledVersion),
+                  "no version on file",
+                  IsBlank(StandardVersion),
+                  "no standard set",
+                  InstalledVersion = StandardVersion,
+                  "current",
+                  "update available"
+              )
+            Color: =ColorValue("#5A6570")
