@@ -382,10 +382,10 @@ Screens:
                         Height: =48
                         BorderThickness: =1
                         Text: =""
-                        Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
+                        Fill: =AppTheme.Surface
                         HoverFill: =AppTheme.Sunken
                         PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =If(ThisItem.IsSelected, AppTheme.Primary, AppTheme.LineSoft)
+                        BorderColor: =AppTheme.LineSoft
                         HoverBorderColor: =AppTheme.Line
                         PressedBorderColor: =AppTheme.Primary
                         RadiusTopLeft: =8
@@ -586,10 +586,10 @@ Screens:
                         Height: =48
                         BorderThickness: =1
                         Text: =""
-                        Fill: =If(ThisItem.IsSelected, AppTheme.PrimaryLight, AppTheme.Surface)
+                        Fill: =AppTheme.Surface
                         HoverFill: =AppTheme.Sunken
                         PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =If(ThisItem.IsSelected, AppTheme.Primary, AppTheme.LineSoft)
+                        BorderColor: =AppTheme.LineSoft
                         HoverBorderColor: =AppTheme.Line
                         PressedBorderColor: =AppTheme.Primary
                         RadiusTopLeft: =8

@@ -798,3 +798,25 @@ times out of ten is worse than no check, because the eleventh is ignored too.
 were written, so they never got an `Appearance` and stayed pale while the other four
 highlighted. Nothing reported it: they were styled, just not the way the rest were. When a
 `DEFAULTS` fallback exists, a missing rule looks like a deliberate choice.
+
+## A gallery selects its first row, so `ThisItem.IsSelected` styling reads as "already chosen"
+
+Every card and row in this app was styled from `ThisItem.IsSelected` - a tinted fill, a
+coloured border, and on two screens a 4px accent rail. A canvas `Gallery` selects its first
+row when it loads, so the top card rendered as picked before anyone touched the screen.
+Reported as *"the solution card looks like it's already selected and could confuse users"*,
+which is exactly what it was.
+
+The styling came from Studio's own generated browse gallery, where it makes sense: there, the
+gallery drives a detail pane on the same screen, and the highlight tells you which record the
+pane is showing.
+
+It makes no sense here. Every one of these rows navigates on tap, so by the time a selection
+would mean anything the screen has gone. There is nothing left to mark.
+
+Hover and pressed feedback stay, on the transparent hit target. Those are what tell you the
+row is live, and they respond to what the user is doing rather than to a default.
+
+Sixteen instances across five screens. Worth grepping `IsSelected` after adding any gallery,
+because one card looking pre-selected reads as a bug in the data rather than in the styling -
+the reasonable assumption is "why is that one highlighted", not "all galleries do this".
