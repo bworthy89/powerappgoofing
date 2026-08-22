@@ -142,13 +142,9 @@ EXTRA = {
     "btnBackCat": BACK,
     "txtSearchCat": SEARCH,
     "txtSearchHome": SEARCH,
-    "btnTileCustomers": tile("People"),
     "btnTileCatalogue": tile("Document"),
     "btnTileAdmin": tile("Settings"),
     "btnTileOnboard": tile("Add"),
-    "btnRecent1": {"Appearance": "ButtonAppearance.Subtle"},
-    "btnRecent2": {"Appearance": "ButtonAppearance.Subtle"},
-    "btnRecent3": {"Appearance": "ButtonAppearance.Subtle"},
     # wave 4
     "btnBackAdm": BACK,
     "btnBackEdit": {"Appearance": "ButtonAppearance.Subtle",

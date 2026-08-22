@@ -1,5 +1,5 @@
 # Screen — Customer Overview
-# Answers one question: what does this customer run. Reached from scrCustomers with
+# Answers one question: what does this customer run. Reached from scrHome's customer
 # varCustomer already set to a whole TB_Customers record. Support notes surface first
 # (when present), then every solution (a TB_Installations row with a blank Parent) as a
 # card showing model, version, currency state and status, with that solution's units
@@ -33,7 +33,7 @@ Screens:
                   Y: =Gutter
                   Width: =Gutter * 10
                   Height: =28
-                  Text: ="Customers"
+                  Text: ="Home"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -43,7 +43,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: =Navigate(scrCustomers, ScreenTransition.CoverRight)
+                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
             - lblTitleOvw:
                 Control: ModernText
                 Properties:

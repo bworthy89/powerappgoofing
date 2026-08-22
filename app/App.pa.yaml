@@ -39,7 +39,4 @@ App:
     OnStart: |-
       =Set(varCustomer, Defaults(TB_Customers));
       Set(varInstallation, Defaults(TB_Installations));
-      Set(varExpandedModel, 0);
-      ClearCollect(colRecent, {Id: 0, Name: "", At: Now()});
-      Clear(colRecent);
-      IfError(LoadData(colRecent, "recent", true), Blank())
+      Set(varExpandedModel, 0)

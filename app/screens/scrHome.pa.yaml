@@ -1,15 +1,17 @@
 # Screen — Home
 # The landing screen: reached from App.StartScreen, so it is the only screen that never
 # has varCustomer or varInstallation pre-set from an incoming Navigate. It is built last
-# because scrCustomers, scrCustomerOverview, scrCatalogue, scrSolution and scrUnit must
+# because scrCustomerOverview, scrCatalogue, scrSolution and scrUnit must
 # already exist for its formulas (and App.StartScreen naming this screen) to resolve —
 # the same forward-reference condition already accepted for scrUnit in
 # scrCustomerOverview and for scrHome itself in App.StartScreen.
 #
-# Two mutually exclusive regions share the same Y origin (contentY, realised below as
+# Two mutually exclusive regions share the same Y origin (realised below as
 # lblSearchCustomersHead.Y): the three search-result galleries, visible only while
-# txtSearchHome has at least two characters, and the dashboard (currency card, the two count
-# tiles, the two entry tiles, and the recently-viewed row), visible the rest of the time.
+# txtSearchHome has at least two characters, and the customer list, visible the rest of
+# the time. This screen absorbed scrCustomers — the customer is how technicians come in,
+# so home is the list rather than a menu standing in front of it. See
+# plans/2026-08-21-home-as-customer-list-design.md.
 # Every control in the dashboard region repeats
 # "Len(Trim(txtSearchHome.Text)) < 2" in its own Visible so the two regions never render on
 # top of each other — the same repeated-guard idiom scrCatalogue uses across
@@ -31,7 +33,7 @@
 # cumulative offsets, each Visible only once the search has two characters and that
 # gallery actually has rows. Customers and products match StartsWith(Title, ...);
 # documents match Trim(txtSearchHome.Text) in Title, exactly as briefed. Search rows are
-# deliberately lighter than the full browse rows in scrCustomers/scrCatalogue (no
+# deliberately lighter than the full browse rows below and in scrCatalogue (no
 # currency chip) — this is a way-finder, not a second copy of those screens, and every
 # extra TB_Installations query here would be one more place the retired-row exclusion
 # has to be re-verified for no real benefit.
@@ -79,24 +81,6 @@
 # review, flattened to ManualLayout, which costs one edit and removes the only
 # first-screen-loaded gamble on the page.
 #
-# Recently opened — device-local, no list involved. galCustomers.OnSelect in
-# scrCustomers (Task 3) now also writes colRecent; App.OnStart now also calls
-# LoadData(colRecent, "recent", true). Both are flagged inline at their call sites
-# below. The dedupe-and-trim step in scrCustomers uses RemoveIf, not Distinct:
-# Distinct(Table, Formula) returns a single-column table named Result rather than the
-# original row, so Sort(Distinct(colRecent, Id), At, ...) would sort on a column that
-# no longer exists, and ClearCollect-ing the result back into colRecent would destroy
-# Name and At — breaking the three Index(colRecent, n).Name references below. RemoveIf
-# by Id first (dedupe), then RemoveIf the oldest At when over 3 rows (trim), preserves
-# every column on every row. FALLBACK, if Studio rejects RemoveIf/SaveData/LoadData:
-# delete lblRecentHeading, btnRecent1, btnRecent2 and btnRecent3 from this file, delete
-# the colRecent lines from scrCustomers' galCustomers.OnSelect, and delete the LoadData
-# line from App.OnStart. Nothing else on this screen reads colRecent, so removing it is
-# a clean subtraction — the brief calls this the least load-bearing element on the
-# screen, and it is written that way on purpose: btnRecent1 through btnRecent3 each
-# guard their own Index(colRecent, n) behind CountRows(colRecent) >= n, both in Text and
-# in OnSelect, so an empty or partially populated colRecent (the normal state on day
-# one, before anyone has opened a customer) never evaluates an out-of-range Index.
 Screens:
   scrHome:
     Properties:
@@ -119,12 +103,79 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =Gutter
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: =Parent.Width - (Gutter * 2) - If(IsNarrow, 160, 420)
                   Height: =40
                   Text: ="Technician Toolbox"
                   Font: =AppFont
                   Size: =AppType.Title
                   FontWeight: =FontWeight.Bold
+            # Secondary destinations. They sit in the header rather than as tiles in the
+            # body: the customer list is what this screen is for, and four large tiles
+            # competed with it. A bottom bar was rejected - it would have given Admin
+            # equal billing with the customer list.
+            - btnTileCatalogue:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="Document"
+                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
+                  Text: ="Catalogue"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderThickness: =0
+                  Height: =32
+                  Width: =If(IsNarrow, 44, 120)
+                  X: =btnTileOnboard.X - 8 - If(IsNarrow, 44, 120)
+                  Y: =Gutter + 4
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
+            - btnTileOnboard:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="Add"
+                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
+                  Text: ="New customer"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderThickness: =0
+                  Height: =32
+                  Width: =If(IsNarrow, 44, 150)
+                  X: =btnTileAdmin.X - 8 - If(IsNarrow, 44, 150)
+                  Y: =Gutter + 4
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrOnboard, ScreenTransition.Cover)
+            - btnTileAdmin:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="Settings"
+                  Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
+                  Text: ="Admin"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppTheme.Primary
+                  BorderThickness: =0
+                  Height: =32
+                  Width: =If(IsNarrow, 44, 110)
+                  X: =Parent.Width - Gutter - If(IsNarrow, 44, 110)
+                  Y: =Gutter + 4
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Navigate(scrAdmin, ScreenTransition.Cover)
             - txtSearchHome:
                 Control: ModernTextInput
                 Properties:
@@ -431,424 +482,113 @@ Screens:
                     CountRows(galSearchCustomers.AllItems) = 0 &&
                     CountRows(galSearchProducts.AllItems) = 0 &&
                     CountRows(galSearchDocs.AllItems) = 0
-            - conDashboard:
-                Control: GroupContainer
-                Variant: ManualLayout
+            # The customer list, in the slot the KPI cards used to occupy and inheriting
+            # their visibility rule: this shows while the search box is empty, and the
+            # three result galleries take over from two characters onward. Because it is
+            # hidden while searching, it needs no StartsWith of its own.
+            - galCustomers:
+                Control: Gallery
+                Variant: Vertical
                 Properties:
+                  Items: |
+                    =SortByColumns(Filter(TB_Customers, Active = true), "Title", SortOrder.Ascending)
+                  OnSelect: |
+                    =Set(varCustomer, ThisItem);
+                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
+                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+                  WrapCount: =Switch(scrHome.Size, ScreenSize.Small, 1, ScreenSize.Medium, 1, ScreenSize.Large, 2, 3)
                   X: =Gutter
                   Y: =lblSearchCustomersHead.Y
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: |
-                    =If(
-                        scrHome.Size = ScreenSize.Small,
-                        cardBacklog.Height + Gutter + cardCustomerCount.Height + Gutter + cardModelCount.Height,
-                        cardBacklog.Height
-                    )
-                  Fill: =AppTheme.Bg
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
+                  Height: =Parent.Height - lblSearchCustomersHead.Y - Gutter
+                  TemplateSize: =96
+                  TemplatePadding: =8
+                  ShowScrollbar: =true
                 Children:
-                  - cardBacklog:
-                      Control: GroupContainer
-                      Variant: ManualLayout
+                  - btnCard:
+                      Control: Classic/Button
                       Properties:
-                        # conDashboard has no internal padding, so X = 0 is the correct
-                        # flush-left anchor for its first card, not a hard-coded position.
+                        OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
-                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.5)
-                        Height: =190
+                        Width: =Parent.TemplateWidth
+                        Height: =80
+                        Text: =""
                         Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.Line
+                        HoverFill: =AppTheme.Sunken
+                        PressedFill: =AppTheme.PrimaryLight
+                        BorderColor: =AppTheme.LineSoft
+                        HoverBorderColor: =AppTheme.Line
+                        PressedBorderColor: =AppTheme.Primary
                         BorderThickness: =1
-                      Children:
-                        - lblBacklogHeading:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =16
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =15
-                              Text: ="BACKLOG"
-                              Font: =AppFont
-                              Size: =AppType.Micro
-                              FontWeight: =FontWeight.Bold
-                              Color: =AppTheme.Muted
-                        - lblBacklogFigure:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =32
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =44
-                              Font: =AppFont
-                              Size: =AppType.Display
-                              FontWeight: =FontWeight.Bold
-                              Text: |
-                                =CountRows(
-                                    Filter(
-                                        TB_Installations,
-                                        Status.Value <> "Retired",
-                                        !IsBlank('Installed Version'),
-                                        !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
-                                        'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
-                                    )
-                                )
-                        - lblBacklogCaption:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =80
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =18
-                              Font: =AppFont
-                              Size: =AppType.Small
-                              Color: =AppTheme.Muted
-                              Text: |
-                                ="of " & CountRows(Filter(TB_Installations, Status.Value <> "Retired")) & " installations off standard"
-                        - conProportionBar:
-                            Control: GroupContainer
-                            Variant: ManualLayout
-                            Properties:
-                              X: =Gutter
-                              Y: =112
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =10
-                              Fill: =AppTheme.Bg
-                            Children:
-                              - rectBarTrack:
-                                  Control: Rectangle
-                                  Properties:
-                                    # conProportionBar's own X and Width are already derived
-                                    # and it has no internal padding, so X = 0 is the correct
-                                    # flush anchor here, not a hard-coded position.
-                                    X: =0
-                                    Y: =0
-                                    Width: =Parent.Width
-                                    Height: =Parent.Height
-                                    Fill: =AppTheme.Sunken
-                                    BorderThickness: =0
-                              - rectOnStandard:
-                                  Control: Rectangle
-                                  Properties:
-                                    # Same reasoning as rectBarTrack.X above: conProportionBar
-                                    # has no internal padding, so 0 is the correct anchor.
-                                    X: =0
-                                    Y: =0
-                                    Height: =Parent.Height
-                                    Fill: =AppTheme.Ok
-                                    BorderThickness: =0
-                                    Width: |
-                                      =(Parent.Width - 6) * (
-                                          CountRows(
-                                              Filter(
-                                                  TB_Installations,
-                                                  Status.Value <> "Retired",
-                                                  !IsBlank('Installed Version'),
-                                                  'Installed Version' = LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
-                                              )
-                                          ) / Max(CountRows(Filter(TB_Installations, Status.Value <> "Retired")), 1)
-                                      )
-                              - rectOffStandard:
-                                  Control: Rectangle
-                                  Properties:
-                                    X: =rectOnStandard.Width
-                                    Y: =0
-                                    Height: =Parent.Height
-                                    Fill: =AppTheme.Warn
-                                    BorderThickness: =0
-                                    Width: |
-                                      =(Parent.Width - 6) * (
-                                          CountRows(
-                                              Filter(
-                                                  TB_Installations,
-                                                  Status.Value <> "Retired",
-                                                  !IsBlank('Installed Version'),
-                                                  !IsBlank(LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'),
-                                                  'Installed Version' <> LookUp(TB_Products, ID = TB_Installations[@Product].Id).'Current Standard Version'
-                                              )
-                                          ) / Max(CountRows(Filter(TB_Installations, Status.Value <> "Retired")), 1)
-                                      )
-                        - lblUnknownCount:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =134
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =16
-                              Font: =AppFont
-                              Size: =AppType.Micro
-                              Color: =AppTheme.Neutral
-                              Text: |
-                                =CountRows(
-                                    Filter(TB_Installations, Status.Value <> "Retired", IsBlank('Installed Version'))
-                                ) & " not recorded"
-                  - cardCustomerCount:
-                      Control: GroupContainer
-                      Variant: ManualLayout
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                  - lblName:
+                      Control: ModernText
                       Properties:
-                        X: =If(scrHome.Size = ScreenSize.Small, 0, cardBacklog.X + cardBacklog.Width + Gutter)
-                        Y: =If(scrHome.Size = ScreenSize.Small, cardBacklog.Y + cardBacklog.Height + Gutter, 0)
-                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
-                        Height: =If(scrHome.Size = ScreenSize.Small, 96, cardBacklog.Height)
-                        Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.Line
-                        BorderThickness: =1
-                      Children:
-                        - lblCustomerCountFigure:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =(Parent.Height - 54) / 2
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =36
-                              Align: =Align.Center
-                              Font: =AppFont
-                              Size: =AppType.Title
-                              FontWeight: =FontWeight.Bold
-                              Text: =CountRows(Filter(TB_Customers, Active = true))
-                        - lblCustomerCountCaption:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =lblCustomerCountFigure.Y + lblCustomerCountFigure.Height + 4
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =18
-                              Align: =Align.Center
-                              Font: =AppFont
-                              Size: =AppType.Small
-                              Color: =AppTheme.Muted
-                              Text: ="active customers"
-                  - cardModelCount:
-                      Control: GroupContainer
-                      Variant: ManualLayout
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =Gutter
+                        Y: =12
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =22
+                        Text: =ThisItem.Title
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        FontWeight: =FontWeight.Semibold
+                        Wrap: =false
+                        AutoHeight: =false
+                  - lblDesc:
+                      Control: ModernText
                       Properties:
-                        X: =If(scrHome.Size = ScreenSize.Small, 0, cardCustomerCount.X + cardCustomerCount.Width + Gutter)
-                        Y: =If(scrHome.Size = ScreenSize.Small, cardCustomerCount.Y + cardCustomerCount.Height + Gutter, 0)
-                        Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width, (Parent.Width - (Gutter * 2)) * 0.25)
-                        Height: =If(scrHome.Size = ScreenSize.Small, 96, cardBacklog.Height)
-                        Fill: =AppTheme.Surface
-                        BorderColor: =AppTheme.Line
-                        BorderThickness: =1
-                      Children:
-                        - lblModelCountFigure:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =(Parent.Height - 54) / 2
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =36
-                              Align: =Align.Center
-                              Font: =AppFont
-                              Size: =AppType.Title
-                              FontWeight: =FontWeight.Bold
-                              Text: =CountRows(Filter(TB_Products, Active = true))
-                        - lblModelCountCaption:
-                            Control: ModernText
-                            Properties:
-                              PaddingTop: =0
-                              PaddingBottom: =0
-                              X: =Gutter
-                              Y: =lblModelCountFigure.Y + lblModelCountFigure.Height + 4
-                              Width: =Parent.Width - (Gutter * 2)
-                              Height: =18
-                              Align: =Align.Center
-                              Font: =AppFont
-                              Size: =AppType.Small
-                              Color: =AppTheme.Muted
-                              Text: ="active models"
-            - btnTileCustomers:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Secondary
-                  Icon: ="People"
-                  Layout: =ButtonLayout.IconBefore
-                  X: =Gutter
-                  Y: =conDashboard.Y + conDashboard.Height + Gutter
-                  Width: =(Parent.Width - (Gutter * 5)) / 4
-                  Height: =72
-                  Text: ="Customers"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
-                  OnSelect: =Navigate(scrCustomers, ScreenTransition.Cover)
-            - btnTileCatalogue:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Secondary
-                  Icon: ="Document"
-                  Layout: =ButtonLayout.IconBefore
-                  X: =btnTileCustomers.X + btnTileCustomers.Width + Gutter
-                  Y: =btnTileCustomers.Y
-                  Width: =btnTileCustomers.Width
-                  Height: =72
-                  Text: ="Catalogue"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
-                  OnSelect: =Navigate(scrCatalogue, ScreenTransition.Cover)
-            - btnTileAdmin:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Secondary
-                  Icon: ="Settings"
-                  Layout: =ButtonLayout.IconBefore
-                  X: =btnTileCatalogue.X + btnTileCatalogue.Width + Gutter
-                  Y: =btnTileCustomers.Y
-                  Width: =btnTileCustomers.Width
-                  Height: =72
-                  Text: ="Admin"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
-                  OnSelect: |
-                    =Set(varAdminList, "Cust");
-                    Set(varAdminNew, false);
-                    Navigate(scrAdmin, ScreenTransition.Cover)
-            - btnTileOnboard:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Secondary
-                  Icon: ="Add"
-                  Layout: =ButtonLayout.IconBefore
-                  X: =btnTileAdmin.X + btnTileAdmin.Width + Gutter
-                  Y: =btnTileCustomers.Y
-                  Width: =btnTileCustomers.Width
-                  Height: =72
-                  Text: ="New customer"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
-                  BorderColor: =AppTheme.Line
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2
-                  OnSelect: |
-                    =Set(varWizStep, 1);
-                    Set(varWizError, "");
-                    Navigate(scrOnboard, ScreenTransition.Cover)
-            - lblRecentHeading:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =Gutter
+                        Y: =38
+                        Width: =Parent.TemplateWidth - (Gutter * 2)
+                        Height: =34
+                        Text: =Coalesce(ThisItem.Description, "No description")
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppTheme.Muted
+                        Wrap: =true
+                        AutoHeight: =false
+                  - galCustomersHit:
+                      Control: Classic/Button
+                      Properties:
+                        OnSelect: =Select(Parent)
+                        FocusedBorderThickness: =2
+                        FocusedBorderColor: =AppTheme.Primary
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =Parent.TemplateHeight
+                        Text: =""
+                        Fill: =RGBA(0, 0, 0, 0)
+                        HoverFill: =RGBA(0, 0, 0, 0.04)
+                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        BorderThickness: =0
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+            - lblNoCustomersHome:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
-                  Y: =btnTileCustomers.Y + btnTileCustomers.Height + Gutter
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =20
-                  Text: ="Recently viewed"
-                  Font: =AppFont
-                  Size: =AppType.Micro
-                  FontWeight: =FontWeight.Bold
+                  Text: ="No customers yet. Add one from New customer."
                   Color: =AppTheme.Muted
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) > 0
-            - btnRecent1:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Align: =Align.Center
+                  Wrap: =true
+                  AutoHeight: =false
                   X: =Gutter
-                  Y: =lblRecentHeading.Y + lblRecentHeading.Height + 4
-                  Width: =If(scrHome.Size = ScreenSize.Small, Parent.Width - (Gutter * 2), (Parent.Width - (Gutter * 4)) / 3)
-                  Height: =56
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  BorderColor: =AppTheme.LineSoft
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  # Sort(colRecent, At, SortOrder.Descending) at each read point, not on
-                  # write: Collect appends, so the most recently viewed customer is
-                  # wherever it landed in insertion order, not necessarily position 1.
-                  Text: =If(CountRows(colRecent) >= 1, Index(Sort(colRecent, At, SortOrder.Descending), 1).Name, "")
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 1
-                  OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 1).Id));
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
-            - btnRecent2:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  X: =If(scrHome.Size = ScreenSize.Small, Gutter, btnRecent1.X + btnRecent1.Width + Gutter)
-                  Y: =If(scrHome.Size = ScreenSize.Small, btnRecent1.Y + btnRecent1.Height + 8, btnRecent1.Y)
-                  Width: =btnRecent1.Width
-                  Height: =56
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  BorderColor: =AppTheme.LineSoft
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Text: =If(CountRows(colRecent) >= 2, Index(Sort(colRecent, At, SortOrder.Descending), 2).Name, "")
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 2
-                  OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 2).Id));
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
-            - btnRecent3:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  X: =If(scrHome.Size = ScreenSize.Small, Gutter, btnRecent2.X + btnRecent2.Width + Gutter)
-                  Y: =If(scrHome.Size = ScreenSize.Small, btnRecent2.Y + btnRecent2.Height + 8, btnRecent1.Y)
-                  Width: =btnRecent1.Width
-                  Height: =56
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  BorderColor: =AppTheme.LineSoft
-                  BorderThickness: =1
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  Text: =If(CountRows(colRecent) >= 3, Index(Sort(colRecent, At, SortOrder.Descending), 3).Name, "")
-                  Visible: =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(colRecent) >= 3
-                  OnSelect: |
-                    =Set(varCustomer, LookUp(TB_Customers, ID = Index(Sort(colRecent, At, SortOrder.Descending), 3).Id));
-                    Navigate(scrCustomerOverview, ScreenTransition.Cover)
+                  Y: =lblSearchCustomersHead.Y + 40
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =40
+                  Visible: |
+                    =Len(Trim(txtSearchHome.Text)) < 2 && CountRows(Filter(TB_Customers, Active = true)) = 0
