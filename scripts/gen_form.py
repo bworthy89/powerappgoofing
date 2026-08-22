@@ -254,17 +254,27 @@ for k, v in [("Text",blocked),("Color","RGBA(176, 0, 32, 1)"),("Font","AppFont")
              ("Visible",f"!varAdminNew && ({DEPS}) > 0")]: prop(o, k, v, q)
 
 q = ctrl(o, "btnDeleteEdit", "Classic/Button", c)
+# Notify rather than a label. A delete either happens or it does not, and the
+# first version reported failure into lblEditError, which sits along the bottom
+# where these buttons now are - so a real error could render behind them and
+# look like nothing happening at all.
+#
+# Refresh after Remove because the gallery on scrAdmin reads a filtered view of
+# the same source, and without it the row can survive the trip back.
 blk(o, "OnSelect", [
     "If(!varConfirmDelete,",
     "    Set(varConfirmDelete, true),",
     "    IfError(",
     "        Switch(varAdminList,"] + [
-    f'            "{L["key"]}", Remove({L["source"]}, {var(L)}),' for L in LISTS] + [
-    "            Notify(\"Nothing selected to delete.\", NotificationType.Error)",
+    f'            "{L["key"]}", Remove({L["source"]}, {var(L)}); Refresh({L["source"]}),'
+    for L in LISTS] + [
+    "            Notify(\"Nothing was selected to delete.\", NotificationType.Error)",
     "        );",
     '        Set(varConfirmDelete, false);',
+    '        Notify("Deleted.", NotificationType.Success);',
     "        Navigate(scrAdmin, ScreenTransition.UnCoverRight),",
-    "        Set(varEditError, FirstError.Message)",
+    '        Notify("Could not delete: " & FirstError.Message, NotificationType.Error);',
+    "        Set(varConfirmDelete, false)",
     "    )",
     ")"], q)
 for k, v in [("Font","AppFont"),("Size","AppType.Body"),("FontWeight","FontWeight.Semibold"),

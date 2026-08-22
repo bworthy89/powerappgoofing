@@ -1164,16 +1164,18 @@ Screens:
                         Set(varConfirmDelete, true),
                         IfError(
                             Switch(varAdminList,
-                                "Cust", Remove(TB_Customers, varRecCust),
-                                "Prod", Remove(TB_Products, varRecProd),
-                                "Inst", Remove(TB_Installations, varRecInst),
-                                "SolU", Remove(TB_SolutionUnits, varRecSolU),
-                                "Ref", Remove(TB_References, varRecRef),
-                                Notify("Nothing selected to delete.", NotificationType.Error)
+                                "Cust", Remove(TB_Customers, varRecCust); Refresh(TB_Customers),
+                                "Prod", Remove(TB_Products, varRecProd); Refresh(TB_Products),
+                                "Inst", Remove(TB_Installations, varRecInst); Refresh(TB_Installations),
+                                "SolU", Remove(TB_SolutionUnits, varRecSolU); Refresh(TB_SolutionUnits),
+                                "Ref", Remove(TB_References, varRecRef); Refresh(TB_References),
+                                Notify("Nothing was selected to delete.", NotificationType.Error)
                             );
                             Set(varConfirmDelete, false);
+                            Notify("Deleted.", NotificationType.Success);
                             Navigate(scrAdmin, ScreenTransition.UnCoverRight),
-                            Set(varEditError, FirstError.Message)
+                            Notify("Could not delete: " & FirstError.Message, NotificationType.Error);
+                            Set(varConfirmDelete, false)
                         )
                     )
                   Font: =AppFont
