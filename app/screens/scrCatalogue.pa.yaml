@@ -289,9 +289,28 @@ Screens:
                   TemplatePadding: =6
                   ShowScrollbar: =true
                   Visible: =!IsBlank(varExpandedModel) && varExpandedModel <> 0
+                  # The model's own documents, plus those for every unit it can
+                  # carry. Here that comes from TB_SolutionUnits rather than from
+                  # installations: the catalogue describes the model, not a site,
+                  # so the question is what a CI 300X can take, not what one
+                  # customer happens to have.
+                  #
+                  # "As R" names the outer row so R.Product.Id is not shadowed by
+                  # TB_SolutionUnits' own columns in the inner Filter.
                   Items: |
                     =SortByColumns(
-                        Filter(TB_References, Product.Id = varExpandedModel, IsBlank(Customer)),
+                        Filter(
+                            TB_References As R,
+                            IsBlank(R.Customer),
+                            R.Product.Id = varExpandedModel
+                            || CountRows(
+                                   Filter(
+                                       TB_SolutionUnits,
+                                       Solution.Id = varExpandedModel,
+                                       Unit.Id = R.Product.Id
+                                   )
+                               ) > 0
+                        ),
                         "Title",
                         SortOrder.Ascending
                     )
@@ -349,7 +368,13 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
-                        Text: =ThisItem.Section.Value & "  •  " & ThisItem.'Reference Type'.Value
+                        Text: |
+                          =ThisItem.Section.Value & "  •  " & ThisItem.'Reference Type'.Value &
+                          If(
+                              ThisItem.Product.Id = varExpandedModel,
+                              "",
+                              "  •  " & LookUp(TB_Products, ID = ThisItem.Product.Id).Title
+                          )
                   - lblDocChecked:
                       Control: ModernText
                       Properties:

@@ -432,10 +432,18 @@ Screens:
                   Items: |
                     =SortByColumns(
                         Filter(
-                            TB_References,
-                            Product.Id = varInstallation.Product.Id,
-                            Section.Value = "Documentation",
-                            Or(IsBlank(Customer), Customer.Id = varCustomer.ID)
+                            TB_References As R,
+                            R.Section.Value = "Documentation",
+                            Or(IsBlank(R.Customer), R.Customer.Id = varCustomer.ID),
+                            R.Product.Id = varInstallation.Product.Id
+                            || CountRows(
+                                   Filter(
+                                       TB_Installations,
+                                       'Parent'.Id = varInstallation.ID,
+                                       Status.Value <> "Retired",
+                                       Product.Id = R.Product.Id
+                                   )
+                               ) > 0
                         ),
                         "TBFeatured",
                         SortOrder.Descending
@@ -494,7 +502,9 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
-                        Text: =ThisItem.'Reference Type'.Value
+                        Text: |
+                          =ThisItem.'Reference Type'.Value & "  ·  " &
+                          LookUp(TB_Products, ID = ThisItem.Product.Id).Title
                   - lblDocsExceptionSol:
                       Control: ModernText
                       Properties:
@@ -636,10 +646,18 @@ Screens:
                   Items: |
                     =SortByColumns(
                         Filter(
-                            TB_References,
-                            Product.Id = varInstallation.Product.Id,
-                            Section.Value = "Firmware & Downloads",
-                            Or(IsBlank(Customer), Customer.Id = varCustomer.ID)
+                            TB_References As R,
+                            R.Section.Value = "Firmware & Downloads",
+                            Or(IsBlank(R.Customer), R.Customer.Id = varCustomer.ID),
+                            R.Product.Id = varInstallation.Product.Id
+                            || CountRows(
+                                   Filter(
+                                       TB_Installations,
+                                       'Parent'.Id = varInstallation.ID,
+                                       Status.Value <> "Retired",
+                                       Product.Id = R.Product.Id
+                                   )
+                               ) > 0
                         ),
                         "TBFeatured",
                         SortOrder.Descending
@@ -698,7 +716,9 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         Color: =AppTheme.Muted
-                        Text: =ThisItem.'Reference Type'.Value
+                        Text: |
+                          =ThisItem.'Reference Type'.Value & "  ·  " &
+                          LookUp(TB_Products, ID = ThisItem.Product.Id).Title
                   - lblFirmwareExceptionSol:
                       Control: ModernText
                       Properties:
