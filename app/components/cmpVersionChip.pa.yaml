@@ -56,6 +56,15 @@ ComponentDefinitions:
       Width: =190
       Fill: =RGBA(0, 0, 0, 0)
     Children:
+      # Custom properties are referenced as cmpVersionChip.<Name>, never bare. Studio rejects
+      # the bare name with "Name isn't valid. 'StandardVersion' isn't recognized." - the
+      # component's own name is the qualifier, exactly as Microsoft's walkthrough writes
+      # MenuComponent.Items. Parent.<Name> does not work either: Parent resolves to the
+      # component for layout (Parent.Width, Parent.Height) but not for custom properties.
+      #
+      # This bakes the component name into its own children, so renaming the component in
+      # Studio breaks all 20 of these references at once.
+      #
       # The tint is the fastest read on the screen. Radius 6 matches every other surface
       # in the app; this chip is meant to look native to it, not like a pasted-in widget.
       #
@@ -80,11 +89,11 @@ ComponentDefinitions:
             RadiusBottomRight: =6
             Fill: |-
               =If(
-                  IsBlank(InstalledVersion),
+                  IsBlank(cmpVersionChip.InstalledVersion),
                   AppTheme.NeutralLight,
-                  IsBlank(StandardVersion),
+                  IsBlank(cmpVersionChip.StandardVersion),
                   AppTheme.NeutralLight,
-                  InstalledVersion = StandardVersion,
+                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
                   AppTheme.OkLight,
                   AppTheme.WarnLight
               )
@@ -107,21 +116,21 @@ ComponentDefinitions:
             Wrap: =false
             Text: |-
               =If(
-                  IsBlank(InstalledVersion),
+                  IsBlank(cmpVersionChip.InstalledVersion),
                   "not recorded",
-                  IsBlank(StandardVersion),
-                  InstalledVersion,
-                  InstalledVersion = StandardVersion,
-                  InstalledVersion,
-                  InstalledVersion & "  →  " & StandardVersion
+                  IsBlank(cmpVersionChip.StandardVersion),
+                  cmpVersionChip.InstalledVersion,
+                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
+                  cmpVersionChip.InstalledVersion,
+                  cmpVersionChip.InstalledVersion & "  →  " & cmpVersionChip.StandardVersion
               )
             Color: |-
               =If(
-                  IsBlank(InstalledVersion),
+                  IsBlank(cmpVersionChip.InstalledVersion),
                   ColorValue("#5A6570"),
-                  IsBlank(StandardVersion),
+                  IsBlank(cmpVersionChip.StandardVersion),
                   ColorValue("#5A6570"),
-                  InstalledVersion = StandardVersion,
+                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
                   AppTheme.Ok,
                   AppTheme.Warn
               )
@@ -143,11 +152,11 @@ ComponentDefinitions:
             Wrap: =false
             Text: |-
               =If(
-                  IsBlank(InstalledVersion),
+                  IsBlank(cmpVersionChip.InstalledVersion),
                   "no version on file",
-                  IsBlank(StandardVersion),
+                  IsBlank(cmpVersionChip.StandardVersion),
                   "no standard set",
-                  InstalledVersion = StandardVersion,
+                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
                   "current",
                   "update available"
               )

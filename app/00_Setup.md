@@ -865,3 +865,41 @@ still reserves Fluent's default padding and the surface is taller than its `Heig
 Corollary worth acting on separately: the three currency badges are square because they are
 Rectangles. Converting them to this pattern is what makes them look designed rather than
 drawn.
+
+## Inside a component, a custom property is `ComponentName.Property`, never the bare name
+
+A child control referring to one of its own component's custom properties by bare name is
+rejected:
+
+```
+Name isn't valid. 'StandardVersion' isn't recognized.
+```
+
+The component's own name is the qualifier:
+
+```yaml
+Text: =cmpVersionChip.InstalledVersion        # correct
+Text: =InstalledVersion                       # "isn't recognized"
+Text: =Parent.InstalledVersion                # also wrong
+```
+
+`Parent` is not the escape hatch. Inside a component, `Parent` resolves to the component for
+*layout* — `Parent.Width` and `Parent.Height` work, and are the right way to size children
+against the component — but it does not reach custom properties. The two look like they
+should behave the same and don't.
+
+This matches Microsoft's own walkthrough, which writes `MenuComponent.Items` and
+`Component1.SliderColor` from inside those components.
+
+**Consequence worth planning around:** the component's name is baked into every child
+formula that reads a custom property. Renaming the component in Studio breaks all of them at
+once, with one error per reference. Name it before wiring it up, not after.
+
+The declarations themselves stay bare, because they are YAML keys rather than references:
+
+```yaml
+    CustomProperties:
+      InstalledVersion:          # bare here
+        PropertyKind: Input
+        DataType: Text
+```
