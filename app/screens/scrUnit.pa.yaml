@@ -9,7 +9,7 @@
 # Structurally this is scrSolution scoped down to one unit: same version-pair card, same
 # two document galleries. Two things do NOT carry over:
 #   - No nested gallery of child units — a unit contains nothing beneath it.
-#   - The config-notes card is tinted AppTheme.WarnLight, not AppTheme.Surface. A
+#   - The config-notes card is tinted AppDark.WarnTint, not AppDark.Surface. A
 #     non-standard part or an upgrade-path constraint is exactly what bites mid-job, so
 #     it is called out rather than blending into a neutral card.
 # A breadcrumb (lblCrumb) is new here — customer, then the parent solution's product
@@ -78,7 +78,7 @@
 Screens:
   scrUnit:
     Properties:
-      Fill: =AppTheme.Bg
+      Fill: =AppDark.Bg
     Children:
       - conRootUnit:
           Control: GroupContainer
@@ -88,8 +88,18 @@ Screens:
             Y: =0
             Width: =ContentWidth
             Height: =Parent.Height
-            Fill: =AppTheme.Bg
+            Fill: =AppDark.Bg
           Children:
+            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
+            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
+            - recUnitBrandRule:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =3
+                  Fill: =AppDark.Accent
             - btnBackUnit:
                 Control: ModernButton
                 Properties:
@@ -104,7 +114,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
+                  Color: =AppDark.Accent
                   BorderThickness: =0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -130,7 +140,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
             - lblTitleUnit:
                 Control: ModernText
                 Properties:
@@ -158,7 +168,7 @@ Screens:
                     If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
                   Font: =AppFont
                   Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
             - conVersionUnit:
                 Control: GroupContainer
                 Variant: ManualLayout
@@ -167,8 +177,8 @@ Screens:
                   Y: =Gutter + 122
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =112
-                  Fill: =AppTheme.Surface
-                  BorderColor: =AppTheme.Line
+                  Fill: =AppDark.Surface
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                 Children:
                   - lblVersionHeadingUnit:
@@ -184,7 +194,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Bold
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                   - lblInstalledUnit:
                       Control: ModernText
                       Properties:
@@ -224,7 +234,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Heading
                         FontWeight: =FontWeight.Bold
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                   - lblStandardUnit:
                       Control: ModernText
                       Properties:
@@ -254,12 +264,12 @@ Screens:
                         Fill: |
                           =If(
                               IsBlank(varInstallation.'Installed Version'),
-                              AppTheme.NeutralLight,
+                              AppDark.NeutralTint,
                               IsBlank(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version'),
-                              AppTheme.NeutralLight,
+                              AppDark.NeutralTint,
                               varInstallation.'Installed Version' = LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version',
-                              AppTheme.OkLight,
-                              AppTheme.WarnLight
+                              AppDark.OkTint,
+                              AppDark.WarnTint
                           )
                   - lblCurrencyUnit:
                       Control: ModernText
@@ -294,8 +304,8 @@ Screens:
                   Y: =Gutter + 122 + 112 + Gutter
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =92
-                  Fill: =AppTheme.WarnLight
-                  BorderColor: =AppTheme.Line
+                  Fill: =AppDark.WarnTint
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Visible: =!IsBlank(varInstallation.'Config Notes')
                 Children:
@@ -312,7 +322,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Bold
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                   - lblConfigNotesUnit:
                       Control: ModernText
                       Properties:
@@ -382,12 +392,12 @@ Screens:
                         Height: =48
                         BorderThickness: =1
                         Text: =""
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.Sunken
-                        PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =AppTheme.LineSoft
-                        HoverBorderColor: =AppTheme.Line
-                        PressedBorderColor: =AppTheme.Primary
+                        Fill: =AppDark.Surface
+                        HoverFill: =AppDark.Sunken
+                        PressedFill: =AppDark.AccentTint
+                        BorderColor: =AppDark.LineSoft
+                        HoverBorderColor: =AppDark.Line
+                        PressedBorderColor: =AppDark.Accent
                         RadiusTopLeft: =8
                         RadiusTopRight: =8
                         RadiusBottomLeft: =8
@@ -407,7 +417,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
-                        Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
+                        Color: =If(IsBlank(ThisItem.URL), AppDark.Faint, AppDark.Fg)
                         Text: =ThisItem.Title
                   - lblDocsTypeUnit:
                       Control: ModernText
@@ -423,7 +433,7 @@ Screens:
                         Height: =18
                         Font: =AppFont
                         Size: =AppType.Micro
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                         Text: =ThisItem.'Reference Type'.Value
                   - lblDocsExceptionUnit:
                       Control: ModernText
@@ -440,7 +450,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Primary
+                        Color: =AppDark.Accent
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
                   - lblDocsCheckedUnit:
                       Control: ModernText
@@ -466,10 +476,10 @@ Screens:
                         Color: |
                           =If(
                               IsBlank(ThisItem.'Last Checked'),
-                              AppTheme.Muted,
+                              AppDark.Muted,
                               DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
-                              AppTheme.Warn,
-                              AppTheme.Ok
+                              AppDark.Warn,
+                              AppDark.Ok
                           )
                   # Full-item hit target, LAST so it sits on top of the labels. A button
                   # behind them leaves only the uncovered margins clickable, which is why
@@ -479,7 +489,7 @@ Screens:
                       Control: Classic/Button
                       Properties:
                         FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
+                        FocusedBorderColor: =AppDark.Accent
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -487,8 +497,8 @@ Screens:
                         Height: =Parent.TemplateHeight
                         Text: =""
                         Fill: =RGBA(0, 0, 0, 0)
-                        HoverFill: =RGBA(0, 0, 0, 0.04)
-                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        HoverFill: =RGBA(255, 255, 255, 0.06)
+                        PressedFill: =RGBA(106, 115, 230, 0.18)
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
@@ -509,7 +519,7 @@ Screens:
                   Align: =Align.Center
                   Font: =AppFont
                   Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Text: ="No documentation is on file for this unit."
                   Visible: =CountRows(galDocsUnit.AllItems) = 0
             - lblFirmwareHeadingUnit:
@@ -586,12 +596,12 @@ Screens:
                         Height: =48
                         BorderThickness: =1
                         Text: =""
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.Sunken
-                        PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =AppTheme.LineSoft
-                        HoverBorderColor: =AppTheme.Line
-                        PressedBorderColor: =AppTheme.Primary
+                        Fill: =AppDark.Surface
+                        HoverFill: =AppDark.Sunken
+                        PressedFill: =AppDark.AccentTint
+                        BorderColor: =AppDark.LineSoft
+                        HoverBorderColor: =AppDark.Line
+                        PressedBorderColor: =AppDark.Accent
                         RadiusTopLeft: =8
                         RadiusTopRight: =8
                         RadiusBottomLeft: =8
@@ -611,7 +621,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
-                        Color: =If(IsBlank(ThisItem.URL), AppTheme.Faint, AppTheme.Fg)
+                        Color: =If(IsBlank(ThisItem.URL), AppDark.Faint, AppDark.Fg)
                         Text: =ThisItem.Title
                   - lblFirmwareTypeUnit:
                       Control: ModernText
@@ -627,7 +637,7 @@ Screens:
                         Height: =18
                         Font: =AppFont
                         Size: =AppType.Micro
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                         Text: =ThisItem.'Reference Type'.Value
                   - lblFirmwareExceptionUnit:
                       Control: ModernText
@@ -644,7 +654,7 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Micro
                         FontWeight: =FontWeight.Semibold
-                        Color: =AppTheme.Primary
+                        Color: =AppDark.Accent
                         Text: =If(IsBlank(ThisItem.Customer.Value), "", "this customer")
                   - lblFirmwareCheckedUnit:
                       Control: ModernText
@@ -670,10 +680,10 @@ Screens:
                         Color: |
                           =If(
                               IsBlank(ThisItem.'Last Checked'),
-                              AppTheme.Muted,
+                              AppDark.Muted,
                               DateDiff(ThisItem.'Last Checked', Today(), TimeUnit.Months) >= 12,
-                              AppTheme.Warn,
-                              AppTheme.Ok
+                              AppDark.Warn,
+                              AppDark.Ok
                           )
                   # Full-item hit target, LAST so it sits on top of the labels. A button
                   # behind them leaves only the uncovered margins clickable, which is why
@@ -683,7 +693,7 @@ Screens:
                       Control: Classic/Button
                       Properties:
                         FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
+                        FocusedBorderColor: =AppDark.Accent
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -691,8 +701,8 @@ Screens:
                         Height: =Parent.TemplateHeight
                         Text: =""
                         Fill: =RGBA(0, 0, 0, 0)
-                        HoverFill: =RGBA(0, 0, 0, 0.04)
-                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        HoverFill: =RGBA(255, 255, 255, 0.06)
+                        PressedFill: =RGBA(106, 115, 230, 0.18)
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
@@ -713,6 +723,6 @@ Screens:
                   Align: =Align.Center
                   Font: =AppFont
                   Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Text: ="No firmware or downloads are on file for this unit."
                   Visible: =CountRows(galFirmwareUnit.AllItems) = 0

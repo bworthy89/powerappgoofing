@@ -37,7 +37,17 @@ App:
           AccentSolid:   ColorValue("#2E3AD4"),
           Ok:            ColorValue("#3DD68C"),
           Warn:          ColorValue("#F5B83D"),
-          OnBrand:       ColorValue("#FFFFFF")
+          OnBrand:       ColorValue("#FFFFFF"),
+          Sunken:        ColorValue("#0A0C0F"),
+          SurfaceAlt:    ColorValue("#1E222B"),
+          LineSoft:      ColorValue("#21252E"),
+          Faint:         ColorValue("#7F8794"),
+          AccentTint:    ColorValue("#101326"),
+          OkTint:        ColorValue("#102C1E"),
+          WarnTint:      ColorValue("#302509"),
+          NeutralTint:   ColorValue("#232833"),
+          Danger:        ColorValue("#EC6A6E"),
+          DangerSolid:   ColorValue("#C0182B")
       };
       AppFont = Font.'Lato';
       AppType = {

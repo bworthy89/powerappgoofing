@@ -5,18 +5,28 @@
 Screens:
   scrEditForm:
     Properties:
-      Fill: =AppTheme.Bg
+      Fill: =AppDark.Bg
       OnVisible: =Set(varConfirmDelete, false)
     Children:
       - conRootEdit:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            Fill: =AppTheme.Bg
+            Fill: =AppDark.Bg
             Height: =Parent.Height
             Width: =ContentWidth
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
+            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
+            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
+            - recEditBrandRule:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =3
+                  Fill: =AppDark.Accent
             - btnBackEdit:
                 Control: ModernButton
                 Properties:
@@ -24,7 +34,7 @@ Screens:
                   Icon: ="Cancel"
                   Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
-                  Color: =AppTheme.Primary
+                  Color: =AppDark.Accent
                   Font: =AppFont
                   Height: =28
                   OnSelect: =Navigate(scrAdmin, ScreenTransition.CoverRight)
@@ -54,7 +64,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Name"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -71,7 +81,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecCust.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -90,7 +100,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Description"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -107,7 +117,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecCust.Description)
                   Type: =TextInputType.Multiline
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -126,7 +136,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Support notes"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -143,7 +153,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecCust.'Support Notes')
                   Type: =TextInputType.Multiline
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -162,7 +172,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Active"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -190,7 +200,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Model"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -207,7 +217,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecProd.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -226,7 +236,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Product type"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -244,10 +254,10 @@ Screens:
                     =Choices(TB_Products.'Product Type')
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -261,7 +271,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Family"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -279,10 +289,10 @@ Screens:
                     =Choices(TB_Products.Family)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -296,7 +306,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Current standard version"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -313,7 +323,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecProd.'Current Standard Version')
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -332,7 +342,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Description"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -349,7 +359,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecProd.Description)
                   Type: =TextInputType.Multiline
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -368,7 +378,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Active"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -396,7 +406,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Name"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -413,7 +423,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecInst.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -432,7 +442,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Customer"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -450,10 +460,10 @@ Screens:
                     =Choices(TB_Installations.Customer)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -467,7 +477,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Product"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -485,10 +495,10 @@ Screens:
                     =Choices(TB_Installations.Product)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -502,7 +512,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Parent solution (blank = this IS a solution)"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -520,10 +530,10 @@ Screens:
                     =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -537,7 +547,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Installed version"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -554,7 +564,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecInst.'Installed Version')
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -573,7 +583,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Status"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -591,10 +601,10 @@ Screens:
                     =Choices(TB_Installations.Status)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -608,7 +618,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Config notes"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -625,7 +635,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecInst.'Config Notes')
                   Type: =TextInputType.Multiline
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -644,7 +654,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Label, e.g. CI 300X - SDRB250"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -661,7 +671,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecSolU.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -680,7 +690,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Solution model"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -698,10 +708,10 @@ Screens:
                     =Choices(TB_SolutionUnits.Solution)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -715,7 +725,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Unit model that attaches to it"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -733,10 +743,10 @@ Screens:
                     =Choices(TB_SolutionUnits.Unit)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -750,7 +760,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Part of the standard build"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -778,7 +788,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Title"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -795,7 +805,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecRef.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -814,7 +824,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Product"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -832,10 +842,10 @@ Screens:
                     =Choices(TB_References.Product)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -849,7 +859,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Customer (blank = applies to all customers)"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -867,10 +877,10 @@ Screens:
                     =Choices(TB_References.Customer)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -884,7 +894,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Section"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -902,10 +912,10 @@ Screens:
                     =Choices(TB_References.Section)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -919,7 +929,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Reference type"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -937,10 +947,10 @@ Screens:
                     =Choices(TB_References.'Reference Type')
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value))
                   ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -954,7 +964,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="URL"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -971,7 +981,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecRef.URL)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -990,7 +1000,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Version"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -1007,7 +1017,7 @@ Screens:
                   Default: =If(varAdminNew, "", varRecRef.Version)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -1026,7 +1036,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Featured"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -1144,7 +1154,7 @@ Screens:
                   PaddingBottom: =0
                   Text: |
                     ="Cannot delete: " & (Switch(varAdminList, "Cust", CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID)) + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID)), "Prod", CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_References, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Unit.Id = varRecProd.ID)), "Inst", CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID)), 0)) & " " & (Switch(varAdminList, "Cust", "installations or documents", "Prod", "installations, documents or solution-unit rows", "Inst", "units attached to it", "")) & " still reference this. Remove those first."
-                  Color: =RGBA(176, 0, 32, 1)
+                  Color: =AppDark.Danger
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true
@@ -1159,7 +1169,7 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)
-                  BasePaletteColor: =RGBA(176, 0, 32, 1)
+                  BasePaletteColor: =AppDark.DangerSolid
                   OnSelect: |
                     =If(!varConfirmDelete,
                         Set(varConfirmDelete, true),
@@ -1200,7 +1210,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Cancel"
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
                   Width: =110
@@ -1218,7 +1228,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =varEditError
-                  Color: =RGBA(176, 0, 32, 1)
+                  Color: =AppDark.Danger
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true

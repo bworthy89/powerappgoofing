@@ -3,7 +3,7 @@
 Screens:
   scrOnboard:
     Properties:
-      Fill: =AppTheme.Bg
+      Fill: =AppDark.Bg
       OnVisible: |
         =Set(varWizStep, 1);
         Set(varWizError, "");
@@ -15,11 +15,21 @@ Screens:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            Fill: =AppTheme.Bg
+            Fill: =AppDark.Bg
             Height: =Parent.Height
             Width: =ContentWidth
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
+            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
+            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
+            - recWizBrandRule:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =3
+                  Fill: =AppDark.Accent
             - btnWizCancel:
                 Control: ModernButton
                 Properties:
@@ -27,7 +37,7 @@ Screens:
                   Icon: ="ChevronLeft"
                   Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
-                  Color: =AppTheme.Primary
+                  Color: =AppDark.Accent
                   Font: =AppFont
                   Height: =28
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
@@ -56,7 +66,7 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -73,7 +83,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Customer name"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -95,7 +105,7 @@ Screens:
                   X: =Gutter
                   Y: =130
                   Visible: =varWizStep = 1
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -109,7 +119,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Description"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -131,7 +141,7 @@ Screens:
                   X: =Gutter
                   Y: =202
                   Visible: =varWizStep = 1
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -145,7 +155,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Support notes"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -167,7 +177,7 @@ Screens:
                   X: =Gutter
                   Y: =298
                   Visible: =varWizStep = 1
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
                   Size: =AppType.Body
@@ -181,7 +191,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Active"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -243,7 +253,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Product"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -265,10 +275,10 @@ Screens:
                   X: =Gutter
                   Y: =130
                   Visible: =varWizStep = 2
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolVersion:
@@ -277,7 +287,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Installed software version"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -299,10 +309,10 @@ Screens:
                   X: =Gutter
                   Y: =202
                   Visible: =varWizStep = 2
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   RadiusTopLeft: =6
@@ -315,7 +325,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =If(IsBlank(ddWizSolProduct.Selected), "The software build running on the machine, not the model number.", "Standard for " & ddWizSolProduct.Selected.Value & " is " & Coalesce(LookUp(TB_Products, ID = ddWizSolProduct.Selected.Id, 'Current Standard Version'), "not recorded"))
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   Wrap: =false
@@ -331,7 +341,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Status"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -353,10 +363,10 @@ Screens:
                   X: =Gutter
                   Y: =294
                   Visible: =varWizStep = 2
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolNotes:
@@ -365,7 +375,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Config notes"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -387,10 +397,10 @@ Screens:
                   X: =Gutter
                   Y: =366
                   Visible: =varWizStep = 2
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   RadiusTopLeft: =6
@@ -401,7 +411,7 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Primary
-                  BasePaletteColor: =AppTheme.Ok
+                  BasePaletteColor: =AppDark.Ok
                   Icon: ="Add"
                   Layout: =ButtonLayout.IconBefore
                   OnSelect: |
@@ -465,7 +475,7 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         PaddingLeft: =10
-                        Fill: =AppTheme.Sunken
+                        Fill: =AppDark.Sunken
                         X: =0
                         Y: =0
                         Width: =Parent.TemplateWidth
@@ -476,7 +486,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =If(CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 0, "No machines added yet.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) = 1, "1 machine added.", CountRows(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))) & " machines added.")
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -513,7 +523,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Which machine are these attached to"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -540,10 +550,10 @@ Screens:
                   X: =Gutter
                   Y: =130
                   Visible: =varWizStep = 3
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblWizNoSolutions:
@@ -552,7 +562,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="No machines on this customer yet - go back a step and add one."
-                  Color: =RGBA(176, 0, 32, 1)
+                  Color: =AppDark.Danger
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true
@@ -568,7 +578,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Units for a " & varWizSolProdName & "  -  the standard build is ticked")
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -585,7 +595,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Already added"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -618,12 +628,12 @@ Screens:
                           =ThisItem.Unit.Value & "   " & LookUp(TB_Products, ID = ThisItem.Unit.Id).'Product Type'.Value
                         Default: =ThisItem.Standard
                         Reset: =varWizCompReset
-                        Color: =AppTheme.Fg
+                        Color: =AppDark.Fg
                         Font: =AppFont
                         Size: =AppType.Small
-                        Fill: =AppTheme.Sunken
-                        CheckmarkFill: =AppTheme.Primary
-                        CheckboxBorderColor: =AppTheme.Line
+                        Fill: =AppDark.Sunken
+                        CheckmarkFill: =AppDark.Accent
+                        CheckboxBorderColor: =AppDark.Line
                         PaddingLeft: =8
                         X: =0
                         Y: =2
@@ -670,10 +680,10 @@ Screens:
                         Y: =2
                         Height: =40
                         Width: =120
-                        BorderColor: =AppTheme.Line
+                        BorderColor: =AppDark.Line
                         BorderThickness: =1
-                        Color: =AppTheme.Fg
-                        Fill: =AppTheme.Surface
+                        Color: =AppDark.Fg
+                        Fill: =AppDark.Surface
                         Font: =AppFont
                         Size: =AppType.Body
                         RadiusTopLeft: =6
@@ -686,7 +696,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a machine above and its units appear here.", CountRows(Filter(TB_SolutionUnits, Solution.Id = varWizParent.Product.Id)) = 0, "A " & varWizSolProdName & " has no attached units on file. If that is wrong, add them under Admin.", "Everything on file for a " & varWizSolProdName & " is already added.")
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true
@@ -723,7 +733,7 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         PaddingLeft: =10
-                        Fill: =AppTheme.Sunken
+                        Fill: =AppDark.Sunken
                         X: =0
                         Y: =0
                         Width: =Parent.TemplateWidth
@@ -734,7 +744,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Status for the ticked units"
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Micro
                   FontWeight: =FontWeight.Semibold
@@ -756,17 +766,17 @@ Screens:
                   X: =Gutter
                   Y: =Parent.Height - Gutter - 94
                   Visible: =varWizStep = 3
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppTheme.Fg
-                  Fill: =AppTheme.Surface
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - btnWizAddUnits:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Primary
-                  BasePaletteColor: =AppTheme.Ok
+                  BasePaletteColor: =AppDark.Ok
                   Icon: ="Add"
                   Layout: =ButtonLayout.IconBefore
                   OnSelect: |
@@ -837,7 +847,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: =varWizError
-                  Color: =RGBA(176, 0, 32, 1)
+                  Color: =AppDark.Danger
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true

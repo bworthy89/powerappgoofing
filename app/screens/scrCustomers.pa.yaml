@@ -6,7 +6,7 @@
 Screens:
   scrCustomers:
     Properties:
-      Fill: =AppTheme.Bg
+      Fill: =AppDark.Bg
     Children:
       - conRootCus:
           Control: GroupContainer
@@ -16,8 +16,18 @@ Screens:
             Y: =0
             Width: =ContentWidth
             Height: =Parent.Height
-            Fill: =AppTheme.Bg
+            Fill: =AppDark.Bg
           Children:
+            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
+            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
+            - recCusBrandRule:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =3
+                  Fill: =AppDark.Accent
             - btnBackCus:
                 Control: ModernButton
                 Properties:
@@ -32,7 +42,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppTheme.Primary
+                  Color: =AppDark.Accent
                   BorderThickness: =0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -64,7 +74,7 @@ Screens:
                   Placeholder: ="Search customers"
                   Font: =AppFont
                   Size: =AppType.Body
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -118,12 +128,12 @@ Screens:
                         Width: =Parent.TemplateWidth
                         Height: =80
                         Text: =""
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.Sunken
-                        PressedFill: =AppTheme.PrimaryLight
-                        BorderColor: =AppTheme.LineSoft
-                        HoverBorderColor: =AppTheme.Line
-                        PressedBorderColor: =AppTheme.Primary
+                        Fill: =AppDark.Surface
+                        HoverFill: =AppDark.Sunken
+                        PressedFill: =AppDark.AccentTint
+                        BorderColor: =AppDark.LineSoft
+                        HoverBorderColor: =AppDark.Line
+                        PressedBorderColor: =AppDark.Accent
                         BorderThickness: =1
                         RadiusTopLeft: =8
                         RadiusTopRight: =8
@@ -160,12 +170,12 @@ Screens:
                         Text: =Coalesce(ThisItem.Description, "No description")
                         Font: =AppFont
                         Size: =AppType.Small
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                   - galCustomersHit:
                       Control: Classic/Button
                       Properties:
                         FocusedBorderThickness: =2
-                        FocusedBorderColor: =AppTheme.Primary
+                        FocusedBorderColor: =AppDark.Accent
                         OnSelect: =Select(Parent)
                         X: =0
                         Y: =0
@@ -173,8 +183,8 @@ Screens:
                         Height: =Parent.TemplateHeight
                         Text: =""
                         Fill: =RGBA(0, 0, 0, 0)
-                        HoverFill: =RGBA(0, 0, 0, 0.04)
-                        PressedFill: =RGBA(0, 87, 184, 0.10)
+                        HoverFill: =RGBA(255, 255, 255, 0.06)
+                        PressedFill: =RGBA(106, 115, 230, 0.18)
                         BorderThickness: =0
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
@@ -190,6 +200,6 @@ Screens:
                   Align: =Align.Center
                   Font: =AppFont
                   Size: =AppType.Small
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Text: ="No customers match your search."
                   Visible: =CountRows(galCustomers.AllItems) = 0

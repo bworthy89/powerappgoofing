@@ -5,7 +5,7 @@
 Screens:
   scrAdmin:
     Properties:
-      Fill: =AppTheme.Bg
+      Fill: =AppDark.Bg
       OnVisible: |
         =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))
     Children:
@@ -13,11 +13,21 @@ Screens:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
-            Fill: =AppTheme.Bg
+            Fill: =AppDark.Bg
             Height: =Parent.Height
             Width: =ContentWidth
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
+            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
+            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
+            - recAdmBrandRule:
+                Control: Rectangle
+                Properties:
+                  X: =0
+                  Y: =0
+                  Width: =Parent.Width
+                  Height: =3
+                  Fill: =AppDark.Accent
             - btnBackAdm:
                 Control: ModernButton
                 Properties:
@@ -25,7 +35,7 @@ Screens:
                   Icon: ="ChevronLeft"
                   Layout: =ButtonLayout.IconBefore
                   BorderThickness: =0
-                  Color: =AppTheme.Primary
+                  Color: =AppDark.Accent
                   Font: =AppFont
                   Height: =28
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
@@ -56,8 +66,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Customers"
-                  Color: =If(varAdminList = "Cust", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "Cust", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -75,8 +85,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Products"
-                  Color: =If(varAdminList = "Prod", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "Prod", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -94,8 +104,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Installations"
-                  Color: =If(varAdminList = "Inst", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "Inst", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -113,8 +123,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Solution units"
-                  Color: =If(varAdminList = "SolU", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "SolU", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -132,8 +142,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="References"
-                  Color: =If(varAdminList = "Ref", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "Ref", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -151,8 +161,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Access" & If(CountRows(Filter(TB_Admins, Status.Value = "Pending")) > 0, "  (" & CountRows(Filter(TB_Admins, Status.Value = "Pending")) & ")", "")
-                  Color: =If(varAdminList = "Acc", AppTheme.OnPrimary, AppTheme.Fg)
-                  BorderColor: =AppTheme.Line
+                  Color: =If(varAdminList = "Acc", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =34
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
@@ -167,7 +177,7 @@ Screens:
                 Control: ModernTextInput
                 Properties:
                   Type: =TextInputType.Search
-                  BorderColor: =AppTheme.Line
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Default: =""
                   Font: =AppFont
@@ -191,8 +201,8 @@ Screens:
                   Size: =AppType.Small
                   Text: ="Guided setup"
                   Tooltip: ="Add a customer with its solutions and components"
-                  Color: =AppTheme.Primary
-                  BorderColor: =AppTheme.Line
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =40
                   Width: =150
@@ -265,7 +275,7 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        BorderColor: =AppTheme.LineSoft
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
                         X: =0
@@ -308,7 +318,7 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        BorderColor: =AppTheme.LineSoft
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
                         X: =0
@@ -351,7 +361,7 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        BorderColor: =AppTheme.LineSoft
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
                         X: =0
@@ -394,7 +404,7 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        BorderColor: =AppTheme.LineSoft
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
                         X: =0
@@ -437,7 +447,7 @@ Screens:
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
-                        BorderColor: =AppTheme.LineSoft
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         PaddingLeft: =12
                         X: =0
@@ -471,9 +481,9 @@ Screens:
                         Y: =0
                         Width: =Parent.TemplateWidth
                         Height: =50
-                        Fill: =AppTheme.Surface
-                        HoverFill: =AppTheme.Surface
-                        BorderColor: =AppTheme.LineSoft
+                        Fill: =AppDark.Surface
+                        HoverFill: =AppDark.Surface
+                        BorderColor: =AppDark.LineSoft
                         BorderThickness: =1
                         RadiusTopLeft: =6
                         RadiusTopRight: =6
@@ -502,7 +512,7 @@ Screens:
                         PaddingBottom: =0
                         Text: |
                           =Coalesce(ThisItem.Person.Email, "no email") & "   ·   " & ThisItem.Status.Value & "   ·   asked " & Text(ThisItem.Created, "d mmm")
-                        Color: =AppTheme.Muted
+                        Color: =AppDark.Muted
                         Font: =AppFont
                         Size: =AppType.Small
                         Wrap: =false
@@ -515,7 +525,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Appearance: =ButtonAppearance.Primary
-                        BasePaletteColor: =AppTheme.Ok
+                        BasePaletteColor: =AppDark.Ok
                         OnSelect: |
                           =Patch(TB_Admins, ThisItem, { Status: { Value: "Approved" } })
                         Text: ="Approve"
@@ -536,15 +546,15 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Appearance: =ButtonAppearance.Outline
-                        BasePaletteColor: =RGBA(176, 0, 32, 1)
+                        BasePaletteColor: =AppDark.DangerSolid
                         OnSelect: |
                           =Patch(TB_Admins, ThisItem, { Status: { Value: "Denied" } })
                         Text: ="Deny"
                         Font: =AppFont
                         Size: =AppType.Small
                         FontWeight: =FontWeight.Semibold
-                        Color: =RGBA(176, 0, 32, 1)
-                        BorderColor: =RGBA(176, 0, 32, 1)
+                        Color: =AppDark.Danger
+                        BorderColor: =AppDark.Danger
                         BorderThickness: =1
                         X: =Parent.TemplateWidth - 100
                         Y: =8
@@ -562,7 +572,7 @@ Screens:
                   PaddingBottom: =0
                   Text: ="No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."
                   Align: =Align.Center
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
                   Wrap: =true
@@ -578,7 +588,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   Align: =Align.Center
-                  Color: =AppTheme.Muted
+                  Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Nothing matches that search."
