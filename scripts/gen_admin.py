@@ -12,13 +12,21 @@ import io, sys
 # ---------------------------------------------------------------- field spec
 # kind: text | note | choice | bool | lookup | url
 LISTS = [
-    dict(key="Cust", label="Customers", source="TB_Customers", fields=[
+    dict(key="Cust", label="Customers", source="TB_Customers",
+         deps="CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID))"
+              " + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID))",
+         depsLabel="installations or documents", fields=[
         dict(n="Title",           kind="text",   caption="Name"),
         dict(n="Description",     kind="note",   caption="Description"),
         dict(n="'Support Notes'", kind="note",   caption="Support notes", id="SupportNotes"),
         dict(n="Active",          kind="bool",   caption="Active"),
     ]),
-    dict(key="Prod", label="Products", source="TB_Products", fields=[
+    dict(key="Prod", label="Products", source="TB_Products",
+         deps="CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID))"
+              " + CountRows(Filter(TB_References, Product.Id = varRecProd.ID))"
+              " + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID))"
+              " + CountRows(Filter(TB_SolutionUnits, Unit.Id = varRecProd.ID))",
+         depsLabel="installations, documents or solution-unit rows", fields=[
         dict(n="Title",                        kind="text",   caption="Model"),
         dict(n="'Product Type'",               kind="choice", caption="Product type", id="ProductType"),
         dict(n="Family",                       kind="choice", caption="Family"),
@@ -26,7 +34,9 @@ LISTS = [
         dict(n="Description",                  kind="note",   caption="Description"),
         dict(n="Active",                       kind="bool",   caption="Active"),
     ]),
-    dict(key="Inst", label="Installations", source="TB_Installations", fields=[
+    dict(key="Inst", label="Installations", source="TB_Installations",
+         deps="CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID))",
+         depsLabel="units attached to it", fields=[
         dict(n="Title",                 kind="text",   caption="Name"),
         dict(n="Customer",              kind="lookup", caption="Customer", target="TB_Customers"),
         dict(n="Product",               kind="lookup", caption="Product",  target="TB_Products"),

@@ -6,6 +6,7 @@ Screens:
   scrEditForm:
     Properties:
       Fill: =AppTheme.Bg
+      OnVisible: =Set(varConfirmDelete, false)
     Children:
       - conRootEdit:
           Control: GroupContainer
@@ -1136,6 +1137,80 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
+            - lblDeleteBlocked:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: |
+                    ="Cannot delete: " & (Switch(varAdminList, "Cust", CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID)) + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID)), "Prod", CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_References, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Unit.Id = varRecProd.ID)), "Inst", CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID)), 0)) & " " & (Switch(varAdminList, "Cust", "installations or documents", "Prod", "installations, documents or solution-unit rows", "Inst", "units attached to it", "")) & " still reference this. Remove those first."
+                  Color: =RGBA(176, 0, 32, 1)
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Wrap: =true
+                  AutoHeight: =false
+                  Align: =Align.Right
+                  Height: =36
+                  Width: =ContentWidth - (Gutter * 2) - 360
+                  X: =Gutter + 360
+                  Y: =Parent.Height - Gutter - 88
+                  Visible: =!varAdminNew && (Switch(varAdminList, "Cust", CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID)) + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID)), "Prod", CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_References, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Unit.Id = varRecProd.ID)), "Inst", CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID)), 0)) > 0
+            - btnDeleteEdit:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Secondary
+                  OnSelect: |
+                    =If(!varConfirmDelete,
+                        Set(varConfirmDelete, true),
+                        IfError(
+                            Switch(varAdminList,
+                                "Cust", Remove(TB_Customers, varRecCust),
+                                "Prod", Remove(TB_Products, varRecProd),
+                                "Inst", Remove(TB_Installations, varRecInst),
+                                "SolU", Remove(TB_SolutionUnits, varRecSolU),
+                                "Ref", Remove(TB_References, varRecRef),
+                                Notify("Nothing selected to delete.", NotificationType.Error)
+                            );
+                            Set(varConfirmDelete, false);
+                            Navigate(scrAdmin, ScreenTransition.UnCoverRight),
+                            Set(varEditError, FirstError.Message)
+                        )
+                    )
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Text: =If(varConfirmDelete, "Confirm delete", "Delete")
+                  Color: =If(varConfirmDelete, AppTheme.OnPrimary, RGBA(176, 0, 32, 1))
+                  BorderColor: =RGBA(176, 0, 32, 1)
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =170
+                  X: =ContentWidth - Gutter - 170
+                  Y: =Parent.Height - Gutter - 44
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  Visible: =!varAdminNew && (Switch(varAdminList, "Cust", CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID)) + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID)), "Prod", CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_References, Product.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID)) + CountRows(Filter(TB_SolutionUnits, Unit.Id = varRecProd.ID)), "Inst", CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID)), 0)) = 0
+            - btnCancelDelete:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Secondary
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Text: ="Cancel"
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =110
+                  X: =ContentWidth - Gutter - 170 - 8 - 110
+                  Y: =Parent.Height - Gutter - 44
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Set(varConfirmDelete, false)
+                  Visible: =varConfirmDelete
             - lblEditError:
                 Control: ModernText
                 Properties:
