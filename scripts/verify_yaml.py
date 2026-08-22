@@ -72,6 +72,18 @@ BANNED = [
 ]
 
 
+# Inline SVG markup, used for the chamfered panels and custom glyphs on scrHome.
+# SVG attributes are single-quoted (width='30', fill='none'), which is exactly the shape
+# check 4 treats as a quoted SharePoint column name - one card background produced eleven
+# false findings. Real findings then hide in the noise, which is worse than no check.
+#
+# Matching the markup itself rather than the data: prefix, because the formula spans
+# several lines and only the first carries the prefix.
+SVG_MARKUP_RE = re.compile(
+    r"<svg|</svg>|<path|<rect|<polygon|<circle|<line|<g |viewBox|xmlns|preserveAspectRatio"
+)
+
+
 def _code_only(line):
     """Strip a YAML comment and any double-quoted string contents from a line
     so keyword checks do not fire on comment text or string literals (e.g. a
@@ -178,6 +190,8 @@ def check_file(path):
         # the closed set of real enum type names is exempted; column access
         # through a record/control (ThisItem.'Deployment Status') uses the
         # same dotted shape and must still be checked.
+        if SVG_MARKUP_RE.search(line):
+            continue
         for m in re.finditer(r"'([^']{2,40})'", line):
             quoted = m.group(1)
             prefix = line[:m.start()]

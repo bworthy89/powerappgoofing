@@ -24,6 +24,21 @@ App:
           Neutral:       ColorValue("#66727E"),
           NeutralLight:  ColorValue("#EDF0F3")
       };
+      AppDark = {
+          Brand:         ColorValue("#111987"),
+          Bg:            ColorValue("#0F1115"),
+          Surface:       ColorValue("#171A21"),
+          SurfaceHi:     ColorValue("#1E222B"),
+          Line:          ColorValue("#2A2F3A"),
+          Fg:            ColorValue("#F2F4F8"),
+          FgSecondary:   ColorValue("#B9C0CC"),
+          Muted:         ColorValue("#838C9B"),
+          Accent:        ColorValue("#6A73E6"),
+          AccentSolid:   ColorValue("#2E3AD4"),
+          Ok:            ColorValue("#3DD68C"),
+          Warn:          ColorValue("#F5B83D"),
+          OnBrand:       ColorValue("#FFFFFF")
+      };
       AppFont = Font.'Lato';
       AppType = {
           Display:  32,
