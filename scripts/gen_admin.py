@@ -75,7 +75,14 @@ def gen_admin():
     o.write("# One gallery per list, toggled by varAdminList. Each row is a single\n")
     o.write("# Classic/Button so the whole row is the tap target and the text is the\n")
     o.write("# button's own Text - no separate label to keep aligned.\n")
-    o.write("Screens:\n  scrAdmin:\n    Properties:\n      Fill: =AppTheme.Bg\n    Children:\n")
+    # The screen turns people away itself. Hiding the button on home is tidiness;
+    # this is the part that holds if anyone arrives by another route. Neither is a
+    # security boundary - a technician with Contribute can edit the lists directly
+    # in SharePoint, so the real control is list permissions.
+    o.write('Screens:\n  scrAdmin:\n    Properties:\n      Fill: =AppTheme.Bg\n'
+            '      OnVisible: |\n'
+            '        =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))\n'
+            '    Children:\n')
     ind = "      "
     p = ctrl(o, "conRootAdm", "GroupContainer", ind, "ManualLayout")
     prop(o, "Fill", "AppTheme.Bg", p)
@@ -133,6 +140,23 @@ def gen_admin():
     # row through scrEditForm; this walks the whole site - customer, its
     # solutions, and the components under them - in one pass. Only meaningful
     # on the Customers list, so it hides on the other three.
+    # Empty TB_Admins means everyone is an admin. That is deliberate - the
+    # alternative locks out the person who has to add the first row - but it
+    # should never be quiet about it.
+    q = ctrl(o, "lblAdminOpen", "Label", c)
+    for k, v in [("Text",'"Anyone can reach Admin: TB_Admins is empty. Add yourself to it to lock this down."'),
+                 ("Color","AppTheme.Warn"),("Fill","AppTheme.WarnLight"),
+                 ("Font","AppFont"),("Size","AppType.Small"),
+                 ("FontWeight","FontWeight.Semibold"),
+                 ("Align","Align.Center"),("Wrap","true"),("AutoHeight","false"),
+                 ("PaddingTop","6"),("PaddingBottom","6"),
+                 ("X","Gutter"),("Y","Gutter + 74"),("Height","28"),
+                 ("Width","ContentWidth - (Gutter * 2)"),
+                 ("Visible","CountRows(TB_Admins) = 0"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
+        prop(o, k, v, q)
+
     q = ctrl(o, "btnGuidedSetup", "Classic/Button", c)
     for k, v in [("Font","AppFont"),("Size","AppType.Small"),
                  ("Text",'"Guided setup"'),

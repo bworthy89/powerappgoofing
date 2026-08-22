@@ -61,8 +61,13 @@ cd scripts\sharepoint
 `-WhatIf` first, every time. It prints what it would build without touching the site. When
 the output looks right, run it again without the switch.
 
-Four lists, 26 columns. `TB_Installations.Parent` is a lookup onto its own list, which is
-what lets a recycler hang off the machine it sits in.
+Five lists. `TB_Installations.Parent` is a lookup onto its own list, which is what lets a
+recycler hang off the machine it sits in.
+
+The fifth, `TB_Admins`, controls who can reach the Admin section. **While it is empty,
+everyone can** - deliberately, since the alternative locks out whoever has to add the first
+row, and the Admin screen says so on screen while that is true. Add yourself to it once the
+app is running.
 
 ### 1.2 Check them
 

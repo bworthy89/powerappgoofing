@@ -40,6 +40,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$SiteUrl,
     [string]$ClientId,
+    [switch]$UseWebLogin,
     [switch]$SkipConnect
 )
 
@@ -55,6 +56,7 @@ $ExpectedType = @{
     'Choice'   = 'Choice'
     'URL'      = 'URL'
     'DateTime' = 'DateTime'
+    'User'     = 'User'
 }
 
 $script:Failures = 0
@@ -68,10 +70,19 @@ Write-Host "  site: $SiteUrl"
 Write-Host ""
 
 if (-not $SkipConnect) {
-    if (-not $ClientId) {
-        throw "ClientId is required unless you pass -SkipConnect. PnP.PowerShell 2.x and later refuse to connect without an app registration."
+    Import-Module PnP.PowerShell
+    if ($UseWebLogin) {
+        if (-not (Get-Command Connect-PnPOnline).Parameters.ContainsKey('UseWebLogin')) {
+            throw "-UseWebLogin does not exist in PnP.PowerShell $((Get-Module PnP.PowerShell).Version). It requires 1.12 on Windows PowerShell 5.1. Use -ClientId instead."
+        }
+        Connect-PnPOnline -Url $SiteUrl -UseWebLogin
     }
-    Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
+    elseif ($ClientId) {
+        Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
+    }
+    else {
+        throw "Pass -ClientId <guid>, or -UseWebLogin on PnP 1.12, or -SkipConnect if you have already connected."
+    }
 }
 
 # A wrong site is the likeliest mistake, and every later failure would be a

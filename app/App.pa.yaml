@@ -39,4 +39,7 @@ App:
     OnStart: |-
       =Set(varCustomer, Defaults(TB_Customers));
       Set(varInstallation, Defaults(TB_Installations));
-      Set(varExpandedModel, 0)
+      Set(varExpandedModel, 0);
+      Set(varIsAdmin,
+          CountRows(TB_Admins) = 0
+          || !IsBlank(LookUp(TB_Admins, Lower(Person.Email) = Lower(User().Email))))

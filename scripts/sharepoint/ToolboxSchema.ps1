@@ -81,6 +81,14 @@ $Schema = [ordered]@{
         )
     }
 
+    'TB_Admins' = @{
+        Description = 'Who may reach the Admin section. Empty means everyone.'
+        TitleLabel  = 'Name'
+        Fields      = @(
+            @{ Display = 'Person'; Internal = 'TBPerson'; Type = 'User' }
+        )
+    }
+
     'TB_References' = @{
         Description = 'Documents and firmware links, keyed to a model.'
         TitleLabel  = 'Document title'
@@ -107,4 +115,5 @@ $ViewFields = @{
     'TB_Products'      = @('Title','TBProductType','TBFamily','TBStandardVersion','TBDescription','TBActive')
     'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes')
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
+    'TB_Admins'        = @('Title','TBPerson')
 }

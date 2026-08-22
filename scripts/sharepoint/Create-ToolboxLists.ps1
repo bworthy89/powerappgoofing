@@ -42,14 +42,18 @@
     ./Create-ToolboxLists.ps1 -SiteUrl https://contoso.sharepoint.com/sites/TT -ClientId <guid> -RenameLegacyCustomers
 
 .NOTES
-    UNVERIFIED. Written without access to a SharePoint tenant and never executed. Run with
-    -WhatIf first, and expect to correct at least one thing.
+    Authentication. -ClientId is the supported route and needs an Entra app registration.
+    -UseWebLogin needs none, but exists only in PnP.PowerShell 1.12, which runs only on
+    Windows PowerShell 5.1. The script checks and tells you which you have.
+
+    Run with -WhatIf first, every time.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [Parameter(Mandatory = $true)][string]$SiteUrl,
     [string]$ClientId,
+    [switch]$UseWebLogin,
     [switch]$RenameLegacyCustomers,
     [switch]$SkipConnect
 )
@@ -192,11 +196,44 @@ if (-not $SkipConnect) {
         throw "PnP.PowerShell is not installed. Run: Install-Module PnP.PowerShell -Scope CurrentUser"
     }
     Import-Module PnP.PowerShell
+    $pnpVersion = (Get-Module PnP.PowerShell).Version
+
     Write-Step "connecting..."
-    if ($ClientId) {
+    if ($UseWebLogin) {
+        # -UseWebLogin was removed in PnP.PowerShell 2.0. It survives only in 1.12,
+        # which in turn runs only on Windows PowerShell 5.1. Its attraction is that it
+        # needs no Entra app registration and no admin consent - the reason to accept a
+        # pinned, superseded module at all.
+        if (-not (Get-Command Connect-PnPOnline).Parameters.ContainsKey('UseWebLogin')) {
+            throw @"
+-UseWebLogin does not exist in PnP.PowerShell $pnpVersion. It was removed in 2.0.
+
+To use it, run this in Windows PowerShell 5.1, not PowerShell 7, with the last version
+that has it:
+
+    Install-Module PnP.PowerShell -RequiredVersion 1.12.0 -Scope CurrentUser -Force -AllowClobber
+
+Otherwise drop -UseWebLogin and pass -ClientId instead, which needs an app registration
+from Register-PnPEntraIDAppForInteractiveLogin.
+"@
+        }
+        Connect-PnPOnline -Url $SiteUrl -UseWebLogin
+    }
+    elseif ($ClientId) {
         Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
-    } else {
-        Connect-PnPOnline -Url $SiteUrl -Interactive
+    }
+    else {
+        throw @"
+No way to authenticate. Pass one of:
+
+  -ClientId <guid>   an Entra app registration, from Register-PnPEntraIDAppForInteractiveLogin.
+                     Needs admin consent once. This is the supported route.
+
+  -UseWebLogin       no app registration, but requires PnP.PowerShell 1.12 on Windows
+                     PowerShell 5.1, and it fails under some conditional access policies.
+
+  -SkipConnect       you have already run Connect-PnPOnline yourself.
+"@
     }
 }
 

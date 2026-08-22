@@ -5,17 +5,30 @@
     GENERATED FILE. Built by scripts/sharepoint/build_standalone.py from
     ToolboxSchema.ps1 and Create-ToolboxLists.ps1. Edit those, then regenerate.
 
-    One file, nothing to dot-source. Paste the whole thing into a PowerShell 7
-    window with PnP.PowerShell installed.
+    One file, nothing to dot-source. Paste the whole thing into a PowerShell window
+    with PnP.PowerShell installed.
 
-    HOW TO USE
+    WHICH POWERSHELL depends on how you are signing in, and the two do not mix:
 
-      1. Open PowerShell 7.  pwsh          ($PSVersionTable.PSVersion must be 7.x -
-                                            PnP.PowerShell 3.x will not load on 5.1)
-      2. Install-Module PnP.PowerShell -Scope CurrentUser      (once per machine)
-      3. Edit the three settings below.
-      4. Paste the whole file. Read the output.
-      5. Set $DryRun to $false, paste again.
+      With an Entra app registration - the supported route:
+          PowerShell 7  (pwsh)
+          Install-Module PnP.PowerShell -Scope CurrentUser
+          set $ClientId below
+
+      Without one - $UseWebLogin:
+          Windows PowerShell 5.1  (powershell)
+          Install-Module PnP.PowerShell -RequiredVersion 1.12.0 -Scope CurrentUser -Force -AllowClobber
+          set $UseWebLogin = $true below
+
+      -UseWebLogin was removed in PnP 2.0, and PnP 2.x and later will not load on 5.1,
+      so each route needs its own module version. The script checks and says which you
+      have if they do not match.
+
+    THEN
+
+      1. Edit the settings below.
+      2. Paste the whole file. Read the output.
+      3. Set $DryRun to $false, paste again.
 
     $DryRun is $true to begin with on purpose. The dry run is how you catch a wrong
     site URL before it creates four lists somewhere you did not intend.
@@ -30,7 +43,7 @@
 #>
 
 # ---------------------------------------------------------------------------
-# Settings - edit these three
+# Settings
 # ---------------------------------------------------------------------------
 
 # The site, not a list and not a page. Ends at /sites/<something>, unless you are
@@ -38,7 +51,16 @@
 $SiteUrl  = 'https://contoso.sharepoint.com/sites/TechnicianToolbox'
 
 # From Register-PnPEntraIDAppForInteractiveLogin. A bare guid, no angle brackets.
+# Leave as-is if you are using $UseWebLogin below.
 $ClientId = '00000000-0000-0000-0000-000000000000'
+
+# $true skips the Entra app registration entirely - but only works on
+# PnP.PowerShell 1.12, which only runs on Windows PowerShell 5.1:
+#
+#     Install-Module PnP.PowerShell -RequiredVersion 1.12.0 -Scope CurrentUser -Force -AllowClobber
+#
+# The script checks and tells you if the version you have cannot do it.
+$UseWebLogin = $false
 
 # $true prints what would happen and changes nothing.
 $DryRun   = $true
@@ -68,8 +90,8 @@ Add-Member -InputObject $Toolbox -MemberType ScriptMethod -Name ShouldProcess -V
 if ($SiteUrl -notmatch '^https://[^/]+\.sharepoint\.com/') {
     throw "SiteUrl does not look like a SharePoint site: '$SiteUrl'. Expected something like https://contoso.sharepoint.com/sites/TechnicianToolbox"
 }
-if ($ClientId -eq '00000000-0000-0000-0000-000000000000' -and -not $SkipConnect) {
-    throw "Set `$ClientId to the client id from Register-PnPEntraIDAppForInteractiveLogin, or set `$SkipConnect if you have already connected."
+if ($ClientId -eq '00000000-0000-0000-0000-000000000000' -and -not $SkipConnect -and -not $UseWebLogin) {
+    throw "Set `$ClientId to the client id from Register-PnPEntraIDAppForInteractiveLogin, or set `$UseWebLogin, or set `$SkipConnect if you have already connected."
 }
 
 $ErrorActionPreference = 'Stop'
@@ -149,6 +171,14 @@ $Schema = [ordered]@{
         )
     }
 
+    'TB_Admins' = @{
+        Description = 'Who may reach the Admin section. Empty means everyone.'
+        TitleLabel  = 'Name'
+        Fields      = @(
+            @{ Display = 'Person'; Internal = 'TBPerson'; Type = 'User' }
+        )
+    }
+
     'TB_References' = @{
         Description = 'Documents and firmware links, keyed to a model.'
         TitleLabel  = 'Document title'
@@ -175,6 +205,7 @@ $ViewFields = @{
     'TB_Products'      = @('Title','TBProductType','TBFamily','TBStandardVersion','TBDescription','TBActive')
     'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes')
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
+    'TB_Admins'        = @('Title','TBPerson')
 }
 
 
@@ -303,11 +334,44 @@ if (-not $SkipConnect) {
         throw "PnP.PowerShell is not installed. Run: Install-Module PnP.PowerShell -Scope CurrentUser"
     }
     Import-Module PnP.PowerShell
+    $pnpVersion = (Get-Module PnP.PowerShell).Version
+
     Write-Step "connecting..."
-    if ($ClientId) {
+    if ($UseWebLogin) {
+        # -UseWebLogin was removed in PnP.PowerShell 2.0. It survives only in 1.12,
+        # which in turn runs only on Windows PowerShell 5.1. Its attraction is that it
+        # needs no Entra app registration and no admin consent - the reason to accept a
+        # pinned, superseded module at all.
+        if (-not (Get-Command Connect-PnPOnline).Parameters.ContainsKey('UseWebLogin')) {
+            throw @"
+-UseWebLogin does not exist in PnP.PowerShell $pnpVersion. It was removed in 2.0.
+
+To use it, run this in Windows PowerShell 5.1, not PowerShell 7, with the last version
+that has it:
+
+    Install-Module PnP.PowerShell -RequiredVersion 1.12.0 -Scope CurrentUser -Force -AllowClobber
+
+Otherwise drop -UseWebLogin and pass -ClientId instead, which needs an app registration
+from Register-PnPEntraIDAppForInteractiveLogin.
+"@
+        }
+        Connect-PnPOnline -Url $SiteUrl -UseWebLogin
+    }
+    elseif ($ClientId) {
         Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
-    } else {
-        Connect-PnPOnline -Url $SiteUrl -Interactive
+    }
+    else {
+        throw @"
+No way to authenticate. Pass one of:
+
+  -ClientId <guid>   an Entra app registration, from Register-PnPEntraIDAppForInteractiveLogin.
+                     Needs admin consent once. This is the supported route.
+
+  -UseWebLogin       no app registration, but requires PnP.PowerShell 1.12 on Windows
+                     PowerShell 5.1, and it fails under some conditional access policies.
+
+  -SkipConnect       you have already run Connect-PnPOnline yourself.
+"@
     }
 }
 

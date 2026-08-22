@@ -6,6 +6,8 @@ Screens:
   scrAdmin:
     Properties:
       Fill: =AppTheme.Bg
+      OnVisible: |
+        =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))
     Children:
       - conRootAdm:
           Control: GroupContainer
@@ -137,6 +139,30 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2) - 130
                   X: =Gutter
                   Y: =Gutter + 126
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - lblAdminOpen:
+                Control: ModernText
+                Properties:
+                  Text: |
+                    ="Anyone can reach Admin: TB_Admins is empty. Add yourself to it to lock this down."
+                  Color: =AppTheme.Warn
+                  Fill: =AppTheme.WarnLight
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Align: =Align.Center
+                  Wrap: =true
+                  AutoHeight: =false
+                  PaddingTop: =6
+                  PaddingBottom: =6
+                  X: =Gutter
+                  Y: =Gutter + 74
+                  Height: =28
+                  Width: =ContentWidth - (Gutter * 2)
+                  Visible: =CountRows(TB_Admins) = 0
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6

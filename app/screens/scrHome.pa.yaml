@@ -122,6 +122,7 @@ Screens:
             - btnTileAdmin:
                 Control: ModernButton
                 Properties:
+                  Visible: =varIsAdmin
                   Appearance: =ButtonAppearance.Subtle
                   Icon: ="Settings"
                   Layout: =If(IsNarrow, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
