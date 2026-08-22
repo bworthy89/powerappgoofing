@@ -738,3 +738,38 @@ me: worthyb@us.glory-global.com | rows: 1 | approved: 1 | match: 0 | isAdmin: fa
 `isAdmin` ruled out a stale variable. One label separated four candidate causes in a single
 look, and it is the same technique that settled the blank-screen and empty-wizard bugs.
 Reach for it second, not tenth.
+
+## Dropping `Fill` can leave a `Color` that no longer reads
+
+`ModernButton` has no `Fill`, so the converter drops it and reports doing so. `Color`
+survives, because `ModernButton` does have one - and a foreground chosen to sit on the
+removed background is now sitting on whatever `Appearance` provides.
+
+The delete button was `Fill: If(armed, red, Surface)` with `Color: If(armed, OnPrimary,
+red)`. After conversion the fill was gone, the button fell to `ButtonAppearance.Secondary` -
+pale - and the armed state rendered white text on it. Invisible, and reported as "the button
+goes white and you can't see the words".
+
+Two rules fall out:
+
+- Replace a dropped `Fill` with `Appearance`, and a non-default colour with
+  `BasePaletteColor`. `Primary` fills with the palette colour and picks a readable
+  foreground itself; `Outline` draws it in that colour on the page background. Then delete
+  the `Color` rather than leaving it.
+- If a `Color` stays, it has to make sense against the `Appearance` on its own. A conditional
+  `Color` paired with a matching conditional `Appearance` is fine - that is what the admin
+  tabs do.
+
+`scripts/modernize.py` now flags the specific case: a `ModernButton` that lost its `Fill`,
+keeps a light `Color`, and has no `Appearance` of its own, so it falls to the pale default.
+
+A first version of that check flagged any surviving `Color` at all. It found ten controls and
+all ten were correct - blue text on a Subtle button, mostly. A check that cries wolf ten
+times out of ten is worse than no check, because the eleventh is ignored too.
+
+### The related failure
+
+`btnListSolU` and `btnListAcc` were added to the admin screen after the tab styling rules
+were written, so they never got an `Appearance` and stayed pale while the other four
+highlighted. Nothing reported it: they were styled, just not the way the rest were. When a
+`DEFAULTS` fallback exists, a missing rule looks like a deliberate choice.

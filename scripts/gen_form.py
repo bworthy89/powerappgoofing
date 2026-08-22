@@ -279,10 +279,12 @@ blk(o, "OnSelect", [
     ")"], q)
 for k, v in [("Font","AppFont"),("Size","AppType.Body"),("FontWeight","FontWeight.Semibold"),
              ("Text",'If(varConfirmDelete, "Confirm delete", "Delete")'),
-             ("Fill",'If(varConfirmDelete, RGBA(176, 0, 32, 1), AppTheme.Surface)'),
-             ("Color",'If(varConfirmDelete, AppTheme.OnPrimary, RGBA(176, 0, 32, 1))'),
-             ("HoverFill",'If(varConfirmDelete, RGBA(140, 0, 26, 1), AppTheme.Sunken)'),
-             ("BorderColor","RGBA(176, 0, 32, 1)"),("BorderThickness","1"),
+             # No Fill or Color here. ModernButton has no Fill, so the conversion
+             # drops it - but Color survives, and a Color that only made sense
+             # against the dropped Fill left white text on a light button.
+             # Appearance and BasePaletteColor carry both states instead; see
+             # EXTRA in scripts/modernize.py.
+             ("BorderThickness","1"),
              ("Height","44"),("Width","170"),
              ("X","ContentWidth - Gutter - 170"),
              ("Y","Parent.Height - Gutter - 44"),

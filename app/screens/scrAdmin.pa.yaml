@@ -109,7 +109,7 @@ Screens:
             - btnListSolU:
                 Control: ModernButton
                 Properties:
-                  Appearance: =ButtonAppearance.Secondary
+                  Appearance: =If(varAdminList = "SolU", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Solution units"
@@ -147,7 +147,7 @@ Screens:
             - btnListAcc:
                 Control: ModernButton
                 Properties:
-                  Appearance: =ButtonAppearance.Secondary
+                  Appearance: =If(varAdminList = "Acc", ButtonAppearance.Primary, ButtonAppearance.Secondary)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Access" & If(CountRows(Filter(TB_Admins, Status.Value = "Pending")) > 0, "  (" & CountRows(Filter(TB_Admins, Status.Value = "Pending")) & ")", "")
@@ -514,7 +514,8 @@ Screens:
                   - btnAccApprove:
                       Control: ModernButton
                       Properties:
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Primary
+                        BasePaletteColor: =AppTheme.Ok
                         OnSelect: |
                           =Patch(TB_Admins, ThisItem, { Status: { Value: "Approved" } })
                         Text: ="Approve"
@@ -534,7 +535,8 @@ Screens:
                   - btnAccDeny:
                       Control: ModernButton
                       Properties:
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
+                        BasePaletteColor: =RGBA(176, 0, 32, 1)
                         OnSelect: |
                           =Patch(TB_Admins, ThisItem, { Status: { Value: "Denied" } })
                         Text: ="Deny"

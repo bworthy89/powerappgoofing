@@ -1158,7 +1158,8 @@ Screens:
             - btnDeleteEdit:
                 Control: ModernButton
                 Properties:
-                  Appearance: =ButtonAppearance.Secondary
+                  Appearance: =If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)
+                  BasePaletteColor: =RGBA(176, 0, 32, 1)
                   OnSelect: |
                     =If(!varConfirmDelete,
                         Set(varConfirmDelete, true),
@@ -1182,8 +1183,6 @@ Screens:
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   Text: =If(varConfirmDelete, "Confirm delete", "Delete")
-                  Color: =If(varConfirmDelete, AppTheme.OnPrimary, RGBA(176, 0, 32, 1))
-                  BorderColor: =RGBA(176, 0, 32, 1)
                   BorderThickness: =1
                   Height: =44
                   Width: =170

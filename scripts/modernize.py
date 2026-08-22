@@ -161,6 +161,17 @@ EXTRA = {
     "btnListProd": tab("Prod"),
     "btnListInst": tab("Inst"),
     "btnListRef": tab("Ref"),
+    "btnListSolU": tab("SolU"),
+    "btnListAcc": tab("Acc"),
+    # Appearance and BasePaletteColor together, because Fill does not survive the
+    # conversion: Primary fills with the palette colour and picks a readable
+    # foreground, Outline draws it in that colour on the page background.
+    "btnDeleteEdit": {"Appearance": "If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)",
+                      "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
+    "btnAccApprove": {"Appearance": "ButtonAppearance.Primary",
+                      "BasePaletteColor": "AppTheme.Ok"},
+    "btnAccDeny": {"Appearance": "ButtonAppearance.Outline",
+                   "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
     # The wizard's green "add" buttons read as a different kind of action from
     # the blue "next" ones. BasePaletteColor keeps that distinction, which a
     # bare Appearance would have flattened.
@@ -290,7 +301,7 @@ def convert(src, extra=None, keep_classic=None):
         pind = indent_of(lines[i])
         out.append(lines[i]); i += 1
 
-        seen, added_at = set(), len(out)
+        seen, dropped, colours, added_at = set(), set(), {}, len(out)
         while i < len(lines):
             if not lines[i].strip():
                 out.append(lines[i]); i += 1; continue
@@ -314,6 +325,7 @@ def convert(src, extra=None, keep_classic=None):
             value = rest.lstrip("=").strip() if rest.startswith("=") else None
 
             if newkey not in ALLOWED[target]:
+                dropped.add(newkey)
                 report.append(f"  dropped       {name}.{key}"
                               + (f" = {value}" if value else " (block)"))
                 continue
@@ -337,7 +349,20 @@ def convert(src, extra=None, keep_classic=None):
                 report.append(f"  renamed       {name}.{key} -> {newkey}")
 
             seen.add(newkey)
+            if newkey == "Color" and value:
+                colours["Color"] = value
             out.extend(block)
+
+        # The actual failure mode, narrowly: a light foreground that only worked
+        # against a Fill the conversion removed, on a button that then falls to
+        # the Secondary default - white text on a pale button. A first, broader
+        # version flagged every Subtle button with an accent Color and ten of
+        # ten were fine, which is a check nobody would read twice.
+        if (target == "ModernButton" and "Fill" in dropped
+                and "OnPrimary" in colours.get("Color", "")
+                and name not in extra):
+            report.append(f"  CHECK         {name} keeps a light Color but lost its Fill and has "
+                          "no Appearance - it will be unreadable on the Secondary default")
 
         for k, v in list(extra.get(name, {}).items()) + list(DEFAULTS.get(target, {}).items()):
             if k in seen:
