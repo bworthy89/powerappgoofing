@@ -124,5 +124,20 @@ units", "units under each machine".
 `TB_SolutionUnits` has to be populated before the wizard can suggest anything. Until it has
 rows, every machine looks standalone - which is a safe failure, but a silent one.
 
-Rows are maintained in SharePoint directly. There is no admin screen for this list, on the
-grounds that a model catalogue changes when products are launched, not during a site visit.
+### How the rows get there
+
+The first version of this design left them to be typed into SharePoint by hand, on the
+grounds that a model catalogue changes when products launch rather than during a site visit.
+That was the wrong call: it meant the app could not answer "what belongs to a CI 300X"
+without someone maintaining a list it gave them no way to edit.
+
+`TB_SolutionUnits` is now the fifth list in the Admin section, alongside Customers, Products,
+Installations and References. It cost one entry in the `LISTS` spec, since both the browse
+screen and the edit form generate from it.
+
+That change exposed a hardcoded `/ 4` in the tab bar's width, which would have pushed the
+fifth tab off the right edge. It divides by `len(LISTS)` now.
+
+For the initial load of a large catalogue, SharePoint's **Edit in grid view** is faster than
+any form - the matrix is repetitive, and grid paste handles it. The admin screen is for
+corrections and additions afterwards.

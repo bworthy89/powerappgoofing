@@ -41,7 +41,7 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =36
                   Size: =AppType.Title
-                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "Ref", "reference", "record")
+                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "Ref", "reference", "record")
                   Wrap: =false
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
@@ -637,6 +637,140 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
+            - lblCapTitleSolU:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Label, e.g. CI 300X - SDRB250"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =120
+                  Visible: =varAdminList = "SolU"
+            - txtTitleSolU:
+                Control: ModernTextInput
+                Properties:
+                  Default: =If(varAdminNew, "", varRecSolU.Title)
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =138
+                  Visible: =varAdminList = "SolU"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - lblCapSolutionSolU:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Solution model"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =192
+                  Visible: =varAdminList = "SolU"
+            - ddSolutionSolU:
+                Control: ModernDropdown
+                Properties:
+                  Items: |
+                    =Choices(TB_SolutionUnits.Solution)
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value))
+                  ItemDisplayText: =ThisItem.Value
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Color: =AppTheme.Fg
+                  Fill: =AppTheme.Surface
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =210
+                  Visible: =varAdminList = "SolU"
+            - lblCapUnitSolU:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Unit model that attaches to it"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =264
+                  Visible: =varAdminList = "SolU"
+            - ddUnitSolU:
+                Control: ModernDropdown
+                Properties:
+                  Items: |
+                    =Choices(TB_SolutionUnits.Unit)
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value))
+                  ItemDisplayText: =ThisItem.Value
+                  BorderColor: =AppTheme.Line
+                  BorderThickness: =1
+                  Color: =AppTheme.Fg
+                  Fill: =AppTheme.Surface
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =282
+                  Visible: =varAdminList = "SolU"
+            - lblCapStandardSolU:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Part of the standard build"
+                  Color: =AppTheme.Muted
+                  Font: =AppFont
+                  Size: =AppType.Micro
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =16
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =336
+                  Visible: =varAdminList = "SolU"
+            - tglStandardSolU:
+                Control: ModernToggle
+                Properties:
+                  Default: =If(varAdminNew, false, varRecSolU.Standard)
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =36
+                  Width: =110
+                  X: =Gutter
+                  Y: =354
+                  Visible: =varAdminList = "SolU"
             - lblCapTitleRef:
                 Control: ModernText
                 Properties:
@@ -956,6 +1090,17 @@ Screens:
                                     'Installed Version': txtInstVersionInst.Text,
                                     Status: { Value: ddStatusInst.Selected.Value },
                                     'Config Notes': txtConfigNotesInst.Text
+                                }
+                            )
+                        );
+                        If(varAdminList = "SolU",
+                            Patch(TB_SolutionUnits,
+                                If(varAdminNew, Defaults(TB_SolutionUnits), varRecSolU),
+                                {
+                                    Title: txtTitleSolU.Text,
+                                    Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), ddSolutionSolU.Selected),
+                                    Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), ddUnitSolU.Selected),
+                                    Standard: tglStandardSolU.Checked
                                 }
                             )
                         );

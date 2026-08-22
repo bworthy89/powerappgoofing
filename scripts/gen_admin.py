@@ -36,6 +36,12 @@ LISTS = [
         dict(n="Status",                kind="choice", caption="Status"),
         dict(n="'Config Notes'",        kind="note",   caption="Config notes", id="ConfigNotes"),
     ]),
+    dict(key="SolU", label="Solution units", source="TB_SolutionUnits", fields=[
+        dict(n="Title",    kind="text",   caption="Label, e.g. CI 300X - SDRB250"),
+        dict(n="Solution", kind="lookup", caption="Solution model", target="TB_Products"),
+        dict(n="Unit",     kind="lookup", caption="Unit model that attaches to it", target="TB_Products"),
+        dict(n="Standard", kind="bool",   caption="Part of the standard build"),
+    ]),
     dict(key="Ref", label="References", source="TB_References", fields=[
         dict(n="Title",              kind="text",   caption="Title"),
         dict(n="Product",            kind="lookup", caption="Product", target="TB_Products"),
@@ -108,6 +114,10 @@ def gen_admin():
                  ("X","Gutter"),("Y","Gutter + 34")]:
         prop(o, k, v, q)
 
+    # The tab bar divides by however many lists there are. It was hardcoded to
+    # four, which silently pushed the fifth tab off the right edge.
+    TABW = f"(ContentWidth - (Gutter * 2) - {8 * (len(LISTS) - 1)}) / {len(LISTS)}"
+
     # list selector buttons
     for i, L in enumerate(LISTS):
         q = ctrl(o, f"btnList{L['key']}", "Classic/Button", c)
@@ -118,8 +128,8 @@ def gen_admin():
                      ("Color",f'If({sel}, AppTheme.OnPrimary, AppTheme.Fg)'),
                      ("HoverFill",f'If({sel}, AppTheme.PrimaryDark, AppTheme.Sunken)'),
                      ("BorderColor","AppTheme.Line"),("BorderThickness","1"),
-                     ("Height","34"),("Width","(ContentWidth - (Gutter * 2) - 24) / 4"),
-                     ("X",f"Gutter + (((ContentWidth - (Gutter * 2) - 24) / 4) + 8) * {i}"),
+                     ("Height","34"),("Width",TABW),
+                     ("X",f"Gutter + ({TABW} + 8) * {i}"),
                      ("Y","Gutter + 80"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
@@ -202,7 +212,8 @@ def gen_admin():
     sub = {"Cust": '" - " & Coalesce(ThisItem.Description, "no description")',
            "Prod": '" - " & Coalesce(ThisItem.\'Product Type\'.Value, "no type") & "  |  standard " & Coalesce(ThisItem.\'Current Standard Version\', "not set")',
            "Inst": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.\'Parent\'), "  |  SOLUTION", "  |  unit of " & ThisItem.\'Parent\'.Value)',
-           "Ref":  '" - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")'}
+           "Ref":  '" - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")',
+           "SolU": '" - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")'}
     for L in LISTS:
         q = ctrl(o, f"galAdm{L['key']}", "Gallery", c, "Vertical")
         o.write(f"{q}Items: |\n{q}  =SortByColumns(\n"
