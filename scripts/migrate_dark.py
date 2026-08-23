@@ -95,7 +95,12 @@ def migrate(path):
         leftover = len(re.findall(r"RGBA\(176, 0, 32, 1\)", s))
         assert not leftover, f"{path.name}: {leftover} danger reds on an unexpected property"
 
-    # 4. the brand rule, as first child of the root container
+    # 4. the brand rule, as first child of the root container.
+    # Skipped on screens carrying the full 56px brand band - a 3px accent line at Y=0
+    # would draw straight across it. The rule gives continuity to screens that have no
+    # band; it is not decoration for the ones that do.
+    if re.search(r"- rec\w+Band:\n\s*Control: Rectangle", s):
+        return counts
     m = re.search(r"      - (conRoot\w+):\n", s)
     assert m, f"{path.name}: no conRoot container"
     sfx = m.group(1).replace("conRoot", "")

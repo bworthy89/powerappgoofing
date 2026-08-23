@@ -1043,3 +1043,43 @@ the compiler enforces.
 
 The schema is public and worth reading directly when a control shape is in doubt:
 https://raw.githubusercontent.com/microsoft/PowerApps-Tooling/refs/heads/master/schemas/pa-yaml/v3.0/pa.schema.yaml
+
+## A generator that still emits the old theme will silently undo a migration
+
+`migrate_dark.py` and `fix_dark_defaults.py` were applied to the *output* .pa.yaml files.
+Three screens — `scrAdmin`, `scrEditForm`, `scrOnboard` — are produced by generators, and
+those generators still emitted `AppTheme` afterwards. Running any one of them would have
+reverted that screen to the light palette and dropped every explicit colour added later.
+
+Nothing about running a generator looks dangerous, which is what made it worth finding
+before it fired rather than after.
+
+**The build is now one command**, so the follow-up passes cannot be forgotten either:
+
+```
+python scripts/build_screens.py
+```
+
+which runs, in order:
+
+```
+generators  ->  migrate_dark  ->  fix_dark_defaults  ->  verify_yaml
+```
+
+Both middle passes are idempotent, and both still earn their place:
+
+- `migrate_dark` no longer changes tokens (the generators emit `AppDark` directly). What it
+  contributes is the 3px brand rule, and only on screens with no full brand band — a 3px
+  accent line at Y=0 would otherwise draw straight across one.
+- `fix_dark_defaults` adds `Color`/`Fill` to controls that would inherit the light theme's
+  near-black default. **A non-zero count from it is a real finding**, not noise: it means new
+  controls shipped depending on a default that is wrong for this app. It correctly reports
+  zero now, and correctly leaves `Primary` buttons alone — those render white on the accent
+  from the theme.
+
+`modernize.py` (the classic→modern converter) had the same latent problem and its tokens
+were moved too, but it is no longer part of the build and has not been re-verified against
+the rebuilt screens.
+
+**Rule: when a transformation is applied to generated output, apply it to the generator in
+the same change, or the generator becomes a way to undo it.**

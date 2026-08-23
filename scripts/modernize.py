@@ -13,6 +13,11 @@ follows: never guess a control property. Anything not in the set is dropped and
 reported, so the report is the review surface - read it, do not skim it.
 
 Usage:  python scripts/modernize.py <in.pa.yaml> <out.pa.yaml>
+
+NOTE: this tool predates the dark palette and is no longer part of the build
+(see build_screens.py). Its token references were moved to AppDark so that running it
+cannot reintroduce the light theme, but it has not been re-verified against the
+rebuilt screens - treat any output it produces as needing review.
 """
 import re, sys
 
@@ -64,8 +69,8 @@ VALUE_MAP = {
 # in play. Colours that carry meaning - muted for hierarchy, the status palette -
 # are deliberately NOT in here.
 THEME_DEFAULT = {
-    "Color": {"AppTheme.Fg", "AppTheme.OnPrimary"},
-    "Fill": {"AppTheme.Surface", "AppTheme.Bg"},
+    "Color": {"AppDark.Fg", "AppDark.OnBrand"},
+    "Fill": {"AppDark.Surface", "AppDark.Bg"},
 }
 
 # Controls that must stay classic, by name, with the reason. These are painted
@@ -169,7 +174,7 @@ EXTRA = {
     "btnDeleteEdit": {"Appearance": "If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)",
                       "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
     "btnAccApprove": {"Appearance": "ButtonAppearance.Primary",
-                      "BasePaletteColor": "AppTheme.Ok"},
+                      "BasePaletteColor": "AppDark.Ok"},
     "btnAccDeny": {"Appearance": "ButtonAppearance.Outline",
                    "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
     # The wizard's green "add" buttons read as a different kind of action from
@@ -179,10 +184,10 @@ EXTRA = {
     "btnWizStep2Next": {"Appearance": "ButtonAppearance.Primary"},
     "btnWizFinish": {"Appearance": "ButtonAppearance.Primary"},
     "btnWizAddSolution": {"Appearance": "ButtonAppearance.Primary",
-                          "BasePaletteColor": "AppTheme.Ok",
+                          "BasePaletteColor": "AppDark.Ok",
                           "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
     "btnWizAddUnits": {"Appearance": "ButtonAppearance.Primary",
-                       "BasePaletteColor": "AppTheme.Ok",
+                       "BasePaletteColor": "AppDark.Ok",
                        "Icon": '"Add"', "Layout": "ButtonLayout.IconBefore"},
     "btnWizCancel": BACK,
     # wave 3

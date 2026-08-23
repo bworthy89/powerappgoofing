@@ -103,13 +103,13 @@ def gen_admin():
     # this is the part that holds if anyone arrives by another route. Neither is a
     # security boundary - a technician with Contribute can edit the lists directly
     # in SharePoint, so the real control is list permissions.
-    o.write('Screens:\n  scrAdmin:\n    Properties:\n      Fill: =AppTheme.Bg\n'
+    o.write('Screens:\n  scrAdmin:\n    Properties:\n      Fill: =AppDark.Bg\n'
             '      OnVisible: |\n'
             '        =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))\n'
             '    Children:\n')
     ind = "      "
     p = ctrl(o, "conRootAdm", "GroupContainer", ind, "ManualLayout")
-    prop(o, "Fill", "AppTheme.Bg", p)
+    prop(o, "Fill", "AppDark.Bg", p)
     prop(o, "Height", "Parent.Height", p)
     prop(o, "Width", "ContentWidth", p)
     prop(o, "X", "Max((Parent.Width - ContentWidth) / 2, Gutter)", p)
@@ -117,16 +117,16 @@ def gen_admin():
     c = p
 
     q = ctrl(o, "btnBackAdm", "Classic/Button", c)
-    for k, v in [("BorderThickness","0"),("Color","AppTheme.Primary"),("Fill","AppTheme.Bg"),
-                 ("Font","AppFont"),("Height","28"),("HoverColor","AppTheme.PrimaryDark"),
-                 ("HoverFill","AppTheme.Sunken"),("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
+    for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark.Bg"),
+                 ("Font","AppFont"),("Height","28"),("HoverColor","AppDark.AccentSolid"),
+                 ("HoverFill","AppDark.Sunken"),("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
                  ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
                  ("X","Gutter"),("Y","Gutter"),("FocusedBorderThickness","2"),
-                 ("FocusedBorderColor","AppTheme.Primary")]:
+                 ("FocusedBorderColor","AppDark.Accent")]:
         prop(o, k, v, q)
 
     q = ctrl(o, "lblTitleAdm", "Label", c)
-    for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
+    for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
                  ("Height","36"),("Size","AppType.Title"),("Text",'"Admin"'),("Wrap","false"),
                  ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y","Gutter + 34")]:
@@ -142,22 +142,22 @@ def gen_admin():
         sel = f'varAdminList = "{L["key"]}"'
         for k, v in [("Font","AppFont"),("Size","AppType.Small"),
                      ("Text", L["label"] if L.get("raw_label") else f'"{L["label"]}"'),
-                     ("Fill",f'If({sel}, AppTheme.Primary, AppTheme.Surface)'),
-                     ("Color",f'If({sel}, AppTheme.OnPrimary, AppTheme.Fg)'),
-                     ("HoverFill",f'If({sel}, AppTheme.PrimaryDark, AppTheme.Sunken)'),
-                     ("BorderColor","AppTheme.Line"),("BorderThickness","1"),
+                     ("Fill",f'If({sel}, AppDark.Accent, AppDark.Surface)'),
+                     ("Color",f'If({sel}, AppDark.OnBrand, AppDark.Fg)'),
+                     ("HoverFill",f'If({sel}, AppDark.AccentSolid, AppDark.Sunken)'),
+                     ("BorderColor","AppDark.Line"),("BorderThickness","1"),
                      ("Height","34"),("Width",TABW),
                      ("X",f"Gutter + ({TABW} + 8) * {i}"),
                      ("Y","Gutter + 80"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                      ("OnSelect",f'Set(varAdminList, "{L["key"]}")'),
-                     ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
+                     ("FocusedBorderThickness","2"),("FocusedBorderColor","AppDark.Accent")]:
             prop(o, k, v, q)
 
     q = ctrl(o, "txtSearchAdm", "Classic/TextInput", c)
-    for k, v in [("BorderColor","AppTheme.Line"),("BorderThickness","1"),("Color","AppTheme.Fg"),
-                 ("Default",'""'),("Fill","AppTheme.Surface"),("Font","AppFont"),("Height","40"),
+    for k, v in [("BorderColor","AppDark.Line"),("BorderThickness","1"),("Color","AppDark.Fg"),
+                 ("Default",'""'),("Fill","AppDark.Surface"),("Font","AppFont"),("Height","40"),
                  ("HintText",'"Search"'),("Size","AppType.Body"),
                  ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","Gutter + 126"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
@@ -172,8 +172,8 @@ def gen_admin():
     for k, v in [("Font","AppFont"),("Size","AppType.Small"),
                  ("Text",'"Guided setup"'),
                  ("Tooltip",'"Add a customer with its solutions and components"'),
-                 ("Fill","AppTheme.Surface"),("Color","AppTheme.Primary"),
-                 ("HoverFill","AppTheme.Sunken"),("BorderColor","AppTheme.Line"),
+                 ("Fill","AppDark.Surface"),("Color","AppDark.Accent"),
+                 ("HoverFill","AppDark.Sunken"),("BorderColor","AppDark.Line"),
                  ("BorderThickness","1"),
                  ("Height","40"),("Width","150"),
                  ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","Gutter + 126"),
@@ -181,20 +181,20 @@ def gen_admin():
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'varAdminList = "Cust"'),
                  ("OnSelect","Navigate(scrOnboard, ScreenTransition.Cover)"),
-                 ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
+                 ("FocusedBorderThickness","2"),("FocusedBorderColor","AppDark.Accent")]:
         prop(o, k, v, q)
 
     q = ctrl(o, "btnAddNew", "Classic/Button", c)
     for k, v in [("Font","AppFont"),("Size","AppType.Small"),("Text",'"+  Add new"'),
-                 ("Fill","AppTheme.Ok"),("Color","AppTheme.OnPrimary"),
-                 ("HoverFill","AppTheme.Primary"),("BorderThickness","0"),
+                 ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
+                 ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("Height","40"),("Width","118"),
                  ("X","ContentWidth - Gutter - 118"),("Y","Gutter + 126"),
                  ("Visible",'varAdminList <> "Acc"'),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("OnSelect","PLACEHOLDER"),
-                 ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
+                 ("FocusedBorderThickness","2"),("FocusedBorderColor","AppDark.Accent")]:
         if k == "OnSelect":
             # One typed variable per list. Power Fx infers a variable's type from
             # its Set() calls, so a single variable Set to records of four
@@ -234,14 +234,14 @@ def gen_admin():
                 f"{r}  Set(varAdminNew, false);\n"
                 f"{r}  Navigate(scrEditForm, ScreenTransition.Cover)\n")
         for k, v in [("Align","Align.Left"),("Font","AppFont"),("Size","AppType.Small"),
-                     ("Color","AppTheme.Fg"),("Fill","AppTheme.Surface"),
-                     ("HoverFill","AppTheme.PrimaryLight"),("PressedFill","AppTheme.PrimaryLight"),
-                     ("BorderColor","AppTheme.LineSoft"),("BorderThickness","1"),
+                     ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
+                     ("HoverFill","AppDark.AccentTint"),("PressedFill","AppDark.AccentTint"),
+                     ("BorderColor","AppDark.LineSoft"),("BorderThickness","1"),
                      ("PaddingLeft","12"),
                      ("X","0"),("Y","0"),("Width","Parent.TemplateWidth"),("Height","44"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
-                     ("FocusedBorderThickness","2"),("FocusedBorderColor","AppTheme.Primary")]:
+                     ("FocusedBorderThickness","2"),("FocusedBorderColor","AppDark.Accent")]:
             prop(o, k, v, r)
 
     # ---- Access: approve or deny, in the row
@@ -261,15 +261,15 @@ def gen_admin():
     r = ctrl(o, "rectAccRow", "Classic/Button", q)
     for k, v in [("Text",'""'),("X","0"),("Y","0"),
                  ("Width","Parent.TemplateWidth"),("Height","50"),
-                 ("Fill","AppTheme.Surface"),("HoverFill","AppTheme.Surface"),
-                 ("BorderColor","AppTheme.LineSoft"),("BorderThickness","1"),
+                 ("Fill","AppDark.Surface"),("HoverFill","AppDark.Surface"),
+                 ("BorderColor","AppDark.LineSoft"),("BorderThickness","1"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
         prop(o, k, v, r)
 
     r = ctrl(o, "lblAccName", "Label", q)
     o.write(f'{r}Text: |\n{r}  =Coalesce(ThisItem.Person.DisplayName, ThisItem.Title, "unknown")\n')
-    for k, v in [("Color","AppTheme.Fg"),("Font","AppFont"),("Size","AppType.Body"),
+    for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("Size","AppType.Body"),
                  ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
                  ("AutoHeight","false"),("X","Gutter"),("Y","6"),
                  ("Width","Parent.TemplateWidth - 300"),("Height","20")]:
@@ -278,7 +278,7 @@ def gen_admin():
     r = ctrl(o, "lblAccMeta", "Label", q)
     o.write(f'{r}Text: |\n{r}  =Coalesce(ThisItem.Person.Email, "no email") & "   ·   " '
             f'& ThisItem.Status.Value & "   ·   asked " & Text(ThisItem.Created, "d mmm")\n')
-    for k, v in [("Color","AppTheme.Muted"),("Font","AppFont"),("Size","AppType.Small"),
+    for k, v in [("Color","AppDark.Muted"),("Font","AppFont"),("Size","AppType.Small"),
                  ("Wrap","false"),("AutoHeight","false"),("X","Gutter"),("Y","26"),
                  ("Width","Parent.TemplateWidth - 300"),("Height","18")]:
         prop(o, k, v, r)
@@ -290,8 +290,8 @@ def gen_admin():
             f'{r}  =Patch(TB_Admins, ThisItem, {{ Status: {{ Value: "Approved" }} }})\n')
     for k, v in [("Text",'"Approve"'),("Font","AppFont"),("Size","AppType.Small"),
                  ("FontWeight","FontWeight.Semibold"),
-                 ("Fill","AppTheme.Ok"),("Color","AppTheme.OnPrimary"),
-                 ("HoverFill","AppTheme.Primary"),("BorderThickness","0"),
+                 ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
+                 ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("X","Parent.TemplateWidth - 200"),("Y","8"),
                  ("Width","92"),("Height","34"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
@@ -304,9 +304,9 @@ def gen_admin():
             f'{r}  =Patch(TB_Admins, ThisItem, {{ Status: {{ Value: "Denied" }} }})\n')
     for k, v in [("Text",'"Deny"'),("Font","AppFont"),("Size","AppType.Small"),
                  ("FontWeight","FontWeight.Semibold"),
-                 ("Fill","AppTheme.Surface"),("Color","RGBA(176, 0, 32, 1)"),
-                 ("HoverFill","AppTheme.Sunken"),
-                 ("BorderColor","RGBA(176, 0, 32, 1)"),("BorderThickness","1"),
+                 ("Fill","AppDark.Surface"),("Color","AppDark.Danger"),
+                 ("HoverFill","AppDark.Sunken"),
+                 ("BorderColor","AppDark.Danger"),("BorderThickness","1"),
                  ("X","Parent.TemplateWidth - 100"),("Y","8"),
                  ("Width","92"),("Height","34"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
@@ -316,7 +316,7 @@ def gen_admin():
 
     q = ctrl(o, "lblAccEmpty", "Label", c)
     for k, v in [("Text",'"No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."'),
-                 ("Align","Align.Center"),("Color","AppTheme.Muted"),("Font","AppFont"),
+                 ("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
                  ("X","Gutter"),("Y","Gutter + 200"),("Height","40"),
                  ("Width","ContentWidth - (Gutter * 2)"),
@@ -326,7 +326,7 @@ def gen_admin():
     q = ctrl(o, "lblAdmEmpty", "Label", c)
     cond = " || ".join(
         f'(varAdminList = "{L["key"]}" && CountRows(galAdm{L["key"]}.AllItems) = 0)' for L in LISTS)
-    for k, v in [("Align","Align.Center"),("Color","AppTheme.Muted"),("Font","AppFont"),
+    for k, v in [("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Text",'"Nothing matches that search."'),
                  ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y","Gutter + 190"),("Visible",cond)]:
