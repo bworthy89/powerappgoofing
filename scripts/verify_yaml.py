@@ -227,6 +227,14 @@ def check_file(path):
                     findings.append((n, f"{table} has no column '{col}' - "
                                         f"filter refers to a column of another list"))
 
+        # 1h. an unresolved templating placeholder. The generators build these files by
+        #     f-string, so a brace that was escaped but never substituted ships as text.
+        #     Studio says "unexpected characters" and the control falls back to zero,
+        #     which reads as a layout bug rather than a build one.
+        for ph in re.findall(r"\{([A-Za-z_]\w*)\}", code):
+            findings.append((n, f"unresolved template placeholder '{{{ph}}}' - the "
+                                "generator emitted it literally"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):

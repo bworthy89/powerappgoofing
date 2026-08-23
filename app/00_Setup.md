@@ -1270,3 +1270,30 @@ could not be verified against this compiler with the authoring MCP disconnected,
 earlier attempt in this project was abandoned for the same reason (see the comment in
 `scrHome`). Tabs use a button that sets a variable and a `Visible` that reads it, both proven
 here many times over.
+
+## An unresolved `{Placeholder}` ships silently and reads as a layout bug
+
+These screens are built by f-string templating, so a brace escaped but never substituted
+reaches the app as literal text:
+
+```yaml
+Height: ={TAB_H}
+Y: ={Y_TABS}
+```
+
+Studio reports *unexpected characters*, and the control **falls back to zero** — so three tab
+buttons rendered stacked at the top of the screen. The reported symptom is a layout problem;
+the cause is a build one.
+
+Nothing else catches it. The YAML is well-formed, every other check passes, and the value is
+merely wrong rather than malformed.
+
+The mistake underneath: a helper returning an f-string wrote `{{NAME}}` to escape the braces
+from *its own* interpolation, expecting a later pass to substitute them. **There is no later
+pass** — the helper's result is inserted into the document verbatim. Single braces are
+correct, because Python resolves the name when the helper is *called*, which happens inside
+the document f-string where the value is already defined.
+
+`verify_yaml.py` now flags any `{Identifier}` surviving in a formula. Power Fx has no use for
+one, and record literals (`{ Value: "x" }`) are excluded because the pattern requires the
+whole brace to be a single identifier.

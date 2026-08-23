@@ -101,11 +101,11 @@ def tab(key, label, i):
                   Color: =If(varSolTab = "{key}", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: ={{TAB_H}}
+                  Height: ={TAB_H}
                   Width: =(Min({P.CW}, {P.PANEL_MAX}) - 16) / 3
                   X: =Gutter + ((Min({P.CW}, {P.PANEL_MAX}) - 16) / 3 + 8) * {i}
                   Y: |
-                    ={{Y_TABS}}
+                    ={Y_TABS}
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
