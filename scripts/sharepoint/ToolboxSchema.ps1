@@ -93,6 +93,18 @@ $Schema = [ordered]@{
         )
     }
 
+    'TB_SoftwareVersions' = @{
+        Description = 'The software build a site runs for a given model. One row per customer and model; a machine with its own Installed Version overrides it.'
+        TitleLabel  = 'Label'
+        Fields      = @(
+            @{ Display = 'Version'; Internal = 'TBVersion'; Type = 'Text' }
+        )
+        Lookups     = @(
+            @{ Display = 'Customer'; Internal = 'TBCustomer'; Target = 'TB_Customers'; Required = $true }
+            @{ Display = 'Product';  Internal = 'TBProduct';  Target = 'TB_Products';  Required = $true }
+        )
+    }
+
     'TB_Admins' = @{
         Description = 'Access requests and approvals. No approved rows means everyone is an admin.'
         TitleLabel  = 'Name'
@@ -106,7 +118,7 @@ $Schema = [ordered]@{
         Description = 'Documents and firmware links, keyed to a model.'
         TitleLabel  = 'Document title'
         Fields      = @(
-            @{ Display = 'Section';        Internal = 'TBSection';       Type = 'Choice';   Choices = @('Documentation','Firmware & Downloads','Software') }
+            @{ Display = 'Section';        Internal = 'TBSection';       Type = 'Choice';   Choices = @('Documentation','Firmware & Downloads') }
             @{ Display = 'Reference Type'; Internal = 'TBReferenceType'; Type = 'Choice';   Choices = $ReferenceTypes }
             @{ Display = 'URL';            Internal = 'TBUrl';           Type = 'URL' }
             @{ Display = 'Version';        Internal = 'TBVersion';       Type = 'Text' }
@@ -130,4 +142,5 @@ $ViewFields = @{
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
     'TB_SolutionUnits' = @('Title','TBSolution','TBUnit','TBStandard')
     'TB_Admins'        = @('Title','TBPerson','TBStatus')
+    'TB_SoftwareVersions' = @('Title','TBCustomer','TBProduct','TBVersion')
 }

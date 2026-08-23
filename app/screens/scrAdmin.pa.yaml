@@ -80,8 +80,8 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 0
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 0
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -99,8 +99,8 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 1
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 1
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -118,8 +118,8 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 2
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 2
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -137,14 +137,33 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 3
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 3
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   OnSelect: =Set(varAdminList, "SolU")
+            - btnListSwVer:
+                Control: ModernButton
+                Properties:
+                  Appearance: =If(varAdminList = "SwVer", ButtonAppearance.Primary, ButtonAppearance.Outline)
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Text: ="Software"
+                  Color: =If(varAdminList = "SwVer", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 4
+                  Y: =56 + Gutter + 80
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Set(varAdminList, "SwVer")
             - btnListRef:
                 Control: ModernButton
                 Properties:
@@ -156,8 +175,8 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 4
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 5
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -175,8 +194,8 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 40) / 6
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 5
+                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
+                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 6
                   Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -252,6 +271,7 @@ Screens:
                         "Prod", Set(varRecProd, Defaults(TB_Products)),
                         "Inst", Set(varRecInst, Defaults(TB_Installations)),
                         "SolU", Set(varRecSolU, Defaults(TB_SolutionUnits)),
+                        "SwVer", Set(varRecSwVer, Defaults(TB_SoftwareVersions)),
                         "Ref", Set(varRecRef, Defaults(TB_References))
                     );
                     Navigate(scrEditForm, ScreenTransition.Cover)
@@ -415,6 +435,50 @@ Screens:
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")
                         OnSelect: |
                           =Set(varRecSolU, ThisItem);
+                          Set(varAdminNew, false);
+                          Navigate(scrEditForm, ScreenTransition.Cover)
+                        Align: =Align.Left
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        BorderColor: =AppDark.LineSoft
+                        BorderThickness: =1
+                        PaddingLeft: =12
+                        X: =0
+                        Y: =0
+                        Width: =Parent.TemplateWidth
+                        Height: =44
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+            - galAdmSwVer:
+                Control: Gallery
+                Variant: Vertical
+                Properties:
+                  Items: |
+                    =SortByColumns(
+                        Filter(TB_SoftwareVersions, StartsWith(Title, Trim(txtSearchAdm.Text))),
+                        "Title",
+                        SortOrder.Ascending
+                    )
+                  Visible: =varAdminList = "SwVer"
+                  X: =Gutter
+                  Y: =56 + Gutter + 180
+                  Width: =ContentWidth - (Gutter * 2)
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  TemplateSize: =44
+                  TemplatePadding: =6
+                  ShowScrollbar: =true
+                Children:
+                  - btnRowSwVer:
+                      Control: ModernButton
+                      Properties:
+                        Color: =AppDark.Fg
+                        Appearance: =ButtonAppearance.Outline
+                        Text: |
+                          =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.Version, "no version")
+                        OnSelect: |
+                          =Set(varRecSwVer, ThisItem);
                           Set(varAdminNew, false);
                           Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
@@ -614,4 +678,4 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =56 + Gutter + 190
-                  Visible: =(varAdminList = "Cust" && CountRows(galAdmCust.AllItems) = 0) || (varAdminList = "Prod" && CountRows(galAdmProd.AllItems) = 0) || (varAdminList = "Inst" && CountRows(galAdmInst.AllItems) = 0) || (varAdminList = "SolU" && CountRows(galAdmSolU.AllItems) = 0) || (varAdminList = "Ref" && CountRows(galAdmRef.AllItems) = 0)
+                  Visible: =(varAdminList = "Cust" && CountRows(galAdmCust.AllItems) = 0) || (varAdminList = "Prod" && CountRows(galAdmProd.AllItems) = 0) || (varAdminList = "Inst" && CountRows(galAdmInst.AllItems) = 0) || (varAdminList = "SolU" && CountRows(galAdmSolU.AllItems) = 0) || (varAdminList = "SwVer" && CountRows(galAdmSwVer.AllItems) = 0) || (varAdminList = "Ref" && CountRows(galAdmRef.AllItems) = 0)

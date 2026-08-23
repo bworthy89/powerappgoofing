@@ -344,9 +344,8 @@ def effective_version(inst, customer_id, product_id):
     and compared, so a site default can be corrected without touching machine records.
     """
     return (f"Coalesce({inst}.'Installed Version', "
-            f"LookUp(TB_References, Customer.Id = {customer_id} "
-            f"&& Product.Id = {product_id} "
-            f"&& Section.Value = \"Software\").Version)")
+            f"LookUp(TB_SoftwareVersions, Customer.Id = {customer_id} "
+            f"&& Product.Id = {product_id}).Version)")
 
 
 def version_source_note(inst, customer_id, product_id):
@@ -356,7 +355,6 @@ def version_source_note(inst, customer_id, product_id):
     the next person to open the admin form finds the field empty and assumes a bug.
     """
     return (f"If(!IsBlank({inst}.'Installed Version'), \"\", "
-            f"!IsBlank(LookUp(TB_References, Customer.Id = {customer_id} "
-            f"&& Product.Id = {product_id} "
-            f"&& Section.Value = \"Software\").Version), "
+            f"!IsBlank(LookUp(TB_SoftwareVersions, Customer.Id = {customer_id} "
+            f"&& Product.Id = {product_id}).Version), "
             f"\"  ·  site default for this model\", \"\")")

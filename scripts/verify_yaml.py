@@ -28,6 +28,7 @@ SCHEMA = {
     "TB_References": {"Title", "Product", "Customer", "Section",
                       "Reference Type", "URL", "Version", "Featured",
                       "Last Checked"},
+    "TB_SoftwareVersions": {"Title", "Customer", "Product", "Version"},
 }
 ALL_COLUMNS = set().union(*SCHEMA.values())
 

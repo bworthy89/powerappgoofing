@@ -300,6 +300,8 @@ Screens:
             - ddWizSolProduct:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Product)
                   ItemDisplayText: =ThisItem.Value
@@ -310,8 +312,6 @@ Screens:
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolVersion:
@@ -388,6 +388,8 @@ Screens:
             - ddWizSolStatus:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Status)
                   ItemDisplayText: =ThisItem.Value
@@ -398,8 +400,6 @@ Screens:
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblCapWizSolNotes:
@@ -571,6 +571,8 @@ Screens:
             - ddWizUnitParent:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)
                   OnChange: |
@@ -586,8 +588,6 @@ Screens:
                   Visible: =varWizStep = 3
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - lblWizNoSolutions:
@@ -795,6 +795,8 @@ Screens:
             - ddWizUnitStatus:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Status)
                   ItemDisplayText: =ThisItem.Value
@@ -805,8 +807,6 @@ Screens:
                   Visible: =varWizStep = 3
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
             - btnWizAddUnits:

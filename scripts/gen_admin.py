@@ -62,6 +62,16 @@ LISTS = [
         dict(n="Unit",     kind="lookup", caption="Unit model that attaches to it", target="TB_Products"),
         dict(n="Standard", kind="bool",   caption="Part of the standard build"),
     ]),
+    # The software build a site runs for a model. One row per customer and model; a
+    # machine with its own Installed Version overrides it, so this is a default rather
+    # than an assertion about every machine.
+    dict(key="SwVer", label="Software", source="TB_SoftwareVersions", fields=[
+        dict(n="Title",    kind="text",   caption="Label, e.g. Northgate - CI 300X"),
+        dict(n="Customer", kind="lookup", caption="Customer", target="TB_Customers"),
+        dict(n="Product",  kind="lookup", caption="Model this version applies to",
+             target="TB_Products"),
+        dict(n="Version",  kind="text",   caption="Software version running at this site"),
+    ]),
     dict(key="Ref", label="References", source="TB_References", fields=[
         dict(n="Title",              kind="text",   caption="Title"),
         dict(n="Product",            kind="lookup", caption="Product", target="TB_Products"),
@@ -212,7 +222,8 @@ def gen_admin():
            "Prod": '" - " & Coalesce(ThisItem.\'Product Type\'.Value, "no type") & "  |  standard " & Coalesce(ThisItem.\'Current Standard Version\', "not set")',
            "Inst": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.\'Parent\'), "  |  SOLUTION", "  |  unit of " & ThisItem.\'Parent\'.Value)',
            "Ref":  '" - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")',
-           "SolU": '" - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")'}
+           "SolU": '" - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")',
+           "SwVer": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.Version, "no version")'}
     for L in LISTS:
         q = ctrl(o, f"galAdm{L['key']}", "Gallery", c, "Vertical")
         o.write(f"{q}Items: |\n{q}  =SortByColumns(\n"

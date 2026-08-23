@@ -62,7 +62,7 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =36
                   Size: =AppType.Title
-                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "Ref", "reference", "record")
+                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "SwVer", "softwar", "Ref", "reference", "record")
                   Wrap: =false
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
@@ -269,14 +269,14 @@ Screens:
             - ddProductTypeProd:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Products.'Product Type')
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -304,14 +304,14 @@ Screens:
             - ddFamilyProd:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Products.Family)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -482,14 +482,14 @@ Screens:
             - ddCustomerInst:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Customer)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -517,14 +517,14 @@ Screens:
             - ddProductInst:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Product)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -552,14 +552,14 @@ Screens:
             - ddParentInst:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -625,14 +625,14 @@ Screens:
             - ddStatusInst:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Status)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -736,14 +736,14 @@ Screens:
             - ddSolutionSolU:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_SolutionUnits.Solution)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -771,14 +771,14 @@ Screens:
             - ddUnitSolU:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_SolutionUnits.Unit)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -815,6 +815,152 @@ Screens:
                   X: =Gutter
                   Y: =354
                   Visible: =varAdminList = "SolU"
+            - lblCapTitleSwVer:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Label, e.g. Northgate - CI 300X"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =120
+                  Visible: =varAdminList = "SwVer"
+            - txtTitleSwVer:
+                Control: ModernTextInput
+                Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
+                  Default: =If(varAdminNew, "", varRecSwVer.Title)
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =138
+                  Visible: =varAdminList = "SwVer"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - lblCapCustomerSwVer:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Customer"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =192
+                  Visible: =varAdminList = "SwVer"
+            - ddCustomerSwVer:
+                Control: ModernDropdown
+                Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
+                  Items: |
+                    =Choices(TB_SoftwareVersions.Customer)
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SoftwareVersions.Customer), Value = varRecSwVer.Customer.Value))
+                  ItemDisplayText: =ThisItem.Value
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =210
+                  Visible: =varAdminList = "SwVer"
+            - lblCapProductSwVer:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Model this version applies to"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =264
+                  Visible: =varAdminList = "SwVer"
+            - ddProductSwVer:
+                Control: ModernDropdown
+                Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
+                  Items: |
+                    =Choices(TB_SoftwareVersions.Product)
+                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SoftwareVersions.Product), Value = varRecSwVer.Product.Value))
+                  ItemDisplayText: =ThisItem.Value
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =282
+                  Visible: =varAdminList = "SwVer"
+            - lblCapVersionSwVer:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Software version running at this site"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =336
+                  Visible: =varAdminList = "SwVer"
+            - txtVersionSwVer:
+                Control: ModernTextInput
+                Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
+                  Default: =If(varAdminNew, "", varRecSwVer.Version)
+                  Type: =TextInputType.SingleLine
+                  Placeholder: =""
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Height: =40
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =354
+                  Visible: =varAdminList = "SwVer"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
             - lblCapTitleRef:
                 Control: ModernText
                 Properties:
@@ -873,14 +1019,14 @@ Screens:
             - ddProductRef:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.Product)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -908,14 +1054,14 @@ Screens:
             - ddCustomerRef:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.Customer)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -943,14 +1089,14 @@ Screens:
             - ddSectionRef:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.Section)
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -978,14 +1124,14 @@ Screens:
             - ddRefTypeRef:
                 Control: ModernDropdown
                 Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.'Reference Type')
                   Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
@@ -1155,6 +1301,17 @@ Screens:
                                 }
                             )
                         );
+                        If(varAdminList = "SwVer",
+                            Patch(TB_SoftwareVersions,
+                                If(varAdminNew, Defaults(TB_SoftwareVersions), varRecSwVer),
+                                {
+                                    Title: txtTitleSwVer.Text,
+                                    Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), ddCustomerSwVer.Selected),
+                                    Product: If(IsBlank(ddProductSwVer.Selected), Blank(), ddProductSwVer.Selected),
+                                    Version: txtVersionSwVer.Text
+                                }
+                            )
+                        );
                         If(varAdminList = "Ref",
                             Patch(TB_References,
                                 If(varAdminNew, Defaults(TB_References), varRecRef),
@@ -1220,6 +1377,7 @@ Screens:
                                 "Prod", Remove(TB_Products, varRecProd); Refresh(TB_Products),
                                 "Inst", Remove(TB_Installations, varRecInst); Refresh(TB_Installations),
                                 "SolU", Remove(TB_SolutionUnits, varRecSolU); Refresh(TB_SolutionUnits),
+                                "SwVer", Remove(TB_SoftwareVersions, varRecSwVer); Refresh(TB_SoftwareVersions),
                                 "Ref", Remove(TB_References, varRecRef); Refresh(TB_References),
                                 Notify("Nothing was selected to delete.", NotificationType.Error)
                             );

@@ -39,13 +39,12 @@ CARD_H = 76
 # Machines at this site whose installed version differs from their product's standard.
 # Rows with no version, or a product with no standard, are not "behind" - they are unknown,
 # and the three-state distinction is the whole point of this app.
-# The version in force for a machine: its own, else the site's Software reference for that
+# The version in force for a machine: its own, else the site baseline for that
 # model. Written out twice below because a gallery row has no local name to bind it to, and
 # it must match screen_parts.effective_version exactly - the hero and this count disagreeing
 # is precisely the bug this replaced.
 _EFF = ("Coalesce(I.'Installed Version', "
-        "LookUp(TB_References, Customer.Id = ThisItem.ID && Product.Id = I.Product.Id "
-        "&& Section.Value = \"Software\").Version)")
+        "LookUp(TB_SoftwareVersions, Customer.Id = ThisItem.ID && Product.Id = I.Product.Id).Version)")
 
 BEHIND = ("CountRows(Filter(TB_Installations As I, I.Customer.Id = ThisItem.ID, "
           "I.Status.Value <> \"Retired\", "

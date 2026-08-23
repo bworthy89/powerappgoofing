@@ -43,7 +43,7 @@ PROD = "LookUp(TB_Products, ID = ThisItem.Product.Id)"
 # below - the hero and this card disagreeing is exactly what this change removes.
 EFF_READ = "lblEffVerOvw.Text"
 EFF_ROW = ("Coalesce(ThisItem.'Installed Version', "
-           "LookUp(TB_References, Customer.Id = varCustomer.ID "
+           "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID "
            "&& Product.Id = ThisItem.Product.Id "
            "&& Section.Value = \"Software\").Version)")
 
@@ -55,8 +55,7 @@ UNIT_N = f"CountRows({UNITS})"
 # Same rule as the hero and as scrCustomers: the machine's own version, else the site
 # default recorded against that model. varCustomer is the site being viewed.
 _EFF = ("Coalesce(U.'Installed Version', "
-        "LookUp(TB_References, Customer.Id = varCustomer.ID && Product.Id = U.Product.Id "
-        "&& Section.Value = \"Software\").Version)")
+        "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = U.Product.Id).Version)")
 
 BEHIND_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
             "U.Status.Value <> \"Retired\", "

@@ -172,6 +172,7 @@ EXTRA = {
     "btnListInst": tab("Inst"),
     "btnListRef": tab("Ref"),
     "btnListSolU": tab("SolU"),
+    "btnListSwVer": tab("SwVer"),
     "btnListAcc": tab("Acc"),
     # Appearance and BasePaletteColor together, because Fill does not survive the
     # conversion: Primary fills with the palette colour and picks a readable

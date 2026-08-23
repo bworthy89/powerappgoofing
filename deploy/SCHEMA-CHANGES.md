@@ -151,3 +151,49 @@ compared, so a site default can be corrected in one row.
 - **`Version` was previously write-only.** The admin form has always offered the field and
   nothing ever read it back, so any values already sitting in it will start having an
   effect. Worth a look at existing rows before adding new ones.
+
+## Create TB_SoftwareVersions (replaces the earlier "Software" Section idea)
+
+**The earlier instruction to add `Software` to TB_References → Section is withdrawn.** That
+overloaded a pointer list: `TB_References.Version` means "the version of the document or
+firmware being linked to", not "the software running at a site". Anyone adding a firmware
+link with a version would have silently changed what machines reported as installed. If you
+already added the choice value, removing it is optional — nothing reads it now.
+
+### The list
+
+**TB_SoftwareVersions**
+
+| Display | Internal | Type | Required |
+|---|---|---|---|
+| Title | Title | Text | yes (label, e.g. `Northgate - CI 300X`) |
+| Customer | TBCustomer | Lookup → TB_Customers | yes |
+| Product | TBProduct | Lookup → TB_Products | yes |
+| Version | TBVersion | Text | no |
+
+`scripts/sharepoint/ToolboxSchema.ps1` defines it, so `Create-ToolboxLists.ps1` and
+`Test-ToolboxSchema.ps1` both cover it if you use them.
+
+### What a row means
+
+```
+Customer  Northgate Retail Group
+Product   CI 300X
+Version   3.4.1
+```
+
+*At this site, every CI 300X runs 3.4.1 — unless that machine's own Installed Version says
+otherwise.*
+
+The machine always wins, so one unit on a different build stays visible rather than being
+hidden by the site default. Nothing is written back to installation records; this only
+changes what is displayed and compared, so a site default is corrected in one row.
+
+### In the app
+
+Admin gains a **Software** tab between Solution units and References, with the same add,
+edit and delete behaviour as the other lists. Rows read
+`Northgate - CI 300X - Northgate Retail Group | CI 300X | 3.4.1`.
+
+The solution and unit screens show the effective version and say when it came from here
+rather than from the machine: *"update available · site default for this model"*.

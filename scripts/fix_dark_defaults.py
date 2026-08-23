@@ -20,9 +20,13 @@ answer, and they are also self-documenting.
 THREE ROLES, NOT ONE
 
 - ModernText: AppDark.Fg. These are titles, headings and content.
-- Text inputs and dropdowns: Color AND Fill. They had no Fill either, so they were white
-  boxes on a dark screen - worse than the dark text, and easy to miss when scanning for
-  colour problems because the text inside them was perfectly readable.
+- Text inputs: Color AND Fill. They had no Fill either, so they were white boxes on a
+  dark screen - worse than the dark text, and easy to miss when scanning for colour
+  problems because the text inside them was perfectly readable.
+- Dropdowns: a LIGHT field with dark ink, and the pair is rewritten even when already
+  set. A ModernDropdown takes its surface from the modern theme and ignores Fill, the
+  same way ModernButton does, so the dark pair every other field uses put near-white
+  text on a near-white control. Light-on-light is readable whichever way Fill behaves.
 - Buttons: Color only, and only when Appearance is not Primary. A Primary button gets white
   on the accent from the theme and is already correct; forcing Fg onto the others stops
   Subtle and Outline rendering the light theme's near-black.
@@ -41,7 +45,9 @@ from pathlib import Path
 SCREENS = Path(r"E:\Papp\powerappgoofing\app\screens")
 
 TEXTY = {"ModernText", "Label"}
-FIELDY = {"ModernTextInput", "Classic/TextInput", "ModernDropdown", "ModernCombobox"}
+FIELDY = {"ModernTextInput", "Classic/TextInput"}
+# Dropdowns are handled separately: their surface comes from the theme, not from Fill.
+DROPDOWNY = {"ModernDropdown", "ModernCombobox", "Classic/DropDown"}
 BUTTONY = {"ModernButton", "Classic/Button"}
 TOGGLY = {"ModernToggle", "Classic/CheckBox", "ModernCheckBox"}
 
@@ -67,12 +73,29 @@ def fix(path):
         ind = indent_of(b)
         has_color = re.search(rf"^{ind}Color: ", b, re.M)
         has_fill = re.search(rf"^{ind}Fill: ", b, re.M)
+        # A dropdown carrying the dark pair is wrong rather than merely missing, so those
+        # are rewritten instead of skipped.
+        if ctl in DROPDOWNY:
+            b = re.sub(rf"^{ind}(Color|Fill): =AppDark\.\w+\n", "", b, flags=re.M)
+            has_color = has_fill = None
         # A transparent hit target shows no text, so a colour on it means nothing.
         invisible = re.search(r'Text: =""', b) and ctl in BUTTONY
         want = []
 
         if ctl in TEXTY and not has_color:
             want.append(("Color", "=AppDark.Fg"))
+        elif ctl in DROPDOWNY:
+            # A ModernDropdown renders its surface from the modern theme - which is light -
+            # and ignores Fill, exactly as ModernButton does. Near-white text on it is
+            # invisible, which is what "the choices are white with light font" was.
+            #
+            # So dropdowns are light fields with dark ink. That is readable whether or not
+            # Fill is honoured: if it is, the field matches the ink; if it is not, the
+            # theme's own light surface does. Literals rather than AppDark tokens because
+            # AppDark has no light-field pair and adding one costs an App.pa.yaml repaste
+            # for two values used in one place.
+            want.append(("Color", '=ColorValue("#14181C")'))
+            want.append(("Fill", '=ColorValue("#F2F4F8")'))
         elif ctl in FIELDY:
             if not has_color:
                 want.append(("Color", "=AppDark.Fg"))
