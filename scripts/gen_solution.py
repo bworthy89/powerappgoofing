@@ -345,8 +345,14 @@ Screens:
             # The answer. A component so scrUnit can show the identical comparison from one
             # definition - the only two places it is allowed, since a component cannot go in
             # a gallery.
+            # A component instance is Control: CanvasComponent with the definition named
+            # separately. "Control: cmpVersionChip" is rejected with PA2101 - the schema's
+            # ControlTypeId pattern requires a capitalised built-in type name, and a
+            # component name is not one. (An editor snippet in the same schema file writes
+            # "Control: Component"; the normative definition is CanvasComponent.)
             - cmpVersionSol:
-                Control: cmpVersionChip
+                Control: CanvasComponent
+                ComponentName: cmpVersionChip
                 Properties:
                   X: =Gutter
                   Y: ={Y_HERO}

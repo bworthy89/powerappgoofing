@@ -1011,3 +1011,35 @@ shortcut, and it should be written down wherever both copies live.
 Corollary: design components around *what can hold them*. A component sized for a gallery
 row is a component that can never be used. `cmpVersionChip` was originally a 190x44 pill for
 exactly that; it is now a full-width hero, which is what its actual placements needed.
+
+## A component instance is `Control: CanvasComponent` with `ComponentName:` beside it
+
+Naming the component as the control type is rejected:
+
+```
+PA2101 : Unknown control type 'cmpVersionChip'.
+```
+
+The schema's `ControlTypeId` pattern is `^([A-Z][a-zA-Z0-9]*/)?[A-Z][a-zA-Z0-9]*$` — a
+capitalised built-in type name. A component name is not one, and `cmpVersionChip` fails the
+pattern on the leading lowercase alone. The definition is named in a **sibling key**:
+
+```yaml
+- cmpVersionSol:
+    Control: CanvasComponent
+    ComponentName: cmpVersionChip
+    Properties:
+      X: =Gutter
+      InstalledVersion: =Coalesce(varInstallation.'Installed Version', "")
+```
+
+`ComponentName` is required for this control type, and custom properties are set in
+`Properties` alongside X/Y/Width/Height like any other control.
+
+Watch out for the editor snippets inside `pa.schema.yaml` itself: they write
+`Control: Component`, which does not match the normative `ControlTypeId-CanvasComponent`
+definition (`const: CanvasComponent`) a few lines above. The normative definition is the one
+the compiler enforces.
+
+The schema is public and worth reading directly when a control shape is in doubt:
+https://raw.githubusercontent.com/microsoft/PowerApps-Tooling/refs/heads/master/schemas/pa-yaml/v3.0/pa.schema.yaml
