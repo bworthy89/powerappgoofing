@@ -1145,3 +1145,34 @@ classic→modern mapping and had `Secondary` as its default landing place — em
 instead. Fixing it there rather than in the generated YAML matters: patching the output
 would be undone by the next build, which is the same trap as the generators that kept
 emitting `AppTheme`.
+
+## `LookUp` takes one condition; `Filter` takes many
+
+```powerfx
+Filter(T, A = 1, B = 2, C = 3)     -- three conditions, ANDed
+LookUp(T, A = 1, B = 2, C = 3)     -- WRONG
+LookUp(T, A = 1 && B = 2 && C = 3) -- right
+```
+
+`LookUp(Table, Condition [, ReductionFormula])`. The signature has room for exactly one
+condition; anything after it is the column to return.
+
+Writing it Filter-style produced four errors at once, none of which named the real problem:
+
+```
+Invalid number of arguments: received 4, expected 2-3.
+The function 'IsBlank' has some invalid arguments.
+The '.' operator cannot be used on Unknown values.
+Name isn't valid. 'Section' isn't recognized.
+```
+
+"'Section' isn't recognized" is the giveaway and the most misleading of the four — it points
+at a column that exists, because the third argument was being read as a reduction formula
+evaluated in a scope where the comparison made no sense.
+
+**The three-argument form is the more dangerous mistake**, because it compiles. `LookUp(T,
+A = 1, B = 2)` is valid syntax: it finds the first row where `A = 1` and returns the value of
+`B = 2` — a boolean — instead of filtering on it. No error, wrong answer.
+
+`verify_yaml.py` now flags both: more than three arguments, and a third argument containing
+a comparison operator.

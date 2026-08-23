@@ -44,8 +44,8 @@ CARD_H = 76
 # it must match screen_parts.effective_version exactly - the hero and this count disagreeing
 # is precisely the bug this replaced.
 _EFF = ("Coalesce(I.'Installed Version', "
-        "LookUp(TB_References, Customer.Id = ThisItem.ID, Product.Id = I.Product.Id, "
-        "Section.Value = \"Software\").Version)")
+        "LookUp(TB_References, Customer.Id = ThisItem.ID && Product.Id = I.Product.Id "
+        "&& Section.Value = \"Software\").Version)")
 
 BEHIND = ("CountRows(Filter(TB_Installations As I, I.Customer.Id = ThisItem.ID, "
           "I.Status.Value <> \"Retired\", "

@@ -185,6 +185,34 @@ def check_file(path):
             findings.append((n, "ButtonAppearance.Secondary renders near-white on any "
                                 "background - use Outline or Subtle"))
 
+        # 1f. LookUp takes ONE condition, unlike Filter:
+        #         LookUp(Table, Condition [, ReductionFormula])
+        #     A second condition passed as another argument is either rejected outright
+        #     ("Invalid number of arguments: received 4, expected 2-3") or, worse, silently
+        #     accepted as the reduction formula - which returns the wrong column rather
+        #     than filtering, and reports the failure somewhere else entirely.
+        for m in re.finditer(r"LookUp\(", code):
+            depth, args, cur = 0, [], ""
+            for ch in code[m.end():]:
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    if depth == 0:
+                        args.append(cur)
+                        break
+                    depth -= 1
+                elif ch == "," and depth == 0:
+                    args.append(cur)
+                    cur = ""
+                    continue
+                cur += ch
+            if len(args) > 3:
+                findings.append((n, f"LookUp given {len(args)} arguments - it takes one "
+                                    "condition; join them with &&"))
+            elif len(args) == 3 and re.search(r"[<>=]", args[2]):
+                findings.append((n, "LookUp's third argument looks like a condition, but "
+                                    "that slot is the reduction formula - join with &&"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):

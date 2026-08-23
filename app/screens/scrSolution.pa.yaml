@@ -102,10 +102,10 @@ Screens:
                   Width: =Min(Parent.Width - (Gutter * 2), 620)
                   Height: =116
                   InstalledVersion: |
-                    =Coalesce(varInstallation.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = varInstallation.Product.Id, Section.Value = "Software").Version)
+                    =Coalesce(varInstallation.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id && Section.Value = "Software").Version)
                   StandardVersion: =Coalesce(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version', "")
                   SourceNote: |
-                    =If(!IsBlank(varInstallation.'Installed Version'), "", !IsBlank(LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = varInstallation.Product.Id, Section.Value = "Software").Version), "  ·  site default for this model", "")
+                    =If(!IsBlank(varInstallation.'Installed Version'), "", !IsBlank(LookUp(TB_References, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id && Section.Value = "Software").Version), "  ·  site default for this model", "")
 
             - conConfigNotesSol:
                 Control: GroupContainer
