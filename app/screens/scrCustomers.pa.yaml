@@ -52,6 +52,7 @@ Screens:
             - lblTitleCus:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -65,6 +66,8 @@ Screens:
             - txtSearchCus:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Type: =TextInputType.Search
                   X: =Gutter
                   Y: =Gutter + 84
@@ -142,6 +145,7 @@ Screens:
                   - lblName:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Wrap: =false

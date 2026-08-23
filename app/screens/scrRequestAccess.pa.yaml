@@ -56,6 +56,7 @@ Screens:
             - lblTitleReq:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   Text: ="Admin access"
@@ -90,6 +91,7 @@ Screens:
             - lblReqStatus:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =4
                   PaddingBottom: =4
                   Text: |

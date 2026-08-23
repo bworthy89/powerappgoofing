@@ -144,6 +144,7 @@ Screens:
             - lblTitleUnit:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -198,6 +199,7 @@ Screens:
                   - lblInstalledUnit:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -238,6 +240,7 @@ Screens:
                   - lblStandardUnit:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Wrap: =false
@@ -274,6 +277,7 @@ Screens:
                   - lblCurrencyUnit:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -326,6 +330,7 @@ Screens:
                   - lblConfigNotesUnit:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -338,6 +343,7 @@ Screens:
             - lblDocsHeadingUnit:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -525,6 +531,7 @@ Screens:
             - lblFirmwareHeadingUnit:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =If(scrUnit.Size >= ScreenSize.Medium, galDocsUnit.X + galDocsUnit.Width + Gutter, Gutter)

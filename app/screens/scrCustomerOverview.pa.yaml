@@ -57,6 +57,7 @@ Screens:
             - lblTitleOvw:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -97,6 +98,7 @@ Screens:
                   - lblSupportNotes:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -109,6 +111,7 @@ Screens:
             - lblSolutionsHeading:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -186,6 +189,7 @@ Screens:
                   - lblModel:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Wrap: =false
@@ -238,6 +242,7 @@ Screens:
                   - lblCurrencyOvw:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         OnSelect: =Select(Parent)

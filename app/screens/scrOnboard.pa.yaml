@@ -49,6 +49,7 @@ Screens:
             - lblWizTitle:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   Font: =AppFont
@@ -97,6 +98,8 @@ Screens:
             - txtWizCustName:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =""
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -133,6 +136,8 @@ Screens:
             - txtWizCustDesc:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =""
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -169,6 +174,8 @@ Screens:
             - txtWizCustNotes:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =""
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -205,6 +212,7 @@ Screens:
             - tglWizCustActive:
                 Control: ModernToggle
                 Properties:
+                  Color: =AppDark.Fg
                   Default: =true
                   Font: =AppFont
                   Size: =AppType.Body
@@ -466,6 +474,7 @@ Screens:
                   - lblWizSolRow:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: |
@@ -642,6 +651,7 @@ Screens:
                   - lblWizCompId:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: =ThisItem.Unit.Id
@@ -657,6 +667,7 @@ Screens:
                   - lblWizCompName:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: =ThisItem.Unit.Value
@@ -724,6 +735,7 @@ Screens:
                   - lblWizUnitRow:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: |

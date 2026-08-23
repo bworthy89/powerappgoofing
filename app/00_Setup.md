@@ -954,3 +954,37 @@ before encoding — the source artwork was 602x590; the embedded copy is 200px w
 `verify_yaml.py` skips lines matching `SVG_MARKUP_RE`. SVG attributes are single-quoted,
 which is exactly the shape its quoted-token check treats as a SharePoint column name — one
 card background produced eleven false findings before the guard existed.
+
+## A control with no `Color` inherits the theme's, which is dark — swapping to a dark ground breaks all of them at once
+
+After migrating nine screens to the dark palette, every heading, field and non-primary
+button on them rendered near-black on graphite. The migration was not at fault: it rewrote
+every colour that was **written down**, and 75 controls had never had a `Color` at all.
+Those inherit the modern theme's default foreground, which is dark because the theme is a
+light theme, and no background swap changes that.
+
+This is the inverse of the `Fill`/`Color` failure recorded above. There a colour outlived
+its background; here no colour existed to outlive one. Both share a root cause — appearance
+depending on something that changed underneath — and neither is visible to a compile.
+
+**A dark modern theme would be the real fix and does not exist.** The theme editor generates
+a palette from a seed colour and exposes no dark-mode switch, so `AppDark` is a Power Fx
+record and every control states its own colour.
+
+Three roles, not one:
+
+| control | needs |
+|---|---|
+| `ModernText`, `Label` | `Color` |
+| `ModernTextInput`, `ModernDropdown` | `Color` **and** `Fill` |
+| `ModernButton` (not Primary) | `Color` |
+| `ModernToggle`, checkboxes | `Color` |
+
+The field case is the one that hides. Those controls also had no `Fill`, so they were white
+boxes on a dark screen — and because the text inside them was perfectly readable, they do
+not register when you scan for a contrast problem. A `Primary` button is already correct
+(white on the accent, from the theme); forcing a colour onto it would fight the theme.
+
+`scripts/fix_dark_defaults.py` applies this and reports what it added. Run it after any
+change that introduces controls, and treat a non-zero count as a real finding rather than
+noise — it means new controls shipped depending on a default that is wrong for this app.

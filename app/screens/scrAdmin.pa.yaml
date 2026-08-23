@@ -47,6 +47,7 @@ Screens:
             - lblTitleAdm:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   Font: =AppFont
@@ -176,6 +177,8 @@ Screens:
             - txtSearchAdm:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Type: =TextInputType.Search
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -265,6 +268,7 @@ Screens:
                   - btnRowCust:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Description, "no description")
@@ -308,6 +312,7 @@ Screens:
                   - btnRowProd:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.'Product Type'.Value, "no type") & "  |  standard " & Coalesce(ThisItem.'Current Standard Version', "not set")
@@ -351,6 +356,7 @@ Screens:
                   - btnRowInst:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.'Parent'), "  |  SOLUTION", "  |  unit of " & ThisItem.'Parent'.Value)
@@ -394,6 +400,7 @@ Screens:
                   - btnRowSolU:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")
@@ -437,6 +444,7 @@ Screens:
                   - btnRowRef:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Secondary
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")
@@ -492,6 +500,7 @@ Screens:
                   - lblAccName:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: |

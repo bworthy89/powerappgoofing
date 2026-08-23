@@ -46,6 +46,7 @@ Screens:
             - lblTitleEdit:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   Font: =AppFont
@@ -78,6 +79,8 @@ Screens:
             - txtTitleCust:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecCust.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -114,6 +117,8 @@ Screens:
             - txtDescriptionCust:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecCust.Description)
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -150,6 +155,8 @@ Screens:
             - txtSupportNotesCust:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecCust.'Support Notes')
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -186,6 +193,7 @@ Screens:
             - tglActiveCust:
                 Control: ModernToggle
                 Properties:
+                  Color: =AppDark.Fg
                   Default: =If(varAdminNew, false, varRecCust.Active)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -214,6 +222,8 @@ Screens:
             - txtTitleProd:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecProd.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -320,6 +330,8 @@ Screens:
             - txtStdVersionProd:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecProd.'Current Standard Version')
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -356,6 +368,8 @@ Screens:
             - txtDescriptionProd:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecProd.Description)
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -392,6 +406,7 @@ Screens:
             - tglActiveProd:
                 Control: ModernToggle
                 Properties:
+                  Color: =AppDark.Fg
                   Default: =If(varAdminNew, false, varRecProd.Active)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -420,6 +435,8 @@ Screens:
             - txtTitleInst:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecInst.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -561,6 +578,8 @@ Screens:
             - txtInstVersionInst:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecInst.'Installed Version')
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -632,6 +651,8 @@ Screens:
             - txtConfigNotesInst:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecInst.'Config Notes')
                   Type: =TextInputType.Multiline
                   Placeholder: =""
@@ -668,6 +689,8 @@ Screens:
             - txtTitleSolU:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecSolU.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -774,6 +797,7 @@ Screens:
             - tglStandardSolU:
                 Control: ModernToggle
                 Properties:
+                  Color: =AppDark.Fg
                   Default: =If(varAdminNew, false, varRecSolU.Standard)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -802,6 +826,8 @@ Screens:
             - txtTitleRef:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecRef.Title)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -978,6 +1004,8 @@ Screens:
             - txtURLRef:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecRef.URL)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -1014,6 +1042,8 @@ Screens:
             - txtVersionRef:
                 Control: ModernTextInput
                 Properties:
+                  Color: =AppDark.Fg
+                  Fill: =AppDark.Surface
                   Default: =If(varAdminNew, "", varRecRef.Version)
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
@@ -1050,6 +1080,7 @@ Screens:
             - tglFeaturedRef:
                 Control: ModernToggle
                 Properties:
+                  Color: =AppDark.Fg
                   Default: =If(varAdminNew, false, varRecRef.Featured)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -1168,6 +1199,7 @@ Screens:
             - btnDeleteEdit:
                 Control: ModernButton
                 Properties:
+                  Color: =AppDark.Fg
                   Appearance: =If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)
                   BasePaletteColor: =AppDark.DangerSolid
                   OnSelect: |
@@ -1206,6 +1238,7 @@ Screens:
             - btnCancelDelete:
                 Control: ModernButton
                 Properties:
+                  Color: =AppDark.Fg
                   Appearance: =ButtonAppearance.Secondary
                   Font: =AppFont
                   Size: =AppType.Small

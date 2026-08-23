@@ -81,6 +81,7 @@ Screens:
             - lblTitleSol:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -135,6 +136,7 @@ Screens:
                   - lblInstalledSol:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -175,6 +177,7 @@ Screens:
                   - lblStandardSol:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         Wrap: =false
@@ -211,6 +214,7 @@ Screens:
                   - lblCurrencySol:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -263,6 +267,7 @@ Screens:
                   - lblConfigNotesSol:
                       Control: ModernText
                       Properties:
+                        Color: =AppDark.Fg
                         PaddingTop: =0
                         PaddingBottom: =0
                         X: =Gutter
@@ -275,6 +280,7 @@ Screens:
             - lblUnitsHeading:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -408,6 +414,7 @@ Screens:
             - lblDocsHeadingSol:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
@@ -605,6 +612,7 @@ Screens:
             - lblFirmwareHeadingSol:
                 Control: ModernText
                 Properties:
+                  Color: =AppDark.Fg
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =If(scrSolution.Size >= ScreenSize.Medium, galDocsSol.X + galDocsSol.Width + Gutter, Gutter)
