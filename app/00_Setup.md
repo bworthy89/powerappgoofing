@@ -988,3 +988,26 @@ not register when you scan for a contrast problem. A `Primary` button is already
 `scripts/fix_dark_defaults.py` applies this and reports what it added. Run it after any
 change that introduces controls, and treat a non-zero count as a real finding rather than
 noise — it means new controls shipped depending on a default that is wrong for this app.
+
+## A component cannot go inside a gallery, which decides what components are worth building
+
+Microsoft's documented limitation: *"You can't insert a component into a gallery or a form
+(including SharePoint form)."*
+
+That removes every list in this app — unit rows, solution cards, document rows, search
+results — from the set of places a component can live. A reusable status chip, which is
+exactly the thing worth sharing, is banned from the rows that would use it most.
+
+What is left is standalone placements. `cmpVersionChip` is used on `scrSolution` and
+`scrUnit`, which show the same comparison against a different record. Two instances is a
+thin case, but those two screens are where the logic being wrong matters most, and one
+definition cannot drift from itself.
+
+**Consequence to plan around:** row-level status has to be built from ordinary controls, so
+the four-state logic exists twice — once in the component, once inline in the gallery
+template. They must be changed together. That duplication is forced by the platform, not a
+shortcut, and it should be written down wherever both copies live.
+
+Corollary: design components around *what can hold them*. A component sized for a gallery
+row is a component that can never be used. `cmpVersionChip` was originally a 190x44 pill for
+exactly that; it is now a full-width hero, which is what its actual placements needed.

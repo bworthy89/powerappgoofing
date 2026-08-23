@@ -1,42 +1,46 @@
-# Component — Version chip
+# Component — Version panel
 #
-# The app's whole reason to exist is "is this machine on the current build?", and until now
-# that answer was a concatenated string inside a label:
+# The app's whole reason to exist is "is this machine on the current build?". This is that
+# answer, and it is the largest thing on any detail screen.
 #
-#     SDRB250   3.4.1  ·  standard 3.6.0
+# WHY IT IS A COMPONENT AND WHY IT IS ONLY USED TWICE
 #
-# A technician scanning six units at a site had to read each line as prose. This makes the
-# answer a shape: a tinted pill whose colour, headline and verdict all say the same thing.
+# Microsoft's documented limitation: "You can't insert a component into a gallery or a
+# form." That rules out the unit rows, the solution cards on scrCustomerOverview, and every
+# other list in this app - the places a reusable status chip would have earned its keep.
+# What is left is scrSolution and scrUnit, which show the identical comparison against a
+# different record. Two instances is a thin case for a component, but those two are the
+# screens where the logic being wrong matters most, and one definition cannot drift from
+# itself. Row-level status is built inline instead; see gen_solution.py.
 #
-# FOUR states, not three. "No standard recorded on the product" is distinct from "no version
-# recorded on the machine" — the first is a gap in the catalogue, the second a gap in the
-# survey, and they are fixed by different people. Collapsing them into one grey blob is what
-# the old string did.
+# It was originally a 190x44 pill. That was sized for the gallery rows it turns out it can
+# never live in, so it is now a full-width hero: the version numbers are the headline of the
+# screen, not a badge in its corner.
 #
-# Colour NEVER carries the state alone; every state also says it in words. That rule is
-# already honoured everywhere in this app and is the one accessibility rule most status
-# displays break.
+# FOUR STATES, NOT THREE
 #
-# Contrast verified 2026-08-22, all against WCAG AA 4.5:1 for normal text:
-#   Warn  #9A6100 on WarnLight    #FBF0DC   4.55
-#   Ok    #17795E on OkLight      #E2F2EC   4.61
-#   Muted #66727E on NeutralLight #EDF0F3   4.30  <- FAILS, so this file uses #5A6570 (5.20)
-# The darkened grey is written literally rather than as AppTheme.Muted precisely because
-# AppTheme.Muted is the value that fails. Do not "tidy" it back to the theme token.
+# "No standard recorded on the product" is a different fact from "no version recorded on the
+# machine" - the first is a gap in the catalogue, the second a gap in the survey, and
+# different people fix them. The old concatenated string collapsed both into one grey blob.
 #
-# AccessAppScope is true so the chip can read AppTheme. If the compiler rejects that, or
-# AppTheme resolves blank inside the component, the fix is mechanical: replace each
-# AppTheme.X below with its literal hex from App.pa.yaml. Nothing else about the component
-# depends on app scope.
+# Colour never carries the state alone. Every state also says it in words, which is the
+# accessibility rule most status displays break.
 #
-# The version numbers are NOT tabular figures — Power Apps exposes no font-variant-numeric,
-# so 3.4.1 and 3.6.0 will not align digit-over-digit. Rendering them at 17pt semibold in a
-# tinted box is the available substitute for that alignment.
+# CUSTOM PROPERTY REFERENCES
+#
+# Always cmpVersionChip.<Name>. The bare name is rejected with "Name isn't valid", and
+# Parent.<Name> does not work either - Parent resolves for layout (Parent.Width) but not for
+# custom properties. That bakes this component's name into its own children, so renaming it
+# in Studio breaks every reference at once.
+#
+# The rail colour is interpolated into the SVG as a hex STRING, not a Color. Power Fx colours
+# are a distinct type with no text conversion, so the state test is duplicated - once
+# returning text for the SVG, once returning Color for the labels. They must stay in step.
 
 ComponentDefinitions:
   cmpVersionChip:
     DefinitionType: CanvasComponent
-    Description: Shows an installed software version against the product's current standard, as a four-state tinted chip.
+    Description: The installed software version against the product's current standard, as a four-state hero panel with a chamfered surface and a state-coloured rail.
     AccessAppScope: true
     CustomProperties:
       InstalledVersion:
@@ -52,69 +56,68 @@ ComponentDefinitions:
         Default: |-
           =""
     Properties:
-      Height: =44
-      Width: =190
+      Height: =116
+      Width: =560
       Fill: =RGBA(0, 0, 0, 0)
     Children:
-      # Custom properties are referenced as cmpVersionChip.<Name>, never bare. Studio rejects
-      # the bare name with "Name isn't valid. 'StandardVersion' isn't recognized." - the
-      # component's own name is the qualifier, exactly as Microsoft's walkthrough writes
-      # MenuComponent.Items. Parent.<Name> does not work either: Parent resolves to the
-      # component for layout (Parent.Width, Parent.Height) but not for custom properties.
-      #
-      # This bakes the component name into its own children, so renaming the component in
-      # Studio breaks all 20 of these references at once.
-      #
-      # The tint is the fastest read on the screen. Radius 6 matches every other surface
-      # in the app; this chip is meant to look native to it, not like a pasted-in widget.
-      #
-      # A ModernText with empty Text, not a Rectangle. Classic/Rectangle has no radius
-      # properties at all - it rejects RadiusTopLeft with PA2108 - so every rounded surface
-      # in this app is a ModernText or a button carrying Fill plus the four Radius keys.
-      # lblReqStatus on scrRequestAccess is the same pill, already proven in Studio.
-      - recChipFill:
-          Control: ModernText
+      # The chamfered surface. Power Apps has no chamfer - only four independent radii - so
+      # this is SVG, matching the cut corners of the GLORY wordmark. The 4px rail carries the
+      # state as colour; the text below carries it as words.
+      - imgChipPanel:
+          Control: Image
           Properties:
-            Text: |-
-              =""
-            PaddingTop: =0
-            PaddingBottom: =0
             X: =0
             Y: =0
             Width: =Parent.Width
             Height: =Parent.Height
-            RadiusTopLeft: =6
-            RadiusTopRight: =6
-            RadiusBottomLeft: =6
-            RadiusBottomRight: =6
-            Fill: |-
-              =If(
-                  IsBlank(cmpVersionChip.InstalledVersion),
-                  AppTheme.NeutralLight,
-                  IsBlank(cmpVersionChip.StandardVersion),
-                  AppTheme.NeutralLight,
-                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  AppTheme.OkLight,
-                  AppTheme.WarnLight
+            Image: |
+              ="data:image/svg+xml;utf8, " & EncodeUrl(
+                  "<svg xmlns='http://www.w3.org/2000/svg' width='" & Round(Parent.Width, 0) & "' height='" & Round(Parent.Height, 0) & "' viewBox='0 0 " & Round(Parent.Width, 0) & " " & Round(Parent.Height, 0) & "' preserveAspectRatio='none'>" &
+                  "<path d='M0 0 H" & Round(Parent.Width - 20, 0) & " L" & Round(Parent.Width, 0) & " 20 V" & Round(Parent.Height, 0) & " H0 Z' fill='#171A21' stroke='#2A2F3A' stroke-width='1'/>" &
+                  "<rect x='0' y='0' width='4' height='" & Round(Parent.Height, 0) & "' fill='" &
+                  If(
+                      IsBlank(cmpVersionChip.InstalledVersion), "#7F8794",
+                      IsBlank(cmpVersionChip.StandardVersion), "#838C9B",
+                      cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion, "#3DD68C",
+                      "#F5B83D"
+                  ) & "'/>"
               )
 
-      # The headline. When the machine is behind, it carries BOTH numbers and the direction
+      - lblChipLabel:
+          Control: ModernText
+          Properties:
+            X: =24
+            Y: =16
+            Width: =Parent.Width - 48
+            Height: =18
+            PaddingTop: =0
+            PaddingBottom: =0
+            Text: ="SOFTWARE VERSION"
+            Font: =AppFont
+            Size: =AppType.Small
+            FontWeight: =FontWeight.Bold
+            Color: =AppDark.Muted
+            Wrap: =false
+            AutoHeight: =false
+
+      # The headline. When the machine is behind it carries BOTH numbers and the direction
       # between them, so the comparison needs no second glance. Every other state shows one
-      # number, or says plainly that there isn't one.
+      # number, or says plainly that there is not one.
       - lblChipVersion:
           Control: ModernText
           Properties:
-            X: =10
-            Y: =4
-            Width: =Parent.Width - 20
-            Height: =22
+            X: =24
+            Y: =40
+            Width: =Parent.Width - 48
+            Height: =41
             PaddingTop: =0
             PaddingBottom: =0
             Font: =AppFont
-            Size: =AppType.Heading
+            Size: =If(IsNarrow, AppType.Title, AppType.Display)
             FontWeight: =FontWeight.Semibold
             Wrap: =false
-            Text: |-
+            AutoHeight: =false
+            Text: |
               =If(
                   IsBlank(cmpVersionChip.InstalledVersion),
                   "not recorded",
@@ -122,42 +125,43 @@ ComponentDefinitions:
                   cmpVersionChip.InstalledVersion,
                   cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
                   cmpVersionChip.InstalledVersion,
-                  cmpVersionChip.InstalledVersion & "  →  " & cmpVersionChip.StandardVersion
+                  cmpVersionChip.InstalledVersion & "   →   " & cmpVersionChip.StandardVersion
               )
-            Color: |-
+            Color: |
               =If(
                   IsBlank(cmpVersionChip.InstalledVersion),
-                  ColorValue("#5A6570"),
+                  AppDark.Faint,
                   IsBlank(cmpVersionChip.StandardVersion),
-                  ColorValue("#5A6570"),
+                  AppDark.Fg,
                   cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  AppTheme.Ok,
-                  AppTheme.Warn
+                  AppDark.Ok,
+                  AppDark.Warn
               )
 
-      # The verdict, in words. This is the line that makes the chip readable to someone who
-      # cannot distinguish the tints, and it is also the line that tells a technician what to
-      # DO — "update available" is an instruction, "3.4.1 ≠ 3.6.0" is a riddle.
+      # The verdict, in words. This is what makes the panel readable to someone who cannot
+      # separate the tints, and it is also the line that says what to DO - "update available"
+      # is an instruction, "3.4.1 is not 3.6.0" is a riddle.
       - lblChipVerdict:
           Control: ModernText
           Properties:
-            X: =10
-            Y: =25
-            Width: =Parent.Width - 20
-            Height: =16
+            X: =24
+            Y: =84
+            Width: =Parent.Width - 48
+            Height: =18
             PaddingTop: =0
             PaddingBottom: =0
             Font: =AppFont
             Size: =AppType.Small
             Wrap: =false
-            Text: |-
+            AutoHeight: =false
+            Text: |
               =If(
                   IsBlank(cmpVersionChip.InstalledVersion),
-                  "no version on file",
+                  "no version on file for this machine",
                   IsBlank(cmpVersionChip.StandardVersion),
-                  "no standard set",
+                  "no standard set for this model",
                   cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  "current",
+                  "on the current standard",
                   "update available"
               )
-            Color: =ColorValue("#5A6570")
+            Color: =AppDark.Muted
