@@ -38,26 +38,40 @@ OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrCustomerOverview.pa.yaml")
 CARD_H = 88
 PROD = "LookUp(TB_Products, ID = ThisItem.Product.Id)"
 
+# The version in force for a solution row: its own, else the site default for that
+# model. Identical in meaning to screen_parts.effective_version and to the count
+# below - the hero and this card disagreeing is exactly what this change removes.
+EFF_READ = "lblEffVerOvw.Text"
+EFF_ROW = ("Coalesce(ThisItem.'Installed Version', "
+           "LookUp(TB_References, Customer.Id = varCustomer.ID, "
+           "Product.Id = ThisItem.Product.Id, Section.Value = \"Software\").Version)")
+
 # Units under this solution row. "As U" names the outer row so U.Product.Id is not shadowed
 # by the nested LookUp's own scope.
 UNITS = ("Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
          "U.Status.Value <> \"Retired\")")
 UNIT_N = f"CountRows({UNITS})"
+# Same rule as the hero and as scrCustomers: the machine's own version, else the site
+# default recorded against that model. varCustomer is the site being viewed.
+_EFF = ("Coalesce(U.'Installed Version', "
+        "LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, "
+        "Section.Value = \"Software\").Version)")
+
 BEHIND_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
             "U.Status.Value <> \"Retired\", "
-            "!IsBlank(U.'Installed Version'), "
+            f"!IsBlank({_EFF}), "
             "!IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), "
-            "U.'Installed Version' <> LookUp(TB_Products, ID = U.Product.Id)"
+            f"{_EFF} <> LookUp(TB_Products, ID = U.Product.Id)"
             ".'Current Standard Version'))")
 
 # The solution's own four-state comparison, same order and meaning as cmpVersionChip and as
 # the unit rows on scrSolution. Three copies of this logic now exist; they must move together.
 STATE_COLOUR = f"""=If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank({EFF_READ}),
                               AppDark.Line,
                               IsBlank({PROD}.'Current Standard Version'),
                               AppDark.Muted,
-                              ThisItem.'Installed Version' = {PROD}.'Current Standard Version',
+                              {EFF_READ} = {PROD}.'Current Standard Version',
                               AppDark.Ok,
                               AppDark.Warn
                           )"""
@@ -225,6 +239,26 @@ Screens:
                               "<path d='M0 0 H" & Round(Parent.TemplateWidth - 16, 0) & " L" & Round(Parent.TemplateWidth, 0) & " 16 V{CARD_H} H0 Z' fill='#171A21' stroke='#2A2F3A' stroke-width='1'/>" &
                               "</svg>"
                           )
+                  # The effective version is a non-delegable LookUp per row, and the card
+                  # formulas below reference it a dozen times. Evaluated once here and read
+                  # back, the same parking idiom scrCustomers uses for its behind count.
+                  - lblEffVerOvw:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =1
+                        Height: =1
+                        Visible: =false
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppDark.Muted
+                        Text: |
+                          ={EFF_ROW}
+
                   - recCardRailOvw:
                       Control: Rectangle
                       Properties:
@@ -293,21 +327,21 @@ Screens:
                         AutoHeight: =false
                         Text: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank({EFF_READ}),
                               "not recorded",
                               IsBlank({PROD}.'Current Standard Version'),
-                              ThisItem.'Installed Version',
-                              ThisItem.'Installed Version' = {PROD}.'Current Standard Version',
-                              ThisItem.'Installed Version',
-                              ThisItem.'Installed Version' & "  →  " & {PROD}.'Current Standard Version'
+                              {EFF_READ},
+                              {EFF_READ} = {PROD}.'Current Standard Version',
+                              {EFF_READ},
+                              {EFF_READ} & "  →  " & {PROD}.'Current Standard Version'
                           )
                         Color: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank({EFF_READ}),
                               AppDark.Faint,
                               IsBlank({PROD}.'Current Standard Version'),
                               AppDark.Muted,
-                              ThisItem.'Installed Version' = {PROD}.'Current Standard Version',
+                              {EFF_READ} = {PROD}.'Current Standard Version',
                               AppDark.Ok,
                               AppDark.Warn
                           )

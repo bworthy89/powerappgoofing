@@ -106,7 +106,7 @@ $Schema = [ordered]@{
         Description = 'Documents and firmware links, keyed to a model.'
         TitleLabel  = 'Document title'
         Fields      = @(
-            @{ Display = 'Section';        Internal = 'TBSection';       Type = 'Choice';   Choices = @('Documentation','Firmware & Downloads') }
+            @{ Display = 'Section';        Internal = 'TBSection';       Type = 'Choice';   Choices = @('Documentation','Firmware & Downloads','Software') }
             @{ Display = 'Reference Type'; Internal = 'TBReferenceType'; Type = 'Choice';   Choices = $ReferenceTypes }
             @{ Display = 'URL';            Internal = 'TBUrl';           Type = 'URL' }
             @{ Display = 'Version';        Internal = 'TBVersion';       Type = 'Text' }

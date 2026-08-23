@@ -107,3 +107,47 @@ typo did not survive the rebuild.
 `TB_CustomerGuides` is the one old list whose export could not be parsed - it is in a
 different format from the other six. Its contents folded into `TB_References` along with the
 other two reference lists, but the column-by-column detail is not recorded here.
+
+## Add "Software" to TB_References → Section
+
+One manual change, needed before customer-level software versions work.
+
+**TB_References → Section** (internal name `TBSection`) is a Choice column. Add a third
+value alongside the two that exist:
+
+```
+Documentation
+Firmware & Downloads
+Software          <- add this
+```
+
+List settings → Columns → Section → add `Software` to the choices → OK.
+
+### What it enables
+
+A `TB_References` row with **Customer**, **Product**, **Section = Software** and a
+**Version** becomes the software version for every machine of that model at that site:
+
+```
+Customer  Northgate Retail Group
+Product   CI 300X
+Section   Software
+Version   3.4.1
+```
+
+Every Northgate CI 300X with a blank Installed Version now shows 3.4.1 and is compared
+against the model's Current Standard Version. A machine that has its own Installed Version
+keeps it — the machine record always wins, so one unit on a different build stays visible
+rather than being hidden by the site default.
+
+Nothing is written to the installation records. This only changes what is displayed and
+compared, so a site default can be corrected in one row.
+
+### Two things to expect
+
+- **`Choices()` is a cached snapshot.** The new value will not appear in the admin form's
+  Section dropdown until the app is closed and reopened. This is the same trap recorded in
+  `app/00_Setup.md`.
+- **`Version` was previously write-only.** The admin form has always offered the field and
+  nothing ever read it back, so any values already sitting in it will start having an
+  effect. Worth a look at existing rows before adding new ones.

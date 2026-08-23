@@ -55,6 +55,12 @@ ComponentDefinitions:
         Description: The product's current standard version. Blank means the catalogue has no standard for this product.
         Default: |-
           =""
+      SourceNote:
+        PropertyKind: Input
+        DataType: Text
+        Description: Where the installed version came from, when it was not the machine's own record. Blank when it was.
+        Default: |-
+          =""
     Properties:
       Height: =116
       Width: =560
@@ -163,5 +169,5 @@ ComponentDefinitions:
                   cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
                   "on the current standard",
                   "update available"
-              )
+              ) & cmpVersionChip.SourceNote
             Color: =AppDark.Muted

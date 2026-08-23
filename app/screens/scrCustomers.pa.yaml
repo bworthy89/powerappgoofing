@@ -171,7 +171,7 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppDark.Muted
                         Text: |
-                          =CountRows(Filter(TB_Installations As I, I.Customer.Id = ThisItem.ID, I.Status.Value <> "Retired", !IsBlank(I.'Installed Version'), !IsBlank(LookUp(TB_Products, ID = I.Product.Id).'Current Standard Version'), I.'Installed Version' <> LookUp(TB_Products, ID = I.Product.Id).'Current Standard Version'))
+                          =CountRows(Filter(TB_Installations As I, I.Customer.Id = ThisItem.ID, I.Status.Value <> "Retired", !IsBlank(Coalesce(I.'Installed Version', LookUp(TB_References, Customer.Id = ThisItem.ID, Product.Id = I.Product.Id, Section.Value = "Software").Version)), !IsBlank(LookUp(TB_Products, ID = I.Product.Id).'Current Standard Version'), Coalesce(I.'Installed Version', LookUp(TB_References, Customer.Id = ThisItem.ID, Product.Id = I.Product.Id, Section.Value = "Software").Version) <> LookUp(TB_Products, ID = I.Product.Id).'Current Standard Version'))
 
                   # Amber only when something is known to be behind. Neutral otherwise -
                   # never green, because "nothing recorded" and "all current" are the same

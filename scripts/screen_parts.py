@@ -304,7 +304,8 @@ def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
                     {empty_visible}"""
 
 
-def version_hero(sfx, y, product_expr):
+def version_hero(sfx, y, product_expr, customer_id="varCustomer.ID",
+                 product_id="varInstallation.Product.Id"):
     """The version answer, as a component instance.
 
     Control is the literal CanvasComponent; the definition is named in the sibling
@@ -314,6 +315,8 @@ def version_hero(sfx, y, product_expr):
     This is the only place a component is allowed to live in this app: one cannot be
     inserted into a gallery or a form, which rules out every list here.
     """
+    eff = effective_version("varInstallation", customer_id, product_id)
+    note = version_source_note("varInstallation", customer_id, product_id)
     return f"""            - cmpVersion{sfx}:
                 Control: CanvasComponent
                 ComponentName: cmpVersionChip
@@ -323,5 +326,35 @@ def version_hero(sfx, y, product_expr):
                     ={y}
                   Width: =Min({CW}, {PANEL_MAX})
                   Height: =116
-                  InstalledVersion: =Coalesce(varInstallation.'Installed Version', "")
-                  StandardVersion: =Coalesce({product_expr}.'Current Standard Version', "")"""
+                  InstalledVersion: |
+                    ={eff}
+                  StandardVersion: =Coalesce({product_expr}.'Current Standard Version', "")
+                  SourceNote: |
+                    ={note}"""
+
+
+def effective_version(inst, customer_id, product_id):
+    """The software version in force for an installation.
+
+    The machine's own Installed Version, or failing that the Software reference recorded
+    for this customer and this model. Coalesce treats a zero-length string as blank, so a
+    field someone cleared behaves the same as one never filled in.
+
+    The installation record is never written by this - it only changes what is displayed
+    and compared, so a site default can be corrected without touching machine records.
+    """
+    return (f"Coalesce({inst}.'Installed Version', "
+            f"LookUp(TB_References, Customer.Id = {customer_id}, "
+            f"Product.Id = {product_id}, Section.Value = \"Software\").Version)")
+
+
+def version_source_note(inst, customer_id, product_id):
+    """Says where a displayed version came from, when it was not the machine itself.
+
+    Without this the hero asserts a version the installation record does not contain, and
+    the next person to open the admin form finds the field empty and assumes a bug.
+    """
+    return (f"If(!IsBlank({inst}.'Installed Version'), \"\", "
+            f"!IsBlank(LookUp(TB_References, Customer.Id = {customer_id}, "
+            f"Product.Id = {product_id}, Section.Value = \"Software\").Version), "
+            f"\"  ·  site default for this model\", \"\")")

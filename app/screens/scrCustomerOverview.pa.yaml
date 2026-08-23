@@ -189,6 +189,26 @@ Screens:
                               "<path d='M0 0 H" & Round(Parent.TemplateWidth - 16, 0) & " L" & Round(Parent.TemplateWidth, 0) & " 16 V88 H0 Z' fill='#171A21' stroke='#2A2F3A' stroke-width='1'/>" &
                               "</svg>"
                           )
+                  # The effective version is a non-delegable LookUp per row, and the card
+                  # formulas below reference it a dozen times. Evaluated once here and read
+                  # back, the same parking idiom scrCustomers uses for its behind count.
+                  - lblEffVerOvw:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =0
+                        Y: =0
+                        Width: =1
+                        Height: =1
+                        Visible: =false
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =AppDark.Muted
+                        Text: |
+                          =Coalesce(ThisItem.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = ThisItem.Product.Id, Section.Value = "Software").Version)
+
                   - recCardRailOvw:
                       Control: Rectangle
                       Properties:
@@ -199,11 +219,11 @@ Screens:
                         Height: =88
                         Fill: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank(lblEffVerOvw.Text),
                               AppDark.Line,
                               IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
                               AppDark.Muted,
-                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              lblEffVerOvw.Text = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
                               AppDark.Ok,
                               AppDark.Warn
                           )
@@ -242,9 +262,9 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         Text: |
-                          =LookUp(TB_Products, ID = ThisItem.Product.Id).Family.Value & "  ·  " & CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired")) & " unit(s)" & If(CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(U.'Installed Version'), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), U.'Installed Version' <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) > 0, "  ·  " & CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(U.'Installed Version'), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), U.'Installed Version' <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) & " behind", "") & If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
+                          =LookUp(TB_Products, ID = ThisItem.Product.Id).Family.Value & "  ·  " & CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired")) & " unit(s)" & If(CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version)), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version) <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) > 0, "  ·  " & CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version)), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version) <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) & " behind", "") & If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
                         Color: |
-                          =If(CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(U.'Installed Version'), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), U.'Installed Version' <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) > 0, AppDark.Warn, AppDark.Muted)
+                          =If(CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, U.Status.Value <> "Retired", !IsBlank(Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version)), !IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), Coalesce(U.'Installed Version', LookUp(TB_References, Customer.Id = varCustomer.ID, Product.Id = U.Product.Id, Section.Value = "Software").Version) <> LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version')) > 0, AppDark.Warn, AppDark.Muted)
                   # Right-aligned so versions form one column down the list, the same
                   # treatment as the unit rows on scrSolution.
                   - lblCardVerOvw:
@@ -265,21 +285,21 @@ Screens:
                         AutoHeight: =false
                         Text: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank(lblEffVerOvw.Text),
                               "not recorded",
                               IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
-                              ThisItem.'Installed Version',
-                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
-                              ThisItem.'Installed Version',
-                              ThisItem.'Installed Version' & "  →  " & LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'
+                              lblEffVerOvw.Text,
+                              lblEffVerOvw.Text = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              lblEffVerOvw.Text,
+                              lblEffVerOvw.Text & "  →  " & LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'
                           )
                         Color: |
                           =If(
-                              IsBlank(ThisItem.'Installed Version'),
+                              IsBlank(lblEffVerOvw.Text),
                               AppDark.Faint,
                               IsBlank(LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version'),
                               AppDark.Muted,
-                              ThisItem.'Installed Version' = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
+                              lblEffVerOvw.Text = LookUp(TB_Products, ID = ThisItem.Product.Id).'Current Standard Version',
                               AppDark.Ok,
                               AppDark.Warn
                           )
