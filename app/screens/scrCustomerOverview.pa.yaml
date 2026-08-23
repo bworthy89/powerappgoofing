@@ -207,7 +207,7 @@ Screens:
                         Size: =AppType.Small
                         Color: =AppDark.Muted
                         Text: |
-                          =Coalesce(ThisItem.'Installed Version', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = ThisItem.Product.Id && Section.Value = "Software").Version)
+                          =Coalesce(ThisItem.'Installed Version', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = ThisItem.Product.Id).'Software Version')
 
                   - recCardRailOvw:
                       Control: Rectangle

@@ -42,10 +42,22 @@ PROD = "LookUp(TB_Products, ID = ThisItem.Product.Id)"
 # model. Identical in meaning to screen_parts.effective_version and to the count
 # below - the hero and this card disagreeing is exactly what this change removes.
 EFF_READ = "lblEffVerOvw.Text"
-EFF_ROW = ("Coalesce(ThisItem.'Installed Version', "
-           "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID "
-           "&& Product.Id = ThisItem.Product.Id "
-           "&& Section.Value = \"Software\").Version)")
+
+
+def _effective(inst, product_id):
+    """The version in force for one installation: its own, else the site baseline.
+
+    One definition for both the solution card and the per-unit count below. They were
+    written out separately and a rename reached one and not the other, which put a Section
+    filter on a list that has no Section and read a column that had been renamed - both of
+    which shipped.
+    """
+    return (f"Coalesce({inst}.'Installed Version', "
+            f"LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID "
+            f"&& Product.Id = {product_id}).'Software Version')")
+
+
+EFF_ROW = _effective("ThisItem", "ThisItem.Product.Id")
 
 # Units under this solution row. "As U" names the outer row so U.Product.Id is not shadowed
 # by the nested LookUp's own scope.
@@ -54,8 +66,7 @@ UNITS = ("Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
 UNIT_N = f"CountRows({UNITS})"
 # Same rule as the hero and as scrCustomers: the machine's own version, else the site
 # default recorded against that model. varCustomer is the site being viewed.
-_EFF = ("Coalesce(U.'Installed Version', "
-        "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = U.Product.Id).'Software Version')")
+_EFF = _effective("U", "U.Product.Id")
 
 BEHIND_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
             "U.Status.Value <> \"Retired\", "

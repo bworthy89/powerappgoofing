@@ -214,6 +214,19 @@ def check_file(path):
                 findings.append((n, "LookUp's third argument looks like a condition, but "
                                     "that slot is the reduction formula - join with &&"))
 
+        # 1g. A column filtered on a list that does not have it. The generators build
+        #     these expressions by string substitution, and a rename that reaches one copy
+        #     and not another leaves a filter pointed at the wrong list - which reports as
+        #     "Name isn't valid" against a column that exists elsewhere.
+        for m in re.finditer(r"LookUp\((TB_\w+)([^()]*(?:\([^()]*\)[^()]*)*)\)", code):
+            table, body = m.group(1), m.group(2)
+            if table not in SCHEMA:
+                continue
+            for col in re.findall(r"(?<![\w.'])([A-Z]\w+)\.(?:Value|Id)\b", body):
+                if col not in SCHEMA[table]:
+                    findings.append((n, f"{table} has no column '{col}' - "
+                                        f"filter refers to a column of another list"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):
