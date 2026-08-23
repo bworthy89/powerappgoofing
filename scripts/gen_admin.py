@@ -7,6 +7,8 @@ GroupContainer, Gallery.
 Form / DataCard are deliberately avoided: describe_control returns HTTP 500
 for both, so their properties cannot be verified.
 """
+
+import screen_parts as P
 import io, sys
 
 # ---------------------------------------------------------------- field spec
@@ -114,14 +116,15 @@ def gen_admin():
     prop(o, "Width", "ContentWidth", p)
     prop(o, "X", "Max((Parent.Width - ContentWidth) / 2, Gutter)", p)
     o.write(f"{p[:-2]}Children:\n")
+    o.write(P.brand_band("Adm", "scrHome", back_transition="CoverRight", back_label="Home") + "\n")
     c = p
 
     q = ctrl(o, "btnBackAdm", "Classic/Button", c)
     for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark.Bg"),
-                 ("Font","AppFont"),("Height","28"),("HoverColor","AppDark.AccentSolid"),
+                 ("Font","AppFont"),("Height","44"),("HoverColor","AppDark.AccentSolid"),
                  ("HoverFill","AppDark.Sunken"),("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
                  ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-                 ("X","Gutter"),("Y","Gutter"),("FocusedBorderThickness","2"),
+                 ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
                  ("FocusedBorderColor","AppDark.Accent")]:
         prop(o, k, v, q)
 
@@ -129,7 +132,7 @@ def gen_admin():
     for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
                  ("Height","36"),("Size","AppType.Title"),("Text",'"Admin"'),("Wrap","false"),
                  ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
-                 ("X","Gutter"),("Y","Gutter + 34")]:
+                 ("X","Gutter"),("Y","BandH + Gutter + 34")]:
         prop(o, k, v, q)
 
     # The tab bar divides by however many lists there are. It was hardcoded to
@@ -146,9 +149,9 @@ def gen_admin():
                      ("Color",f'If({sel}, AppDark.OnBrand, AppDark.Fg)'),
                      ("HoverFill",f'If({sel}, AppDark.AccentSolid, AppDark.Sunken)'),
                      ("BorderColor","AppDark.Line"),("BorderThickness","1"),
-                     ("Height","34"),("Width",TABW),
+                     ("Height","44"),("Width",TABW),
                      ("X",f"Gutter + ({TABW} + 8) * {i}"),
-                     ("Y","Gutter + 80"),
+                     ("Y","BandH + Gutter + 80"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                      ("OnSelect",f'Set(varAdminList, "{L["key"]}")'),
@@ -159,7 +162,7 @@ def gen_admin():
     for k, v in [("BorderColor","AppDark.Line"),("BorderThickness","1"),("Color","AppDark.Fg"),
                  ("Default",'""'),("Fill","AppDark.Surface"),("Font","AppFont"),("Height","40"),
                  ("HintText",'"Search"'),("Size","AppType.Body"),
-                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","Gutter + 126"),
+                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","BandH + Gutter + 126"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
         prop(o, k, v, q)
@@ -176,7 +179,7 @@ def gen_admin():
                  ("HoverFill","AppDark.Sunken"),("BorderColor","AppDark.Line"),
                  ("BorderThickness","1"),
                  ("Height","40"),("Width","150"),
-                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","BandH + Gutter + 126"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'varAdminList = "Cust"'),
@@ -189,7 +192,7 @@ def gen_admin():
                  ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
                  ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("Height","40"),("Width","118"),
-                 ("X","ContentWidth - Gutter - 118"),("Y","Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118"),("Y","BandH + Gutter + 126"),
                  ("Visible",'varAdminList <> "Acc"'),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
@@ -222,9 +225,9 @@ def gen_admin():
                 f"{q}      Filter({L['source']}, StartsWith(Title, Trim(txtSearchAdm.Text))),\n"
                 f"{q}      \"Title\",\n{q}      SortOrder.Ascending\n{q}  )\n")
         for k, v in [("Visible",f'varAdminList = "{L["key"]}"'),
-                     ("X","Gutter"),("Y","Gutter + 180"),
+                     ("X","Gutter"),("Y","BandH + Gutter + 180"),
                      ("Width","ContentWidth - (Gutter * 2)"),
-                     ("Height","Parent.Height - (Gutter + 180) - Gutter"),
+                     ("Height","Parent.Height - (BandH + Gutter + 180) - Gutter"),
                      ("TemplateSize","44"),("TemplatePadding","6"),("ShowScrollbar","true")]:
             prop(o, k, v, q)
         o.write(f"{q[:-2]}Children:\n")
@@ -250,9 +253,9 @@ def gen_admin():
     # Pending first, so the thing needing a decision is at the top.
     o.write(f"{q}Items: |\n"
             f"{q}  =Sort(TB_Admins, If(Status.Value = \"Pending\", 0, 1), SortOrder.Ascending)\n")
-    for k, v in [("Visible",VIS),("X","Gutter"),("Y","Gutter + 180"),
+    for k, v in [("Visible",VIS),("X","Gutter"),("Y","BandH + Gutter + 180"),
                  ("Width","ContentWidth - (Gutter * 2)"),
-                 ("Height","Parent.Height - (Gutter + 180) - Gutter"),
+                 ("Height","Parent.Height - (BandH + Gutter + 180) - Gutter"),
                  ("TemplateSize","56"),("TemplatePadding","6"),
                  ("ShowScrollbar","true")]:
         prop(o, k, v, q)
@@ -293,7 +296,7 @@ def gen_admin():
                  ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
                  ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("X","Parent.TemplateWidth - 200"),("Y","8"),
-                 ("Width","92"),("Height","34"),
+                 ("Width","92"),("Height","44"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'ThisItem.Status.Value <> "Approved"')]:
@@ -308,7 +311,7 @@ def gen_admin():
                  ("HoverFill","AppDark.Sunken"),
                  ("BorderColor","AppDark.Danger"),("BorderThickness","1"),
                  ("X","Parent.TemplateWidth - 100"),("Y","8"),
-                 ("Width","92"),("Height","34"),
+                 ("Width","92"),("Height","44"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'ThisItem.Status.Value <> "Denied"')]:
@@ -318,7 +321,7 @@ def gen_admin():
     for k, v in [("Text",'"No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."'),
                  ("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
-                 ("X","Gutter"),("Y","Gutter + 200"),("Height","40"),
+                 ("X","Gutter"),("Y","BandH + Gutter + 200"),("Height","40"),
                  ("Width","ContentWidth - (Gutter * 2)"),
                  ("Visible",f'{VIS} && CountRows(TB_Admins) = 0')]:
         prop(o, k, v, q)
@@ -329,7 +332,7 @@ def gen_admin():
     for k, v in [("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Text",'"Nothing matches that search."'),
                  ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
-                 ("X","Gutter"),("Y","Gutter + 190"),("Visible",cond)]:
+                 ("X","Gutter"),("Y","BandH + Gutter + 190"),("Visible",cond)]:
         prop(o, k, v, q)
     return o.getvalue()
 
@@ -348,5 +351,5 @@ def _modern(src):
     return src
 
 
-open(r"E:\Papp\tt2\scrAdmin.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(gen_admin()))
+open(r"E:\Papp\powerappgoofing\app\screens\scrAdmin.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(gen_admin()))
 print("wrote scrAdmin.pa.yaml")

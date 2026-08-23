@@ -172,11 +172,11 @@ EXTRA = {
     # conversion: Primary fills with the palette colour and picks a readable
     # foreground, Outline draws it in that colour on the page background.
     "btnDeleteEdit": {"Appearance": "If(varConfirmDelete, ButtonAppearance.Primary, ButtonAppearance.Outline)",
-                      "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
+                      "BasePaletteColor": "AppDark.DangerSolid"},
     "btnAccApprove": {"Appearance": "ButtonAppearance.Primary",
                       "BasePaletteColor": "AppDark.Ok"},
     "btnAccDeny": {"Appearance": "ButtonAppearance.Outline",
-                   "BasePaletteColor": "RGBA(176, 0, 32, 1)"},
+                   "BasePaletteColor": "AppDark.DangerSolid"},
     # The wizard's green "add" buttons read as a different kind of action from
     # the blue "next" ones. BasePaletteColor keeps that distinction, which a
     # bare Appearance would have flattened.

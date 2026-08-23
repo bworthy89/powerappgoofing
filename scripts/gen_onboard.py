@@ -21,6 +21,8 @@ Controls follow the same rules as the admin form: no Form/DataCard (their
 properties cannot be verified), and lookup dropdowns use Choices() because
 Classic/DropDown.Value is rejected by the compiler. See app/00_Setup.md.
 """
+
+import screen_parts as P
 import io
 
 def prop(o, k, v, ind):
@@ -79,15 +81,16 @@ for k, v in [("Fill","AppDark.Bg"),("Height","Parent.Height"),
              ("Width","ContentWidth"),
              ("X","Max((Parent.Width - ContentWidth) / 2, Gutter)")]: prop(o, k, v, p)
 o.write(f"{p[:-2]}Children:\n"); c = p
+o.write(P.brand_band("Wiz", "scrAdmin", back_transition="UnCoverRight", back_label="Admin") + "\n")
 
 # ---- chrome -------------------------------------------------------------
 q = ctrl(o, "btnWizCancel", "Classic/Button", c)
 for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),
-             ("Fill","AppDark.Bg"),("Font","AppFont"),("Height","28"),
+             ("Fill","AppDark.Bg"),("Font","AppFont"),("Height","44"),
              ("HoverColor","AppDark.AccentSolid"),("HoverFill","AppDark.Sunken"),
              ("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
              ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","Gutter"),("FocusedBorderThickness","2"),
+             ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
              ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizTitle", "Label", c)
@@ -96,7 +99,7 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),
              ("Size","AppType.Title"),("Wrap","false"),("AutoHeight","false"),
              ("Text",'"New customer"'),
              ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-             ("Y","Gutter + 34")]: prop(o, k, v, q)
+             ("Y","BandH + Gutter + 34")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizStep", "Label", c)
 steps = ('Switch(varWizStep, 1, "Step 1 of 3  -  the customer", '
@@ -106,14 +109,14 @@ for k, v in [("Color","AppDark.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Height","20"),("Wrap","false"),("AutoHeight","false"),
              ("Text",steps),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","Gutter + 72")]: prop(o, k, v, q)
+             ("X","Gutter"),("Y","BandH + Gutter + 72")]: prop(o, k, v, q)
 
 def caption(name, text, y, vis):
     q = ctrl(o, name, "Label", c)
     for k, v in [("Text",f'"{text}"'),("Color","AppDark.Muted"),
-                 ("Font","AppFont"),("Size","AppType.Micro"),
+                 ("Font","AppFont"),("Size","AppType.Small"),
                  ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
-                 ("AutoHeight","false"),("Height","16"),
+                 ("AutoHeight","false"),("Height","18"),
                  ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
                  ("Y",str(y)),("Visible",vis)]: prop(o, k, v, q)
 
@@ -159,8 +162,8 @@ def spref(indent, idexpr, valexpr, tail=","):
 def hint(name, text, y, vis):
     q = ctrl(o, name, "Label", c)
     for k, v in [("Text",text),("Color","AppDark.Muted"),("Font","AppFont"),
-                 ("Size","AppType.Micro"),("Wrap","false"),("AutoHeight","false"),
-                 ("Height","16"),("Width","ContentWidth - (Gutter * 2)"),
+                 ("Size","AppType.Small"),("Wrap","false"),("AutoHeight","false"),
+                 ("Height","18"),("Width","ContentWidth - (Gutter * 2)"),
                  ("X","Gutter"),("Y",str(y)),("Visible",vis)]: prop(o, k, v, q)
 
 def standard_hint(dd):
@@ -260,7 +263,7 @@ o.write(f"{q}Items: |\n{q}  =Filter(TB_Installations, "
 for k, v in [("Visible",V2),("X","Gutter"),("Y",str(y + 60)),
              ("Width","ContentWidth - (Gutter * 2)"),
              ("Height",f"Parent.Height - {y + 60} - Gutter - 60"),
-             ("TemplateSize","36"),("TemplatePadding","4"),
+             ("TemplateSize","48"),("TemplatePadding","4"),
              ("ShowScrollbar","true")]: prop(o, k, v, q)
 o.write(f"{q[:-2]}Children:\n")
 r = ctrl(o, "lblWizSolRow", "Label", q)
@@ -357,15 +360,15 @@ q = ctrl(o, "lblWizCompHead", "Label", c)
 head = ('If(IsBlank(ddWizUnitParent.Selected), "", '
         '"Units for a " & varWizSolProdName & "  -  the standard build is ticked")')
 for k, v in [("Text",head),("Color","AppDark.Muted"),("Font","AppFont"),
-             ("Size","AppType.Micro"),("FontWeight","FontWeight.Semibold"),
-             ("Wrap","false"),("AutoHeight","false"),("Height","16"),
+             ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
+             ("Wrap","false"),("AutoHeight","false"),("Height","18"),
              ("Width",HALF),("X","Gutter"),("Y",str(y)),("Visible",V3)]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizAddedHead", "Label", c)
 for k, v in [("Text",'"Already added"'),("Color","AppDark.Muted"),
-             ("Font","AppFont"),("Size","AppType.Micro"),
+             ("Font","AppFont"),("Size","AppType.Small"),
              ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
-             ("AutoHeight","false"),("Height","16"),("Width",HALF),
+             ("AutoHeight","false"),("Height","18"),("Width",HALF),
              ("X",RX),("Y",str(y)),("Visible",V3)]: prop(o, k, v, q)
 y += 22
 
@@ -401,7 +404,7 @@ for nm, txt in [("lblWizCompId", "ThisItem.Unit.Id"),
     r = ctrl(o, nm, "Label", q)
     for k, v in [("Text",txt),("Visible","false"),("X","0"),("Y","0"),
                  ("Width","1"),("Height","1"),("Font","AppFont"),
-                 ("Size","AppType.Micro"),("Wrap","false"),
+                 ("Size","AppType.Small"),("Wrap","false"),
                  ("AutoHeight","false")]: prop(o, k, v, r)
 
 r = ctrl(o, "txtWizCompVersion", "Classic/TextInput", q)
@@ -431,7 +434,7 @@ q = ctrl(o, "galWizUnits", "Gallery", c, "Vertical")
 o.write(f"{q}Items: |\n{q}  =Filter(TB_Installations, "
         f"Customer.Id = varWizCust.ID, !IsBlank('Parent'))\n")
 for k, v in [("Visible",V3),("X",RX),("Y",str(y)),("Width",HALF),
-             ("Height",GALH),("TemplateSize","36"),("TemplatePadding","4"),
+             ("Height",GALH),("TemplateSize","48"),("TemplatePadding","4"),
              ("ShowScrollbar","true")]: prop(o, k, v, q)
 o.write(f"{q[:-2]}Children:\n")
 r = ctrl(o, "lblWizUnitRow", "Label", q)
@@ -525,5 +528,5 @@ def _modern(src):
     return src
 
 
-open(r"E:\Papp\tt2\scrOnboard.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(o.getvalue()))
+open(r"E:\Papp\powerappgoofing\app\screens\scrOnboard.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(o.getvalue()))
 print("wrote scrOnboard.pa.yaml")

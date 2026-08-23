@@ -6,6 +6,8 @@ from its Set() calls, and a single variable Set to records of four different
 tables has no coherent type. Defaults(<table>) gives an empty record WITH a
 schema, the same reason App.OnStart uses it instead of Blank().
 """
+
+import screen_parts as P
 import io, sys, importlib.util, re
 
 import os
@@ -109,14 +111,15 @@ p = ctrl(o, "conRootEdit", "GroupContainer", ind, "ManualLayout")
 for k, v in [("Fill","AppDark.Bg"),("Height","Parent.Height"),("Width","ContentWidth"),
              ("X","Max((Parent.Width - ContentWidth) / 2, Gutter)")]: prop(o, k, v, p)
 o.write(f"{p[:-2]}Children:\n"); c = p
+o.write(P.brand_band("Edit", "scrAdmin", back_transition="UnCoverRight", back_label="Admin") + "\n")
 
 q = ctrl(o, "btnBackEdit", "Classic/Button", c)
 for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark.Bg"),
-             ("Font","AppFont"),("Height","28"),("HoverColor","AppDark.AccentSolid"),
+             ("Font","AppFont"),("Height","44"),("HoverColor","AppDark.AccentSolid"),
              ("HoverFill","AppDark.Sunken"),
              ("OnSelect","Navigate(scrAdmin, ScreenTransition.CoverRight)"),
              ("Size","AppType.Small"),("Text",'"<  Cancel"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","Gutter"),("FocusedBorderThickness","2"),
+             ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
              ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblTitleEdit", "Label", c)
@@ -125,7 +128,7 @@ title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
 for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
              ("Height","36"),("Size","AppType.Title"),("Text",title),("Wrap","false"),
              ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","Gutter + 34")]: prop(o, k, v, q)
+             ("X","Gutter"),("Y","BandH + Gutter + 34")]: prop(o, k, v, q)
 
 # ---- fields, grouped per list, only the selected list visible
 for L in LISTS:
@@ -135,9 +138,9 @@ for L in LISTS:
         nm, k = input_name(L, f), f["kind"]
         cap = ctrl(o, "lblCap" + fid(f) + L["key"], "Label", c)
         for kk, vv in [("Text",f'"{f["caption"]}"'),("Color","AppDark.Muted"),
-                       ("Font","AppFont"),("Size","AppType.Micro"),
+                       ("Font","AppFont"),("Size","AppType.Small"),
                        ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
-                       ("AutoHeight","false"),("Height","16"),
+                       ("AutoHeight","false"),("Height","18"),
                        ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
                        ("Y",str(y)),("Visible",vis)]: prop(o, kk, vv, cap)
         h = 64 if k == "note" else 40
@@ -331,5 +334,5 @@ def _modern(src):
     return src
 
 
-open(r"E:\Papp\tt2\scrEditForm.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(o.getvalue()))
+open(r"E:\Papp\powerappgoofing\app\screens\scrEditForm.pa.yaml", "w", encoding="utf-8", newline="").write(_modern(o.getvalue()))
 print("wrote scrEditForm.pa.yaml")

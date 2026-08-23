@@ -1083,3 +1083,34 @@ the rebuilt screens.
 
 **Rule: when a transformation is applied to generated output, apply it to the generator in
 the same change, or the generator becomes a way to undo it.**
+
+## Three generators were writing to a different folder than the repo
+
+`gen_admin.py`, `gen_form.py` and `gen_onboard.py` wrote their screens to `E:\Papp\tt2\` — a
+leftover working directory from an earlier session — while the other seven generators wrote
+to `app/screens/`. The repo copies of those three screens were stale copies someone had
+moved across by hand.
+
+The effect: **every generator-level change to those three screens landed somewhere nobody
+pastes from.** The build reported success each time, because the generator genuinely
+succeeded — it just succeeded into the wrong directory. Two rounds of edits (dark palette,
+then the band and type pass) appeared to do nothing, and the obvious explanation — that the
+edits were wrong — was not the real one.
+
+What made it findable was checking the *output* against the intent rather than trusting the
+build's exit code: the screens still reported `RULE` instead of `yes` for the brand band and
+29 controls still at 10pt after a pass that removed every 10pt reference from the generator.
+A generator whose source has no `AppType.Micro` cannot emit 29 of them; that contradiction is
+what pointed at the path.
+
+Two related traps in the same area:
+
+- **A crashed generator leaves the previous file in place.** `gen_form.py` failed with a
+  `NameError` for several runs, and the stale screen sat there looking fine.
+  `build_screens.py` now prints a `FAILED:` line at the end naming every generator that did
+  not run, and says the screens for those are stale.
+- **Do not truncate the build output.** The failure above was invisible because the run was
+  piped through `tail`, which showed only the passes.
+
+**Rule: when a change to a generator produces no change in the screen, check where the
+generator writes before assuming the change was wrong.**

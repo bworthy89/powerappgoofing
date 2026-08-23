@@ -18,16 +18,41 @@ Screens:
             Width: =ContentWidth
             X: =Max((Parent.Width - ContentWidth) / 2, Gutter)
           Children:
-            # Brand continuity with the band on scrHome. 3px at Y=0, above all screen
-            # content, which starts at Y=Gutter - so no existing Y arithmetic moves.
-            - recAdmBrandRule:
+            - recAdmBand:
                 Control: Rectangle
                 Properties:
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =3
-                  Fill: =AppDark.Accent
+                  Height: =BandH
+                  Fill: =AppDark.Brand
+            - imgWordmarkAdm:
+                Control: Image
+                Properties:
+                  X: =Parent.Width - Gutter - 96
+                  Y: =20
+                  Width: =96
+                  Height: =15
+                  Image: |
+                    ="data:image/png;base64,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"
+            - btnBackAdm:
+                Control: ModernButton
+                Properties:
+                  Color: =AppDark.Fg
+                  Appearance: =ButtonAppearance.Subtle
+                  Icon: ="ChevronLeft"
+                  Layout: =ButtonLayout.IconBefore
+                  Text: ="Home"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  BorderThickness: =0
+                  X: =Gutter - 8
+                  Y: =6
+                  Width: =140
+                  Height: =44
+                  OnSelect: |
+                    =Navigate(scrHome, ScreenTransition.CoverRight)
             - btnBackAdm:
                 Control: ModernButton
                 Properties:
@@ -37,13 +62,13 @@ Screens:
                   BorderThickness: =0
                   Color: =AppDark.Accent
                   Font: =AppFont
-                  Height: =28
+                  Height: =44
                   OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
                   Size: =AppType.Small
                   Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
-                  Y: =Gutter
+                  Y: =BandH + Gutter
             - lblTitleAdm:
                 Control: ModernText
                 Properties:
@@ -59,7 +84,7 @@ Screens:
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =Gutter + 34
+                  Y: =BandH + Gutter + 34
             - btnListCust:
                 Control: ModernButton
                 Properties:
@@ -70,10 +95,10 @@ Screens:
                   Color: =If(varAdminList = "Cust", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 0
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -89,10 +114,10 @@ Screens:
                   Color: =If(varAdminList = "Prod", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 1
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -108,10 +133,10 @@ Screens:
                   Color: =If(varAdminList = "Inst", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 2
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -127,10 +152,10 @@ Screens:
                   Color: =If(varAdminList = "SolU", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 3
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -146,10 +171,10 @@ Screens:
                   Color: =If(varAdminList = "Ref", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 4
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -165,10 +190,10 @@ Screens:
                   Color: =If(varAdminList = "Acc", AppDark.OnBrand, AppDark.Fg)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
-                  Height: =34
+                  Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 5
-                  Y: =Gutter + 80
+                  Y: =BandH + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -189,7 +214,7 @@ Screens:
                   Size: =AppType.Body
                   Width: =ContentWidth - (Gutter * 2) - 130
                   X: =Gutter
-                  Y: =Gutter + 126
+                  Y: =BandH + Gutter + 126
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -210,7 +235,7 @@ Screens:
                   Height: =40
                   Width: =150
                   X: =ContentWidth - Gutter - 118 - 8 - 150
-                  Y: =Gutter + 126
+                  Y: =BandH + Gutter + 126
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -230,7 +255,7 @@ Screens:
                   Height: =40
                   Width: =118
                   X: =ContentWidth - Gutter - 118
-                  Y: =Gutter + 126
+                  Y: =BandH + Gutter + 126
                   Visible: =varAdminList <> "Acc"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -258,9 +283,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Cust"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -302,9 +327,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Prod"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -346,9 +371,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Inst"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -390,9 +415,9 @@ Screens:
                     )
                   Visible: =varAdminList = "SolU"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -434,9 +459,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Ref"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -474,9 +499,9 @@ Screens:
                     =Sort(TB_Admins, If(Status.Value = "Pending", 0, 1), SortOrder.Ascending)
                   Visible: =varAdminList = "Acc"
                   X: =Gutter
-                  Y: =Gutter + 180
+                  Y: =BandH + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (Gutter + 180) - Gutter
+                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -545,7 +570,7 @@ Screens:
                         X: =Parent.TemplateWidth - 200
                         Y: =8
                         Width: =92
-                        Height: =34
+                        Height: =44
                         RadiusTopLeft: =6
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
@@ -568,7 +593,7 @@ Screens:
                         X: =Parent.TemplateWidth - 100
                         Y: =8
                         Width: =92
-                        Height: =34
+                        Height: =44
                         RadiusTopLeft: =6
                         RadiusTopRight: =6
                         RadiusBottomLeft: =6
@@ -587,7 +612,7 @@ Screens:
                   Wrap: =true
                   AutoHeight: =false
                   X: =Gutter
-                  Y: =Gutter + 200
+                  Y: =BandH + Gutter + 200
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   Visible: =varAdminList = "Acc" && CountRows(TB_Admins) = 0
@@ -604,5 +629,5 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =Gutter + 190
+                  Y: =BandH + Gutter + 190
                   Visible: =(varAdminList = "Cust" && CountRows(galAdmCust.AllItems) = 0) || (varAdminList = "Prod" && CountRows(galAdmProd.AllItems) = 0) || (varAdminList = "Inst" && CountRows(galAdmInst.AllItems) = 0) || (varAdminList = "SolU" && CountRows(galAdmSolU.AllItems) = 0) || (varAdminList = "Ref" && CountRows(galAdmRef.AllItems) = 0)
