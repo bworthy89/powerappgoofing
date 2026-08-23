@@ -72,7 +72,7 @@ Screens:
             - btnListCust:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "Cust", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "Cust", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Customers"
@@ -91,7 +91,7 @@ Screens:
             - btnListProd:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "Prod", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "Prod", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Products"
@@ -110,7 +110,7 @@ Screens:
             - btnListInst:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "Inst", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "Inst", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Installations"
@@ -129,7 +129,7 @@ Screens:
             - btnListSolU:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "SolU", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "SolU", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Solution units"
@@ -148,7 +148,7 @@ Screens:
             - btnListRef:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "Ref", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "Ref", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="References"
@@ -167,7 +167,7 @@ Screens:
             - btnListAcc:
                 Control: ModernButton
                 Properties:
-                  Appearance: =If(varAdminList = "Acc", ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                  Appearance: =If(varAdminList = "Acc", ButtonAppearance.Primary, ButtonAppearance.Outline)
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Access" & If(CountRows(Filter(TB_Admins, Status.Value = "Pending")) > 0, "  (" & CountRows(Filter(TB_Admins, Status.Value = "Pending")) & ")", "")
@@ -278,7 +278,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Color: =AppDark.Fg
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Description, "no description")
                         OnSelect: |
@@ -322,7 +322,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Color: =AppDark.Fg
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.'Product Type'.Value, "no type") & "  |  standard " & Coalesce(ThisItem.'Current Standard Version', "not set")
                         OnSelect: |
@@ -366,7 +366,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Color: =AppDark.Fg
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.'Parent'), "  |  SOLUTION", "  |  unit of " & ThisItem.'Parent'.Value)
                         OnSelect: |
@@ -410,7 +410,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Color: =AppDark.Fg
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")
                         OnSelect: |
@@ -454,7 +454,7 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Color: =AppDark.Fg
-                        Appearance: =ButtonAppearance.Secondary
+                        Appearance: =ButtonAppearance.Outline
                         Text: |
                           =ThisItem.Title & " - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")
                         OnSelect: |

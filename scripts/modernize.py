@@ -107,11 +107,16 @@ KEEP_CLASSIC = {
 # ModernButton defaults to ButtonAppearance.Primary - a solid brand-coloured
 # button. Every converted button has just had its Fill dropped, so without a
 # fallback a quiet list row or a secondary action silently becomes the loudest
-# thing on the screen. Secondary is the safe landing place; anything that should
+# thing on the screen. Outline is the safe landing place; anything that should
 # be Primary says so explicitly in EXTRA, which is applied first and wins.
+#
+# NOT Secondary. Secondary paints an opaque neutral fill from the modern theme, which
+# is a light theme with no dark-mode switch, so it renders near-white on any
+# background - and these buttons carry near-white text. Outline is transparent with a
+# border, so the screen's own colour shows through.
 DEFAULTS = {
     "ModernText": {"PaddingTop": "0", "PaddingBottom": "0"},
-    "ModernButton": {"Appearance": "ButtonAppearance.Secondary"},
+    "ModernButton": {"Appearance": "ButtonAppearance.Outline"},
 }
 
 BACK = {"Appearance": "ButtonAppearance.Subtle",
@@ -127,14 +132,14 @@ SEARCH = {"Type": "TextInputType.Search"}
 def tab(key):
     """The admin list buttons carried their selected state in Fill, which
     ModernButton does not have. Appearance carries it instead - Primary for the
-    active list, Secondary for the rest - so the indicator survives rather than
+    active list, Outline for the rest - so the indicator survives rather than
     being silently dropped as decoration."""
     return {"Appearance": f'If(varAdminList = "{key}", '
-                          "ButtonAppearance.Primary, ButtonAppearance.Secondary)"}
+                          "ButtonAppearance.Primary, ButtonAppearance.Outline)"}
 
 
 def tile(icon):
-    return {"Appearance": "ButtonAppearance.Secondary",
+    return {"Appearance": "ButtonAppearance.Outline",
             "Icon": f'"{icon}"',
             "Layout": "ButtonLayout.IconBefore"}
 
@@ -360,14 +365,14 @@ def convert(src, extra=None, keep_classic=None):
 
         # The actual failure mode, narrowly: a light foreground that only worked
         # against a Fill the conversion removed, on a button that then falls to
-        # the Secondary default - white text on a pale button. A first, broader
+        # the Outline default - white text on a pale button. A first, broader
         # version flagged every Subtle button with an accent Color and ten of
         # ten were fine, which is a check nobody would read twice.
         if (target == "ModernButton" and "Fill" in dropped
                 and "OnPrimary" in colours.get("Color", "")
                 and name not in extra):
             report.append(f"  CHECK         {name} keeps a light Color but lost its Fill and has "
-                          "no Appearance - it will be unreadable on the Secondary default")
+                          "no Appearance - it will be unreadable on the Outline default")
 
         for k, v in list(extra.get(name, {}).items()) + list(DEFAULTS.get(target, {}).items()):
             if k in seen:

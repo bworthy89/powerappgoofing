@@ -1114,3 +1114,34 @@ Two related traps in the same area:
 
 **Rule: when a change to a generator produces no change in the screen, check where the
 generator writes before assuming the change was wrong.**
+
+## `ButtonAppearance.Secondary` is unreadable on a dark screen
+
+The six admin tabs and the five list rows rendered as white buttons with near-white text.
+Their `Color` was correct — `AppDark.Fg` — and the fault was the *background*.
+
+`Secondary` paints an **opaque neutral fill taken from the app's modern theme**, and that
+theme is a light theme with no dark-mode switch. So a Secondary button is near-white
+whatever colour the screen behind it is, and any light foreground lands on top of it.
+
+| Appearance | background | safe on dark |
+|---|---|---|
+| `Primary` | the accent | yes — white text on the accent |
+| `Outline` | transparent, with a border | yes |
+| `Subtle` | transparent, no border | yes |
+| `Secondary` | **opaque theme neutral** | **no** |
+
+`Outline` is the replacement for anything that needs a boundary — tabs, list rows, secondary
+actions. `Subtle` suits controls sitting on a coloured surface, like the back buttons on the
+brand band.
+
+This is the same root cause as the uncoloured-control failure above: **a control whose
+appearance comes from the theme rather than from a property will follow the theme, and the
+theme is light.** Anything that reads the theme has to be checked against the real
+background rather than assumed.
+
+`verify_yaml.py` now rejects `Secondary` outright, and `modernize.py` — which owns the
+classic→modern mapping and had `Secondary` as its default landing place — emits `Outline`
+instead. Fixing it there rather than in the generated YAML matters: patching the output
+would be undone by the next build, which is the same trap as the generators that kept
+emitting `AppTheme`.

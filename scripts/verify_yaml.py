@@ -176,6 +176,15 @@ def check_file(path):
                 continue
             findings.append((n, f"nested LookUp reaches the outer row by bare name - use Table[@Field]: {stripped[:50]}"))
 
+        # 1e. ButtonAppearance.Secondary is unreadable on this app's dark ground. It
+        #     paints an opaque neutral fill from the modern theme, which is a light theme
+        #     with no dark-mode switch, so it renders near-white on any background - and
+        #     these buttons carry near-white text. Outline is the transparent-with-border
+        #     variant; Subtle is transparent with none.
+        if "ButtonAppearance.Secondary" in code:
+            findings.append((n, "ButtonAppearance.Secondary renders near-white on any "
+                                "background - use Outline or Subtle"))
+
         # 2. inline scalar carrying ": " outside a block scalar
         m = re.match(r"^(\w+):\s*=(.*)$", stripped)
         if m and ": " in m.group(2):

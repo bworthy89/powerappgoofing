@@ -1248,7 +1248,7 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Color: =AppDark.Fg
-                  Appearance: =ButtonAppearance.Secondary
+                  Appearance: =ButtonAppearance.Outline
                   Font: =AppFont
                   Size: =AppType.Small
                   Text: ="Cancel"
