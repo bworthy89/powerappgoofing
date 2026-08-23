@@ -23,8 +23,6 @@ Screens:
             Height: =Parent.Height
             Fill: =AppDark.Bg
           Children:
-            # Compact brand band. Half the height of the home band because this is a detail
-            # screen and the mark is reassurance, not an entrance.
             - recSolBand:
                 Control: Rectangle
                 Properties:
@@ -56,9 +54,10 @@ Screens:
                   BorderThickness: =0
                   X: =Gutter - 8
                   Y: =6
-                  Width: =110
+                  Width: =140
                   Height: =44
-                  OnSelect: =Navigate(scrCustomerOverview, ScreenTransition.UnCover)
+                  OnSelect: |
+                    =Navigate(scrCustomerOverview, ScreenTransition.UnCover)
 
             - lblTitleSol:
                 Control: ModernText
@@ -93,20 +92,13 @@ Screens:
                   Text: |
                     =LookUp(TB_Products, ID = varInstallation.Product.Id).Family.Value & "  ·  " & varCustomer.Title & If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
 
-            # The answer. A component so scrUnit can show the identical comparison from one
-            # definition - the only two places it is allowed, since a component cannot go in
-            # a gallery.
-            # A component instance is Control: CanvasComponent with the definition named
-            # separately. "Control: cmpVersionChip" is rejected with PA2101 - the schema's
-            # ControlTypeId pattern requires a capitalised built-in type name, and a
-            # component name is not one. (An editor snippet in the same schema file writes
-            # "Control: Component"; the normative definition is CanvasComponent.)
             - cmpVersionSol:
                 Control: CanvasComponent
                 ComponentName: cmpVersionChip
                 Properties:
                   X: =Gutter
-                  Y: =lblSubtitleSol.Y + lblSubtitleSol.Height + Gutter
+                  Y: |
+                    =lblSubtitleSol.Y + lblSubtitleSol.Height + Gutter
                   Width: =Min(Parent.Width - (Gutter * 2), 620)
                   Height: =116
                   InstalledVersion: =Coalesce(varInstallation.'Installed Version', "")
@@ -117,7 +109,8 @@ Screens:
                 Variant: ManualLayout
                 Properties:
                   X: =Gutter
-                  Y: =cmpVersionSol.Y + cmpVersionSol.Height + Gutter
+                  Y: |
+                    =cmpVersionSol.Y + cmpVersionSol.Height + Gutter
                   Width: =Min(Parent.Width - (Gutter * 2), 620)
                   Height: =92
                   Fill: =AppDark.Surface
