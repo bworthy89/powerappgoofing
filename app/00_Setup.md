@@ -1177,14 +1177,16 @@ A = 1, B = 2)` is valid syntax: it finds the first row where `A = 1` and returns
 `verify_yaml.py` now flags both: more than three arguments, and a third argument containing
 a comparison operator.
 
-## Custom properties do not survive a component paste — create them in Studio first
+## Custom properties DO survive a component paste — and a stale screen looks identical
 
-Pasting a component's YAML brings its **children** across. It does not create its
-**custom properties**. Studio's paste operates on controls, and `CustomProperties` is
-component metadata that lives beside them.
+I claimed the opposite here and was wrong; this entry is kept because the wrong version was
+acted on and cost a round trip.
 
-So a screen setting a property the component does not yet have produces a cascade that
-names everything except the real cause:
+Pasting a component's YAML brings its `CustomProperties` across with it. Adding `SourceNote`
+to `cmpVersionChip` and pasting the component was enough — Studio reported the name "already
+in use" when a hand-created property was attempted afterwards.
+
+### What actually caused the errors
 
 ```
 The function 'Coalesce' has some invalid arguments.
@@ -1194,22 +1196,15 @@ The '.' operator cannot be used on Error values.
 Incompatible types for comparison. These types can't be compared: Error, Text.
 ```
 
-None of those mention the missing property. The binding fails, the value becomes an Error,
-and every formula downstream reports its own symptom.
+That is the `LookUp`-given-Filter-conditions signature recorded above, on a **screen that had
+not been repasted**. The component was current, the screen was not, and the mismatch looks
+exactly like a missing property: a failed binding, an Error value, and every downstream
+formula reporting its own symptom.
 
-**Before pasting a component that gained a property, add it by hand:**
+### The rule that is actually useful
 
-Components → select the component → **New custom property** →
-
-| field | value |
-|---|---|
-| Display name | the exact name the screens use |
-| Property type | Data |
-| Property definition | Input |
-| Data type | Text (or whatever the screen passes) |
-
-Then paste the component YAML, then the screens that use it.
-
-**Rule: adding a custom property to a component is a manual step in Studio, every time.**
-Worth saying in the same breath as "repaste the component", because the paste alone looks
-like it worked — the children update and the error appears on the consuming screen instead.
+**When a component and its screens change together, repaste both, and suspect the stale one
+first.** The error surfaces on the consuming screen either way, so the message cannot tell
+you which half is behind. Check the formula named in the error against the file on disk
+before concluding anything about component metadata — the answer is one `grep` away and does
+not depend on remembering how Studio behaves.
