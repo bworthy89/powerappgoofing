@@ -143,6 +143,10 @@ def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
     # A heading may be a literal or a formula; a caller passing one starting
     # with "=" wants it evaluated (scrCatalogue names the selected model).
     heading_text = heading if heading.startswith("=") else f'="{heading}"'
+    # No heading means no space for one: the label collapses to zero height and the
+    # gallery starts at the origin rather than 32px below it.
+    head_h = 0 if heading == "" else 22
+    head_gap = 0 if heading == "" else 10
     x = x or "=Gutter"
     width = width or f"={CW}"
     return f"""
@@ -157,7 +161,8 @@ def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
                     ={y}
                   Width: |
                     {width}
-                  Height: =22
+                  Height: ={head_h}
+                  Visible: ={str(heading != "").lower()}
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
@@ -172,7 +177,7 @@ def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
                 Properties:
                   X: |
                     {x}
-                  Y: =lbl{key}Heading{sfx}.Y + lbl{key}Heading{sfx}.Height + 10
+                  Y: =lbl{key}Heading{sfx}.Y + {head_h} + {head_gap}
                   Width: |
                     {width}
                   Height: |

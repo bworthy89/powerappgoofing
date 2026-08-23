@@ -320,6 +320,7 @@ Screens:
                   Width: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: =22
+                  Visible: =true
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
@@ -334,7 +335,7 @@ Screens:
                 Properties:
                   X: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
-                  Y: =lblDocsHeadingCat.Y + lblDocsHeadingCat.Height + 10
+                  Y: =lblDocsHeadingCat.Y + 22 + 10
                   Width: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: |

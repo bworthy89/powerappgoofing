@@ -178,6 +178,7 @@ Screens:
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: =22
+                  Visible: =true
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
@@ -192,7 +193,7 @@ Screens:
                 Properties:
                   X: |
                     =Gutter
-                  Y: =lblDocsHeadingUnit.Y + lblDocsHeadingUnit.Height + 10
+                  Y: =lblDocsHeadingUnit.Y + 22 + 10
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: |
@@ -344,6 +345,7 @@ Screens:
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: =22
+                  Visible: =true
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
@@ -358,7 +360,7 @@ Screens:
                 Properties:
                   X: |
                     =Gutter
-                  Y: =lblFirmwareHeadingUnit.Y + lblFirmwareHeadingUnit.Height + 10
+                  Y: =lblFirmwareHeadingUnit.Y + 22 + 10
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: |

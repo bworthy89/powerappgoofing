@@ -1234,3 +1234,35 @@ than rely on the script's escape. `TB_SoftwareVersions` uses `Software Version`
 
 Power Fx needs the single quotes once a column name contains a space:
 `LookUp(TB_SoftwareVersions, ...).'Software Version'`.
+
+## A canvas screen does not scroll, and neither does a ManualLayout container
+
+`scrSolution` stacked its version panel, config notes, units, documentation and firmware to
+1273px on a viewport of roughly 750. The last two sections were simply unreachable — no
+scrollbar, no wheel response, nothing cut off in a way that suggested more content below.
+
+Nothing in a canvas app scrolls by default. A **Gallery** scrolls its own rows, and an
+**auto-layout container** scrolls when its Vertical Overflow is set to Scroll. A
+`ManualLayout` GroupContainer has no overflow behaviour at all, and the screen itself never
+scrolls.
+
+So a screen whose content is taller than the viewport is not a styling problem — it is
+content that does not exist as far as the user is concerned.
+
+**Check the arithmetic when a screen gains a section.** Sum the fixed heights and the gallery
+heights; if the total can exceed roughly 700px, the layout needs one of:
+
+- one region that fills the remaining height and scrolls internally (a Gallery)
+- an auto-layout container with Vertical Overflow set to Scroll
+- fewer things on screen at once
+
+`scrSolution` took the third with a tab strip: Units, Documents and Firmware share one origin
+and one region, with counts in the tab labels so tabbing hides nothing. The page is now 455px
+before the list starts, and the list fills whatever is left — so the page stops growing as a
+site gains documents, which the stacked version did without limit.
+
+Auto-layout was the obvious fix and was not used: its `Variant` and `Layout*` property names
+could not be verified against this compiler with the authoring MCP disconnected, and an
+earlier attempt in this project was abandoned for the same reason (see the comment in
+`scrHome`). Tabs use a button that sets a variable and a `Visible` that reads it, both proven
+here many times over.

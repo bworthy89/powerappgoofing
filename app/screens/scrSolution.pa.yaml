@@ -12,6 +12,7 @@ Screens:
   scrSolution:
     Properties:
       Fill: =AppDark.Bg
+      OnVisible: =Set(varSolTab, "Units")
     Children:
       - conRootSol:
           Control: GroupContainer
@@ -147,11 +148,83 @@ Screens:
                         Size: =AppType.Body
                         Color: =AppDark.Fg
 
+            - btnTabUnitsSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: |
+                    =If(varSolTab = "Units", ButtonAppearance.Primary, ButtonAppearance.Outline)
+                  Text: |
+                    ="Units" & If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) > 0, "  " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)), "")
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(varSolTab = "Units", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: ={TAB_H}
+                  Width: =(Min(Parent.Width - (Gutter * 2), 620) - 16) / 3
+                  X: =Gutter + ((Min(Parent.Width - (Gutter * 2), 620) - 16) / 3 + 8) * 0
+                  Y: |
+                    ={Y_TABS}
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Set(varSolTab, "Units")
+            - btnTabDocsSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: |
+                    =If(varSolTab = "Docs", ButtonAppearance.Primary, ButtonAppearance.Outline)
+                  Text: |
+                    ="Documents" & If(CountRows(galDocsSol.AllItems) > 0, "  " & CountRows(galDocsSol.AllItems), "")
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(varSolTab = "Docs", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: ={TAB_H}
+                  Width: =(Min(Parent.Width - (Gutter * 2), 620) - 16) / 3
+                  X: =Gutter + ((Min(Parent.Width - (Gutter * 2), 620) - 16) / 3 + 8) * 1
+                  Y: |
+                    ={Y_TABS}
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Set(varSolTab, "Docs")
+            - btnTabFirmwareSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: |
+                    =If(varSolTab = "Firmware", ButtonAppearance.Primary, ButtonAppearance.Outline)
+                  Text: |
+                    ="Firmware" & If(CountRows(galFirmwareSol.AllItems) > 0, "  " & CountRows(galFirmwareSol.AllItems), "")
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Color: =If(varSolTab = "Firmware", AppDark.OnBrand, AppDark.Fg)
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: ={TAB_H}
+                  Width: =(Min(Parent.Width - (Gutter * 2), 620) - 16) / 3
+                  X: =Gutter + ((Min(Parent.Width - (Gutter * 2), 620) - 16) / 3 + 8) * 2
+                  Y: |
+                    ={Y_TABS}
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: =Set(varSolTab, "Firmware")
+
             # ---- units
             # A row is a unit the MODEL takes, so it may have nothing behind it. That is the
             # point: "do they have a barcode scanner" was unanswerable when the list only
             # showed what happened to be attached, because absent and uncatalogued looked
             # identical.
+            # The tab names the section, so this line carries only the exception worth
+            # knowing about: something attached here that the model does not list.
             - lblUnitsHeading:
                 Control: ModernText
                 Properties:
@@ -159,25 +232,29 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: |
-                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0)
+                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =22
+                  Height: =20
                   Font: =AppFont
                   Size: =AppType.Small
-                  FontWeight: =FontWeight.Bold
-                  Color: =AppDark.Muted
+                  Color: =AppDark.Warn
                   Wrap: =false
                   AutoHeight: =false
+                  Visible: |
+                    =varSolTab = "Units" && CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0
                   Text: |
-                    ="UNITS" & If(CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0, "   (" & CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) & " also attached, not on the model's list)", "")
+                    =CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) & " also attached, not on the model's list"
             - galUnitsSol:
                 Control: Gallery
                 Variant: Vertical
                 Properties:
                   X: =Gutter
-                  Y: =lblUnitsHeading.Y + lblUnitsHeading.Height + 10
+                  Y: |
+                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12 + If(lblUnitsHeading.Visible, 26, 0)
                   Width: =Parent.Width - (Gutter * 2)
-                  Height: =Max(Min(CountRows(galUnitsSol.AllItems), 5), 1) * 56
+                  Visible: =varSolTab = "Units"
+                  Height: |
+                    =Max(Parent.Height - (conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12) - Gutter, 120) - If(lblUnitsHeading.Visible, 26, 0)
                   TemplateSize: =56
                   TemplatePadding: =0
                   ShowScrollbar: =false
@@ -330,7 +407,8 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Color: =AppDark.Muted
-                  Visible: =CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) = 0
+                  Visible: |
+                    =varSolTab = "Units" && CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) = 0
 
             - lblDocsHeadingSol:
                 Control: ModernText
@@ -340,14 +418,15 @@ Screens:
                   X: |
                     =Gutter
                   Y: |
-                    =galUnitsSol.Y + galUnitsSol.Height + Gutter
+                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12
                   Width: |
                     =Parent.Width - (Gutter * 2)
-                  Height: =22
+                  Height: =0
+                  Visible: =false
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
-                    ="DOCUMENTATION"
+                    =""
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
@@ -358,16 +437,16 @@ Screens:
                 Properties:
                   X: |
                     =Gutter
-                  Y: =lblDocsHeadingSol.Y + lblDocsHeadingSol.Height + 10
+                  Y: =lblDocsHeadingSol.Y + 0 + 0
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: |
-                    =Min(CountRows(galDocsSol.AllItems), 4) * 60
+                    =Max(Parent.Height - (conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12) - Gutter, 120)
                   TemplateSize: =60
                   TemplatePadding: =0
                   ShowScrollbar: =true
                   Visible: |
-                    =CountRows(galDocsSol.AllItems) > 0
+                    =varSolTab = "Docs"
                   Items: |
                     =SortByColumns(
                         Filter(
@@ -504,7 +583,7 @@ Screens:
                   Size: =AppType.Body
                   Color: =AppDark.Muted
                   Visible: |
-                    =CountRows(galDocsSol.AllItems) = 0
+                    =varSolTab = "Docs" && CountRows(galDocsSol.AllItems) = 0
 
             - lblFirmwareHeadingSol:
                 Control: ModernText
@@ -514,14 +593,15 @@ Screens:
                   X: |
                     =Gutter
                   Y: |
-                    =galDocsSol.Y + Max(galDocsSol.Height, 40) + Gutter
+                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12
                   Width: |
                     =Parent.Width - (Gutter * 2)
-                  Height: =22
+                  Height: =0
+                  Visible: =false
                   Wrap: =false
                   AutoHeight: =false
                   Text: |
-                    ="FIRMWARE & DOWNLOADS"
+                    =""
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
@@ -532,16 +612,16 @@ Screens:
                 Properties:
                   X: |
                     =Gutter
-                  Y: =lblFirmwareHeadingSol.Y + lblFirmwareHeadingSol.Height + 10
+                  Y: =lblFirmwareHeadingSol.Y + 0 + 0
                   Width: |
                     =Parent.Width - (Gutter * 2)
                   Height: |
-                    =Min(CountRows(galFirmwareSol.AllItems), 4) * 60
+                    =Max(Parent.Height - (conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12) - Gutter, 120)
                   TemplateSize: =60
                   TemplatePadding: =0
                   ShowScrollbar: =true
                   Visible: |
-                    =CountRows(galFirmwareSol.AllItems) > 0
+                    =varSolTab = "Firmware"
                   Items: |
                     =SortByColumns(
                         Filter(
@@ -678,4 +758,4 @@ Screens:
                   Size: =AppType.Body
                   Color: =AppDark.Muted
                   Visible: |
-                    =CountRows(galFirmwareSol.AllItems) = 0
+                    =varSolTab = "Firmware" && CountRows(galFirmwareSol.AllItems) = 0
