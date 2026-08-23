@@ -1176,3 +1176,40 @@ A = 1, B = 2)` is valid syntax: it finds the first row where `A = 1` and returns
 
 `verify_yaml.py` now flags both: more than three arguments, and a third argument containing
 a comparison operator.
+
+## Custom properties do not survive a component paste — create them in Studio first
+
+Pasting a component's YAML brings its **children** across. It does not create its
+**custom properties**. Studio's paste operates on controls, and `CustomProperties` is
+component metadata that lives beside them.
+
+So a screen setting a property the component does not yet have produces a cascade that
+names everything except the real cause:
+
+```
+The function 'Coalesce' has some invalid arguments.
+Invalid number of arguments: received 4, expected 2-3.
+Name isn't valid. 'Section' isn't recognized.
+The '.' operator cannot be used on Error values.
+Incompatible types for comparison. These types can't be compared: Error, Text.
+```
+
+None of those mention the missing property. The binding fails, the value becomes an Error,
+and every formula downstream reports its own symptom.
+
+**Before pasting a component that gained a property, add it by hand:**
+
+Components → select the component → **New custom property** →
+
+| field | value |
+|---|---|
+| Display name | the exact name the screens use |
+| Property type | Data |
+| Property definition | Input |
+| Data type | Text (or whatever the screen passes) |
+
+Then paste the component YAML, then the screens that use it.
+
+**Rule: adding a custom property to a component is a manual step in Studio, every time.**
+Worth saying in the same breath as "repaste the component", because the paste alone looks
+like it worked — the children update and the error appears on the consuming screen instead.
