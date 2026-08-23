@@ -81,6 +81,9 @@ BANNED = [
 # several lines and only the first carries the prefix.
 SVG_MARKUP_RE = re.compile(
     r"<svg|</svg>|<path|<rect|<polygon|<circle|<line|<g |viewBox|xmlns|preserveAspectRatio"
+    # Continuation lines too: a Power Fx conditional inside an SVG splits the markup
+    # across lines, so an attribute can appear with no tag beside it.
+    r"|fill='|stroke='|stroke-width='|/>\" &"
 )
 
 

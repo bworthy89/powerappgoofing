@@ -334,12 +334,17 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: |
                     =galUnitsSol.Y + galUnitsSol.Height + Gutter
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
                   Height: =22
-                  Text: ="DOCUMENTATION"
+                  Wrap: =false
+                  AutoHeight: =false
+                  Text: |
+                    ="DOCUMENTATION"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
@@ -348,14 +353,18 @@ Screens:
                 Control: Gallery
                 Variant: Vertical
                 Properties:
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: =lblDocsHeadingSol.Y + lblDocsHeadingSol.Height + 10
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =Min(CountRows(galDocsSol.AllItems), 4) * 60
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
+                  Height: |
+                    =Min(CountRows(galDocsSol.AllItems), 4) * 60
                   TemplateSize: =60
                   TemplatePadding: =0
-                  ShowScrollbar: =false
-                  Visible: =CountRows(galDocsSol.AllItems) > 0
+                  ShowScrollbar: =true
+                  Visible: |
+                    =CountRows(galDocsSol.AllItems) > 0
                   Items: |
                     =SortByColumns(
                         Filter(
@@ -481,27 +490,35 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: =galDocsSol.Y
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
                   Height: =40
                   Text: ="No documentation is on file for this system."
                   Font: =AppFont
                   Size: =AppType.Body
                   Color: =AppDark.Muted
-                  Visible: =CountRows(galDocsSol.AllItems) = 0
+                  Visible: |
+                    =CountRows(galDocsSol.AllItems) = 0
 
             - lblFirmwareHeadingSol:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: |
                     =galDocsSol.Y + Max(galDocsSol.Height, 40) + Gutter
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
                   Height: =22
-                  Text: ="FIRMWARE & DOWNLOADS"
+                  Wrap: =false
+                  AutoHeight: =false
+                  Text: |
+                    ="FIRMWARE & DOWNLOADS"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
@@ -510,14 +527,18 @@ Screens:
                 Control: Gallery
                 Variant: Vertical
                 Properties:
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: =lblFirmwareHeadingSol.Y + lblFirmwareHeadingSol.Height + 10
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =Min(CountRows(galFirmwareSol.AllItems), 4) * 60
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
+                  Height: |
+                    =Min(CountRows(galFirmwareSol.AllItems), 4) * 60
                   TemplateSize: =60
                   TemplatePadding: =0
-                  ShowScrollbar: =false
-                  Visible: =CountRows(galFirmwareSol.AllItems) > 0
+                  ShowScrollbar: =true
+                  Visible: |
+                    =CountRows(galFirmwareSol.AllItems) > 0
                   Items: |
                     =SortByColumns(
                         Filter(
@@ -643,12 +664,15 @@ Screens:
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    =Gutter
                   Y: =galFirmwareSol.Y
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
                   Height: =40
                   Text: ="No firmware or downloads are on file for this system."
                   Font: =AppFont
                   Size: =AppType.Body
                   Color: =AppDark.Muted
-                  Visible: =CountRows(galFirmwareSol.AllItems) = 0
+                  Visible: |
+                    =CountRows(galFirmwareSol.AllItems) = 0

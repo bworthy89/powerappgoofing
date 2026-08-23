@@ -110,7 +110,8 @@ def config_panel(sfx, y):
                         Color: =AppDark.Fg"""
 
 
-def ref_gallery(key, sfx, heading, empty, y, items):
+def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
+                visible=None, empty_visible=None, x=None, width=None):
     """A documents-or-firmware list.
 
     A row carries an accent rail only when Featured, so the eye goes to the reference
@@ -120,19 +121,46 @@ def ref_gallery(key, sfx, heading, empty, y, items):
     The "last checked" column is deliberately loud when stale: a service manual nobody has
     verified in eighteen months is a different object from one checked last month, and the
     old screen said so in the same grey as everything else.
+
+    meta/height/visible let a caller vary the parts that genuinely differ. scrCatalogue
+    names the owning product only when the document belongs to a UNIT rather than to the
+    model being viewed - repeating "CI 300X" on every row of the CI 300X panel is noise -
+    and it lives in a responsive split whose height is not derived from its own row count.
     """
+    meta = meta or (
+        "=ThisItem.'Reference Type'.Value & \"  ·  \" & "
+        "LookUp(TB_Products, ID = ThisItem.Product.Id).Title & "
+        "If(IsBlank(ThisItem.Customer.Value), \"\", \"  ·  this customer\")")
+    height = height or f"=Min(CountRows(gal{key}{sfx}.AllItems), 4) * 60"
+    visible = visible or f"=CountRows(gal{key}{sfx}.AllItems) > 0"
+    # The empty state answers the same gate as the gallery, inverted. Passed
+    # explicitly rather than derived, because negating an arbitrary caller
+    # expression textually produces things like "X > 0 = false".
+    empty_visible = empty_visible or f"=CountRows(gal{key}{sfx}.AllItems) = 0"
+    # scrCatalogue places this list in the right-hand column of a responsive
+    # split rather than at the page gutter.
+    # A heading may be a literal or a formula; a caller passing one starting
+    # with "=" wants it evaluated (scrCatalogue names the selected model).
+    heading_text = heading if heading.startswith("=") else f'="{heading}"'
+    x = x or "=Gutter"
+    width = width or f"={CW}"
     return f"""
             - lbl{key}Heading{sfx}:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    {x}
                   Y: |
                     ={y}
-                  Width: ={CW}
+                  Width: |
+                    {width}
                   Height: =22
-                  Text: ="{heading}"
+                  Wrap: =false
+                  AutoHeight: =false
+                  Text: |
+                    {heading_text}
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Bold
@@ -141,14 +169,18 @@ def ref_gallery(key, sfx, heading, empty, y, items):
                 Control: Gallery
                 Variant: Vertical
                 Properties:
-                  X: =Gutter
+                  X: |
+                    {x}
                   Y: =lbl{key}Heading{sfx}.Y + lbl{key}Heading{sfx}.Height + 10
-                  Width: ={CW}
-                  Height: =Min(CountRows(gal{key}{sfx}.AllItems), 4) * 60
+                  Width: |
+                    {width}
+                  Height: |
+                    {height}
                   TemplateSize: =60
                   TemplatePadding: =0
-                  ShowScrollbar: =false
-                  Visible: =CountRows(gal{key}{sfx}.AllItems) > 0
+                  ShowScrollbar: =true
+                  Visible: |
+                    {visible}
                   Items: |
                     {items}
                 Children:
@@ -189,7 +221,7 @@ def ref_gallery(key, sfx, heading, empty, y, items):
                         Width: =(Parent.TemplateWidth - 32) * 0.6
                         Height: =18
                         Text: |
-                          =ThisItem.'Reference Type'.Value & "  ·  " & LookUp(TB_Products, ID = ThisItem.Product.Id).Title & If(IsBlank(ThisItem.Customer.Value), "", "  ·  this customer")
+                          {meta}
                         Font: =AppFont
                         Size: =AppType.Small
                         Color: =AppDark.Muted
@@ -257,15 +289,18 @@ def ref_gallery(key, sfx, heading, empty, y, items):
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  X: =Gutter
+                  X: |
+                    {x}
                   Y: =gal{key}{sfx}.Y
-                  Width: ={CW}
+                  Width: |
+                    {width}
                   Height: =40
                   Text: ="{empty}"
                   Font: =AppFont
                   Size: =AppType.Body
                   Color: =AppDark.Muted
-                  Visible: =CountRows(gal{key}{sfx}.AllItems) = 0"""
+                  Visible: |
+                    {empty_visible}"""
 
 
 def version_hero(sfx, y, product_expr):
