@@ -146,7 +146,15 @@ def check_file(path):
         # 1d. a nested LookUp reaching the outer row by bare column name. LookUp opens
         #     its own record scope, so an unqualified outer column fails with
         #     "Name isn't valid". Reach outward with Table[@Field].
-        if re.search(r"LookUp\([A-Za-z_]\w*,\s*ID\s*=\s*(?!ThisItem\.)(?!var)(?!\w+\[@)[A-Z]\w*\.", _code_only(line)):
+        #     An "As" alias is NOT a bare outer column: Filter(T As U, ...) explicitly
+        #     names that scope, and U.Field resolves inside a nested LookUp. This app
+        #     depends on that (As R, As I, As U), so aliases declared on the same line are
+        #     exempt - without this the check fires on every correct use of As.
+        code = _code_only(line)
+        aliases = set(re.findall(r"\bAs\s+([A-Z]\w*)", code))
+        for m in re.finditer(r"LookUp\([A-Za-z_]\w*,\s*ID\s*=\s*(?!ThisItem\.)(?!var)(?!\w+\[@)([A-Z]\w*)\.", code):
+            if m.group(1) in aliases:
+                continue
             findings.append((n, f"nested LookUp reaches the outer row by bare name - use Table[@Field]: {stripped[:50]}"))
 
         # 2. inline scalar carrying ": " outside a block scalar
