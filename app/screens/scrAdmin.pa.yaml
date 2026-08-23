@@ -53,22 +53,6 @@ Screens:
                   Height: =44
                   OnSelect: |
                     =Navigate(scrHome, ScreenTransition.CoverRight)
-            - btnBackAdm:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  Icon: ="ChevronLeft"
-                  Layout: =ButtonLayout.IconBefore
-                  BorderThickness: =0
-                  Color: =AppDark.Accent
-                  Font: =AppFont
-                  Height: =44
-                  OnSelect: =Navigate(scrHome, ScreenTransition.CoverRight)
-                  Size: =AppType.Small
-                  Text: ="Home"
-                  Width: =Gutter * 8
-                  X: =Gutter
-                  Y: =56 + Gutter
             - lblTitleAdm:
                 Control: ModernText
                 Properties:

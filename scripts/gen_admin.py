@@ -119,14 +119,8 @@ def gen_admin():
     o.write(P.brand_band("Adm", "scrHome", back_transition="CoverRight", back_label="Home") + "\n")
     c = p
 
-    q = ctrl(o, "btnBackAdm", "Classic/Button", c)
-    for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark.Bg"),
-                 ("Font","AppFont"),("Height","44"),("HoverColor","AppDark.AccentSolid"),
-                 ("HoverFill","AppDark.Sunken"),("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
-                 ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-                 ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
-                 ("FocusedBorderColor","AppDark.Accent")]:
-        prop(o, k, v, q)
+    # The back button comes from the brand band above; a second one here collided with it
+    # as a duplicate control name.
 
     q = ctrl(o, "lblTitleAdm", "Label", c)
     for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),

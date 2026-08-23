@@ -109,6 +109,22 @@ def _code_only(line):
     return "".join(out)
 
 
+# Studio rejects two controls with the same name in one screen:
+#   PA1001 : DuplicateNameInSequence
+# Worth checking here because the failure names a line number, not the name, and because a
+# shared fragment (the brand band) can collide with a control the screen already had.
+NAME_RE = re.compile(r"^\s*- (\w+):\s*$", re.M)
+
+
+def duplicate_names(text):
+    seen, dupes = set(), []
+    for n in NAME_RE.findall(text):
+        if n in seen and n not in dupes:
+            dupes.append(n)
+        seen.add(n)
+    return dupes
+
+
 def check_file(path):
     findings = []
     text = path.read_text(encoding="utf-8")
@@ -214,6 +230,10 @@ def check_file(path):
             if looks_like_column and quoted not in ALL_COLUMNS and quoted not in SCHEMA:
                 if not quoted.startswith(("scr", "gal", "lbl", "btn", "con", "ico", "rect", "img")):
                     findings.append((n, f"'{quoted}' is not a column in any of the four lists"))
+
+    for n in duplicate_names(text):
+        findings.append((0, f"duplicate control name '{n}' - Studio rejects this as "
+                            "DuplicateNameInSequence"))
 
     return findings
 

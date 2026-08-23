@@ -52,22 +52,6 @@ Screens:
                   Height: =44
                   OnSelect: |
                     =Navigate(scrAdmin, ScreenTransition.UnCoverRight)
-            - btnBackEdit:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Subtle
-                  Icon: ="Cancel"
-                  Layout: =ButtonLayout.IconBefore
-                  BorderThickness: =0
-                  Color: =AppDark.Accent
-                  Font: =AppFont
-                  Height: =44
-                  OnSelect: =Navigate(scrAdmin, ScreenTransition.CoverRight)
-                  Size: =AppType.Small
-                  Text: ="Cancel"
-                  Width: =Gutter * 8
-                  X: =Gutter
-                  Y: =56 + Gutter
             - lblTitleEdit:
                 Control: ModernText
                 Properties:

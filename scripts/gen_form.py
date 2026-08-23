@@ -111,16 +111,10 @@ p = ctrl(o, "conRootEdit", "GroupContainer", ind, "ManualLayout")
 for k, v in [("Fill","AppDark.Bg"),("Height","Parent.Height"),("Width","ContentWidth"),
              ("X","Max((Parent.Width - ContentWidth) / 2, Gutter)")]: prop(o, k, v, p)
 o.write(f"{p[:-2]}Children:\n"); c = p
-o.write(P.brand_band("Edit", "scrAdmin", back_transition="UnCoverRight", back_label="Admin") + "\n")
+o.write(P.brand_band("Edit", "scrAdmin", back_transition="UnCoverRight", back_label="Cancel") + "\n")
 
-q = ctrl(o, "btnBackEdit", "Classic/Button", c)
-for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark.Bg"),
-             ("Font","AppFont"),("Height","44"),("HoverColor","AppDark.AccentSolid"),
-             ("HoverFill","AppDark.Sunken"),
-             ("OnSelect","Navigate(scrAdmin, ScreenTransition.CoverRight)"),
-             ("Size","AppType.Small"),("Text",'"<  Cancel"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
-             ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
+# The back button comes from the brand band above; a second one here collided with it
+# as a duplicate control name.
 
 q = ctrl(o, "lblTitleEdit", "Label", c)
 title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
