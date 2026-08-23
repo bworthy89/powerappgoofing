@@ -86,14 +86,7 @@ def refs(section):
 
 TAB_H = 44
 
-# Counts live in the labels so tabbing hides nothing. Each is the same expression the
-# corresponding gallery uses for Items, reduced to a row count.
-UNIT_N = "CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id))"
-DOCS_N = f"CountRows(galDocsSol.AllItems)"
-FIRM_N = f"CountRows(galFirmwareSol.AllItems)"
-
-
-def tab(key, label, count, i):
+def tab(key, label, i):
     """One tab. Primary when active, Outline otherwise - the same pairing scrAdmin uses,
     and Outline rather than Secondary because Secondary paints an opaque light fill."""
     return f"""            - btnTab{key}Sol:
@@ -101,8 +94,7 @@ def tab(key, label, count, i):
                 Properties:
                   Appearance: |
                     =If(varSolTab = "{key}", ButtonAppearance.Primary, ButtonAppearance.Outline)
-                  Text: |
-                    ="{label}" & If({count} > 0, "  " & {count}, "")
+                  Text: ="{label}"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -204,9 +196,9 @@ Screens:
 
 {P.config_panel("Sol", Y_CFG)}
 
-{tab("Units", "Units", UNIT_N, 0)}
-{tab("Docs", "Documents", DOCS_N, 1)}
-{tab("Firmware", "Firmware", FIRM_N, 2)}
+{tab("Units", "Units", 0)}
+{tab("Docs", "Documents", 1)}
+{tab("Firmware", "Firmware", 2)}
 
             # ---- units
             # A row is a unit the MODEL takes, so it may have nothing behind it. That is the

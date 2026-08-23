@@ -1257,9 +1257,13 @@ heights; if the total can exceed roughly 700px, the layout needs one of:
 - fewer things on screen at once
 
 `scrSolution` took the third with a tab strip: Units, Documents and Firmware share one origin
-and one region, with counts in the tab labels so tabbing hides nothing. The page is now 455px
-before the list starts, and the list fills whatever is left — so the page stops growing as a
-site gains documents, which the stacked version did without limit.
+and one region. The page is now 455px before the list starts, and the list fills whatever is
+left — so the page stops growing as a site gains documents, which the stacked version did
+without limit.
+
+Row counts were tried in the tab labels and removed. They answered a question nobody was
+asking — a technician opens Documents to find a document, not to learn there are seven — and
+they cost a `CountRows` per tab on every render of the screen.
 
 Auto-layout was the obvious fix and was not used: its `Variant` and `Layout*` property names
 could not be verified against this compiler with the authoring MCP disconnected, and an

@@ -153,8 +153,7 @@ Screens:
                 Properties:
                   Appearance: |
                     =If(varSolTab = "Units", ButtonAppearance.Primary, ButtonAppearance.Outline)
-                  Text: |
-                    ="Units" & If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)) > 0, "  " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id)), "")
+                  Text: ="Units"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -176,8 +175,7 @@ Screens:
                 Properties:
                   Appearance: |
                     =If(varSolTab = "Docs", ButtonAppearance.Primary, ButtonAppearance.Outline)
-                  Text: |
-                    ="Documents" & If(CountRows(galDocsSol.AllItems) > 0, "  " & CountRows(galDocsSol.AllItems), "")
+                  Text: ="Documents"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
@@ -199,8 +197,7 @@ Screens:
                 Properties:
                   Appearance: |
                     =If(varSolTab = "Firmware", ButtonAppearance.Primary, ButtonAppearance.Outline)
-                  Text: |
-                    ="Firmware" & If(CountRows(galFirmwareSol.AllItems) > 0, "  " & CountRows(galFirmwareSol.AllItems), "")
+                  Text: ="Firmware"
                   Font: =AppFont
                   Size: =AppType.Small
                   FontWeight: =FontWeight.Semibold
