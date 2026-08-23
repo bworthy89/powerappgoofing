@@ -1208,3 +1208,29 @@ first.** The error surfaces on the consuming screen either way, so the message c
 you which half is behind. Check the formula named in the error against the file on disk
 before concluding anything about component metadata — the answer is one `grep` away and does
 not depend on remembering how Studio behaves.
+
+## Do not name a SharePoint column `Version`
+
+It collides with SharePoint's built-in item versioning. The column is created and looks
+normal in the SharePoint UI, but Power Apps cannot resolve it:
+
+```
+Name isn't valid. 'Version' isn't recognized.
+```
+
+The tell is that **only that one column fails** — sibling lookups on the same list resolve
+fine, which rules out the list, the data source and the connection, and points at the column
+itself.
+
+`TB_References` has a working `Version` column, which makes this confusing. That one was
+created by `Create-ToolboxLists.ps1`, which sets the internal name (`TBVersion`) and the
+display name separately. A column typed into the SharePoint UI gets its internal name derived
+from the display name, and for `Version` that derivation collides.
+
+**So: a column created by the script can carry a name a hand-created column cannot.** Any
+list a person is expected to build by hand should avoid reserved-ish names entirely rather
+than rely on the script's escape. `TB_SoftwareVersions` uses `Software Version`
+(`TBSoftwareVersion`), which also reads better on the form.
+
+Power Fx needs the single quotes once a column name contains a space:
+`LookUp(TB_SoftwareVersions, ...).'Software Version'`.

@@ -70,7 +70,8 @@ LISTS = [
         dict(n="Customer", kind="lookup", caption="Customer", target="TB_Customers"),
         dict(n="Product",  kind="lookup", caption="Model this version applies to",
              target="TB_Products"),
-        dict(n="Version",  kind="text",   caption="Software version running at this site"),
+        dict(n="'Software Version'", kind="text",
+             caption="Software version running at this site", id="SwVersion"),
     ]),
     dict(key="Ref", label="References", source="TB_References", fields=[
         dict(n="Title",              kind="text",   caption="Title"),
@@ -223,7 +224,7 @@ def gen_admin():
            "Inst": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & If(IsBlank(ThisItem.\'Parent\'), "  |  SOLUTION", "  |  unit of " & ThisItem.\'Parent\'.Value)',
            "Ref":  '" - " & Coalesce(ThisItem.Product.Value, "no product") & "  |  " & Coalesce(ThisItem.Section.Value, "no section")',
            "SolU": '" - " & Coalesce(ThisItem.Unit.Value, "no unit") & If(ThisItem.Standard, "  |  standard", "  |  option")',
-           "SwVer": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.Version, "no version")'}
+           "SwVer": '" - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.\'Software Version\', "no version")'}
     for L in LISTS:
         q = ctrl(o, f"galAdm{L['key']}", "Gallery", c, "Vertical")
         o.write(f"{q}Items: |\n{q}  =SortByColumns(\n"

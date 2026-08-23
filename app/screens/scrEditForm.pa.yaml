@@ -923,7 +923,7 @@ Screens:
                   X: =Gutter
                   Y: =282
                   Visible: =varAdminList = "SwVer"
-            - lblCapVersionSwVer:
+            - lblCapSwVersionSwVer:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
@@ -940,12 +940,12 @@ Screens:
                   X: =Gutter
                   Y: =336
                   Visible: =varAdminList = "SwVer"
-            - txtVersionSwVer:
+            - txtSwVersionSwVer:
                 Control: ModernTextInput
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecSwVer.Version)
+                  Default: =If(varAdminNew, "", varRecSwVer.'Software Version')
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -1308,7 +1308,7 @@ Screens:
                                     Title: txtTitleSwVer.Text,
                                     Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), ddCustomerSwVer.Selected),
                                     Product: If(IsBlank(ddProductSwVer.Selected), Blank(), ddProductSwVer.Selected),
-                                    Version: txtVersionSwVer.Text
+                                    'Software Version': txtSwVersionSwVer.Text
                                 }
                             )
                         );

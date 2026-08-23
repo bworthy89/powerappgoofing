@@ -476,7 +476,7 @@ Screens:
                         Color: =AppDark.Fg
                         Appearance: =ButtonAppearance.Outline
                         Text: |
-                          =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.Version, "no version")
+                          =ThisItem.Title & " - " & Coalesce(ThisItem.Customer.Value, "no customer") & "  |  " & Coalesce(ThisItem.Product.Value, "no model") & "  |  " & Coalesce(ThisItem.'Software Version', "no version")
                         OnSelect: |
                           =Set(varRecSwVer, ThisItem);
                           Set(varAdminNew, false);

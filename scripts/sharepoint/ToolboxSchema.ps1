@@ -97,7 +97,7 @@ $Schema = [ordered]@{
         Description = 'The software build a site runs for a given model. One row per customer and model; a machine with its own Installed Version overrides it.'
         TitleLabel  = 'Label'
         Fields      = @(
-            @{ Display = 'Version'; Internal = 'TBVersion'; Type = 'Text' }
+            @{ Display = 'Software Version'; Internal = 'TBSoftwareVersion'; Type = 'Text' }
         )
         Lookups     = @(
             @{ Display = 'Customer'; Internal = 'TBCustomer'; Target = 'TB_Customers'; Required = $true }
@@ -142,5 +142,5 @@ $ViewFields = @{
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
     'TB_SolutionUnits' = @('Title','TBSolution','TBUnit','TBStandard')
     'TB_Admins'        = @('Title','TBPerson','TBStatus')
-    'TB_SoftwareVersions' = @('Title','TBCustomer','TBProduct','TBVersion')
+    'TB_SoftwareVersions' = @('Title','TBCustomer','TBProduct','TBSoftwareVersion')
 }

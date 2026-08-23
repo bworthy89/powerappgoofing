@@ -55,7 +55,7 @@ UNIT_N = f"CountRows({UNITS})"
 # Same rule as the hero and as scrCustomers: the machine's own version, else the site
 # default recorded against that model. varCustomer is the site being viewed.
 _EFF = ("Coalesce(U.'Installed Version', "
-        "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = U.Product.Id).Version)")
+        "LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = U.Product.Id).'Software Version')")
 
 BEHIND_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
             "U.Status.Value <> \"Retired\", "

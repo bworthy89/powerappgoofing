@@ -169,7 +169,7 @@ already added the choice value, removing it is optional — nothing reads it now
 | Title | Title | Text | yes (label, e.g. `Northgate - CI 300X`) |
 | Customer | TBCustomer | Lookup → TB_Customers | yes |
 | Product | TBProduct | Lookup → TB_Products | yes |
-| Version | TBVersion | Text | no |
+| Software Version | TBSoftwareVersion | Text | no |
 
 `scripts/sharepoint/ToolboxSchema.ps1` defines it, so `Create-ToolboxLists.ps1` and
 `Test-ToolboxSchema.ps1` both cover it if you use them.
@@ -177,10 +177,17 @@ already added the choice value, removing it is optional — nothing reads it now
 ### What a row means
 
 ```
-Customer  Northgate Retail Group
-Product   CI 300X
-Version   3.4.1
+Customer          Northgate Retail Group
+Product           CI 300X
+Software Version  3.4.1
 ```
+
+> **Do not name that column `Version`.** It collides with SharePoint's built-in item
+> versioning, and a column created by hand in the UI ends up with an internal name Power
+> Apps cannot resolve — the app reports `Name isn't valid. 'Version' isn't recognized` while
+> the column looks perfectly normal in SharePoint. `TB_References` has a working `Version`
+> column only because `Create-ToolboxLists.ps1` sets its internal name (`TBVersion`)
+> explicitly, which the UI does not do.
 
 *At this site, every CI 300X runs 3.4.1 — unless that machine's own Installed Version says
 otherwise.*
