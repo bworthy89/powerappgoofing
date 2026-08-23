@@ -11,8 +11,8 @@ Anything genuinely screen-specific stays in that screen's generator.
 """
 from pathlib import Path
 
-BAND = 56          # keep in step with BandH in App.pa.yaml Formulas
-TOP = "BandH"      # what generated screens write, so the band height has one definition
+BAND = 56   # the one definition of the band height; generators emit it as a literal
+            # so changing it needs no App-level formula and no App.pa.yaml repaste
 CW = "Parent.Width - (Gutter * 2)"
 PANEL_MAX = 620          # a reading measure; full-bleed panels look unfinished on desktop
 
@@ -37,7 +37,7 @@ def brand_band(sfx, back_target, back_transition="UnCover", back_label="Back",
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =BandH
+                  Height: ={BAND}
                   Fill: =AppDark.Brand
             - imgWordmark{sfx}:
                 Control: Image

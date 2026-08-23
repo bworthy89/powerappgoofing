@@ -26,7 +26,7 @@ Screens:
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =BandH
+                  Height: =56
                   Fill: =AppDark.Brand
             - imgWordmarkWiz:
                 Control: Image
@@ -70,7 +70,7 @@ Screens:
                   Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
-                  Y: =BandH + Gutter
+                  Y: =56 + Gutter
             - lblWizTitle:
                 Control: ModernText
                 Properties:
@@ -86,7 +86,7 @@ Screens:
                   Text: ="New customer"
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =BandH + Gutter + 34
+                  Y: =56 + Gutter + 34
             - lblWizStep:
                 Control: ModernText
                 Properties:
@@ -102,7 +102,7 @@ Screens:
                   Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  the machines on site", 3, "Step 3 of 3  -  what is attached to each machine", "")
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =BandH + Gutter + 72
+                  Y: =56 + Gutter + 72
             - lblCapCustName:
                 Control: ModernText
                 Properties:

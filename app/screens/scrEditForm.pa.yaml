@@ -23,7 +23,7 @@ Screens:
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =BandH
+                  Height: =56
                   Fill: =AppDark.Brand
             - imgWordmarkEdit:
                 Control: Image
@@ -67,7 +67,7 @@ Screens:
                   Text: ="Cancel"
                   Width: =Gutter * 8
                   X: =Gutter
-                  Y: =BandH + Gutter
+                  Y: =56 + Gutter
             - lblTitleEdit:
                 Control: ModernText
                 Properties:
@@ -83,7 +83,7 @@ Screens:
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =BandH + Gutter + 34
+                  Y: =56 + Gutter + 34
             - lblCapTitleCust:
                 Control: ModernText
                 Properties:

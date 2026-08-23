@@ -124,7 +124,7 @@ def gen_admin():
                  ("Font","AppFont"),("Height","44"),("HoverColor","AppDark.AccentSolid"),
                  ("HoverFill","AppDark.Sunken"),("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
                  ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-                 ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
+                 ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
                  ("FocusedBorderColor","AppDark.Accent")]:
         prop(o, k, v, q)
 
@@ -132,7 +132,7 @@ def gen_admin():
     for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
                  ("Height","36"),("Size","AppType.Title"),("Text",'"Admin"'),("Wrap","false"),
                  ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
-                 ("X","Gutter"),("Y","BandH + Gutter + 34")]:
+                 ("X","Gutter"),("Y","56 + Gutter + 34")]:
         prop(o, k, v, q)
 
     # The tab bar divides by however many lists there are. It was hardcoded to
@@ -151,7 +151,7 @@ def gen_admin():
                      ("BorderColor","AppDark.Line"),("BorderThickness","1"),
                      ("Height","44"),("Width",TABW),
                      ("X",f"Gutter + ({TABW} + 8) * {i}"),
-                     ("Y","BandH + Gutter + 80"),
+                     ("Y","56 + Gutter + 80"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                      ("OnSelect",f'Set(varAdminList, "{L["key"]}")'),
@@ -162,7 +162,7 @@ def gen_admin():
     for k, v in [("BorderColor","AppDark.Line"),("BorderThickness","1"),("Color","AppDark.Fg"),
                  ("Default",'""'),("Fill","AppDark.Surface"),("Font","AppFont"),("Height","40"),
                  ("HintText",'"Search"'),("Size","AppType.Body"),
-                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","BandH + Gutter + 126"),
+                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","56 + Gutter + 126"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
         prop(o, k, v, q)
@@ -179,7 +179,7 @@ def gen_admin():
                  ("HoverFill","AppDark.Sunken"),("BorderColor","AppDark.Line"),
                  ("BorderThickness","1"),
                  ("Height","40"),("Width","150"),
-                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","BandH + Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","56 + Gutter + 126"),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'varAdminList = "Cust"'),
@@ -192,7 +192,7 @@ def gen_admin():
                  ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
                  ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("Height","40"),("Width","118"),
-                 ("X","ContentWidth - Gutter - 118"),("Y","BandH + Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118"),("Y","56 + Gutter + 126"),
                  ("Visible",'varAdminList <> "Acc"'),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
@@ -225,9 +225,9 @@ def gen_admin():
                 f"{q}      Filter({L['source']}, StartsWith(Title, Trim(txtSearchAdm.Text))),\n"
                 f"{q}      \"Title\",\n{q}      SortOrder.Ascending\n{q}  )\n")
         for k, v in [("Visible",f'varAdminList = "{L["key"]}"'),
-                     ("X","Gutter"),("Y","BandH + Gutter + 180"),
+                     ("X","Gutter"),("Y","56 + Gutter + 180"),
                      ("Width","ContentWidth - (Gutter * 2)"),
-                     ("Height","Parent.Height - (BandH + Gutter + 180) - Gutter"),
+                     ("Height","Parent.Height - (56 + Gutter + 180) - Gutter"),
                      ("TemplateSize","44"),("TemplatePadding","6"),("ShowScrollbar","true")]:
             prop(o, k, v, q)
         o.write(f"{q[:-2]}Children:\n")
@@ -253,9 +253,9 @@ def gen_admin():
     # Pending first, so the thing needing a decision is at the top.
     o.write(f"{q}Items: |\n"
             f"{q}  =Sort(TB_Admins, If(Status.Value = \"Pending\", 0, 1), SortOrder.Ascending)\n")
-    for k, v in [("Visible",VIS),("X","Gutter"),("Y","BandH + Gutter + 180"),
+    for k, v in [("Visible",VIS),("X","Gutter"),("Y","56 + Gutter + 180"),
                  ("Width","ContentWidth - (Gutter * 2)"),
-                 ("Height","Parent.Height - (BandH + Gutter + 180) - Gutter"),
+                 ("Height","Parent.Height - (56 + Gutter + 180) - Gutter"),
                  ("TemplateSize","56"),("TemplatePadding","6"),
                  ("ShowScrollbar","true")]:
         prop(o, k, v, q)
@@ -321,7 +321,7 @@ def gen_admin():
     for k, v in [("Text",'"No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."'),
                  ("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
-                 ("X","Gutter"),("Y","BandH + Gutter + 200"),("Height","40"),
+                 ("X","Gutter"),("Y","56 + Gutter + 200"),("Height","40"),
                  ("Width","ContentWidth - (Gutter * 2)"),
                  ("Visible",f'{VIS} && CountRows(TB_Admins) = 0')]:
         prop(o, k, v, q)
@@ -332,7 +332,7 @@ def gen_admin():
     for k, v in [("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Text",'"Nothing matches that search."'),
                  ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
-                 ("X","Gutter"),("Y","BandH + Gutter + 190"),("Visible",cond)]:
+                 ("X","Gutter"),("Y","56 + Gutter + 190"),("Visible",cond)]:
         prop(o, k, v, q)
     return o.getvalue()
 

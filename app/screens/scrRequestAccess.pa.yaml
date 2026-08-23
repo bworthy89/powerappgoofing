@@ -24,7 +24,7 @@ Screens:
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =BandH
+                  Height: =56
                   Fill: =AppDark.Brand
             - imgWordmarkReq:
                 Control: Image

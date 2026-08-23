@@ -24,7 +24,7 @@ Screens:
                   X: =0
                   Y: =0
                   Width: =Parent.Width
-                  Height: =BandH
+                  Height: =56
                   Fill: =AppDark.Brand
             - imgWordmarkAdm:
                 Control: Image
@@ -68,7 +68,7 @@ Screens:
                   Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
-                  Y: =BandH + Gutter
+                  Y: =56 + Gutter
             - lblTitleAdm:
                 Control: ModernText
                 Properties:
@@ -84,7 +84,7 @@ Screens:
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =BandH + Gutter + 34
+                  Y: =56 + Gutter + 34
             - btnListCust:
                 Control: ModernButton
                 Properties:
@@ -98,7 +98,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 0
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -117,7 +117,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 1
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -136,7 +136,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 2
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -155,7 +155,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 3
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -174,7 +174,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 4
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -193,7 +193,7 @@ Screens:
                   Height: =44
                   Width: =(ContentWidth - (Gutter * 2) - 40) / 6
                   X: =Gutter + ((ContentWidth - (Gutter * 2) - 40) / 6 + 8) * 5
-                  Y: =BandH + Gutter + 80
+                  Y: =56 + Gutter + 80
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -214,7 +214,7 @@ Screens:
                   Size: =AppType.Body
                   Width: =ContentWidth - (Gutter * 2) - 130
                   X: =Gutter
-                  Y: =BandH + Gutter + 126
+                  Y: =56 + Gutter + 126
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -235,7 +235,7 @@ Screens:
                   Height: =40
                   Width: =150
                   X: =ContentWidth - Gutter - 118 - 8 - 150
-                  Y: =BandH + Gutter + 126
+                  Y: =56 + Gutter + 126
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -255,7 +255,7 @@ Screens:
                   Height: =40
                   Width: =118
                   X: =ContentWidth - Gutter - 118
-                  Y: =BandH + Gutter + 126
+                  Y: =56 + Gutter + 126
                   Visible: =varAdminList <> "Acc"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -283,9 +283,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Cust"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -327,9 +327,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Prod"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -371,9 +371,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Inst"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -415,9 +415,9 @@ Screens:
                     )
                   Visible: =varAdminList = "SolU"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -459,9 +459,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Ref"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -499,9 +499,9 @@ Screens:
                     =Sort(TB_Admins, If(Status.Value = "Pending", 0, 1), SortOrder.Ascending)
                   Visible: =varAdminList = "Acc"
                   X: =Gutter
-                  Y: =BandH + Gutter + 180
+                  Y: =56 + Gutter + 180
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (BandH + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -612,7 +612,7 @@ Screens:
                   Wrap: =true
                   AutoHeight: =false
                   X: =Gutter
-                  Y: =BandH + Gutter + 200
+                  Y: =56 + Gutter + 200
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   Visible: =varAdminList = "Acc" && CountRows(TB_Admins) = 0
@@ -629,5 +629,5 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =BandH + Gutter + 190
+                  Y: =56 + Gutter + 190
                   Visible: =(varAdminList = "Cust" && CountRows(galAdmCust.AllItems) = 0) || (varAdminList = "Prod" && CountRows(galAdmProd.AllItems) = 0) || (varAdminList = "Inst" && CountRows(galAdmInst.AllItems) = 0) || (varAdminList = "SolU" && CountRows(galAdmSolU.AllItems) = 0) || (varAdminList = "Ref" && CountRows(galAdmRef.AllItems) = 0)

@@ -90,7 +90,7 @@ for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),
              ("HoverColor","AppDark.AccentSolid"),("HoverFill","AppDark.Sunken"),
              ("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
              ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
+             ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
              ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizTitle", "Label", c)
@@ -99,7 +99,7 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),
              ("Size","AppType.Title"),("Wrap","false"),("AutoHeight","false"),
              ("Text",'"New customer"'),
              ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-             ("Y","BandH + Gutter + 34")]: prop(o, k, v, q)
+             ("Y","56 + Gutter + 34")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizStep", "Label", c)
 steps = ('Switch(varWizStep, 1, "Step 1 of 3  -  the customer", '
@@ -109,7 +109,7 @@ for k, v in [("Color","AppDark.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Height","20"),("Wrap","false"),("AutoHeight","false"),
              ("Text",steps),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","BandH + Gutter + 72")]: prop(o, k, v, q)
+             ("X","Gutter"),("Y","56 + Gutter + 72")]: prop(o, k, v, q)
 
 def caption(name, text, y, vis):
     q = ctrl(o, name, "Label", c)

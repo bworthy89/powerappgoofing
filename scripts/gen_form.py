@@ -119,7 +119,7 @@ for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),("Fill","AppDark
              ("HoverFill","AppDark.Sunken"),
              ("OnSelect","Navigate(scrAdmin, ScreenTransition.CoverRight)"),
              ("Size","AppType.Small"),("Text",'"<  Cancel"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","BandH + Gutter"),("FocusedBorderThickness","2"),
+             ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
              ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblTitleEdit", "Label", c)
@@ -128,7 +128,7 @@ title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
 for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
              ("Height","36"),("Size","AppType.Title"),("Text",title),("Wrap","false"),
              ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","BandH + Gutter + 34")]: prop(o, k, v, q)
+             ("X","Gutter"),("Y","56 + Gutter + 34")]: prop(o, k, v, q)
 
 # ---- fields, grouped per list, only the selected list visible
 for L in LISTS:

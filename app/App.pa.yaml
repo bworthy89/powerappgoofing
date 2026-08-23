@@ -58,7 +58,6 @@ App:
           Small:    12,
           Micro:    10
       };
-      BandH = 56;
       IsNarrow = App.Width < 640;
       Gutter = If(App.Width < 640, 16, 24);
       ContentWidth = Min(App.Width - (Gutter * 2), 1100)
