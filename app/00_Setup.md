@@ -1330,3 +1330,52 @@ Do that whenever a count changes in a row of anything.
 The related lesson: **the same review that called the arithmetic correct also missed it**, so
 "I checked the geometry" is not a claim worth making unless the check included the output at
 the sizes the app actually runs at.
+
+## A property set twice is kept once, silently
+
+`fix_dark_defaults` clears a picker's generator colours before writing its own light-field
+pair. The pattern it used to clear them with matched only `=AppDark.<token>`, so when
+`gen_form` wrote the literal pair directly, both survived:
+
+```yaml
+- dtpLastVerifiedInst:
+    Control: ModernDatePicker
+    Properties:
+      Color: =ColorValue("#14181C")     # from the pass
+      Fill:  =ColorValue("#F2F4F8")
+      Color: =ColorValue("#14181C")     # from the generator
+      Fill:  =ColorValue("#F2F4F8")
+```
+
+YAML keeps the last occurrence of a duplicated key and discards the rest without complaint.
+Here both copies happened to agree, so nothing looked wrong — but the same shape with two
+*different* values is a control that looks configured and behaves otherwise, and no compiler
+will mention it.
+
+Two guards now exist: the strip clears any single-line value rather than one spelling, and
+`verify_yaml.duplicate_properties` reports a key set twice inside one control. **One owner per
+property.** If a pass writes a property, the generator must not, and vice versa.
+
+## `If(varAdminNew, "", …)` suppresses the column's own default
+
+`scrEditForm` gave every field on a new record a hardcoded empty value:
+
+```powerfx
+Default: =If(varAdminNew, false, varRecCust.Active)
+```
+
+`Defaults(TB_Customers)` already returns the list's configured defaults, so the wrapper was
+not filling a gap — it was overriding one. `TB_Customers.Active` and `TB_Products.Active`
+both default to true in the schema; the form wrote **false**.
+
+Every browse list filters on `Active = true`. So a customer or model created through
+*Admin → Add new* existed and was invisible — absent from the customer list, the catalogue
+and search — until someone reopened the record and moved a toggle they had no reason to
+suspect. It survived because the guided setup's own toggle defaults to true, so the two paths
+that create a customer disagreed, and whichever one you used looked self-consistent.
+
+The rule that generalises: **a default that restates what the data source already provides is
+not a safety net, it is a second opinion**, and when the two disagree the data source is
+usually right. Override one only where the column's default is wrong *for a new record
+specifically* — `TB_SolutionUnits.Standard` is the single case here, and it says so at the
+field definition rather than in the form.
