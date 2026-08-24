@@ -178,7 +178,7 @@ def standard_hint(dd):
 # The customer form IS the screen until the customer exists. varWizCust is set
 # by the Patch that creates it, so no step counter is needed to know.
 MADE = "!IsBlank(varWizCust)"
-V1 = f"!({MADE})"
+V1 = "IsBlank(varWizCust)"
 y = 188
 for nm, cap, ml in [("txtWizCustName","Customer name",False),
                     ("txtWizCustDesc","Description",True),
@@ -196,6 +196,8 @@ for k, v in [("Label",'""'),("Default","true"),("Font","AppFont"),("Size","AppTy
 
 q = ctrl(o, "btnWizStep1Next", "Classic/Button", c)
 blk(o, "OnSelect", [
+    'If(Len(Trim(txtWizCustName.Text)) = 0,',
+    '    Set(varWizError, "Enter a customer name."),',
     "IfError(",
     "    Set(varWizCust,",
     "        Patch(TB_Customers, Defaults(TB_Customers),",
@@ -207,14 +209,13 @@ blk(o, "OnSelect", [
     "            }",
     "        )",
     "    );",
-    '    Set(varWizError, "");',
     '    Set(varWizError, ""),',
     "    Set(varWizError, FirstError.Message)",
-    ")"], q)
+    "))"], q)
 for k, v in [("Text",'"Create customer"'),("Fill","AppDark.Accent"),
              ("HoverFill","AppDark.AccentSolid"),("Width","210"),
              ("X","Gutter"),("Y","Parent.Height - Gutter - 44"),
-             ("Visible",f"{V1} && Len(Trim(txtWizCustName.Text)) > 0")] + BTN:
+             ("Visible",V1)] + BTN:
     prop(o, k, v, q)
 
 # ---- step 2: solutions --------------------------------------------------

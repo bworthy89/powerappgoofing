@@ -116,7 +116,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =188
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
             - txtWizCustName:
                 Control: ModernTextInput
                 Properties:
@@ -129,7 +129,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =206
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -154,7 +154,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =260
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
             - txtWizCustDesc:
                 Control: ModernTextInput
                 Properties:
@@ -167,7 +167,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =278
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -192,7 +192,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =356
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
             - txtWizCustNotes:
                 Control: ModernTextInput
                 Properties:
@@ -205,7 +205,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =374
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -230,7 +230,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =452
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
             - tglWizCustActive:
                 Control: ModernToggle
                 Properties:
@@ -243,7 +243,7 @@ Screens:
                   Width: =110
                   X: =Gutter
                   Y: =470
-                  Visible: =!(!IsBlank(varWizCust))
+                  Visible: =IsBlank(varWizCust)
             - btnWizStep1Next:
                 Control: ModernButton
                 Properties:
@@ -251,7 +251,9 @@ Screens:
                   Color: =AppDark.OnBrand
                   Appearance: =ButtonAppearance.Primary
                   OnSelect: |
-                    =IfError(
+                    =If(Len(Trim(txtWizCustName.Text)) = 0,
+                        Set(varWizError, "Enter a customer name."),
+                    IfError(
                         Set(varWizCust,
                             Patch(TB_Customers, Defaults(TB_Customers),
                                 {
@@ -262,15 +264,14 @@ Screens:
                                 }
                             )
                         );
-                        Set(varWizError, "");
                         Set(varWizError, ""),
                         Set(varWizError, FirstError.Message)
-                    )
+                    ))
                   Text: ="Create customer"
                   Width: =210
                   X: =Gutter
                   Y: =Parent.Height - Gutter - 44
-                  Visible: =!(!IsBlank(varWizCust)) && Len(Trim(txtWizCustName.Text)) > 0
+                  Visible: =IsBlank(varWizCust)
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
