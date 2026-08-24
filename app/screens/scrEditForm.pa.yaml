@@ -975,7 +975,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStCustomerSwVer), varStCustomerSwVer, LookUp(TB_Customers, ID = varRecSwVer.Customer.Id))
+                  Default: =LookUp(TB_Customers, ID = varRecSwVer.Customer.Id)
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1232,7 +1232,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStCustomerRef), varStCustomerRef, LookUp(TB_Customers, ID = varRecRef.Customer.Id))
+                  Default: =LookUp(TB_Customers, ID = varRecRef.Customer.Id)
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1461,7 +1461,7 @@ Screens:
                   OnSelect: |
                     =IfError(
                         If(varAdminList = "Cust",
-                            Set(varSaved, Patch(TB_Customers,
+                            Patch(TB_Customers,
                                 If(varAdminNew, Defaults(TB_Customers), varRecCust),
                                 {
                                     Title: txtTitleCust.Text,
@@ -1469,10 +1469,10 @@ Screens:
                                     'Support Notes': txtSupportNotesCust.Text,
                                     Active: tglActiveCust.Checked
                                 }
-                            ))
+                            )
                         );
                         If(varAdminList = "Prod",
-                            Set(varSaved, Patch(TB_Products,
+                            Set(varSavedProd, Patch(TB_Products,
                                 If(varAdminNew, Defaults(TB_Products), varRecProd),
                                 {
                                     Title: txtTitleProd.Text,
@@ -1485,7 +1485,7 @@ Screens:
                             ))
                         );
                         If(varAdminList = "Inst",
-                            Set(varSaved, Patch(TB_Installations,
+                            Set(varSavedInst, Patch(TB_Installations,
                                 If(varAdminNew, Defaults(TB_Installations), varRecInst),
                                 {
                                     Title: txtTitleInst.Text,
@@ -1500,7 +1500,7 @@ Screens:
                             ))
                         );
                         If(varAdminList = "SolU",
-                            Set(varSaved, Patch(TB_SolutionUnits,
+                            Patch(TB_SolutionUnits,
                                 If(varAdminNew, Defaults(TB_SolutionUnits), varRecSolU),
                                 {
                                     Title: txtTitleSolU.Text,
@@ -1508,10 +1508,10 @@ Screens:
                                     Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }),
                                     Standard: tglStandardSolU.Checked
                                 }
-                            ))
+                            )
                         );
                         If(varAdminList = "SwVer",
-                            Set(varSaved, Patch(TB_SoftwareVersions,
+                            Patch(TB_SoftwareVersions,
                                 If(varAdminNew, Defaults(TB_SoftwareVersions), varRecSwVer),
                                 {
                                     Title: txtTitleSwVer.Text,
@@ -1520,10 +1520,10 @@ Screens:
                                     'Software Version': txtSwVersionSwVer.Text,
                                     'Last Verified': dtpLastVerifiedSwVer.SelectedDate
                                 }
-                            ))
+                            )
                         );
                         If(varAdminList = "Ref",
-                            Set(varSaved, Patch(TB_References,
+                            Patch(TB_References,
                                 If(varAdminNew, Defaults(TB_References), varRecRef),
                                 {
                                     Title: txtTitleRef.Text,
@@ -1536,12 +1536,12 @@ Screens:
                                     Featured: tglFeaturedRef.Checked,
                                     'Last Checked': dtpLastCheckedRef.SelectedDate
                                 }
-                            ))
+                            )
                         );
-                        If(varAdminList = "Inst" && varAdminNew && IsBlank(varSaved.'Parent'),     ForAll(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSaved.Customer.Value & " - " & SU.Unit.Value,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.Customer.Id, Value: varSaved.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.Unit.Id, Value: SU.Unit.Value },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true)) > 0,         Notify("Added " & varSaved.Title & " with " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true))                & " standard unit(s).", NotificationType.Success)) );
+                        If(varAdminList = "Inst" && varAdminNew && IsBlank(varSavedInst.'Parent'),     ForAll(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSavedInst.Customer.Value & " - " & SU.Unit.Value,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.Customer.Id, Value: varSavedInst.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.Unit.Id, Value: SU.Unit.Value },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.ID, Value: varSavedInst.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true)) > 0,         Notify("Added " & varSavedInst.Title & " with " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true))                & " standard unit(s).", NotificationType.Success)) );
                         Set(varEditError, "");
                         If(!IsBlank(varResumeList),
-                            If(varResumeList = "Inst" && varResumeField = "Product", Set(varStProductInst, varSaved); Reset(ddProductInst)); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varStSolutionSolU, varSaved); Reset(ddSolutionSolU)); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varStUnitSolU, varSaved); Reset(ddUnitSolU)); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varStProductSwVer, varSaved); Reset(ddProductSwVer)); If(varResumeList = "Ref" && varResumeField = "Product", Set(varStProductRef, varSaved); Reset(ddProductRef)); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
+                            If(varResumeList = "Inst" && varResumeField = "Product", Set(varStProductInst, varSavedProd); Reset(ddProductInst)); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varStSolutionSolU, varSavedProd); Reset(ddSolutionSolU)); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varStUnitSolU, varSavedProd); Reset(ddUnitSolU)); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varStProductSwVer, varSavedProd); Reset(ddProductSwVer)); If(varResumeList = "Ref" && varResumeField = "Product", Set(varStProductRef, varSavedProd); Reset(ddProductRef)); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
                             Navigate(varAdminReturn, ScreenTransition.UnCoverRight)
                         ),
                         Set(varEditError, FirstError.Message)

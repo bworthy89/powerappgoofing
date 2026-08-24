@@ -85,7 +85,7 @@ Screens:
                   Visible: |
                     =varIsAdmin
                   OnSelect: |
-                    =Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
             - btnAddUnitSol:
                 Control: ModernButton
                 Properties:
@@ -111,7 +111,7 @@ Screens:
                   Visible: |
                     =varIsAdmin
                   OnSelect: |
-                    =Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Set(varStCustomerInst, LookUp(TB_Customers, ID = varCustomer.ID)); Set(varStParentInst, varInstallation); Set(varRecInst, Defaults(TB_Installations)); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerInst, LookUp(TB_Customers, ID = varCustomer.ID)); Set(varStParentInst, varInstallation); Set(varRecInst, Defaults(TB_Installations)); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleSol:
                 Control: ModernText
                 Properties:

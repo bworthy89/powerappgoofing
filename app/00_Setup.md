@@ -1433,3 +1433,55 @@ with whatever the previous visit left behind.
 
 `verify_yaml.odata_in_record_merge` still reports the odata field inside a two-argument
 `Patch`, which catches the first of the two wrong shapes.
+
+## A variable `Set` only to `Blank()` has no type, and every reference to it fails
+
+From the **Set** and *Understand variables* documentation:
+
+> *Variables are created implicitly when they appear in a **Set** … To declare a variable **and
+> its type**, just include it in any of these functions … all typing is implicit from usage.*
+
+> *All implicit definitions of the variable must agree on type.*
+
+> *`Set( x, Blank() )` removes the value in the global variable `x`.*
+
+`Blank()` removes a value; it does not supply a type. So a variable that is only ever cleared
+was never declared, and reading it gives:
+
+```
+Name isn't valid. 'varStCustomerSwVer' isn't recognized.
+```
+
+The message names the **reader**, not the writer, so it sends you to the screen where the
+variable is used rather than the one where it should have been assigned.
+
+Two shapes of this shipped together:
+
+- `scrEditForm` kept a pre-fill variable per lookup field, but only some fields were ever
+  pre-filled. The other two were created by the clearing routine and nothing else.
+- `varSaved` captured the result of `Patch()` for all six lists — six row types for one
+  variable, which cannot agree. This is the same trap `gen_form`'s own docstring describes for
+  `varRecCust` / `varRecProd` / `varRecInst`, reintroduced two hundred lines below the comment
+  warning about it. Split into `varSavedProd` and `varSavedInst`, the only two ever read.
+
+`verify_yaml.untyped_variables` reports a variable whose every `Set` is `Blank()`. It has to
+run **across all files at once**: the `Set` that types a variable is routinely on a different
+screen from the one that clears it, which is exactly why no per-file check caught this.
+
+### The check itself had this bug, which is the more useful lesson
+
+The first version captured 24 characters after the comma to see what was assigned. `finditer`
+does not return overlapping matches, so in a chain like
+
+```powerfx
+Set(varA, Blank()); Set(varB, Blank()); Set(varA, LookUp(TB_Customers, ID = 1))
+```
+
+each match swallowed the start of the next `Set(`, and the typed assignment at the end was
+never seen. It reported a correctly-typed variable as untyped — seven `Set` calls found in a
+file containing nine.
+
+It had been proven against a hand-written known-bad string, which passed. **Prove a new check
+against the real app as well as against a synthetic case**: the synthetic case is written to
+match the pattern you have in mind, and it is the real input that exposes what the pattern
+actually does.

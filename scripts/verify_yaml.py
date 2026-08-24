@@ -213,6 +213,34 @@ def odata_in_record_merge(text):
     return out
 
 
+# Captures only a literal Blank(). An earlier version captured 24 characters of
+# whatever followed, and because finditer does not overlap, each match ate the start
+# of the next Set( - so a variable typed later in the same chain looked untyped.
+SET_RE = re.compile(r"Set\(\s*(var\w+)\s*,\s*(Blank\(\s*\))?")
+
+
+def untyped_variables(texts):
+    """Variables whose every Set is Blank(), so Power Fx can infer no type for them.
+
+    "To declare a variable and its type, just include it in any of these functions ... all
+    typing is implicit from usage" - and Blank() is not a type. The reference then fails with
+    "Name isn't valid. 'x' isn't recognized", naming the reader rather than the writer, which
+    sends you looking on the wrong screen.
+
+    Cross-file by necessity: the typing Set and the clearing Set are usually on different
+    screens.
+    """
+    seen = {}
+    for text in texts:
+        for m in SET_RE.finditer(text):
+            # group(2) is the literal Blank() when that is what was assigned, else None
+            seen.setdefault(m.group(1), []).append(m.group(2) is not None)
+    return [(0, f"'{v}' is only ever Set to Blank(), so it has no type - "
+                "every reference to it fails with \"isn't recognized\"")
+            for v, vals in sorted(seen.items())
+            if vals and all(vals)]
+
+
 def check_file(path):
     findings = []
     text = path.read_text(encoding="utf-8")
@@ -401,6 +429,13 @@ def main():
         print(f"{f}: {status}")
         for line_no, msg in findings:
             print(f"  line {line_no}: {msg}")
+
+    # Cross-file: the Set that gives a variable its type is routinely on a different
+    # screen from the one that clears it, so no per-file check can see this.
+    cross = untyped_variables([f.read_text(encoding='utf-8') for f in files])
+    total += len(cross)
+    for _, msg in cross:
+        print(f"across all screens: {msg}")
 
     print(f"\n{len(files)} file(s), {total} finding(s)")
     sys.exit(1 if total else 0)

@@ -398,14 +398,12 @@ def admin_open(key, record_expr, is_new, back="scrAdmin", extra=None):
 # the two cannot drift apart silently.
 STASH_VARS = [
     "varStCustomerInst",
-    "varStProductInst",
     "varStParentInst",
+    "varStProductInst",
+    "varStProductRef",
+    "varStProductSwVer",
     "varStSolutionSolU",
     "varStUnitSolU",
-    "varStCustomerSwVer",
-    "varStProductSwVer",
-    "varStProductRef",
-    "varStCustomerRef",
 ]
 
 

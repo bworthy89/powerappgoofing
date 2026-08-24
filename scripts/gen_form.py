@@ -37,6 +37,26 @@ def ctrl(o, name, control, ind, variant=None):
 def var(L): return "varRec" + L["key"]
 
 
+# Lookups that something actually pre-fills. Everything else reads the record directly.
+#
+# A variable's type comes from its Set() calls and Set(x, Blank()) carries none, so a
+# variable that is only ever cleared has no type and every reference to it fails with
+# "isn't recognized". Two of these existed for fields nothing ever filled.
+SEEDED = {
+    ("Inst", "Customer"),   # scrCustomerOverview "+ Add a machine", scrSolution "+ Add a unit"
+    ("Inst", "Parent"),     # scrSolution "+ Add a unit"
+}
+
+
+def has_stash(L, f):
+    """True when a lookup has somewhere to be pre-filled FROM.
+
+    Either a screen seeds it, or it takes a model and the "+ New" detour hands one back.
+    """
+    return f["kind"] == "lookup" and (
+        f.get("target") == "TB_Products" or (L["key"], fid(f)) in SEEDED)
+
+
 def stash_var(L, f):
     """Where a lookup's pre-filled row lives. Mirrored in screen_parts.STASH_VARS."""
     return "varSt" + fid(f) + L["key"]
@@ -111,8 +131,11 @@ def default_record_expr(L, f):
         # The stash variable holds a real row from the target table, so it has the right
         # type by construction. A hand-built lookup record does not: with '@odata.type' it
         # has a field too many for a structural comparison and without it a field too few.
+        base = f"LookUp({f['target']}, ID = {v}.{n}.Id)"
+        if not has_stash(L, f):
+            return base
         st = stash_var(L, f)
-        return (f"If(!IsBlank({st}), {st}, LookUp({f['target']}, ID = {v}.{n}.Id))")
+        return f"If(!IsBlank({st}), {st}, {base})"
     return f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value)"
 
 
@@ -162,7 +185,7 @@ def items_expr(L, f):
 
 # screen_parts clears these on every entry to the form, and cannot see LISTS to derive them.
 # A field added here and not there would pre-fill with whatever the last visit left behind.
-_want = sorted(stash_var(L, f) for L in LISTS for f in L["fields"] if f["kind"] == "lookup")
+_want = sorted(stash_var(L, f) for L in LISTS for f in L["fields"] if has_stash(L, f))
 assert _want == sorted(P.STASH_VARS), (
     "screen_parts.STASH_VARS is out of step with the form's lookup fields - "
     f"generator has {_want}, screen_parts has {sorted(P.STASH_VARS)}")
@@ -363,18 +386,23 @@ for idx, L in enumerate(LISTS):
     fl = [f"                {f['n']}: {patch_value(L, f)}" for f in L["fields"]]
     fl = [x + ("," if i < len(fl) - 1 else "") for i, x in enumerate(fl)]
     lines += [f'    If(varAdminList = "{L["key"]}",',
-              f"        Set(varSaved, Patch({L['source']},",
+              # Only the two whose result is read are captured, and each into its own
+              # variable: one variable Set from six different tables has no coherent type,
+              # which is the same reason there are four varRec* rather than one.
+              (f"        Set(varSaved{L['key']}, Patch({L['source']},"
+               if L["key"] in ("Prod", "Inst") else
+               f"        Patch({L['source']},"),
               f"            If(varAdminNew, Defaults({L['source']}), {var(L)}),",
               "            {"] + fl + [
               "            }",
-              "        ))",
+              ("        ))" if L["key"] in ("Prod", "Inst") else "        )"),
               "    );"]
 # Saving the model created on a detour hands it back to the field that asked for it, and
 # the form returns to that list rather than leaving. One clause per model field: a Switch
 # would need every branch to be the same record type, and they are not.
 resume = "; ".join(
     f'If(varResumeList = "{L["key"]}" && varResumeField = "{fid(f)}", '
-    f"Set({stash_var(L, f)}, varSaved); Reset({input_name(L, f)}))"
+    f"Set({stash_var(L, f)}, varSavedProd); Reset({input_name(L, f)}))"
     for L in LISTS for f in L["fields"] if f.get("target") == "TB_Products")
 resume += ("; Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); "
            "Set(varResumeList, Blank())")
@@ -389,7 +417,7 @@ resume += ("; Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); 
 #
 # "As SU" names the outer row: TB_Installations has its own Product and Customer, which
 # would otherwise shadow the ones being read from TB_SolutionUnits.
-STD = "Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true)"
+STD = "Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true)"
 
 
 def _ref(id_expr, title_expr):
@@ -400,18 +428,18 @@ def _ref(id_expr, title_expr):
 SP_REF_LITERAL = '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference"'
 
 build = " ".join([
-    'If(varAdminList = "Inst" && varAdminNew && IsBlank(varSaved.' + "'Parent'" + "),",
+    'If(varAdminList = "Inst" && varAdminNew && IsBlank(varSavedInst.' + "'Parent'" + "),",
     "    ForAll(" + STD + " As SU,",
     "        Patch(TB_Installations, Defaults(TB_Installations), {",
-    '            Title: varSaved.Customer.Value & " - " & SU.Unit.Value,',
-    "            Customer: " + _ref("varSaved.Customer.Id", "varSaved.Customer.Value") + ",",
+    '            Title: varSavedInst.Customer.Value & " - " & SU.Unit.Value,',
+    "            Customer: " + _ref("varSavedInst.Customer.Id", "varSavedInst.Customer.Value") + ",",
     "            Product: " + _ref("SU.Unit.Id", "SU.Unit.Value") + ",",
-    "            " + "'Parent': " + _ref("varSaved.ID", "varSaved.Title") + ",",
+    "            " + "'Parent': " + _ref("varSavedInst.ID", "varSavedInst.Title") + ",",
     '            Status: { Value: "In Service" }',
     "        })",
     "    );",
     "    If(CountRows(" + STD + ") > 0,",
-    '        Notify("Added " & varSaved.Title & " with " & CountRows(' + STD + ")",
+    '        Notify("Added " & varSavedInst.Title & " with " & CountRows(' + STD + ")",
     '               & " standard unit(s).", NotificationType.Success))',
     ");",
 ])

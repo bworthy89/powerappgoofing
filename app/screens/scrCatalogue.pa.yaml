@@ -83,7 +83,7 @@ Screens:
                   Visible: |
                     =varIsAdmin
                   OnSelect: |
-                    =Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true); Set(varAdminReturn, scrCatalogue); Navigate(scrEditForm, ScreenTransition.Cover)
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true); Set(varAdminReturn, scrCatalogue); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleCat:
                 Control: ModernText
                 Properties:
