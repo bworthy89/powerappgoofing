@@ -1485,3 +1485,48 @@ It had been proven against a hand-written known-bad string, which passed. **Prov
 against the real app as well as against a synthetic case**: the synthetic case is written to
 match the pattern you have in mind, and it is the real input that exposes what the pattern
 actually does.
+
+## The layout container: `AutoLayout`, `LayoutOverflowY`, and a version suffix that must go
+
+`scrEditForm` had never scrolled, because nothing in a canvas app does by default and its
+root is a `ManualLayout` group sized to the screen. The fix is an auto-layout container
+wrapping a manual-layout one — and every name in it had to come from the compiler, because
+the two written sources disagree or stay silent:
+
+| source | what it gave |
+|---|---|
+| the responsive-layout docs | the concepts, and `VerticalOverflow=Scroll` — which is the **properties-pane label**, not the formula name |
+| `pa.schema.yaml` | `Variant: {type: string, minLength: 1}`. No enumeration, and no mention of `GroupContainer` at all |
+| a container pasted out of Studio | the actual names |
+
+What Studio writes:
+
+```yaml
+- Container1:
+    Control: GroupContainer@1.5.0
+    Variant: AutoLayout
+    Properties:
+      LayoutDirection: =LayoutDirection.Vertical
+      LayoutOverflowY: =LayoutOverflow.Scroll
+      LayoutAlignItems: =LayoutAlignItems.Center
+```
+
+Three things to carry away:
+
+**`Variant: AutoLayout`, with direction as a property.** Not a per-direction variant. The
+`Layout*` family — `LayoutDirection`, `LayoutOverflowY`, `LayoutAlignItems` — is the formula
+naming; the pane labels ("Vertical Overflow", "Align (horizontal)") are not.
+
+**Strip the `@1.5.0`.** A version suffix on `Control:` can produce hundreds of false
+`Unknown property` diagnostics across the whole app. Studio writes it; the repo must not.
+
+**A child of an auto-layout container does not choose its own position.** From the docs'
+known issues: *"Some of the layout containers properties are hidden for child controls …
+these properties will be ignored even if they are set."* So the fields are not put directly
+in the scrolling container — a `ManualLayout` group goes in between, and every absolute
+coordinate inside it survives untouched.
+
+The inner group's `Height` is a `Switch` over `varAdminList`, since one container serves all
+six lists and the scroll extent has to match whichever is showing. Each arm is the same
+running total that positions that list's fields, so hiding a field shortens the scroll
+region as well as closing its gap.

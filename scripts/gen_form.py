@@ -48,6 +48,26 @@ SEEDED = {
 }
 
 
+def block_h(f):
+    """A field's vertical footprint: caption, input, and the gap below.
+
+    Mirrors the heights the field loop assigns. Kept beside show_expr so the container's
+    Height and the fields' Y positions cannot disagree about how tall a field is.
+    """
+    k = f["kind"]
+    h = 64 if k == "note" else (44 if k == "date" else (36 if k == "bool" else 40))
+    return 18 + h + 14
+
+
+def list_height(L):
+    """How tall a list's fields are, as a formula - hidden fields contribute nothing."""
+    parts = []
+    for f in L["fields"]:
+        sh = show_expr(L, f)
+        parts.append(f"If({sh}, {block_h(f)}, 0)" if sh else str(block_h(f)))
+    return " + ".join(parts) + " + 24"
+
+
 def show_expr(L, f):
     """When this field is asked at all, or None when it always is.
 
@@ -260,6 +280,32 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight
              # like it had never been given one.
              ("Y","56 + 12")]: prop(o, k, v, q)
 
+# ---- the scroll region
+#
+# Between the title and the buttons. Everything below this point that belongs to a field is
+# written inside conFieldsEdit rather than at the root.
+sc = ctrl(o, "conScrollEdit", "GroupContainer", c, "AutoLayout")
+for k, v in [("LayoutDirection","LayoutDirection.Vertical"),
+             ("LayoutOverflowY","LayoutOverflow.Scroll"),
+             ("Fill","RGBA(0, 0, 0, 0)"),
+             ("X","0"),("Y","120"),
+             ("Width","ContentWidth"),
+             # Down to just above lblDeleteBlocked, which sits at Parent.Height - Gutter - 88
+             ("Height","Max(Parent.Height - 120 - Gutter - 100, 200)")]:
+    prop(o, k, v, sc)
+o.write(f"{sc[:-2]}Children:\n")
+
+fc = ctrl(o, "conFieldsEdit", "GroupContainer", sc, "ManualLayout")
+HEIGHTS = "Switch(varAdminList, " + ", ".join(
+    f'"{L["key"]}", {list_height(L)}' for L in LISTS) + ", 400)"
+for k, v in [("Fill","RGBA(0, 0, 0, 0)"),("X","0"),("Y","0"),
+             ("Width","ContentWidth"),("Height",HEIGHTS)]:
+    prop(o, k, v, fc)
+o.write(f"{fc[:-2]}Children:\n")
+
+# fields are written one level deeper from here on
+c_root, c = c, fc
+
 # ---- fields, grouped per list, only the selected list visible
 for L in LISTS:
     # Y is a running total of the blocks above, so a hidden field closes its own gap
@@ -271,7 +317,7 @@ for L in LISTS:
         nm, k = input_name(L, f), f["kind"]
         show = show_expr(L, f)
         vis = base_vis if show is None else f"({base_vis}) && ({show})"
-        y = "120" + "".join(
+        y = "0" + "".join(
             f" + If({sh}, {ht}, 0)" if sh else f" + {ht}" for sh, ht in prior)
         cap = ctrl(o, "lblCap" + fid(f) + L["key"], "Label", c)
         for kk, vv in [("Text",f'"{f["caption"]}"'),("Color","AppDark.Muted"),
@@ -421,7 +467,9 @@ for L in LISTS:
                                ("OnSelect",go)]: prop(o, kk, vv, b)
         prior.append((show, 18 + h + 14))
 
-# ---- save
+# ---- save  (back at the root: these stay put while the fields scroll)
+c = c_root
+
 q = ctrl(o, "btnSaveEdit", "Classic/Button", c)
 lines = ["IfError("]
 for idx, L in enumerate(LISTS):

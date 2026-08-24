@@ -69,1393 +69,1415 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =56 + 12
-            - lblCapTitleCust:
-                Control: ModernText
+            - conScrollEdit:
+                Control: GroupContainer
+                Variant: AutoLayout
                 Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Name"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  Fill: =RGBA(0, 0, 0, 0)
+                  X: =0
                   Y: =120
-                  Visible: =varAdminList = "Cust"
-            - txtTitleCust:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecCust.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =varAdminList = "Cust"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapDescriptionCust:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Description"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72
-                  Visible: =varAdminList = "Cust"
-            - txtDescriptionCust:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecCust.Description
-                  Type: =TextInputType.Multiline
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =64
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "Cust"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapSupportNotesCust:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Support notes"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 96
-                  Visible: =varAdminList = "Cust"
-            - txtSupportNotesCust:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecCust.'Support Notes'
-                  Type: =TextInputType.Multiline
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =64
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 96 + 18
-                  Visible: =varAdminList = "Cust"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapActiveCust:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Active"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 96 + 96
-                  Visible: =varAdminList = "Cust"
-            - tglActiveCust:
-                Control: ModernToggle
-                Properties:
-                  Color: =AppDark.Fg
-                  Label: =""
-                  Default: =varRecCust.Active
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =36
-                  Width: =110
-                  X: =Gutter
-                  Y: =120 + 72 + 96 + 96 + 18
-                  Visible: =varAdminList = "Cust"
-            - lblCapTitleProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Model"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120
-                  Visible: =varAdminList = "Prod"
-            - txtTitleProd:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecProd.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =varAdminList = "Prod"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapProductTypeProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Product type"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72
-                  Visible: =varAdminList = "Prod"
-            - ddProductTypeProd:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Products.'Product Type')
-                  Default: =LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value)
-                  ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "Prod"
-            - lblCapFamilyProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Family"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72
-                  Visible: =varAdminList = "Prod"
-            - ddFamilyProd:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Products.Family)
-                  Default: =LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value)
-                  ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "Prod"
-            - lblCapStdVersionProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Current standard version"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72
-                  Visible: =varAdminList = "Prod"
-            - txtStdVersionProd:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecProd.'Current Standard Version'
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Prod"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapDescriptionProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Description"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "Prod"
-            - txtDescriptionProd:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecProd.Description
-                  Type: =TextInputType.Multiline
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =64
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Prod"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapActiveProd:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Active"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 96
-                  Visible: =varAdminList = "Prod"
-            - tglActiveProd:
-                Control: ModernToggle
-                Properties:
-                  Color: =AppDark.Fg
-                  Label: =""
-                  Default: =varRecProd.Active
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =36
-                  Width: =110
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 96 + 18
-                  Visible: =varAdminList = "Prod"
-            - lblCapTitleInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Name"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120
-                  Visible: =(varAdminList = "Inst") && (!varAdminNew)
-            - txtTitleInst:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecInst.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =(varAdminList = "Inst") && (!varAdminNew)
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapCustomerInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Customer"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0)
-                  Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
-            - ddCustomerInst:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStCustomerInst), varStCustomerInst, LookUp(TB_Customers, ID = varRecInst.Customer.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + 18
-                  Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
-            - lblCapProductInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Product"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0)
-                  Visible: =varAdminList = "Inst"
-            - ddProductInst:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Products, Active = true || ID = varRecInst.Product.Id), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStProductInst), varStProductInst, LookUp(TB_Products, ID = varRecInst.Product.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
-                  Visible: =varAdminList = "Inst"
-            - btnNewProductInst:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+ New"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =40
-                  Width: =88
-                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
-                  Visible: =varAdminList = "Inst" && varIsAdmin
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Set(varResumeList, "Inst"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
-            - lblCapParentInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Parent solution (blank = this IS a solution)"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72
-                  Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
-            - ddParentInst:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'), ID <> varRecInst.ID), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStParentInst), varStParentInst, LookUp(TB_Installations, ID = varRecInst.'Parent'.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + 18
-                  Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
-            - lblCapInstVersionInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Installed version"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0)
-                  Visible: =varAdminList = "Inst"
-            - txtInstVersionInst:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecInst.'Installed Version'
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 18
-                  Visible: =varAdminList = "Inst"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapStatusInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Status"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72
-                  Visible: =varAdminList = "Inst"
-            - ddStatusInst:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Installations.Status)
-                  Default: =If(varAdminNew, LookUp(Choices(TB_Installations.Status), Value = "In Service"), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
-                  ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 18
-                  Visible: =varAdminList = "Inst"
-            - lblCapConfigNotesInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Config notes"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72
-                  Visible: =varAdminList = "Inst"
-            - txtConfigNotesInst:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecInst.'Config Notes'
-                  Type: =TextInputType.Multiline
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =64
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 18
-                  Visible: =varAdminList = "Inst"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapLastVerifiedInst:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Last verified against the machine"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96
-                  Visible: =varAdminList = "Inst"
-            - dtpLastVerifiedInst:
-                Control: ModernDatePicker
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =varRecInst.'Last Verified'
-                  Placeholder: ="Not verified"
-                  Format: =DatePickerFormat.LongAbbreviated
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =44
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 18
-                  Visible: =varAdminList = "Inst"
-            - lblCapTitleSolU:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Label, e.g. CI 300X - SDRB250"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120
-                  Visible: =varAdminList = "SolU"
-            - txtTitleSolU:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecSolU.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =varAdminList = "SolU"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapSolutionSolU:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Solution model"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72
-                  Visible: =varAdminList = "SolU"
-            - ddSolutionSolU:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Solution.Id), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStSolutionSolU), varStSolutionSolU, LookUp(TB_Products, ID = varRecSolU.Solution.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
-                  X: =Gutter
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "SolU"
-            - btnNewSolutionSolU:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+ New"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =40
-                  Width: =88
-                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "SolU" && varIsAdmin
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Solution"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
-            - lblCapUnitSolU:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Unit model that attaches to it"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72
-                  Visible: =varAdminList = "SolU"
-            - ddUnitSolU:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Unit.Id), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStUnitSolU), varStUnitSolU, LookUp(TB_Products, ID = varRecSolU.Unit.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "SolU"
-            - btnNewUnitSolU:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+ New"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =40
-                  Width: =88
-                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "SolU" && varIsAdmin
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Unit"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
-            - lblCapStandardSolU:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Part of the standard build"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72
-                  Visible: =varAdminList = "SolU"
-            - tglStandardSolU:
-                Control: ModernToggle
-                Properties:
-                  Color: =AppDark.Fg
-                  Label: =""
-                  Default: =If(varAdminNew, false, varRecSolU.Standard)
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =36
-                  Width: =110
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "SolU"
-            - lblCapTitleSwVer:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Label, e.g. Northgate - CI 300X"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120
-                  Visible: =varAdminList = "SwVer"
-            - txtTitleSwVer:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecSwVer.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =varAdminList = "SwVer"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapCustomerSwVer:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Customer"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72
-                  Visible: =varAdminList = "SwVer"
-            - ddCustomerSwVer:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Customers, ID = varRecSwVer.Customer.Id)
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "SwVer"
-            - lblCapProductSwVer:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Model this version applies to"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72
-                  Visible: =varAdminList = "SwVer"
-            - ddProductSwVer:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Products, Active = true || ID = varRecSwVer.Product.Id), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStProductSwVer), varStProductSwVer, LookUp(TB_Products, ID = varRecSwVer.Product.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "SwVer"
-            - btnNewProductSwVer:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+ New"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =40
-                  Width: =88
-                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "SwVer" && varIsAdmin
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Set(varResumeList, "SwVer"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
-            - lblCapSwVersionSwVer:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Software version running at this site"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72
-                  Visible: =varAdminList = "SwVer"
-            - txtSwVersionSwVer:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecSwVer.'Software Version'
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "SwVer"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapLastVerifiedSwVer:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Last verified against a machine"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "SwVer"
-            - dtpLastVerifiedSwVer:
-                Control: ModernDatePicker
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =varRecSwVer.'Last Verified'
-                  Placeholder: ="Not verified"
-                  Format: =DatePickerFormat.LongAbbreviated
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =44
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "SwVer"
-            - lblCapTitleRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Title"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120
-                  Visible: =varAdminList = "Ref"
-            - txtTitleRef:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecRef.Title
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 18
-                  Visible: =varAdminList = "Ref"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapProductRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Product"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72
-                  Visible: =varAdminList = "Ref"
-            - ddProductRef:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Products, Active = true || ID = varRecRef.Product.Id), Title, SortOrder.Ascending)
-                  Default: =If(!IsBlank(varStProductRef), varStProductRef, LookUp(TB_Products, ID = varRecRef.Product.Id))
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
-                  X: =Gutter
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-            - btnNewProductRef:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+ New"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =40
-                  Width: =88
-                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =120 + 72 + 18
-                  Visible: =varAdminList = "Ref" && varIsAdmin
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  OnSelect: =Set(varResumeList, "Ref"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
-            - lblCapCustomerRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Customer (blank = applies to all customers)"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - ddCustomerRef:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Customers, ID = varRecRef.Customer.Id)
-                  ItemDisplayText: =ThisItem.Title
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-            - lblCapSectionRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Section"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - ddSectionRef:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_References.Section)
-                  Default: =LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value)
-                  ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-            - lblCapRefTypeRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Reference type"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - ddRefTypeRef:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_References.'Reference Type')
-                  Default: =LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value)
-                  ItemDisplayText: =ThisItem.Value
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-            - lblCapURLRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="URL"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - txtURLRef:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecRef.URL
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapVersionRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Version"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - txtVersionRef:
-                Control: ModernTextInput
-                Properties:
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Default: =varRecRef.Version
-                  Type: =TextInputType.SingleLine
-                  Placeholder: =""
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapFeaturedRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Featured"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72
-                  Visible: =varAdminList = "Ref"
-            - tglFeaturedRef:
-                Control: ModernToggle
-                Properties:
-                  Color: =AppDark.Fg
-                  Label: =""
-                  Default: =varRecRef.Featured
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  Height: =36
-                  Width: =110
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 18
-                  Visible: =varAdminList = "Ref"
-            - lblCapLastCheckedRef:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Last checked"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68
-                  Visible: =varAdminList = "Ref"
-            - dtpLastCheckedRef:
-                Control: ModernDatePicker
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =varRecRef.'Last Checked'
-                  Placeholder: ="Not verified"
-                  Format: =DatePickerFormat.LongAbbreviated
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Height: =44
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 18
-                  Visible: =varAdminList = "Ref"
+                  Width: =ContentWidth
+                  Height: =Max(Parent.Height - 120 - Gutter - 100, 200)
+                Children:
+                  - conFieldsEdit:
+                      Control: GroupContainer
+                      Variant: ManualLayout
+                      Properties:
+                        Fill: =RGBA(0, 0, 0, 0)
+                        X: =0
+                        Y: =0
+                        Width: =ContentWidth
+                        Height: =Switch(varAdminList, "Cust", 72 + 96 + 96 + 68 + 24, "Prod", 72 + 72 + 72 + 72 + 96 + 68 + 24, "Inst", If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 76 + 24, "SolU", 72 + 72 + 72 + 68 + 24, "SwVer", 72 + 72 + 72 + 72 + 76 + 24, "Ref", 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 76 + 24, 400)
+                      Children:
+                        - lblCapTitleCust:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Name"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =varAdminList = "Cust"
+                        - txtTitleCust:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecCust.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =varAdminList = "Cust"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapDescriptionCust:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Description"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72
+                              Visible: =varAdminList = "Cust"
+                        - txtDescriptionCust:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecCust.Description
+                              Type: =TextInputType.Multiline
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =64
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "Cust"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapSupportNotesCust:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Support notes"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 96
+                              Visible: =varAdminList = "Cust"
+                        - txtSupportNotesCust:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecCust.'Support Notes'
+                              Type: =TextInputType.Multiline
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =64
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 96 + 18
+                              Visible: =varAdminList = "Cust"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapActiveCust:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Active"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 96 + 96
+                              Visible: =varAdminList = "Cust"
+                        - tglActiveCust:
+                            Control: ModernToggle
+                            Properties:
+                              Color: =AppDark.Fg
+                              Label: =""
+                              Default: =varRecCust.Active
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =36
+                              Width: =110
+                              X: =Gutter
+                              Y: =0 + 72 + 96 + 96 + 18
+                              Visible: =varAdminList = "Cust"
+                        - lblCapTitleProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Model"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =varAdminList = "Prod"
+                        - txtTitleProd:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecProd.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =varAdminList = "Prod"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapProductTypeProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Product type"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72
+                              Visible: =varAdminList = "Prod"
+                        - ddProductTypeProd:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Choices(TB_Products.'Product Type')
+                              Default: =LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value)
+                              ItemDisplayText: =ThisItem.Value
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "Prod"
+                        - lblCapFamilyProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Family"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72
+                              Visible: =varAdminList = "Prod"
+                        - ddFamilyProd:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Choices(TB_Products.Family)
+                              Default: =LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value)
+                              ItemDisplayText: =ThisItem.Value
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "Prod"
+                        - lblCapStdVersionProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Current standard version"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72
+                              Visible: =varAdminList = "Prod"
+                        - txtStdVersionProd:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecProd.'Current Standard Version'
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Prod"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapDescriptionProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Description"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "Prod"
+                        - txtDescriptionProd:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecProd.Description
+                              Type: =TextInputType.Multiline
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =64
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Prod"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapActiveProd:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Active"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 96
+                              Visible: =varAdminList = "Prod"
+                        - tglActiveProd:
+                            Control: ModernToggle
+                            Properties:
+                              Color: =AppDark.Fg
+                              Label: =""
+                              Default: =varRecProd.Active
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =36
+                              Width: =110
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 96 + 18
+                              Visible: =varAdminList = "Prod"
+                        - lblCapTitleInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Name"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
+                        - txtTitleInst:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecInst.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapCustomerInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Customer"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0)
+                              Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
+                        - ddCustomerInst:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(TB_Customers, Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStCustomerInst), varStCustomerInst, LookUp(TB_Customers, ID = varRecInst.Customer.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + 18
+                              Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
+                        - lblCapProductInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Product"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0)
+                              Visible: =varAdminList = "Inst"
+                        - ddProductInst:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Products, Active = true || ID = varRecInst.Product.Id), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStProductInst), varStProductInst, LookUp(TB_Products, ID = varRecInst.Product.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
+                              Visible: =varAdminList = "Inst"
+                        - btnNewProductInst:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Outline
+                              Text: ="+ New"
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              FontWeight: =FontWeight.Semibold
+                              Color: =AppDark.Accent
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =40
+                              Width: =88
+                              X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
+                              Visible: =varAdminList = "Inst" && varIsAdmin
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              OnSelect: =Set(varResumeList, "Inst"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                        - lblCapParentInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Parent solution (blank = this IS a solution)"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72
+                              Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
+                        - ddParentInst:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'), ID <> varRecInst.ID), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStParentInst), varStParentInst, LookUp(TB_Installations, ID = varRecInst.'Parent'.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + 18
+                              Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
+                        - lblCapInstVersionInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Installed version"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0)
+                              Visible: =varAdminList = "Inst"
+                        - txtInstVersionInst:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecInst.'Installed Version'
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 18
+                              Visible: =varAdminList = "Inst"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapStatusInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Status"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72
+                              Visible: =varAdminList = "Inst"
+                        - ddStatusInst:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Choices(TB_Installations.Status)
+                              Default: =If(varAdminNew, LookUp(Choices(TB_Installations.Status), Value = "In Service"), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
+                              ItemDisplayText: =ThisItem.Value
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 18
+                              Visible: =varAdminList = "Inst"
+                        - lblCapConfigNotesInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Config notes"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72
+                              Visible: =varAdminList = "Inst"
+                        - txtConfigNotesInst:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecInst.'Config Notes'
+                              Type: =TextInputType.Multiline
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =64
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 18
+                              Visible: =varAdminList = "Inst"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapLastVerifiedInst:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Last verified against the machine"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96
+                              Visible: =varAdminList = "Inst"
+                        - dtpLastVerifiedInst:
+                            Control: ModernDatePicker
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              DefaultDate: =varRecInst.'Last Verified'
+                              Placeholder: ="Not verified"
+                              Format: =DatePickerFormat.LongAbbreviated
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =44
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 18
+                              Visible: =varAdminList = "Inst"
+                        - lblCapTitleSolU:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Label, e.g. CI 300X - SDRB250"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =varAdminList = "SolU"
+                        - txtTitleSolU:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecSolU.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =varAdminList = "SolU"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapSolutionSolU:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Solution model"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72
+                              Visible: =varAdminList = "SolU"
+                        - ddSolutionSolU:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Solution.Id), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStSolutionSolU), varStSolutionSolU, LookUp(TB_Products, ID = varRecSolU.Solution.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
+                              X: =Gutter
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "SolU"
+                        - btnNewSolutionSolU:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Outline
+                              Text: ="+ New"
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              FontWeight: =FontWeight.Semibold
+                              Color: =AppDark.Accent
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =40
+                              Width: =88
+                              X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "SolU" && varIsAdmin
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Solution"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                        - lblCapUnitSolU:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Unit model that attaches to it"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72
+                              Visible: =varAdminList = "SolU"
+                        - ddUnitSolU:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Unit.Id), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStUnitSolU), varStUnitSolU, LookUp(TB_Products, ID = varRecSolU.Unit.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "SolU"
+                        - btnNewUnitSolU:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Outline
+                              Text: ="+ New"
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              FontWeight: =FontWeight.Semibold
+                              Color: =AppDark.Accent
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =40
+                              Width: =88
+                              X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "SolU" && varIsAdmin
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Unit"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                        - lblCapStandardSolU:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Part of the standard build"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72
+                              Visible: =varAdminList = "SolU"
+                        - tglStandardSolU:
+                            Control: ModernToggle
+                            Properties:
+                              Color: =AppDark.Fg
+                              Label: =""
+                              Default: =If(varAdminNew, false, varRecSolU.Standard)
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =36
+                              Width: =110
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "SolU"
+                        - lblCapTitleSwVer:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Label, e.g. Northgate - CI 300X"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =varAdminList = "SwVer"
+                        - txtTitleSwVer:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecSwVer.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =varAdminList = "SwVer"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapCustomerSwVer:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Customer"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72
+                              Visible: =varAdminList = "SwVer"
+                        - ddCustomerSwVer:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(TB_Customers, Title, SortOrder.Ascending)
+                              Default: =LookUp(TB_Customers, ID = varRecSwVer.Customer.Id)
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "SwVer"
+                        - lblCapProductSwVer:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Model this version applies to"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72
+                              Visible: =varAdminList = "SwVer"
+                        - ddProductSwVer:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Products, Active = true || ID = varRecSwVer.Product.Id), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStProductSwVer), varStProductSwVer, LookUp(TB_Products, ID = varRecSwVer.Product.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "SwVer"
+                        - btnNewProductSwVer:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Outline
+                              Text: ="+ New"
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              FontWeight: =FontWeight.Semibold
+                              Color: =AppDark.Accent
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =40
+                              Width: =88
+                              X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "SwVer" && varIsAdmin
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              OnSelect: =Set(varResumeList, "SwVer"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                        - lblCapSwVersionSwVer:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Software version running at this site"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72
+                              Visible: =varAdminList = "SwVer"
+                        - txtSwVersionSwVer:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecSwVer.'Software Version'
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "SwVer"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapLastVerifiedSwVer:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Last verified against a machine"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "SwVer"
+                        - dtpLastVerifiedSwVer:
+                            Control: ModernDatePicker
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              DefaultDate: =varRecSwVer.'Last Verified'
+                              Placeholder: ="Not verified"
+                              Format: =DatePickerFormat.LongAbbreviated
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =44
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "SwVer"
+                        - lblCapTitleRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Title"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0
+                              Visible: =varAdminList = "Ref"
+                        - txtTitleRef:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecRef.Title
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 18
+                              Visible: =varAdminList = "Ref"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapProductRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Product"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72
+                              Visible: =varAdminList = "Ref"
+                        - ddProductRef:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(Filter(TB_Products, Active = true || ID = varRecRef.Product.Id), Title, SortOrder.Ascending)
+                              Default: =If(!IsBlank(varStProductRef), varStProductRef, LookUp(TB_Products, ID = varRecRef.Product.Id))
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
+                              X: =Gutter
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                        - btnNewProductRef:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Outline
+                              Text: ="+ New"
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              FontWeight: =FontWeight.Semibold
+                              Color: =AppDark.Accent
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =40
+                              Width: =88
+                              X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                              Y: =0 + 72 + 18
+                              Visible: =varAdminList = "Ref" && varIsAdmin
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              OnSelect: =Set(varResumeList, "Ref"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                        - lblCapCustomerRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Customer (blank = applies to all customers)"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - ddCustomerRef:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Sort(TB_Customers, Title, SortOrder.Ascending)
+                              Default: =LookUp(TB_Customers, ID = varRecRef.Customer.Id)
+                              ItemDisplayText: =ThisItem.Title
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                        - lblCapSectionRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Section"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - ddSectionRef:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Choices(TB_References.Section)
+                              Default: =LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value)
+                              ItemDisplayText: =ThisItem.Value
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                        - lblCapRefTypeRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Reference type"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - ddRefTypeRef:
+                            Control: ModernDropdown
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              Items: |
+                                =Choices(TB_References.'Reference Type')
+                              Default: =LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value)
+                              ItemDisplayText: =ThisItem.Value
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                        - lblCapURLRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="URL"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - txtURLRef:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecRef.URL
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapVersionRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Version"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - txtVersionRef:
+                            Control: ModernTextInput
+                            Properties:
+                              Color: =AppDark.Fg
+                              Fill: =AppDark.Surface
+                              Default: =varRecRef.Version
+                              Type: =TextInputType.SingleLine
+                              Placeholder: =""
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =40
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                        - lblCapFeaturedRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Featured"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72 + 72
+                              Visible: =varAdminList = "Ref"
+                        - tglFeaturedRef:
+                            Control: ModernToggle
+                            Properties:
+                              Color: =AppDark.Fg
+                              Label: =""
+                              Default: =varRecRef.Featured
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              Height: =36
+                              Width: =110
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 18
+                              Visible: =varAdminList = "Ref"
+                        - lblCapLastCheckedRef:
+                            Control: ModernText
+                            Properties:
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Text: ="Last checked"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Semibold
+                              Wrap: =false
+                              AutoHeight: =false
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68
+                              Visible: =varAdminList = "Ref"
+                        - dtpLastCheckedRef:
+                            Control: ModernDatePicker
+                            Properties:
+                              Color: =ColorValue("#14181C")
+                              Fill: =ColorValue("#F2F4F8")
+                              DefaultDate: =varRecRef.'Last Checked'
+                              Placeholder: ="Not verified"
+                              Format: =DatePickerFormat.LongAbbreviated
+                              Font: =AppFont
+                              Size: =AppType.Body
+                              BorderColor: =AppDark.Line
+                              BorderThickness: =1
+                              Height: =44
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 18
+                              Visible: =varAdminList = "Ref"
             - btnSaveEdit:
                 Control: ModernButton
                 Properties:
