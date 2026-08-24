@@ -573,6 +573,20 @@ for L in LISTS:
                      ("X","172"),("Y","11"),
                      ("Width","Parent.TemplateWidth - 184"),("Height","20")]: prop(o, k, v, r)
 
+        # A model with nothing recorded against it looked exactly like a broken screen:
+        # the panel simply was not there. Say which it is, and where to fix it.
+        eshow = ("varAdminNew && IsBlank(varStParentInst) "
+                 "&& !IsBlank(ddProductInst.Selected) && CountRows(colStdUnits) = 0")
+        q = ctrl(o, "lblComesWithEmpty", "ModernText", c)
+        for k, v in [("Text",'"No standard build is recorded for this model. '
+                              'Add one in the catalogue, under CAN TAKE."'),
+                     ("Color","AppDark.Faint"),("Font","AppFont"),
+                     ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
+                     ("PaddingTop","0"),("PaddingBottom","0"),
+                     ("Height","36"),("Width","ContentWidth - (Gutter * 2)"),
+                     ("X","Gutter"),("Y",py),
+                     ("Visible",f"({base_vis}) && ({eshow})")]: prop(o, k, v, q)
+
         prior.append((pshow, 22 + 180 + 14))
 
 # ---- save  (back at the root: these stay put while the fields scroll)

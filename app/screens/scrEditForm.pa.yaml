@@ -874,6 +874,22 @@ Screens:
                                     Y: =11
                                     Width: =Parent.TemplateWidth - 184
                                     Height: =20
+                        - lblComesWithEmpty:
+                            Control: ModernText
+                            Properties:
+                              Text: ="No standard build is recorded for this model. Add one in the catalogue, under CAN TAKE."
+                              Color: =AppDark.Faint
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              Wrap: =true
+                              AutoHeight: =false
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Height: =36
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0)
+                              Visible: =(varAdminList = "Inst") && (varAdminNew && IsBlank(varStParentInst) && !IsBlank(ddProductInst.Selected) && CountRows(colStdUnits) = 0)
                         - lblCapTitleSolU:
                             Control: ModernText
                             Properties:
