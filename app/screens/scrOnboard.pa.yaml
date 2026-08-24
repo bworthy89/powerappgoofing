@@ -235,6 +235,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
+                  Label: =""
                   Default: =true
                   Font: =AppFont
                   Size: =AppType.Body

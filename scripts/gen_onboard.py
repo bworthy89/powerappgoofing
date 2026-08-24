@@ -188,7 +188,9 @@ for nm, cap, ml in [("txtWizCustName","Customer name",False),
 
 caption("lblCapWizCustActive", "Active", y, V1)
 q = ctrl(o, "tglWizCustActive", "ModernToggle", c)
-for k, v in [("Default","true"),("Font","AppFont"),("Size","AppType.Body"),
+# Label renders the literal word "Label" when unset, and this screen draws its own caption
+# above every field - the same fix scrEditForm needed.
+for k, v in [("Label",'""'),("Default","true"),("Font","AppFont"),("Size","AppType.Body"),
              ("Height","36"),("Width","110"),("X","Gutter"),("Y",str(y+18)),
              ("Visible",V1)]: prop(o, k, v, q)
 
