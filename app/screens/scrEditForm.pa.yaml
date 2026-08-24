@@ -678,6 +678,44 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
+            - lblCapLastVerifiedInst:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Last verified against the machine"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =648
+                  Visible: =varAdminList = "Inst"
+            - dtpLastVerifiedInst:
+                Control: ModernDatePicker
+                Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
+                  DefaultDate: =If(varAdminNew, Blank(), varRecInst.'Last Verified')
+                  Placeholder: ="Not verified"
+                  Format: =DatePickerFormat.LongAbbreviated
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =648
+                  Visible: =varAdminList = "Inst"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
             - lblCapTitleSolU:
                 Control: ModernText
                 Properties:
@@ -956,6 +994,44 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =354
+                  Visible: =varAdminList = "SwVer"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+            - lblCapLastVerifiedSwVer:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Last verified against a machine"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =408
+                  Visible: =varAdminList = "SwVer"
+            - dtpLastVerifiedSwVer:
+                Control: ModernDatePicker
+                Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
+                  DefaultDate: =If(varAdminNew, Blank(), varRecSwVer.'Last Verified')
+                  Placeholder: ="Not verified"
+                  Format: =DatePickerFormat.LongAbbreviated
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =408
                   Visible: =varAdminList = "SwVer"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1244,6 +1320,44 @@ Screens:
                   X: =Gutter
                   Y: =642
                   Visible: =varAdminList = "Ref"
+            - lblCapLastCheckedRef:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Text: ="Last checked"
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  Wrap: =false
+                  AutoHeight: =false
+                  Height: =18
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =692
+                  Visible: =varAdminList = "Ref"
+            - dtpLastCheckedRef:
+                Control: ModernDatePicker
+                Properties:
+                  Color: =ColorValue("#14181C")
+                  Fill: =ColorValue("#F2F4F8")
+                  DefaultDate: =If(varAdminNew, Blank(), varRecRef.'Last Checked')
+                  Placeholder: ="Not verified"
+                  Format: =DatePickerFormat.LongAbbreviated
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =44
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =692
+                  Visible: =varAdminList = "Ref"
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
             - btnSaveEdit:
                 Control: ModernButton
                 Properties:
@@ -1286,7 +1400,8 @@ Screens:
                                     'Parent': If(IsBlank(ddParentInst.Selected), Blank(), ddParentInst.Selected),
                                     'Installed Version': txtInstVersionInst.Text,
                                     Status: { Value: ddStatusInst.Selected.Value },
-                                    'Config Notes': txtConfigNotesInst.Text
+                                    'Config Notes': txtConfigNotesInst.Text,
+                                    'Last Verified': dtpLastVerifiedInst.SelectedDate
                                 }
                             )
                         );
@@ -1308,7 +1423,8 @@ Screens:
                                     Title: txtTitleSwVer.Text,
                                     Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), ddCustomerSwVer.Selected),
                                     Product: If(IsBlank(ddProductSwVer.Selected), Blank(), ddProductSwVer.Selected),
-                                    'Software Version': txtSwVersionSwVer.Text
+                                    'Software Version': txtSwVersionSwVer.Text,
+                                    'Last Verified': dtpLastVerifiedSwVer.SelectedDate
                                 }
                             )
                         );
@@ -1323,7 +1439,8 @@ Screens:
                                     'Reference Type': { Value: ddRefTypeRef.Selected.Value },
                                     URL: txtURLRef.Text,
                                     Version: txtVersionRef.Text,
-                                    Featured: tglFeaturedRef.Checked
+                                    Featured: tglFeaturedRef.Checked,
+                                    'Last Checked': dtpLastCheckedRef.SelectedDate
                                 }
                             )
                         );

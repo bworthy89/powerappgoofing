@@ -36,13 +36,16 @@ def ctrl(o, name, control, ind, variant=None):
 
 def var(L): return "varRec" + L["key"]
 
-def input_name(L, f): return {"text":"txt","note":"txt","url":"txt","choice":"dd","bool":"tgl","lookup":"dd"}[f["kind"]] + fid(f) + L["key"]
+def input_name(L, f): return {"text":"txt","note":"txt","url":"txt","choice":"dd","bool":"tgl","lookup":"dd","date":"dtp"}[f["kind"]] + fid(f) + L["key"]
 
 # value written by Patch for one field
 def patch_value(L, f):
     n, k = input_name(L, f), f["kind"]
     if k in ("text", "note", "url"): return f"{n}.Text"
     if k == "bool":                  return f"{n}.Checked"
+    # SelectedDate is the date picker's output; blank when nothing is chosen,
+    # which is what a never-verified record should write.
+    if k == "date":                  return f"{n}.SelectedDate"
     if k == "choice":                return f"{{ Value: {n}.Selected.Value }}"
     if k == "lookup":
         # Choices() already returns records in the shape the lookup accepts.
@@ -55,6 +58,7 @@ def default_expr(L, f):
     k = f["kind"]
     if k in ("text", "note", "url"): return f'If(varAdminNew, "", {v}.{n})'
     if k == "bool":                  return f"If(varAdminNew, false, {v}.{n})"
+    if k == "date":                  return f"If(varAdminNew, Blank(), {v}.{n})"
     if k == "choice":                return f'If(varAdminNew, "", {v}.{n}.Value)'
     if k == "lookup":                return f'If(varAdminNew, "", {v}.{n}.Value)'
 
@@ -138,7 +142,29 @@ for L in LISTS:
                        ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
                        ("Y",str(y)),("Visible",vis)]: prop(o, kk, vv, cap)
         h = 64 if k == "note" else 40
-        if k in ("text","note","url"):
+        if k == "date":
+            # Properties per the modern date picker docs: DefaultDate seeds it, SelectedDate
+            # reads back, and Color/Size replaced FontColor/FontSize in the updated control.
+            i = ctrl(o, nm, "ModernDatePicker", c)
+            for kk, vv in [("DefaultDate", default_expr(L,f)),
+                           ("Placeholder", '"Not verified"'),
+                           ("Format", "DatePickerFormat.LongAbbreviated"),
+                           ("Font","AppFont"),("Size","AppType.Body"),
+                           # Same family as ModernDropdown: the modern theme paints the
+                           # surface light and ignores Fill, so this wants dark ink on a
+                           # light field. The AppDark pair is written here and rewritten to
+                           # that light pair by fix_dark_defaults, which owns the rule for
+                           # every modern picker. Writing the literals here instead put the
+                           # same property on the control twice.
+                           ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
+                           ("BorderColor","AppDark.Line"),("BorderThickness","1"),
+                           ("Height","44"),("Width","ContentWidth - (Gutter * 2)"),
+                           ("X","Gutter"),("Y",str(y)),("Visible",vis),
+                           ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                           ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
+                prop(o, kk, vv, i)
+            y += 44 + 28
+        elif k in ("text","note","url"):
             i = ctrl(o, nm, "Classic/TextInput", c)
             for kk, vv in [("Default",default_expr(L,f)),("Mode",
                             "TextMode.MultiLine" if k=="note" else "TextMode.SingleLine"),

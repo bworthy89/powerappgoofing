@@ -24,11 +24,13 @@ SCHEMA = {
     "TB_Products": {"Title", "Product Type", "Family",
                     "Current Standard Version", "Description", "Active"},
     "TB_Installations": {"Title", "Customer", "Parent", "Product",
-                         "Installed Version", "Status", "Config Notes"},
+                         "Installed Version", "Status", "Config Notes",
+                         "Last Verified"},
     "TB_References": {"Title", "Product", "Customer", "Section",
                       "Reference Type", "URL", "Version", "Featured",
                       "Last Checked"},
-    "TB_SoftwareVersions": {"Title", "Customer", "Product", "Software Version"},
+    "TB_SoftwareVersions": {"Title", "Customer", "Product", "Software Version",
+                            "Last Verified"},
 }
 ALL_COLUMNS = set().union(*SCHEMA.values())
 
@@ -124,6 +126,55 @@ def duplicate_names(text):
             dupes.append(n)
         seen.add(n)
     return dupes
+
+
+PROP_RE = re.compile(r"^(\s+)([A-Za-z]\w*):")
+
+
+def duplicate_properties(text):
+    """A property key set twice inside one control.
+
+    YAML keeps the last occurrence and drops the rest without complaint, so a control can
+    look configured twice and behave once. Found after gen_form set Color and Fill on a
+    ModernDatePicker and fix_dark_defaults added its own pair: the strip that clears the
+    generator's values only matched =AppDark.<token>, so literal colours survived alongside
+    the replacements.
+
+    Keyed on indent as well as name so a nested control's property cannot collide with its
+    parent's. Block scalars are skipped whole - their contents are Power Fx, and a formula
+    line can look exactly like a key.
+    """
+    out = []
+    ctrl_name, seen, skip_indent = None, {}, None
+    for n, line in enumerate(text.splitlines(), 1):
+        if not line.strip():
+            continue
+        indent = len(line) - len(line.lstrip())
+        if skip_indent is not None:
+            if indent > skip_indent:
+                continue
+            skip_indent = None
+        m = re.match(r"^\s*- (\w+):\s*$", line)
+        if m:
+            ctrl_name, seen = m.group(1), {}
+            continue
+        if ctrl_name is None:
+            continue
+        pm = PROP_RE.match(line)
+        if not pm:
+            continue
+        key = pm.group(2)
+        if line.rstrip().endswith(("|", "|-", ">", ">-")):
+            skip_indent = indent
+        if key in ("Properties", "Children"):
+            continue
+        prev = seen.get((indent, key))
+        if prev:
+            out.append((n, f"'{key}' is set twice on {ctrl_name} (first at line {prev}) - "
+                           "YAML keeps only the last, so one of them silently does nothing"))
+        else:
+            seen[(indent, key)] = n
+    return out
 
 
 def check_file(path):
@@ -289,6 +340,8 @@ def check_file(path):
             if looks_like_column and quoted not in ALL_COLUMNS and quoted not in SCHEMA:
                 if not quoted.startswith(("scr", "gal", "lbl", "btn", "con", "ico", "rect", "img")):
                     findings.append((n, f"'{quoted}' is not a column in any of the four lists"))
+
+    findings.extend(duplicate_properties(text))
 
     for n in duplicate_names(text):
         findings.append((0, f"duplicate control name '{n}' - Studio rejects this as "

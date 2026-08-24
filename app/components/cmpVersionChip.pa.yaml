@@ -1,30 +1,30 @@
-# Component — Version panel
+# Component — Expected version panel
 #
-# The app's whole reason to exist is "is this machine on the current build?". This is that
-# answer, and it is the largest thing on any detail screen.
+# The app does not read machines. Every version it holds is a record of what someone last
+# entered, so this panel reports two things it can actually support: the version we expect,
+# and how long ago anyone confirmed it. It no longer compares anything.
 #
-# WHY IT IS A COMPONENT AND WHY IT IS ONLY USED TWICE
+# WHY THE COMPARISON WENT
 #
-# Microsoft's documented limitation: "You can't insert a component into a gallery or a
-# form." That rules out the unit rows, the solution cards on scrCustomerOverview, and every
-# other list in this app - the places a reusable status chip would have earned its keep.
-# What is left is scrSolution and scrUnit, which show the identical comparison against a
-# different record. Two instances is a thin case for a component, but those two are the
-# screens where the logic being wrong matters most, and one definition cannot drift from
-# itself. Row-level status is built inline instead; see gen_solution.py.
+# "update available" reads as a finding derived from knowledge the app does not have. A
+# technician who arrives expecting a machine to need updating and finds it already current
+# stops trusting the number - and once that trust is gone the app has nothing else to offer.
+# "3.4.1, verified 14 months ago" is a weaker claim and a true one, and it points at the
+# same action without pretending to know the answer.
 #
-# It was originally a 190x44 pill. That was sized for the gallery rows it turns out it can
-# never live in, so it is now a full-width hero: the version numbers are the headline of the
-# screen, not a badge in its corner.
+# WHY THIS COMPONENT IS NEARLY EMPTY
 #
-# FOUR STATES, NOT THREE
+# The age wording and the staleness threshold live in scripts/screen_parts.py, not here, and
+# arrive as VerifiedNote and IsStale. That is because a component cannot be inserted into a
+# gallery or a form (Microsoft's documented limitation), so the unit rows and solution cards
+# must compute the same thing inline. One Python helper feeding both is the only arrangement
+# where the panel and the rows cannot drift apart; putting the logic in Power Fx here would
+# guarantee two copies in two languages.
 #
-# "No standard recorded on the product" is a different fact from "no version recorded on the
-# machine" - the first is a gap in the catalogue, the second a gap in the survey, and
-# different people fix them. The old concatenated string collapsed both into one grey blob.
+# WHY IT IS STILL A COMPONENT
 #
-# Colour never carries the state alone. Every state also says it in words, which is the
-# accessibility rule most status displays break.
+# scrSolution and scrUnit show the identical panel against a different record, and those are
+# the screens where being wrong matters most.
 #
 # CUSTOM PROPERTY REFERENCES
 #
@@ -35,30 +35,36 @@
 #
 # The rail colour is interpolated into the SVG as a hex STRING, not a Color. Power Fx colours
 # are a distinct type with no text conversion, so the state test is duplicated - once
-# returning text for the SVG, once returning Color for the labels. They must stay in step.
+# returning text for the SVG, once returning Color for the label. They must stay in step.
 
 ComponentDefinitions:
   cmpVersionChip:
     DefinitionType: CanvasComponent
-    Description: The installed software version against the product's current standard, as a four-state hero panel with a chamfered surface and a state-coloured rail.
+    Description: The software version expected on a machine and how long ago it was last verified, as a hero panel with a chamfered surface and an age-coloured rail.
     AccessAppScope: true
     CustomProperties:
-      InstalledVersion:
+      ExpectedVersion:
         PropertyKind: Input
         DataType: Text
-        Description: The version actually on the machine. Blank means nobody has recorded one.
+        Description: The version we expect this machine to be running. Blank means nobody has recorded one.
         Default: |-
           =""
-      StandardVersion:
+      VerifiedNote:
         PropertyKind: Input
         DataType: Text
-        Description: The product's current standard version. Blank means the catalogue has no standard for this product.
+        Description: How long ago the version was last confirmed, already worded - "verified 3 weeks ago", or "never verified". Built by screen_parts.verified_note.
         Default: |-
           =""
+      IsStale:
+        PropertyKind: Input
+        DataType: Boolean
+        Description: True when the version was last verified over a year ago. False when it was verified recently AND when it was never verified at all - "never" is said in words rather than coloured. Built by screen_parts.verified_is_stale.
+        Default: |-
+          =false
       SourceNote:
         PropertyKind: Input
         DataType: Text
-        Description: Where the installed version came from, when it was not the machine's own record. Blank when it was.
+        Description: Where the expected version came from, when it was not the machine's own record. Blank when it was.
         Default: |-
           =""
     Properties:
@@ -68,7 +74,7 @@ ComponentDefinitions:
     Children:
       # The chamfered surface. Power Apps has no chamfer - only four independent radii - so
       # this is SVG, matching the cut corners of the GLORY wordmark. The 4px rail carries the
-      # state as colour; the text below carries it as words.
+      # verification age as colour; the text below carries it as words.
       - imgChipPanel:
           Control: Image
           Properties:
@@ -81,12 +87,7 @@ ComponentDefinitions:
                   "<svg xmlns='http://www.w3.org/2000/svg' width='" & Round(Parent.Width, 0) & "' height='" & Round(Parent.Height, 0) & "' viewBox='0 0 " & Round(Parent.Width, 0) & " " & Round(Parent.Height, 0) & "' preserveAspectRatio='none'>" &
                   "<path d='M0 0 H" & Round(Parent.Width - 20, 0) & " L" & Round(Parent.Width, 0) & " 20 V" & Round(Parent.Height, 0) & " H0 Z' fill='#171A21' stroke='#2A2F3A' stroke-width='1'/>" &
                   "<rect x='0' y='0' width='4' height='" & Round(Parent.Height, 0) & "' fill='" &
-                  If(
-                      IsBlank(cmpVersionChip.InstalledVersion), "#7F8794",
-                      IsBlank(cmpVersionChip.StandardVersion), "#838C9B",
-                      cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion, "#3DD68C",
-                      "#F5B83D"
-                  ) & "'/>"
+                  If(cmpVersionChip.IsStale, "#F5B83D", "#838C9B") & "'/>"
               )
 
       - lblChipLabel:
@@ -98,7 +99,7 @@ ComponentDefinitions:
             Height: =18
             PaddingTop: =0
             PaddingBottom: =0
-            Text: ="SOFTWARE VERSION"
+            Text: ="EXPECTED VERSION"
             Font: =AppFont
             Size: =AppType.Small
             FontWeight: =FontWeight.Bold
@@ -106,9 +107,8 @@ ComponentDefinitions:
             Wrap: =false
             AutoHeight: =false
 
-      # The headline. When the machine is behind it carries BOTH numbers and the direction
-      # between them, so the comparison needs no second glance. Every other state shows one
-      # number, or says plainly that there is not one.
+      # One number, or the plain statement that there is not one. No arrow, no second
+      # version, no verdict - the headline is the record, and the line below dates it.
       - lblChipVersion:
           Control: ModernText
           Properties:
@@ -125,28 +125,20 @@ ComponentDefinitions:
             AutoHeight: =false
             Text: |
               =If(
-                  IsBlank(cmpVersionChip.InstalledVersion),
+                  IsBlank(cmpVersionChip.ExpectedVersion),
                   "not recorded",
-                  IsBlank(cmpVersionChip.StandardVersion),
-                  cmpVersionChip.InstalledVersion,
-                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  cmpVersionChip.InstalledVersion,
-                  cmpVersionChip.InstalledVersion & "   →   " & cmpVersionChip.StandardVersion
+                  cmpVersionChip.ExpectedVersion
               )
             Color: |
               =If(
-                  IsBlank(cmpVersionChip.InstalledVersion),
+                  IsBlank(cmpVersionChip.ExpectedVersion),
                   AppDark.Faint,
-                  IsBlank(cmpVersionChip.StandardVersion),
-                  AppDark.Fg,
-                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  AppDark.Ok,
-                  AppDark.Warn
+                  AppDark.Fg
               )
 
-      # The verdict, in words. This is what makes the panel readable to someone who cannot
-      # separate the tints, and it is also the line that says what to DO - "update available"
-      # is an instruction, "3.4.1 is not 3.6.0" is a riddle.
+      # The age, in words. This is what turns a number into a claim someone can weigh: the
+      # same version is worth acting on at three weeks and worth checking at fourteen months.
+      # Colour never carries it alone.
       - lblChipVerdict:
           Control: ModernText
           Properties:
@@ -161,13 +153,6 @@ ComponentDefinitions:
             Wrap: =false
             AutoHeight: =false
             Text: |
-              =If(
-                  IsBlank(cmpVersionChip.InstalledVersion),
-                  "no version on file for this machine",
-                  IsBlank(cmpVersionChip.StandardVersion),
-                  "no standard set for this model",
-                  cmpVersionChip.InstalledVersion = cmpVersionChip.StandardVersion,
-                  "on the current standard",
-                  "update available"
-              ) & cmpVersionChip.SourceNote
-            Color: =AppDark.Muted
+              =cmpVersionChip.VerifiedNote & cmpVersionChip.SourceNote
+            Color: |
+              =If(cmpVersionChip.IsStale, AppDark.Warn, AppDark.Muted)

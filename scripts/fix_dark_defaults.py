@@ -47,7 +47,10 @@ SCREENS = Path(r"E:\Papp\powerappgoofing\app\screens")
 TEXTY = {"ModernText", "Label"}
 FIELDY = {"ModernTextInput", "Classic/TextInput"}
 # Dropdowns are handled separately: their surface comes from the theme, not from Fill.
-DROPDOWNY = {"ModernDropdown", "ModernCombobox", "Classic/DropDown"}
+DROPDOWNY = {"ModernDropdown", "ModernCombobox", "Classic/DropDown",
+             # The date picker is documented alongside Dropdown and Combo Box for the
+             # Appearance/Color/Size properties, so it is themed the same way.
+             "ModernDatePicker"}
 BUTTONY = {"ModernButton", "Classic/Button"}
 TOGGLY = {"ModernToggle", "Classic/CheckBox", "ModernCheckBox"}
 
@@ -73,10 +76,14 @@ def fix(path):
         ind = indent_of(b)
         has_color = re.search(rf"^{ind}Color: ", b, re.M)
         has_fill = re.search(rf"^{ind}Fill: ", b, re.M)
-        # A dropdown carrying the dark pair is wrong rather than merely missing, so those
-        # are rewritten instead of skipped.
+        # A picker carrying the dark pair is wrong rather than merely missing, so those
+        # are rewritten instead of skipped. The pattern matches any single-line value,
+        # not just =AppDark.<token>: it used to match only the token form, so a generator
+        # that wrote the literal light pair directly had it left in place AND the
+        # replacement added beneath it, putting two Colors on one control. YAML keeps the
+        # last silently. verify_yaml.duplicate_properties now catches the shape as well.
         if ctl in DROPDOWNY:
-            b = re.sub(rf"^{ind}(Color|Fill): =AppDark\.\w+\n", "", b, flags=re.M)
+            b = re.sub(rf"^{ind}(Color|Fill): =.*\n", "", b, flags=re.M)
             has_color = has_fill = None
         # A transparent hit target shows no text, so a colour on it means nothing.
         invisible = re.search(r'Text: =""', b) and ctl in BUTTONY

@@ -309,7 +309,7 @@ def ref_gallery(key, sfx, heading, empty, y, items, meta=None, height=None,
                     {empty_visible}"""
 
 
-def version_hero(sfx, y, product_expr, customer_id="varCustomer.ID",
+def version_hero(sfx, y, customer_id="varCustomer.ID",
                  product_id="varInstallation.Product.Id"):
     """The version answer, as a component instance.
 
@@ -321,6 +321,9 @@ def version_hero(sfx, y, product_expr, customer_id="varCustomer.ID",
     inserted into a gallery or a form, which rules out every list here.
     """
     eff = effective_version("varInstallation", customer_id, product_id)
+    ver = effective_verified("varInstallation", customer_id, product_id)
+    vnote = verified_note(ver)
+    vstale = verified_is_stale(ver)
     note = version_source_note("varInstallation", customer_id, product_id)
     return f"""            - cmpVersion{sfx}:
                 Control: CanvasComponent
@@ -331,9 +334,12 @@ def version_hero(sfx, y, product_expr, customer_id="varCustomer.ID",
                     ={y}
                   Width: =Min({CW}, {PANEL_MAX})
                   Height: =116
-                  InstalledVersion: |
+                  ExpectedVersion: |
                     ={eff}
-                  StandardVersion: =Coalesce({product_expr}.'Current Standard Version', "")
+                  VerifiedNote: |
+                    ={vnote}
+                  IsStale: |
+                    ={vstale}
                   SourceNote: |
                     ={note}"""
 
@@ -351,6 +357,82 @@ def effective_version(inst, customer_id, product_id):
     return (f"Coalesce({inst}.'Installed Version', "
             f"LookUp(TB_SoftwareVersions, Customer.Id = {customer_id} "
             f"&& Product.Id = {product_id}).'Software Version')")
+
+
+# ---------------------------------------------------------------------------- verification
+#
+# Twelve months, matching the threshold already applied to a document's Last Checked, so the
+# app has one rule for staleness rather than two.
+STALE_MONTHS = 12
+
+
+def effective_verified(inst, customer_id, product_id):
+    """The verification date belonging to whichever source supplied the version.
+
+    A machine's own Installed Version wins over the site default, so the date has to follow
+    it. A date that did not track its source would report the site survey's age against a
+    version nobody has confirmed on this machine, which is the failure this whole change
+    exists to remove.
+
+    Mirrors effective_version()'s precedence exactly. The two must move together.
+    """
+    return (f"If(!IsBlank({inst}.'Installed Version'), {inst}.'Last Verified', "
+            f"LookUp(TB_SoftwareVersions, Customer.Id = {customer_id} "
+            f"&& Product.Id = {product_id}).'Last Verified')")
+
+
+def _days(d):
+    return f"DateDiff({d}, Today(), TimeUnit.Days)"
+
+
+def verified_months(d):
+    """Whole months since a date, derived from days.
+
+    NOT DateDiff(..., TimeUnit.Months), which counts calendar-month boundaries rather than
+    elapsed time - the documented example returns 6 for July 15 to January 1 - so a >= 12
+    test on it fires at eleven months and a day.
+
+    30.4375 is 365.25 / 12, so >= 12 here means a full year has actually passed. The label
+    below prints this same number, which is the point: the amber threshold and the words on
+    screen read one value and cannot disagree.
+    """
+    return f"RoundDown({_days(d)} / 30.4375, 0)"
+
+
+def verified_note(d):
+    """'verified 3 weeks ago', or 'never verified'.
+
+    The thresholds are picked so no branch can ever print a 1 and no plural has to be
+    special-cased: days covers 2-13, weeks starts at 14 (2 weeks), months starts at 61
+    (2 months).
+    """
+    dd = _days(d)
+    return (f'If(IsBlank({d}), "never verified", '
+            f'{dd} < 1, "verified today", '
+            f'{dd} < 2, "verified yesterday", '
+            f'{dd} < 14, "verified " & {dd} & " days ago", '
+            f'{dd} < 61, "verified " & RoundDown({dd} / 7, 0) & " weeks ago", '
+            f'"verified " & {verified_months(d)} & " months ago")')
+
+
+def verified_is_stale(d):
+    """Amber: a date that is over the threshold.
+
+    Deliberately NOT true for a missing date. "never verified" already says so in words,
+    and painting a fresh dataset amber says nothing at all.
+    """
+    return f"(!IsBlank({d}) && {verified_months(d)} >= {STALE_MONTHS})"
+
+
+def verified_needs_check(d):
+    """The counts on the customer list and solution cards: over the threshold OR never.
+
+    A different predicate from verified_is_stale, which is why it has a different name. A
+    count is asking "how many should someone look at", and a machine nobody has ever checked
+    belongs in that answer; a single panel is describing one record, and there "never" is
+    better said than coloured.
+    """
+    return f"(IsBlank({d}) || {verified_months(d)} >= {STALE_MONTHS})"
 
 
 def version_source_note(inst, customer_id, product_id):

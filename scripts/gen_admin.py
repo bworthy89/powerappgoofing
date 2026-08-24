@@ -55,6 +55,8 @@ LISTS = [
         dict(n="'Installed Version'",   kind="text",   caption="Installed version", id="InstVersion"),
         dict(n="Status",                kind="choice", caption="Status"),
         dict(n="'Config Notes'",        kind="note",   caption="Config notes", id="ConfigNotes"),
+        dict(n="'Last Verified'",       kind="date",
+             caption="Last verified against the machine", id="LastVerified"),
     ]),
     dict(key="SolU", label="Solution units", singular="solution unit", source="TB_SolutionUnits", fields=[
         dict(n="Title",    kind="text",   caption="Label, e.g. CI 300X - SDRB250"),
@@ -72,6 +74,8 @@ LISTS = [
              target="TB_Products"),
         dict(n="'Software Version'", kind="text",
              caption="Software version running at this site", id="SwVersion"),
+        dict(n="'Last Verified'", kind="date",
+             caption="Last verified against a machine", id="LastVerified"),
     ]),
     dict(key="Ref", label="References", singular="reference", source="TB_References", fields=[
         dict(n="Title",              kind="text",   caption="Title"),
@@ -83,6 +87,7 @@ LISTS = [
         dict(n="URL",                kind="url",    caption="URL"),
         dict(n="Version",            kind="text",   caption="Version"),
         dict(n="Featured",           kind="bool",   caption="Featured"),
+        dict(n="'Last Checked'",     kind="date",   caption="Last checked", id="LastChecked"),
     ]),
 ]
 

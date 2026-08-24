@@ -144,7 +144,7 @@ Screens:
                   Text: |
                     ={PROD}.'Product Type'.Value & If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
 
-{P.version_hero("Unit", Y_HERO, PROD)}
+{P.version_hero("Unit", Y_HERO)}
 
 {P.config_panel("Unit", Y_CFG)}
 {P.ref_gallery("Docs", "Unit", "DOCUMENTATION", "No documentation is on file for this unit.", Y_DOCS, refs("Documentation"))}

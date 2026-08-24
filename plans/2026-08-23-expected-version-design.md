@@ -5,7 +5,7 @@ and reports the result: *on standard*, *update available*, *not recorded*. This 
 comparison everywhere and reports two things instead — the version we expect, and when it was
 last verified.
 
-Status: design agreed 2026-08-23. Not yet built.
+Status: design agreed 2026-08-23, open questions resolved. Implementing.
 
 ## Why
 
@@ -96,22 +96,27 @@ miss.
 date means *someone confirmed this against the machine*. If in practice it will mean *when we
 last typed something*, the honest word is `updated` and the design should change to match.
 
-## Open question
+## Resolved
 
-**What replaces `N behind` on the customer list?** That count was the only reason to scan
-that screen — it answered "which site needs attention". Removing it without a replacement
-makes the list a phone book.
+**What replaces `N behind` on the customer list:** staleness. A row reads
+*"3 not verified in over a year"* in amber, counting machines at that site whose expected
+version was last verified more than twelve months ago **or never**. It preserves the reason
+to scan the screen, is derived from data the app holds, and points at a real action.
 
-The natural equivalent is staleness: *"3 machines not verified in over a year"*. It preserves
-the function, it is derived from data the app actually holds, and it points at a real action.
-Needs deciding before implementation.
+As before, a row stays quiet when there is nothing to say. The app never renders a green
+"all good", because a site nobody has surveyed and a site genuinely up to date are still
+indistinguishable — that reasoning is unchanged by this design.
+
+**"Verified" is the honest word.** The date means someone confirmed the version against the
+machine, not merely that a record was touched. The form must therefore not stamp it on an
+ordinary edit; see *Not automatic* above.
 
 ## Consequences beyond the app
 
 The published pitch and user guide both sell the comparison — *"expected to be behind"*,
-*"three states, never two"* — and the three-state key is a section of the guide. Both need
-rewriting alongside this change, or the documentation will describe an app that no longer
-exists. `app/00_Setup.md` also records the four-state logic in several rules.
+*"three states, never two"* — and the three-state key is a section of the guide. Both are to
+be rewritten **once the app changes are complete**, so the documentation is updated against
+what actually shipped rather than against this design. `app/00_Setup.md` also records the four-state logic in several rules.
 
 ## Files
 

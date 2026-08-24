@@ -73,6 +73,7 @@ $Schema = [ordered]@{
             @{ Display = 'Installed Version'; Internal = 'TBInstalledVersion'; Type = 'Text' }
             @{ Display = 'Status';            Internal = 'TBStatus';           Type = 'Choice'; Choices = @('In Service','Upgrade Planned','Retired'); Default = 'In Service' }
             @{ Display = 'Config Notes';      Internal = 'TBConfigNotes';      Type = 'Note';   Lines = 6 }
+            @{ Display = 'Last Verified';    Internal = 'TBLastVerified'; Type = 'DateTime' }
         )
         Lookups     = @(
             @{ Display = 'Customer'; Internal = 'TBCustomer'; Target = 'TB_Customers';     Required = $true  }
@@ -98,6 +99,7 @@ $Schema = [ordered]@{
         TitleLabel  = 'Label'
         Fields      = @(
             @{ Display = 'Software Version'; Internal = 'TBSoftwareVersion'; Type = 'Text' }
+            @{ Display = 'Last Verified';    Internal = 'TBLastVerified'; Type = 'DateTime' }
         )
         Lookups     = @(
             @{ Display = 'Customer'; Internal = 'TBCustomer'; Target = 'TB_Customers'; Required = $true }
@@ -138,9 +140,9 @@ $Schema = [ordered]@{
 $ViewFields = @{
     'TB_Customers'     = @('Title','TBDescription','TBSupportNotes','TBActive')
     'TB_Products'      = @('Title','TBProductType','TBFamily','TBStandardVersion','TBDescription','TBActive')
-    'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes')
+    'TB_Installations' = @('Title','TBCustomer','TBParent','TBProduct','TBInstalledVersion','TBStatus','TBConfigNotes','TBLastVerified')
     'TB_References'    = @('Title','TBProduct','TBCustomer','TBSection','TBReferenceType','TBUrl','TBVersion','TBFeatured','TBLastChecked')
     'TB_SolutionUnits' = @('Title','TBSolution','TBUnit','TBStandard')
     'TB_Admins'        = @('Title','TBPerson','TBStatus')
-    'TB_SoftwareVersions' = @('Title','TBCustomer','TBProduct','TBSoftwareVersion')
+    'TB_SoftwareVersions' = @('Title','TBCustomer','TBProduct','TBSoftwareVersion','TBLastVerified')
 }

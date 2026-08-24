@@ -26,7 +26,7 @@ scrolling region inside a card.
 TWO SIGNALS, NOT ONE BLENDED ONE
 
 The rail carries the SOLUTION's own version state. The summary line carries its UNITS'
-state, in Warn when any is behind. Blending them into a single worst-of indicator would tell
+state, in Warn when any needs checking. Blending them into a single worst-of indicator would tell
 you something needs attention while hiding which thing, on a screen whose whole job is to
 point you at the right machine.
 """
@@ -57,7 +57,22 @@ def _effective(inst, product_id):
             f"&& Product.Id = {product_id}).'Software Version')")
 
 
+def _verified(inst, product_id):
+    """The date belonging to whichever source supplied the version.
+
+    Mirrors _effective's precedence exactly: a machine's own version wins over the site
+    default, so the date has to follow it rather than report the site survey's age against
+    a machine version nobody confirmed.
+    """
+    return (f"If(!IsBlank({inst}.'Installed Version'), {inst}.'Last Verified', "
+            f"LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID "
+            f"&& Product.Id = {product_id}).'Last Verified')")
+
+
 EFF_ROW = _effective("ThisItem", "ThisItem.Product.Id")
+VER_ROW = _verified("ThisItem", "ThisItem.Product.Id")
+ROW_STALE = P.verified_is_stale(VER_ROW)
+ROW_NOTE = P.verified_note(VER_ROW)
 
 # Units under this solution row. "As U" names the outer row so U.Product.Id is not shadowed
 # by the nested LookUp's own scope.
@@ -68,23 +83,24 @@ UNIT_N = f"CountRows({UNITS})"
 # default recorded against that model. varCustomer is the site being viewed.
 _EFF = _effective("U", "U.Product.Id")
 
-BEHIND_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
-            "U.Status.Value <> \"Retired\", "
-            f"!IsBlank({_EFF}), "
-            "!IsBlank(LookUp(TB_Products, ID = U.Product.Id).'Current Standard Version'), "
-            f"{_EFF} <> LookUp(TB_Products, ID = U.Product.Id)"
-            ".'Current Standard Version'))")
+# Units under this solution that nobody has confirmed within a year, or ever. A count is
+# asking "how many should someone look at", so never-verified belongs in it - unlike the
+# single-record panel, where "never" is better said than coloured.
+_VER_U = _verified("U", "U.Product.Id")
 
-# The solution's own four-state comparison, same order and meaning as cmpVersionChip and as
-# the unit rows on scrSolution. Three copies of this logic now exist; they must move together.
+CHECK_N = ("CountRows(Filter(TB_Installations As U, U.'Parent'.Id = ThisItem.ID, "
+           "U.Status.Value <> \"Retired\", "
+           f"{P.verified_needs_check(_VER_U)}))")
+
+# The card's rail, coloured by verification age rather than by currency - the same rule as
+# cmpVersionChip and the unit rows, and all three now read screen_parts for the threshold
+# instead of each carrying their own copy of it.
 STATE_COLOUR = f"""=If(
                               IsBlank({EFF_READ}),
                               AppDark.Line,
-                              IsBlank({PROD}.'Current Standard Version'),
-                              AppDark.Muted,
-                              {EFF_READ} = {PROD}.'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              {ROW_STALE},
+                              AppDark.Warn,
+                              AppDark.Muted
                           )"""
 
 Y_TITLE = f"{P.BAND} + 24"
@@ -252,7 +268,7 @@ Screens:
                           )
                   # The effective version is a non-delegable LookUp per row, and the card
                   # formulas below reference it a dozen times. Evaluated once here and read
-                  # back, the same parking idiom scrCustomers uses for its behind count.
+                  # back, the same parking idiom scrCustomers uses for its check count.
                   - lblEffVerOvw:
                       Control: ModernText
                       Properties:
@@ -297,9 +313,9 @@ Screens:
                         Color: =AppDark.Fg
                         Wrap: =false
                         AutoHeight: =false
-                  # Family, unit count, and how many of those units are behind. The behind
-                  # count is the only thing on this screen that is not derivable by looking,
-                  # so it is the only part allowed to shout.
+                  # Family, unit count, and how many of those units nobody has confirmed
+                  # lately. That count is the only thing on this screen not derivable by
+                  # looking, so it is the only part allowed to shout.
                   - lblCardMetaOvw:
                       Control: ModernText
                       Properties:
@@ -315,9 +331,9 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         Text: |
-                          ={PROD}.Family.Value & "  ·  " & {UNIT_N} & " unit(s)" & If({BEHIND_N} > 0, "  ·  " & {BEHIND_N} & " behind", "") & If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
+                          ={PROD}.Family.Value & "  ·  " & {UNIT_N} & " unit(s)" & If({CHECK_N} > 0, "  ·  " & {CHECK_N} & " to check", "") & If(ThisItem.Status.Value = "In Service", "", "  ·  " & Lower(ThisItem.Status.Value))
                         Color: |
-                          =If({BEHIND_N} > 0, AppDark.Warn, AppDark.Muted)
+                          =If({CHECK_N} > 0, AppDark.Warn, AppDark.Muted)
                   # Right-aligned so versions form one column down the list, the same
                   # treatment as the unit rows on scrSolution.
                   - lblCardVerOvw:
@@ -340,22 +356,34 @@ Screens:
                           =If(
                               IsBlank({EFF_READ}),
                               "not recorded",
-                              IsBlank({PROD}.'Current Standard Version'),
-                              {EFF_READ},
-                              {EFF_READ} = {PROD}.'Current Standard Version',
-                              {EFF_READ},
-                              {EFF_READ} & "  →  " & {PROD}.'Current Standard Version'
+                              {EFF_READ}
                           )
                         Color: |
                           =If(
                               IsBlank({EFF_READ}),
                               AppDark.Faint,
-                              IsBlank({PROD}.'Current Standard Version'),
-                              AppDark.Muted,
-                              {EFF_READ} = {PROD}.'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              AppDark.Fg
                           )
+                  # The date under the number, matching the unit rows on scrSolution.
+                  - lblCardAgeOvw:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =20 + ((Parent.TemplateWidth - 40) * 0.55)
+                        Y: =58
+                        Width: =(Parent.TemplateWidth - 40) * 0.45 - 12
+                        Height: =18
+                        Align: =Align.Right
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Wrap: =false
+                        AutoHeight: =false
+                        Text: |
+                          ={ROW_NOTE}
+                        Color: |
+                          =If({ROW_STALE}, AppDark.Warn, AppDark.Muted)
                   - galSolutionsHit:
                       Control: Classic/Button
                       Properties:

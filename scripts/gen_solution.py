@@ -49,6 +49,14 @@ FITTED = ("LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID "
           "&& Product.Id = ThisItem.Unit.Id)")
 UPROD = "LookUp(TB_Products, ID = ThisItem.Unit.Id)"
 
+# A unit row reports its own record's date. Note it does NOT fall back to the site default
+# the way the hero does, because the row does not fall back for the version either - that
+# asymmetry is older than this change and is called out in the build notes rather than
+# quietly altered here.
+U_VER   = f"{FITTED}.'Last Verified'"
+U_STALE = P.verified_is_stale(U_VER)
+U_NOTE  = P.verified_note(U_VER)
+
 # Units attached here that the model does not list. Rare, but silently hiding one would be
 # this app's characteristic failure: a correct-looking screen missing a machine.
 STRAY = ("CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, "
@@ -192,7 +200,7 @@ Screens:
                   Text: |
                     ={PROD}.Family.Value & "  ·  " & varCustomer.Title & If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
 
-{P.version_hero("Sol", Y_HERO, PROD)}
+{P.version_hero("Sol", Y_HERO)}
 
 {P.config_panel("Sol", Y_CFG)}
 
@@ -263,11 +271,9 @@ Screens:
                               AppDark.Line,
                               IsBlank({FITTED}.'Installed Version'),
                               AppDark.Muted,
-                              IsBlank({UPROD}.'Current Standard Version'),
-                              AppDark.Muted,
-                              {FITTED}.'Installed Version' = {UPROD}.'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              {U_STALE},
+                              AppDark.Warn,
+                              AppDark.Muted
                           )
                   - lblUnitTypeSol:
                       Control: ModernText
@@ -303,8 +309,8 @@ Screens:
                         Color: =If(IsBlank({FITTED}), AppDark.Faint, AppDark.Fg)
                         Wrap: =false
                         AutoHeight: =false
-                  # Right-aligned so the versions form one column down the list. A mismatch
-                  # then shows as a break in the column rather than as a sentence to read.
+                  # Right-aligned so the versions form one column down the list, with the
+                  # date they were last confirmed directly beneath each one.
                   - lblUnitVerSol:
                       Control: ModernText
                       Properties:
@@ -312,7 +318,7 @@ Screens:
                         PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
-                        Y: =17
+                        Y: =10
                         Width: =(Parent.TemplateWidth - 32) * 0.45
                         Height: =22
                         Align: =Align.Right
@@ -327,11 +333,7 @@ Screens:
                               "not recorded",
                               IsBlank({FITTED}.'Installed Version'),
                               "version not recorded",
-                              IsBlank({UPROD}.'Current Standard Version'),
-                              {FITTED}.'Installed Version',
-                              {FITTED}.'Installed Version' = {UPROD}.'Current Standard Version',
-                              {FITTED}.'Installed Version',
-                              {FITTED}.'Installed Version' & "  →  " & {UPROD}.'Current Standard Version'
+                              {FITTED}.'Installed Version'
                           )
                         Color: |
                           =If(
@@ -339,12 +341,32 @@ Screens:
                               AppDark.Faint,
                               IsBlank({FITTED}.'Installed Version'),
                               AppDark.Muted,
-                              IsBlank({UPROD}.'Current Standard Version'),
-                              AppDark.Muted,
-                              {FITTED}.'Installed Version' = {UPROD}.'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              AppDark.Fg
                           )
+                  # The date under the number. Without it the version is a bare
+                  # assertion; with it a reader can weigh how far to trust it before
+                  # driving out. Blank when nothing is fitted - there is no record to date,
+                  # and "never verified" would read as a finding about a machine that is
+                  # not there.
+                  - lblUnitAgeSol:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
+                        Y: =32
+                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Height: =18
+                        Align: =Align.Right
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Wrap: =false
+                        AutoHeight: =false
+                        Text: |
+                          =If(IsBlank({FITTED}), "", {U_NOTE})
+                        Color: |
+                          =If({U_STALE}, AppDark.Warn, AppDark.Muted)
                   - recUnitRuleSol:
                       Control: Rectangle
                       Properties:

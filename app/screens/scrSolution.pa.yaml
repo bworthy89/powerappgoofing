@@ -102,9 +102,12 @@ Screens:
                     =lblSubtitleSol.Y + lblSubtitleSol.Height + Gutter
                   Width: =Min(Parent.Width - (Gutter * 2), 620)
                   Height: =116
-                  InstalledVersion: |
+                  ExpectedVersion: |
                     =Coalesce(varInstallation.'Installed Version', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Software Version')
-                  StandardVersion: =Coalesce(LookUp(TB_Products, ID = varInstallation.Product.Id).'Current Standard Version', "")
+                  VerifiedNote: |
+                    =If(IsBlank(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified')), "never verified", DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) < 1, "verified today", DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) < 2, "verified yesterday", DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) < 14, "verified " & DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) & " days ago", DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) < 61, "verified " & RoundDown(DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) / 7, 0) & " weeks ago", "verified " & RoundDown(DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) / 30.4375, 0) & " months ago")
+                  IsStale: |
+                    =(!IsBlank(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified')) && RoundDown(DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) / 30.4375, 0) >= 12)
                   SourceNote: |
                     =If(!IsBlank(varInstallation.'Installed Version'), "", !IsBlank(LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Software Version'), "  ·  site default for this model", "")
 
@@ -278,11 +281,9 @@ Screens:
                               AppDark.Line,
                               IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'),
                               AppDark.Muted,
-                              IsBlank(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'),
-                              AppDark.Muted,
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' = LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              (!IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified') && RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 30.4375, 0) >= 12),
+                              AppDark.Warn,
+                              AppDark.Muted
                           )
                   - lblUnitTypeSol:
                       Control: ModernText
@@ -318,8 +319,8 @@ Screens:
                         Color: =If(IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)), AppDark.Faint, AppDark.Fg)
                         Wrap: =false
                         AutoHeight: =false
-                  # Right-aligned so the versions form one column down the list. A mismatch
-                  # then shows as a break in the column rather than as a sentence to read.
+                  # Right-aligned so the versions form one column down the list, with the
+                  # date they were last confirmed directly beneath each one.
                   - lblUnitVerSol:
                       Control: ModernText
                       Properties:
@@ -327,7 +328,7 @@ Screens:
                         PaddingBottom: =0
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
-                        Y: =17
+                        Y: =10
                         Width: =(Parent.TemplateWidth - 32) * 0.45
                         Height: =22
                         Align: =Align.Right
@@ -342,11 +343,7 @@ Screens:
                               "not recorded",
                               IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'),
                               "version not recorded",
-                              IsBlank(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'),
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version',
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' = LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version',
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version',
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' & "  →  " & LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'
+                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'
                           )
                         Color: |
                           =If(
@@ -354,12 +351,32 @@ Screens:
                               AppDark.Faint,
                               IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version'),
                               AppDark.Muted,
-                              IsBlank(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'),
-                              AppDark.Muted,
-                              LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Installed Version' = LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version',
-                              AppDark.Ok,
-                              AppDark.Warn
+                              AppDark.Fg
                           )
+                  # The date under the number. Without it the version is a bare
+                  # assertion; with it a reader can weigh how far to trust it before
+                  # driving out. Blank when nothing is fitted - there is no record to date,
+                  # and "never verified" would read as a finding about a machine that is
+                  # not there.
+                  - lblUnitAgeSol:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        OnSelect: =Select(Parent)
+                        X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
+                        Y: =32
+                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Height: =18
+                        Align: =Align.Right
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Wrap: =false
+                        AutoHeight: =false
+                        Text: |
+                          =If(IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)), "", If(IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified'), "never verified", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 1, "verified today", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 2, "verified yesterday", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 14, "verified " & DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) & " days ago", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 61, "verified " & RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 7, 0) & " weeks ago", "verified " & RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 30.4375, 0) & " months ago"))
+                        Color: |
+                          =If((!IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified') && RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 30.4375, 0) >= 12), AppDark.Warn, AppDark.Muted)
                   - recUnitRuleSol:
                       Control: Rectangle
                       Properties:
