@@ -58,6 +58,32 @@ Screens:
                   OnSelect: |
                     =Navigate(scrHome, ScreenTransition.CoverRight)
 
+            - btnAddModelCat:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a model"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 160)
+                  Y: |
+                    =lblTitleCat.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =152
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true); Set(varAdminReturn, scrCatalogue); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleCat:
                 Control: ModernText
                 Properties:
@@ -65,8 +91,8 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =56 + 24
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =41
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 168, 0)
+                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: ="Catalogue"
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

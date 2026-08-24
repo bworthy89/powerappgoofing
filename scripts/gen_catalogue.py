@@ -38,6 +38,11 @@ import screen_parts as P
 
 OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrCatalogue.pa.yaml")
 
+# The root of the second hierarchy. A peripheral is not a special case here: a printer or a
+# palm vein reader is a model with a different Product Type, added exactly like any other.
+ACTIONS = [("btnAddModelCat", "+  Add a model",
+            P.admin_open("Prod", "Defaults(TB_Products)", True, back="scrCatalogue"), 152)]
+
 CARD_H = 82
 EXPANDED = "!IsBlank(varExpandedModel) && varExpandedModel <> 0"
 SELECTED = "ThisItem.ID = varExpandedModel"
@@ -98,15 +103,15 @@ Screens:
           Children:
 {P.brand_band("Cat", "scrHome", back_transition="CoverRight", back_label="Home")}
 
-            - lblTitleCat:
+{P.title_actions("lblTitleCat", ACTIONS)}            - lblTitleCat:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={P.BAND} + 24
-                  Width: ={P.CW}
-                  Height: =41
+                  Width: ={P.title_shrink(ACTIONS)}
+                  Height: ={P.title_height()}
                   Text: ="Catalogue"
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

@@ -37,6 +37,19 @@ import screen_parts as P
 
 OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrSolution.pa.yaml")
 
+# Correct this machine's record, or add a unit inside it. Adding supplies both the customer
+# and the parent machine, which were two of the three lookups this task used to cost.
+ACTIONS = [
+    ("btnEditSol", "Edit",
+     P.admin_open("Inst", "varInstallation", False, back="scrSolution"), 84),
+    ("btnAddUnitSol", "+  Add a unit",
+     P.admin_open("Inst",
+                  "Patch(Defaults(TB_Installations), { Customer: "
+                  + P.seed("TB_Installations", "Customer", "varCustomer.ID") + ", 'Parent': "
+                  + P.seed("TB_Installations", "'Parent'", "varInstallation.ID") + " })",
+                  True, back="scrSolution"), 136),
+]
+
 BAND = P.BAND
 CW = P.CW
 
@@ -167,15 +180,15 @@ Screens:
           Children:
 {P.brand_band("Sol", "scrCustomerOverview")}
 
-            - lblTitleSol:
+{P.title_actions("lblTitleSol", ACTIONS)}            - lblTitleSol:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={Y_TITLE}
-                  Width: ={CW}
-                  Height: =41
+                  Width: ={P.title_shrink(ACTIONS)}
+                  Height: ={P.title_height()}
                   Text: ={PROD}.Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

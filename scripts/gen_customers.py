@@ -33,6 +33,11 @@ import screen_parts as P
 
 OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrCustomers.pa.yaml")
 
+# The one creation point that cannot start from the thing above it: a customer has no page
+# until it exists, so it is added from the list of its siblings.
+ACTIONS = [("btnAddCust", "+  Add a customer",
+            P.admin_open("Cust", "Defaults(TB_Customers)", True, back="scrCustomers"), 168)]
+
 CARD_H = 76
 
 # Machines at this site nobody has confirmed within a year, or ever.
@@ -79,15 +84,15 @@ Screens:
           Children:
 {P.brand_band("Cus", "scrHome", back_transition="CoverRight", back_label="Home")}
 
-            - lblTitleCus:
+{P.title_actions("lblTitleCus", ACTIONS)}            - lblTitleCus:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={P.BAND} + 24
-                  Width: ={P.CW}
-                  Height: =41
+                  Width: ={P.title_shrink(ACTIONS)}
+                  Height: ={P.title_height()}
                   Text: ="Customers"
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

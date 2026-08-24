@@ -34,6 +34,11 @@ import screen_parts as P
 
 OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrUnit.pa.yaml")
 
+# A unit has nothing beneath it, so its title row offers only the correction - which is the
+# most common admin task in the app: a version moved and someone is standing in front of it.
+ACTIONS = [("btnEditUnit", "Edit",
+            P.admin_open("Inst", "varInstallation", False, back="scrUnit"), 84)]
+
 PROD = "LookUp(TB_Products, ID = varInstallation.Product.Id)"
 PARENT_PROD = ("LookUp(TB_Products, ID = LookUp(TB_Installations, "
                "ID = varInstallation.'Parent'.Id).Product.Id)")
@@ -111,15 +116,15 @@ Screens:
                   Text: |
                     =varCustomer.Title & "  ›  " & {PARENT_PROD}.Title
 
-            - lblTitleUnit:
+{P.title_actions("lblTitleUnit", ACTIONS)}            - lblTitleUnit:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={Y_TITLE}
-                  Width: ={P.CW}
-                  Height: =41
+                  Width: ={P.title_shrink(ACTIONS)}
+                  Height: ={P.title_height()}
                   Text: ={PROD}.Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

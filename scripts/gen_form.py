@@ -52,15 +52,27 @@ def patch_value(L, f):
         return f"If(IsBlank({n}.Selected), Blank(), {n}.Selected)"
     raise ValueError(k)
 
-# Default shown in the input when editing an existing record
+# Default shown in the input.
+#
+# These used to read If(varAdminNew, <empty>, varRec.<field>), which forced every field on a
+# new record to open blank no matter what the record variable held. Reading the variable
+# unconditionally is identical for a plain new record - Defaults() gives "" for text, blank
+# for lookups - and it is what lets a caller open this form with context already supplied:
+#
+#     Set(varRecInst, Patch(Defaults(TB_Installations),
+#                           { Customer: LookUp(Choices(TB_Installations.Customer),
+#                                              Id = varCustomer.ID) }))
+#
+# arrives with the customer filled in. It also means a Choice column's own SharePoint
+# default now shows up preselected, which the wrapper was suppressing.
 def default_expr(L, f):
     v, n = var(L), f["n"]
     k = f["kind"]
-    if k in ("text", "note", "url"): return f'If(varAdminNew, "", {v}.{n})'
-    if k == "bool":                  return f"If(varAdminNew, false, {v}.{n})"
-    if k == "date":                  return f"If(varAdminNew, Blank(), {v}.{n})"
-    if k == "choice":                return f'If(varAdminNew, "", {v}.{n}.Value)'
-    if k == "lookup":                return f'If(varAdminNew, "", {v}.{n}.Value)'
+    if k in ("text", "note", "url"): return f"{v}.{n}"
+    if k == "bool":                  return f"{v}.{n}"
+    if k == "date":                  return f"{v}.{n}"
+    if k == "choice":                return f"{v}.{n}.Value"
+    if k == "lookup":                return f"{v}.{n}.Value"
 
 def default_record_expr(L, f):
     """Preselection for a ModernDropdown, whose Default is a Record.
@@ -68,21 +80,23 @@ def default_record_expr(L, f):
     The classic control took the display Text, so an edit could just hand it
     the stored value. A record has to be found in the same option set the
     control is showing, hence the LookUp by Value.
+
+    On a record with nothing in the field the LookUp matches nothing and yields blank, which
+    is what the old If(varAdminNew, Blank(), ...) wrapper produced by hand.
     """
     v, n = var(L), f["n"]
-    return (f"If(varAdminNew, Blank(), "
-            f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value))")
+    return f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value)"
 
 
 def default_items_expr(L, f):
-    """ComboBox preselection for edit mode.
+    """ComboBox preselection.
 
     DefaultSelectedItems takes a Table, and a SharePoint lookup projects as
     {Id, Value} -- which is not a row of the target list -- so the row has to be
     fetched back by Id rather than handed over directly.
     """
     v, n, t = var(L), f["n"], f["target"]
-    return f"If(varAdminNew, Blank(), Filter({t}, ID = {v}.{n}.Id))"
+    return f"Filter({t}, ID = {v}.{n}.Id)"
 
 def items_expr(L, f):
     if f["kind"] == "choice":
@@ -99,6 +113,21 @@ def items_expr(L, f):
         return ("Filter(Choices(TB_Installations.'Parent') As Opt, "
                 "CountRows(Filter(TB_Installations, ID = Opt.Id, "
                 "Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)")
+    if f.get("target") == "TB_Products":
+        # A model can be retired while sites still have it installed - the delete guard
+        # correctly refuses to remove it - so Active is what stops it being OFFERED.
+        #
+        # Choices() carries only {Id, Value}, so Active is applied by asking per option
+        # whether a matching active row exists, the idiom in 00_Setup.md.
+        #
+        # The second clause is the one that matters. Without it, opening an existing machine
+        # whose model was since retired finds no matching option, the dropdown renders blank,
+        # and saving any unrelated edit writes that blank back - silent data loss triggered by
+        # an unrelated action. With it, a retired model stays visible exactly where it is
+        # already in use.
+        return (f"Filter(Choices({L['source']}.{f['n']}) As Opt, "
+                f"CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 "
+                f"|| Opt.Id = {var(L)}.{f['n']}.Id)")
     return f"Choices({L['source']}.{f['n']})"
 
 # ------------------------------------------------------------------ generate
@@ -115,7 +144,7 @@ p = ctrl(o, "conRootEdit", "GroupContainer", ind, "ManualLayout")
 for k, v in [("Fill","AppDark.Bg"),("Height","Parent.Height"),("Width","ContentWidth"),
              ("X","Max((Parent.Width - ContentWidth) / 2, Gutter)")]: prop(o, k, v, p)
 o.write(f"{p[:-2]}Children:\n"); c = p
-o.write(P.brand_band("Edit", "scrAdmin", back_transition="UnCoverRight", back_label="Cancel") + "\n")
+o.write(P.brand_band("Edit", "varAdminReturn", back_transition="UnCoverRight", back_label="Cancel") + "\n")
 
 # The back button comes from the brand band above; a second one here collided with it
 # as a duplicate control name.
@@ -240,7 +269,7 @@ for idx, L in enumerate(LISTS):
               "        )",
               "    );"]
 lines += ['    Set(varEditError, "");',
-          "    Navigate(scrAdmin, ScreenTransition.UnCoverRight),",
+          "    Navigate(varAdminReturn, ScreenTransition.UnCoverRight),",
           "    Set(varEditError, FirstError.Message)",
           ")"]
 blk(o, "OnSelect", lines, q)
@@ -295,7 +324,7 @@ blk(o, "OnSelect", [
     "        );",
     '        Set(varConfirmDelete, false);',
     '        Notify("Deleted.", NotificationType.Success);',
-    "        Navigate(scrAdmin, ScreenTransition.UnCoverRight),",
+    "        Navigate(varAdminReturn, ScreenTransition.UnCoverRight),",
     '        Notify("Could not delete: " & FirstError.Message, NotificationType.Error);',
     "        Set(varConfirmDelete, false)",
     "    )",

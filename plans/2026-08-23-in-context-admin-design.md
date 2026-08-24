@@ -5,8 +5,7 @@ admin can add anything they must work out which list it belongs in, which means 
 data model first. This replaces that with editing in place — the same screens technicians
 already use, with edit powers switched on.
 
-Status: design agreed 2026-08-23. Not yet built. Implementation deliberately not started —
-other improvements to be discussed first.
+Status: first half built 2026-08-23. See *What is built* below.
 
 ## Problem
 
@@ -140,19 +139,87 @@ to the catalogue, add the model, and find their way back.
   dependency guard. A delete affordance beside an edit one on a browse screen is too easy to
   hit by accident.
 
-## Open questions
+## Resolved
 
-Neither is common, and both are unpleasant if the design has no answer. Both need deciding
-before implementation, not during.
+Both were open because neither is common and both are unpleasant if the design has no
+answer. Decided before implementation, as this spec required.
 
-- **Moving a machine between customers.** The sites hierarchy has no gesture for it, because
-  a machine is reached *through* the customer that owns it. Options: allow the customer to be
-  changed on the edit form (leaving the browse hierarchy alone), or leave it to the All
-  records fallback.
-- **Retiring a model that sites still have installed.** The delete guard already refuses
-  while installations reference it, which is correct but leaves no way to stop offering a
-  model to new sites. Likely wants an Active flag on the model honoured by the dropdowns —
-  `TB_Products` already has one, currently only honoured by the catalogue.
+**Moving a machine between customers — change it on the edit form.** The browse hierarchy
+gets no gesture for it, because a machine is reached *through* the customer that owns it and
+a drag-between-sites affordance on a screen people mostly read would be easy to hit by
+accident. The Installations form already has a Customer field; that is the move. It costs no
+new work and keeps the rare operation in the place where rare operations live.
+
+**Retiring a model that sites still have installed — honour `Active` in the model
+dropdowns.** `TB_Products` already carries the flag and only the catalogue reads it. The
+delete guard correctly refuses while installations reference a model, so the need is to stop
+*offering* it, not to remove it.
+
+`Choices()` returns only `{Id, Value}`, so `Active` cannot be filtered on directly — but
+`00_Setup.md` documents the idiom for exactly this, asking per option whether a qualifying
+row exists:
+
+```powerfx
+Filter(Choices(TB_Installations.Product) As Opt,
+       CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0
+       || Opt.Id = varRecInst.Product.Id)
+```
+
+The second clause is the part that is easy to miss and expensive to omit. Without it, opening
+an existing machine whose model was since retired finds no matching item, the dropdown renders
+blank, and saving any unrelated edit writes that blank back — a silent data loss triggered by
+an unrelated action. With it, a retired model stays visible on the records that already use it
+and disappears only from new ones.
+
+Cost is a non-delegable `CountRows` per option, client-side. `TB_Products` holds models rather
+than machines, so it is small, and the Parent dropdown already pays exactly this price.
+
+## What is built
+
+Editing in place works end to end: every browse screen offers the edit and the creation its
+level owns, the form arrives with the context already filled in, and it returns to where it
+was opened from rather than to the admin list.
+
+| Built | Where |
+|---|---|
+| `+ Add a customer` | scrCustomers |
+| `Edit` the customer, `+ Add a machine` | scrCustomerOverview |
+| `Edit` the machine, `+ Add a unit` | scrSolution |
+| `Edit` the unit | scrUnit |
+| `+ Add a model` | scrCatalogue |
+| Context arrives pre-filled | scrEditForm |
+| The form returns to its caller | scrEditForm |
+| `Active` honoured by model dropdowns | scrEditForm |
+| `Last verified` / `Last checked` date fields | scrEditForm |
+
+Two deliberate departures from the design above:
+
+**Affordances sit on each object's own screen, not on every gallery row.** A row already
+navigates to the object it describes, so a per-row edit button duplicates the destination it
+sits beside — and it would put the most clutter on the busiest screens, which is exactly the
+risk this design names. The task the spec measured, correcting a version, is unaffected: you
+are on the machine, you tap Edit.
+
+**Context pre-fills fields rather than hiding them.** The form lays its fields out at fixed
+positions computed when it is generated, so hiding one at runtime leaves a hole rather than
+closing a gap; showing them filled needs no runtime layout arithmetic. It is also the better
+behaviour — the admin can see what the screen assumed and correct it, which is what makes
+*moving a machine between customers* work with no special gesture, as resolved above.
+
+## Not yet built
+
+None of these are blocked; they are the second half, and each is its own piece of work.
+
+- **Adding a machine offers its standard build.** The model's `TB_SolutionUnits` rows, the
+  standard ones ticked, created in the same action. Needs a selection gallery on the form and
+  a `ForAll` patch after the parent is created.
+- **`Not in the list — add a new model`** inside a model dropdown. Needs the in-progress form
+  to survive a detour and come back with the new model selected.
+- **`+ Add a document`** on the reference tabs of scrSolution, scrUnit and scrCatalogue, and
+  the **Can take** list on a catalogue model.
+- **Retiring guided setup.** The spec makes this conditional on the above landing, and it
+  still is: until adding a machine offers its standard build, the wizard does something the
+  ordinary path cannot.
 
 ## Risks
 

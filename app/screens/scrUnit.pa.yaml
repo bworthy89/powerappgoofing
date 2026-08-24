@@ -78,6 +78,32 @@ Screens:
                   Text: |
                     =varCustomer.Title & "  ›  " & LookUp(TB_Products, ID = LookUp(TB_Installations, ID = varInstallation.'Parent'.Id).Product.Id).Title
 
+            - btnEditUnit:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="Edit"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 92)
+                  Y: |
+                    =lblTitleUnit.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =84
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrUnit); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleUnit:
                 Control: ModernText
                 Properties:
@@ -85,8 +111,8 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =lblCrumbUnit.Y + lblCrumbUnit.Height + 4
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =41
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 100, 0)
+                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

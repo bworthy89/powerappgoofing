@@ -202,5 +202,65 @@ Admin gains a **Software** tab between Solution units and References, with the s
 edit and delete behaviour as the other lists. Rows read
 `Northgate - CI 300X - Northgate Retail Group | CI 300X | 3.4.1`.
 
-The solution and unit screens show the effective version and say when it came from here
-rather than from the machine: *"update available · site default for this model"*.
+The solution and unit screens show the expected version and say when it came from here
+rather than from the machine: *"verified 3 weeks ago · site default for this model"*.
+
+---
+
+## `Last Verified` on `TB_Installations` and `TB_SoftwareVersions`
+
+Add one column to **each** of these two lists, by hand, **before pasting the screens**.
+
+| Display | Internal | Type |
+|---|---|---|
+| Last Verified | TBLastVerified | Date and Time |
+
+Set **Include Time** to *Date Only*. The app never reads a time from it, and a stored time
+makes an age of "verified today" flip to "verified yesterday" depending on the hour.
+
+> As with `Software Version`, check the internal name after creating it. SharePoint derives
+> the internal name from whatever the column is first called, so a column created as
+> `Last Verified` normally lands on `Last_x0020_Verified`, which is fine — the app refers to
+> the **display** name. What breaks is renaming a column later: the display name changes and
+> the internal name does not.
+
+### What it means
+
+**Someone confirmed this version against the machine on this date.** Not "when the record
+was last touched". That distinction is the whole point: a version verified three weeks ago
+is worth acting on, and the same version verified fourteen months ago is worth checking.
+
+Both lists carry it because the expected version can come from either — a machine's own
+`Installed Version` wins over the site default — and the date shown always follows whichever
+one supplied the version.
+
+### It is not set automatically
+
+Editing a version does **not** stamp the date. That would be convenient and wrong: an admin
+correcting a typo in a two-year-old record has not verified anything, and stamping it as a
+verification launders a guess into a fact. The field sits directly beneath the version on
+the admin form so it is hard to miss, and it can be left blank — blank reads as
+*"never verified"*, which is honest.
+
+### In the app
+
+| Where | Shows |
+|---|---|
+| Version panel, solution and unit screens | the expected version, then `verified 3 weeks ago` |
+| Unit rows on a solution | the version, with its age beneath |
+| Solution cards on a customer | the same, plus `N to check` for its units |
+| Customer list | `N to check` — machines at that site not verified in over a year, or ever |
+
+Twelve months is the threshold, matching the one already used for a document's
+`Last Checked`, so the app has one rule for staleness rather than two.
+
+Nothing anywhere compares a machine against its model's `Current Standard Version` any more.
+That column stays, and the catalogue still publishes it: it is a real fact about the product
+line. It simply stopped being used to judge any particular machine, because the app has no
+way to know what a machine is actually running.
+
+## `Last Checked` on `TB_References` — no schema change, new field
+
+This column already exists and always has. It had no field on the admin form, so the user
+guide described setting a value there was no way to set. The References form now has a
+**Last checked** date field. Nothing to create.

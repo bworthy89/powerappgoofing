@@ -5,7 +5,7 @@ and reports the result: *on standard*, *update available*, *not recorded*. This 
 comparison everywhere and reports two things instead — the version we expect, and when it was
 last verified.
 
-Status: design agreed 2026-08-23, open questions resolved. Implementing.
+Status: built 2026-08-23 in `cda8ffe`. Awaiting paste and a re-test on both roles.
 
 ## Why
 

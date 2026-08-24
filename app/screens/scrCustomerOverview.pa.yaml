@@ -58,6 +58,58 @@ Screens:
                   OnSelect: |
                     =Navigate(scrCustomers, ScreenTransition.CoverRight)
 
+            - btnEditCustOvw:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="Edit"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 258)
+                  Y: |
+                    =lblTitleOvw.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =84
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecCust, LookUp(TB_Customers, ID = varCustomer.ID)); Set(varAdminList, "Cust"); Set(varAdminNew, false); Set(varAdminReturn, scrCustomerOverview); Navigate(scrEditForm, ScreenTransition.Cover)
+            - btnAddMachOvw:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a machine"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 92, Gutter + (Parent.Width - (Gutter * 2)) - 166)
+                  Y: |
+                    =lblTitleOvw.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =158
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecInst, Patch(Defaults(TB_Installations), { Customer: LookUp(Choices(TB_Installations.Customer), Id = varCustomer.ID) })); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrCustomerOverview); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleOvw:
                 Control: ModernText
                 Properties:
@@ -65,8 +117,8 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =56 + 24
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =41
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 266, 0)
+                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: =varCustomer.Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

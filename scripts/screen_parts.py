@@ -359,6 +359,141 @@ def effective_version(inst, customer_id, product_id):
             f"&& Product.Id = {product_id}).'Software Version')")
 
 
+# ------------------------------------------------------------------- admin affordances
+#
+# One set of screens serves both roles. Edit powers are switched on by varIsAdmin rather
+# than duplicated into a parallel set of admin screens, which would drift apart. Nothing
+# about the technician view changes: every affordance here is invisible without the flag.
+#
+# Outlined and muted throughout, never filled. These land on screens that were deliberately
+# decluttered, and a row of solid buttons would undo that in one paste.
+#
+# They sit on each object's own screen rather than on every gallery row. A row already
+# navigates to the object, so a per-row edit button duplicates the destination it sits next
+# to while adding the most clutter to the busiest screens.
+
+
+def admin_open(key, record_expr, is_new, back="scrAdmin"):
+    """The single way any screen opens the edit form.
+
+    scrEditForm reads four variables: which list it is editing, the record, whether this
+    is a create, and where to return. That last one is what makes editing in place work at
+    all - the form used to navigate to scrAdmin unconditionally, so editing a machine from
+    its own screen would have dropped the admin on a list of database tables. Seeding the record with context - the customer whose page you are on,
+    the machine you are inside - is what separates "add a unit here" from "add a unit": the
+    form's defaults read that record variable directly, so anything patched into it arrives
+    already filled in, and the admin never answers a question the screen already knew.
+    """
+    return (f"Set(varRec{key}, {record_expr}); "
+            f'Set(varAdminList, "{key}"); '
+            f"Set(varAdminNew, {'true' if is_new else 'false'}); "
+            f"Set(varAdminReturn, {back}); "
+            "Navigate(scrEditForm, ScreenTransition.Cover)")
+
+
+def seed(source, field, id_expr):
+    """A lookup value shaped so a Choices()-fed dropdown will match it.
+
+    Hand-built {Id, Value} records are not what a SharePoint lookup accepts, and the form
+    preselects by looking the stored value up in the same option set the control shows -
+    so the seed has to come out of Choices() to be found there at all.
+    """
+    return f"LookUp(Choices({source}.{field}), Id = {id_expr})"
+
+
+def admin_button(name, label, on_select, x, y, width, height=40, ind=12,
+                 visible="varIsAdmin"):
+    """An outlined, admin-only button. Used for both "+ Add ..." and "Edit".
+
+    Written as a literal block and indented afterwards rather than assembled from escaped
+    fragments: an escaped newline has been eaten in transit three times on this project,
+    each time producing a file that looked plausible and did not parse.
+    """
+    body = f"""- {name}:
+    Control: ModernButton
+    Properties:
+      Appearance: =ButtonAppearance.Outline
+      Text: ="{label}"
+      Font: =AppFont
+      Size: =AppType.Body
+      FontWeight: =FontWeight.Semibold
+      Color: =AppDark.Accent
+      BorderColor: =AppDark.Line
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: |
+        ={x}
+      Y: |
+        ={y}
+      Width: |
+        ={width}
+      Height: ={height}
+      Visible: |
+        ={visible}
+      OnSelect: |
+        ={on_select}
+"""
+    pad = " " * ind
+    return "".join(pad + ln if ln.strip() else ln
+                   for ln in body.splitlines(keepends=True))
+
+
+ACTION_GAP = 8
+
+
+ACTION_H = 40
+ACTION_ROW = 48          # the band a wrapped button row occupies, including its gap
+
+
+def title_actions(title, specs, ind=12):
+    """Admin buttons on a screen's title row.
+
+    The title row is the one element every screen here shares, and it is the only place an
+    affordance fits without disturbing a layout tuned for a technician - a button below a
+    list would have to push a gallery down, and every gallery in this app is sized from the
+    control above it.
+
+    Wide: right-aligned beside the title, in declared order, rightmost last.
+    Narrow: their own row underneath, left to right in declared order, because two buttons
+    beside a title on a phone leave the title about ninety pixels.
+    """
+    widths = [w for *_rest, w in specs]
+    out = []
+    for i, (name, label, on_select, w) in enumerate(specs):
+        left = sum(widths[:i]) + i * ACTION_GAP
+        right = sum(widths[i:]) + (len(specs) - i) * ACTION_GAP
+        x = (f"If(IsNarrow, Gutter + {left}, "
+             f"Gutter + ({CW}) - {right})")
+        y = f"{title}.Y + If(IsNarrow, 41, 0)"
+        out.append(admin_button(name, label, on_select, x=x, y=y,
+                                width=str(w), height=ACTION_H, ind=ind))
+    return "".join(out)
+
+
+def title_shrink(specs):
+    """A title's Width, leaving room for buttons that sit beside it.
+
+    Only when there are buttons AND they are beside it. On narrow they are on their own row,
+    so the title keeps the full measure; for a technician the If is false either way and the
+    screen is byte-identical to what it was.
+    """
+    total = sum(w + ACTION_GAP for *_rest, w in specs) + ACTION_GAP
+    return f"({CW}) - If(varIsAdmin && !IsNarrow, {total}, 0)"
+
+
+def title_height(base=41):
+    """A title's Height, carrying the wrapped button row on narrow screens.
+
+    Every screen positions its next control at lblTitle.Y + lblTitle.Height, so putting the
+    extra height here shifts the rest of the screen down without any screen needing to know
+    the buttons exist.
+    """
+    return f"{base} + If(varIsAdmin && IsNarrow, {ACTION_ROW}, 0)"
+
+
 # ---------------------------------------------------------------------------- verification
 #
 # Twelve months, matching the threshold already applied to a document's Last Checked, so the

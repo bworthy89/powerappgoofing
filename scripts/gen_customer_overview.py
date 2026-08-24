@@ -35,6 +35,19 @@ import screen_parts as P
 
 OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrCustomerOverview.pa.yaml")
 
+# Edit the customer you are looking at, and add a machine to it. The customer is supplied by
+# where you tapped, so the form never asks which site this is.
+ACTIONS = [
+    ("btnEditCustOvw", "Edit",
+     P.admin_open("Cust", "LookUp(TB_Customers, ID = varCustomer.ID)", False,
+                  back="scrCustomerOverview"), 84),
+    ("btnAddMachOvw", "+  Add a machine",
+     P.admin_open("Inst",
+                  "Patch(Defaults(TB_Installations), { Customer: "
+                  + P.seed("TB_Installations", "Customer", "varCustomer.ID") + " })",
+                  True, back="scrCustomerOverview"), 158),
+]
+
 CARD_H = 88
 PROD = "LookUp(TB_Products, ID = ThisItem.Product.Id)"
 
@@ -135,15 +148,15 @@ Screens:
           Children:
 {P.brand_band("Ovw", "scrCustomers", back_transition="CoverRight", back_label="Customers")}
 
-            - lblTitleOvw:
+{P.title_actions("lblTitleOvw", ACTIONS)}            - lblTitleOvw:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={Y_TITLE}
-                  Width: ={P.CW}
-                  Height: =41
+                  Width: ={P.title_shrink(ACTIONS)}
+                  Height: ={P.title_height()}
                   Text: =varCustomer.Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)

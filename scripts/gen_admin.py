@@ -229,7 +229,7 @@ def gen_admin():
             o.write(f"{q}OnSelect: |\n"
                     f"{q}  =Set(varAdminNew, true);\n"
                     f"{q}  Switch(varAdminList,\n{sw}\n{q}  );\n"
-                    f"{q}  Navigate(scrEditForm, ScreenTransition.Cover)\n")
+                    f"{q}  Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)\n")
         else:
             prop(o, k, v, q)
 
@@ -256,7 +256,7 @@ def gen_admin():
         o.write(f"{r}Text: |\n{r}  =ThisItem.Title & {sub[L['key']]}\n")
         o.write(f"{r}OnSelect: |\n{r}  =Set(varRec{L['key']}, ThisItem);\n"
                 f"{r}  Set(varAdminNew, false);\n"
-                f"{r}  Navigate(scrEditForm, ScreenTransition.Cover)\n")
+                f"{r}  Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)\n")
         for k, v in [("Align","Align.Left"),("Font","AppFont"),("Size","AppType.Small"),
                      ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
                      ("HoverFill","AppDark.AccentTint"),("PressedFill","AppDark.AccentTint"),

@@ -51,7 +51,7 @@ Screens:
                   Width: =140
                   Height: =44
                   OnSelect: |
-                    =Navigate(scrAdmin, ScreenTransition.UnCoverRight)
+                    =Navigate(varAdminReturn, ScreenTransition.UnCoverRight)
             - lblTitleEdit:
                 Control: ModernText
                 Properties:
@@ -90,7 +90,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecCust.Title)
+                  Default: =varRecCust.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -128,7 +128,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecCust.Description)
+                  Default: =varRecCust.Description
                   Type: =TextInputType.Multiline
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -166,7 +166,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecCust.'Support Notes')
+                  Default: =varRecCust.'Support Notes'
                   Type: =TextInputType.Multiline
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -203,7 +203,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
-                  Default: =If(varAdminNew, false, varRecCust.Active)
+                  Default: =varRecCust.Active
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =36
@@ -233,7 +233,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecProd.Title)
+                  Default: =varRecProd.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -273,7 +273,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Products.'Product Type')
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value))
+                  Default: =LookUp(Choices(TB_Products.'Product Type'), Value = varRecProd.'Product Type'.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -308,7 +308,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Products.Family)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value))
+                  Default: =LookUp(Choices(TB_Products.Family), Value = varRecProd.Family.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -341,7 +341,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecProd.'Current Standard Version')
+                  Default: =varRecProd.'Current Standard Version'
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -379,7 +379,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecProd.Description)
+                  Default: =varRecProd.Description
                   Type: =TextInputType.Multiline
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -416,7 +416,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
-                  Default: =If(varAdminNew, false, varRecProd.Active)
+                  Default: =varRecProd.Active
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =36
@@ -446,7 +446,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecInst.Title)
+                  Default: =varRecInst.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -486,7 +486,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Customer)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value))
+                  Default: =LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -520,8 +520,8 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_Installations.Product)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value))
+                    =Filter(Choices(TB_Installations.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecInst.Product.Id)
+                  Default: =LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -556,7 +556,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value))
+                  Default: =LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -589,7 +589,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecInst.'Installed Version')
+                  Default: =varRecInst.'Installed Version'
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -629,7 +629,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Status)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
+                  Default: =LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -662,7 +662,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecInst.'Config Notes')
+                  Default: =varRecInst.'Config Notes'
                   Type: =TextInputType.Multiline
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -700,7 +700,7 @@ Screens:
                 Properties:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =If(varAdminNew, Blank(), varRecInst.'Last Verified')
+                  DefaultDate: =varRecInst.'Last Verified'
                   Placeholder: ="Not verified"
                   Format: =DatePickerFormat.LongAbbreviated
                   Font: =AppFont
@@ -738,7 +738,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecSolU.Title)
+                  Default: =varRecSolU.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -777,8 +777,8 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_SolutionUnits.Solution)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value))
+                    =Filter(Choices(TB_SolutionUnits.Solution) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSolU.Solution.Id)
+                  Default: =LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -812,8 +812,8 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_SolutionUnits.Unit)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value))
+                    =Filter(Choices(TB_SolutionUnits.Unit) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSolU.Unit.Id)
+                  Default: =LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -845,7 +845,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
-                  Default: =If(varAdminNew, false, varRecSolU.Standard)
+                  Default: =varRecSolU.Standard
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =36
@@ -875,7 +875,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecSwVer.Title)
+                  Default: =varRecSwVer.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -915,7 +915,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_SoftwareVersions.Customer)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SoftwareVersions.Customer), Value = varRecSwVer.Customer.Value))
+                  Default: =LookUp(Choices(TB_SoftwareVersions.Customer), Value = varRecSwVer.Customer.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -949,8 +949,8 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_SoftwareVersions.Product)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_SoftwareVersions.Product), Value = varRecSwVer.Product.Value))
+                    =Filter(Choices(TB_SoftwareVersions.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSwVer.Product.Id)
+                  Default: =LookUp(Choices(TB_SoftwareVersions.Product), Value = varRecSwVer.Product.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -983,7 +983,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecSwVer.'Software Version')
+                  Default: =varRecSwVer.'Software Version'
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -1021,7 +1021,7 @@ Screens:
                 Properties:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =If(varAdminNew, Blank(), varRecSwVer.'Last Verified')
+                  DefaultDate: =varRecSwVer.'Last Verified'
                   Placeholder: ="Not verified"
                   Format: =DatePickerFormat.LongAbbreviated
                   Font: =AppFont
@@ -1059,7 +1059,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecRef.Title)
+                  Default: =varRecRef.Title
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -1098,8 +1098,8 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_References.Product)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value))
+                    =Filter(Choices(TB_References.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecRef.Product.Id)
+                  Default: =LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1134,7 +1134,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.Customer)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value))
+                  Default: =LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1169,7 +1169,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.Section)
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value))
+                  Default: =LookUp(Choices(TB_References.Section), Value = varRecRef.Section.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1204,7 +1204,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_References.'Reference Type')
-                  Default: =If(varAdminNew, Blank(), LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value))
+                  Default: =LookUp(Choices(TB_References.'Reference Type'), Value = varRecRef.'Reference Type'.Value)
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1237,7 +1237,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecRef.URL)
+                  Default: =varRecRef.URL
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -1275,7 +1275,7 @@ Screens:
                 Properties:
                   Color: =AppDark.Fg
                   Fill: =AppDark.Surface
-                  Default: =If(varAdminNew, "", varRecRef.Version)
+                  Default: =varRecRef.Version
                   Type: =TextInputType.SingleLine
                   Placeholder: =""
                   BorderColor: =AppDark.Line
@@ -1312,7 +1312,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
-                  Default: =If(varAdminNew, false, varRecRef.Featured)
+                  Default: =varRecRef.Featured
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =36
@@ -1342,7 +1342,7 @@ Screens:
                 Properties:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
-                  DefaultDate: =If(varAdminNew, Blank(), varRecRef.'Last Checked')
+                  DefaultDate: =varRecRef.'Last Checked'
                   Placeholder: ="Not verified"
                   Format: =DatePickerFormat.LongAbbreviated
                   Font: =AppFont
@@ -1445,7 +1445,7 @@ Screens:
                             )
                         );
                         Set(varEditError, "");
-                        Navigate(scrAdmin, ScreenTransition.UnCoverRight),
+                        Navigate(varAdminReturn, ScreenTransition.UnCoverRight),
                         Set(varEditError, FirstError.Message)
                     )
                   Font: =AppFont
@@ -1500,7 +1500,7 @@ Screens:
                             );
                             Set(varConfirmDelete, false);
                             Notify("Deleted.", NotificationType.Success);
-                            Navigate(scrAdmin, ScreenTransition.UnCoverRight),
+                            Navigate(varAdminReturn, ScreenTransition.UnCoverRight),
                             Notify("Could not delete: " & FirstError.Message, NotificationType.Error);
                             Set(varConfirmDelete, false)
                         )

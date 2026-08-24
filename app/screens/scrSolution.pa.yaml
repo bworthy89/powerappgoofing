@@ -60,6 +60,58 @@ Screens:
                   OnSelect: |
                     =Navigate(scrCustomerOverview, ScreenTransition.UnCover)
 
+            - btnEditSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="Edit"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 236)
+                  Y: |
+                    =lblTitleSol.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =84
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
+            - btnAddUnitSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a unit"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(IsNarrow, Gutter + 92, Gutter + (Parent.Width - (Gutter * 2)) - 144)
+                  Y: |
+                    =lblTitleSol.Y + If(IsNarrow, 41, 0)
+                  Width: |
+                    =136
+                  Height: =40
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varRecInst, Patch(Defaults(TB_Installations), { Customer: LookUp(Choices(TB_Installations.Customer), Id = varCustomer.ID), 'Parent': LookUp(Choices(TB_Installations.'Parent'), Id = varInstallation.ID) })); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleSol:
                 Control: ModernText
                 Properties:
@@ -67,8 +119,8 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =56 + 24
-                  Width: =Parent.Width - (Gutter * 2)
-                  Height: =41
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 244, 0)
+                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)
