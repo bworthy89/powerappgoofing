@@ -263,7 +263,7 @@ Screens:
                   Visible: |
                     =varSolTab = "Units" && {STRAY} > 0 && !varIsAdmin
                   Text: |
-                    ={STRAY_NAMES} & " attached, not on the model's list"
+                    ={STRAY_NAMES} & " attached, not on " & varInstallation.Product.Value & "'s list"
             # An admin can close the gap from here. This writes the same row the save
             # path writes when a unit is attached - optional, never standard, because one
             # installation cannot establish the usual build.
@@ -289,7 +289,7 @@ Screens:
                   Visible: |
                     =varSolTab = "Units" && {STRAY} > 0 && varIsAdmin
                   Text: |
-                    ={STRAY_NAMES} & " attached, not on the model's list - add"
+                    ={STRAY_NAMES} & " attached, not on " & varInstallation.Product.Value & "'s list - add"
                   OnSelect: |
                     =ForAll({STRAY_ROWS} As X,
                         Patch(TB_SolutionUnits, Defaults(TB_SolutionUnits), {{
