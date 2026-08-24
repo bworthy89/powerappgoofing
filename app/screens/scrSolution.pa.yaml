@@ -64,11 +64,12 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Outline
-                  Text: ="Edit"
+                  Icon: ="Edit"
+                  Text: =""
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
+                  Color: =AppDark.Muted
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   RadiusTopLeft: =6
@@ -76,42 +77,16 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   X: |
-                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 236)
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 52)
                   Y: |
                     =lblTitleSol.Y + If(IsNarrow, 41, 0)
                   Width: |
-                    =84
+                    =44
                   Height: =40
                   Visible: |
                     =varIsAdmin
                   OnSelect: |
                     =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
-            - btnAddUnitSol:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Outline
-                  Text: ="+  Add a unit"
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-                  X: |
-                    =If(IsNarrow, Gutter + 92, Gutter + (Parent.Width - (Gutter * 2)) - 144)
-                  Y: |
-                    =lblTitleSol.Y + If(IsNarrow, 41, 0)
-                  Width: |
-                    =136
-                  Height: =40
-                  Visible: |
-                    =varIsAdmin
-                  OnSelect: |
-                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerInst, LookUp(TB_Customers, ID = varCustomer.ID)); Set(varStParentInst, varInstallation); Set(varRecInst, Defaults(TB_Installations)); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleSol:
                 Control: ModernText
                 Properties:
@@ -119,7 +94,7 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =56 + 24
-                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 244, 0)
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 60, 0)
                   Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
                   Font: =AppFont
@@ -162,6 +137,34 @@ Screens:
                     =(!IsBlank(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified')) && RoundDown(DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) / 30.4375, 0) >= 12)
                   SourceNote: |
                     =If(!IsBlank(varInstallation.'Installed Version'), "", !IsBlank(LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Software Version'), "  ·  site default for this model", "")
+            - btnEditHeroSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Icon: ="Edit"
+                  Text: =""
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Muted
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =Gutter + Min(Parent.Width - (Gutter * 2), 620) - 44
+                  Y: |
+                    =(lblSubtitleSol.Y + lblSubtitleSol.Height + Gutter) + 12
+                  Width: |
+                    =32
+                  Height: =32
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
+
 
             - conConfigNotesSol:
                 Control: GroupContainer
@@ -202,6 +205,33 @@ Screens:
                         Font: =AppFont
                         Size: =AppType.Body
                         Color: =AppDark.Fg
+
+            - btnAddUnitSol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a unit"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =Gutter
+                  Y: |
+                    =galUnitsSol.Y + galUnitsSol.Height + 12
+                  Width: |
+                    =Parent.Width - (Gutter * 2)
+                  Height: =44
+                  Visible: |
+                    =varIsAdmin && varSolTab = "Units"
+                  OnSelect: |
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerInst, LookUp(TB_Customers, ID = varCustomer.ID)); Set(varStParentInst, varInstallation); Set(varRecInst, Defaults(TB_Installations)); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
 
             - btnTabUnitsSol:
                 Control: ModernButton
@@ -306,7 +336,7 @@ Screens:
                   Width: =Parent.Width - (Gutter * 2)
                   Visible: =varSolTab = "Units"
                   Height: |
-                    =Max(Parent.Height - (conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12) - Gutter, 120) - If(lblUnitsHeading.Visible, 26, 0)
+                    =Max(Parent.Height - (conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12) - Gutter, 120) - If(lblUnitsHeading.Visible, 26, 0) - If(varIsAdmin, 56, 0)
                   TemplateSize: =56
                   TemplatePadding: =0
                   ShowScrollbar: =false
@@ -381,7 +411,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
                         Y: =10
-                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Width: =(Parent.TemplateWidth - 32) * 0.45 - If(varIsAdmin, 40, 0)
                         Height: =22
                         Align: =Align.Right
                         Font: =AppFont
@@ -418,7 +448,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
                         Y: =32
-                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Width: =(Parent.TemplateWidth - 32) * 0.45 - If(varIsAdmin, 40, 0)
                         Height: =18
                         Align: =Align.Right
                         Font: =AppFont
@@ -429,6 +459,29 @@ Screens:
                           =If(IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)), "", If(IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified'), "never verified", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 1, "verified today", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 2, "verified yesterday", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 14, "verified " & DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) & " days ago", DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) < 61, "verified " & RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 7, 0) & " weeks ago", "verified " & RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 30.4375, 0) & " months ago"))
                         Color: |
                           =If((!IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified') && RoundDown(DateDiff(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id).'Last Verified', Today(), TimeUnit.Days) / 30.4375, 0) >= 12), AppDark.Warn, AppDark.Muted)
+                  # Declared after the hit target so the tap lands here rather than
+                  # navigating. Hidden where nothing is fitted - there is no record to edit.
+                  - btnEditUnitRowSol:
+                      Control: ModernButton
+                      Properties:
+                        Appearance: =ButtonAppearance.Outline
+                        Icon: ="Edit"
+                        Text: =""
+                        Color: =AppDark.Muted
+                        BorderColor: =AppDark.Line
+                        BorderThickness: =1
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        X: =Parent.TemplateWidth - 44
+                        Y: =12
+                        Width: =32
+                        Height: =32
+                        Visible: |
+                          =varIsAdmin && !IsBlank(LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id))
+                        OnSelect: |
+                          =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecInst, LookUp(TB_Installations, 'Parent'.Id = varInstallation.ID && Product.Id = ThisItem.Unit.Id)); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrSolution); Navigate(scrEditForm, ScreenTransition.Cover)
                   - recUnitRuleSol:
                       Control: Rectangle
                       Properties:

@@ -39,15 +39,10 @@ OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrSolution.pa.yaml")
 
 # Correct this machine's record, or add a unit inside it. Adding supplies both the customer
 # and the parent machine, which were two of the three lookups this task used to cost.
-ACTIONS = [
-    ("btnEditSol", "Edit",
-     P.admin_open("Inst", "varInstallation", False, back="scrSolution"), 84),
-    ("btnAddUnitSol", "+  Add a unit",
-     P.admin_open("Inst", "Defaults(TB_Installations)", True, back="scrSolution",
-                  extra=P.stash([("varStCustomerInst",
-                                  "LookUp(TB_Customers, ID = varCustomer.ID)"),
-                                 ("varStParentInst", "varInstallation")])), 136),
-]
+# Only the pencil sits beside the title. Adding a unit belongs under the list of units,
+# which is where the mockup put it and where it reads as "and one more".
+ACTIONS = [("btnEditSol", "",
+            P.admin_open("Inst", "varInstallation", False, back="scrSolution"), 44)]
 
 BAND = P.BAND
 CW = P.CW
@@ -213,9 +208,19 @@ Screens:
                     ={PROD}.Family.Value & "  ·  " & varCustomer.Title & If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
 
 {P.version_hero("Sol", Y_HERO)}
+{P.pencil("btnEditHeroSol", P.admin_open("Inst", "varInstallation", False, back="scrSolution"), "Gutter + Min(" + CW + ", 620) - 44", f"({Y_HERO}) + 12")}
 
 {P.config_panel("Sol", Y_CFG)}
 
+{P.admin_button("btnAddUnitSol", "+  Add a unit",
+                        P.admin_open("Inst", "Defaults(TB_Installations)", True,
+                                     back="scrSolution",
+                                     extra=P.stash([("varStCustomerInst",
+                                                     "LookUp(TB_Customers, ID = varCustomer.ID)"),
+                                                    ("varStParentInst", "varInstallation")])),
+                        x="Gutter", y="galUnitsSol.Y + galUnitsSol.Height + 12",
+                        width=CW, height=44,
+                        visible='varIsAdmin && varSolTab = "Units"')}
 {tab("Units", "Units", 0)}
 {tab("Docs", "Documents", 1)}
 {tab("Firmware", "Firmware", 2)}
@@ -256,7 +261,7 @@ Screens:
                   Width: ={CW}
                   Visible: =varSolTab = "Units"
                   Height: |
-                    ={LIST_H} - If(lblUnitsHeading.Visible, 26, 0)
+                    ={LIST_H} - If(lblUnitsHeading.Visible, 26, 0) - If(varIsAdmin, 56, 0)
                   TemplateSize: =56
                   TemplatePadding: =0
                   ShowScrollbar: =false
@@ -331,7 +336,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
                         Y: =10
-                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Width: =(Parent.TemplateWidth - 32) * 0.45 - If(varIsAdmin, 40, 0)
                         Height: =22
                         Align: =Align.Right
                         Font: =AppFont
@@ -368,7 +373,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =16 + ((Parent.TemplateWidth - 32) * 0.55)
                         Y: =32
-                        Width: =(Parent.TemplateWidth - 32) * 0.45
+                        Width: =(Parent.TemplateWidth - 32) * 0.45 - If(varIsAdmin, 40, 0)
                         Height: =18
                         Align: =Align.Right
                         Font: =AppFont
@@ -379,6 +384,29 @@ Screens:
                           =If(IsBlank({FITTED}), "", {U_NOTE})
                         Color: |
                           =If({U_STALE}, AppDark.Warn, AppDark.Muted)
+                  # Declared after the hit target so the tap lands here rather than
+                  # navigating. Hidden where nothing is fitted - there is no record to edit.
+                  - btnEditUnitRowSol:
+                      Control: ModernButton
+                      Properties:
+                        Appearance: =ButtonAppearance.Outline
+                        Icon: ="Edit"
+                        Text: =""
+                        Color: =AppDark.Muted
+                        BorderColor: =AppDark.Line
+                        BorderThickness: =1
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        X: =Parent.TemplateWidth - 44
+                        Y: =12
+                        Width: =32
+                        Height: =32
+                        Visible: |
+                          =varIsAdmin && !IsBlank({FITTED})
+                        OnSelect: |
+                          ={P.admin_open("Inst", FITTED, False, back="scrSolution")}
                   - recUnitRuleSol:
                       Control: Rectangle
                       Properties:

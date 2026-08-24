@@ -36,8 +36,8 @@ OUT = Path(r"E:\Papp\powerappgoofing\app\screens\scrUnit.pa.yaml")
 
 # A unit has nothing beneath it, so its title row offers only the correction - which is the
 # most common admin task in the app: a version moved and someone is standing in front of it.
-ACTIONS = [("btnEditUnit", "Edit",
-            P.admin_open("Inst", "varInstallation", False, back="scrUnit"), 84)]
+ACTIONS = [("btnEditUnit", "",
+            P.admin_open("Inst", "varInstallation", False, back="scrUnit"), 44)]
 
 PROD = "LookUp(TB_Products, ID = varInstallation.Product.Id)"
 PARENT_PROD = ("LookUp(TB_Products, ID = LookUp(TB_Installations, "
@@ -150,6 +150,7 @@ Screens:
                     ={PROD}.'Product Type'.Value & If(varInstallation.Status.Value = "In Service", "", "  ·  " & Lower(varInstallation.Status.Value))
 
 {P.version_hero("Unit", Y_HERO)}
+{P.pencil("btnEditHeroUnit", P.admin_open("Inst", "varInstallation", False, back="scrUnit"), "Gutter + Min(" + P.CW + ", 620) - 44", f"({Y_HERO}) + 12")}
 
 {P.config_panel("Unit", Y_CFG)}
 {P.ref_gallery("Docs", "Unit", "DOCUMENTATION", "No documentation is on file for this unit.", Y_DOCS, refs("Documentation"))}

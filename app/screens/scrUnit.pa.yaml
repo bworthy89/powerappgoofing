@@ -82,11 +82,12 @@ Screens:
                 Control: ModernButton
                 Properties:
                   Appearance: =ButtonAppearance.Outline
-                  Text: ="Edit"
+                  Icon: ="Edit"
+                  Text: =""
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
-                  Color: =AppDark.Accent
+                  Color: =AppDark.Muted
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   RadiusTopLeft: =6
@@ -94,11 +95,11 @@ Screens:
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
                   X: |
-                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 92)
+                    =If(IsNarrow, Gutter + 0, Gutter + (Parent.Width - (Gutter * 2)) - 52)
                   Y: |
                     =lblTitleUnit.Y + If(IsNarrow, 41, 0)
                   Width: |
-                    =84
+                    =44
                   Height: =40
                   Visible: |
                     =varIsAdmin
@@ -111,7 +112,7 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =lblCrumbUnit.Y + lblCrumbUnit.Height + 4
-                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 100, 0)
+                  Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 60, 0)
                   Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
                   Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
                   Font: =AppFont
@@ -154,6 +155,34 @@ Screens:
                     =(!IsBlank(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified')) && RoundDown(DateDiff(If(!IsBlank(varInstallation.'Installed Version'), varInstallation.'Last Verified', LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Last Verified'), Today(), TimeUnit.Days) / 30.4375, 0) >= 12)
                   SourceNote: |
                     =If(!IsBlank(varInstallation.'Installed Version'), "", !IsBlank(LookUp(TB_SoftwareVersions, Customer.Id = varCustomer.ID && Product.Id = varInstallation.Product.Id).'Software Version'), "  ·  site default for this model", "")
+            - btnEditHeroUnit:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Icon: ="Edit"
+                  Text: =""
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Muted
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =Gutter + Min(Parent.Width - (Gutter * 2), 620) - 44
+                  Y: |
+                    =(lblSubtitleUnit.Y + lblSubtitleUnit.Height + Gutter) + 12
+                  Width: |
+                    =32
+                  Height: =32
+                  Visible: |
+                    =varIsAdmin
+                  OnSelect: |
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecInst, varInstallation); Set(varAdminList, "Inst"); Set(varAdminNew, false); Set(varAdminReturn, scrUnit); Navigate(scrEditForm, ScreenTransition.Cover)
+
 
             - conConfigNotesUnit:
                 Control: GroupContainer

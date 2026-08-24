@@ -314,6 +314,167 @@ Screens:
                   Text: |
                     =If(Len(Trim(txtSearchCat.Text)) > 0, "No models start with """ & Trim(txtSearchCat.Text) & """.", "No active models are on file.")
 
+            # ---- what this model can take
+            - lblCanTakeHeadingCat:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  X: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
+                  Y: =lblModelsHeadingCat.Y
+                  Width: =200
+                  Height: =18
+                  Text: ="CAN TAKE"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Bold
+                  Color: =AppDark.Muted
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: |
+                    =!IsBlank(varExpandedModel) && varExpandedModel <> 0 && scrCatalogue.Size >= ScreenSize.Large
+            - lblCanTakeHintCat:
+                Control: ModernText
+                Properties:
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  X: |
+                    =(If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)) + 78
+                  Y: =lblModelsHeadingCat.Y
+                  Width: =260
+                  Height: =18
+                  Text: ="drives the Units tab and the standard build"
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  Color: =AppDark.Faint
+                  Wrap: =false
+                  AutoHeight: =false
+                  Visible: |
+                    =!IsBlank(varExpandedModel) && varExpandedModel <> 0 && scrCatalogue.Size >= ScreenSize.Large
+            - galCanTakeCat:
+                Control: Gallery
+                Variant: Vertical
+                Properties:
+                  X: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
+                  Y: =lblModelsHeadingCat.Y + 22
+                  Width: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
+                  Height: |
+                    =Min(CountRows(Filter(TB_SolutionUnits, Solution.Id = varExpandedModel)) * 44 + 8, 180)
+                  TemplateSize: =44
+                  TemplatePadding: =0
+                  ShowScrollbar: =true
+                  Visible: |
+                    =!IsBlank(varExpandedModel) && varExpandedModel <> 0 && scrCatalogue.Size >= ScreenSize.Large
+                  Items: |
+                    =SortByColumns(Filter(TB_SolutionUnits, Solution.Id = varExpandedModel), "Title", SortOrder.Ascending)
+                Children:
+                  - recCanTakeRailCat:
+                      Control: Rectangle
+                      Properties:
+                        X: =0
+                        Y: =0
+                        Width: =3
+                        Height: =Parent.TemplateHeight - 1
+                        Fill: =If(ThisItem.Standard, AppDark.Accent, AppDark.Line)
+                  - lblCanTakeTypeCat:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        X: =14
+                        Y: =4
+                        Width: =Parent.TemplateWidth - 160
+                        Height: =16
+                        Text: |
+                          =Upper(Coalesce(LookUp(TB_Products, ID = ThisItem.Unit.Id).'Product Type'.Value, ""))
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppDark.Muted
+                        Wrap: =false
+                        AutoHeight: =false
+                  - lblCanTakeNameCat:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        X: =14
+                        Y: =21
+                        Width: =Parent.TemplateWidth - 160
+                        Height: =20
+                        Text: =ThisItem.Unit.Value
+                        Font: =AppFont
+                        Size: =AppType.Body
+                        FontWeight: =FontWeight.Semibold
+                        Color: =AppDark.Fg
+                        Wrap: =false
+                        AutoHeight: =false
+                  - lblCanTakeStdCat:
+                      Control: ModernText
+                      Properties:
+                        PaddingTop: =0
+                        PaddingBottom: =0
+                        X: =Parent.TemplateWidth - 144
+                        Y: =12
+                        Width: =92
+                        Height: =20
+                        Align: =Align.Right
+                        Text: =If(ThisItem.Standard, "standard", "optional")
+                        Font: =AppFont
+                        Size: =AppType.Small
+                        Color: =If(ThisItem.Standard, AppDark.Accent, AppDark.Faint)
+                        Wrap: =false
+                        AutoHeight: =false
+                  - btnEditCanTakeCat:
+                      Control: ModernButton
+                      Properties:
+                        Appearance: =ButtonAppearance.Outline
+                        Icon: ="Edit"
+                        Text: =""
+                        Color: =AppDark.Muted
+                        BorderColor: =AppDark.Line
+                        BorderThickness: =1
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        X: =Parent.TemplateWidth - 44
+                        Y: =6
+                        Width: =32
+                        Height: =32
+                        Visible: =varIsAdmin
+                        OnSelect: |
+                          =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varRecSolU, ThisItem); Set(varAdminList, "SolU"); Set(varAdminNew, false); Set(varAdminReturn, scrCatalogue); Navigate(scrEditForm, ScreenTransition.Cover)
+            - btnAddCanTakeCat:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a unit this can take"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  X: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
+                  Y: |
+                    =lblModelsHeadingCat.Y + 22 + Min(CountRows(Filter(TB_SolutionUnits, Solution.Id = varExpandedModel)) * 44 + 8, 180) + 12
+                  Width: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
+                  Height: =44
+                  Visible: |
+                    =varIsAdmin && !IsBlank(varExpandedModel) && varExpandedModel <> 0 && scrCatalogue.Size >= ScreenSize.Large
+                  OnSelect: |
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStSolutionSolU, LookUp(TB_Products, ID = varExpandedModel)); Set(varRecSolU, Defaults(TB_SolutionUnits)); Set(varAdminList, "SolU"); Set(varAdminNew, true); Set(varAdminReturn, scrCatalogue); Navigate(scrEditForm, ScreenTransition.Cover)
+
             # ---- document panel
             # Named after the selected model, because when stacked it sits below a scrolling
             # list and the row it belongs to may be out of view.
@@ -328,7 +489,7 @@ Screens:
                   Width: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: =40
-                  Text: ="Select a model to see its documents."
+                  Text: ="Select a model to see what it takes and its documents."
                   Font: =AppFont
                   Size: =AppType.Body
                   Color: =AppDark.Muted
@@ -342,7 +503,7 @@ Screens:
                   X: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
                   Y: |
-                    =If(scrCatalogue.Size >= ScreenSize.Large, lblModelsHeadingCat.Y, Parent.Height - Gutter - 250)
+                    =If(scrCatalogue.Size >= ScreenSize.Large, lblModelsHeadingCat.Y + If(!IsBlank(varExpandedModel) && varExpandedModel <> 0, (22 + Min(CountRows(Filter(TB_SolutionUnits, Solution.Id = varExpandedModel)) * 44 + 8, 180) + If(varIsAdmin, 56, 0) + 20), 0), Parent.Height - Gutter - 250)
                   Width: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: =22

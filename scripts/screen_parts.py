@@ -434,15 +434,18 @@ def admin_button(name, label, on_select, x, y, width, height=40, ind=12,
     fragments: an escaped newline has been eaten in transit three times on this project,
     each time producing a file that looked plausible and did not parse.
     """
+    # An empty label means an icon button - a pencil. Same control, same geometry
+    # machinery, so the responsive wrap and the title shrink need to know nothing about it.
+    face = '      Icon: ="Edit"\n      Text: =""' if not label else f'      Text: ="{label}"'
     body = f"""- {name}:
     Control: ModernButton
     Properties:
       Appearance: =ButtonAppearance.Outline
-      Text: ="{label}"
+{face}
       Font: =AppFont
       Size: =AppType.Body
       FontWeight: =FontWeight.Semibold
-      Color: =AppDark.Accent
+      Color: ={"AppDark.Muted" if not label else "AppDark.Accent"}
       BorderColor: =AppDark.Line
       BorderThickness: =1
       RadiusTopLeft: =6
@@ -471,6 +474,16 @@ ACTION_GAP = 8
 
 ACTION_H = 40
 ACTION_ROW = 48          # the band a wrapped button row occupies, including its gap
+
+
+def pencil(name, on_select, x, y, ind=12, visible="varIsAdmin", size=32):
+    """A square edit affordance somewhere other than the title row - on a hero panel, say.
+
+    An empty label is what makes admin_button render an icon, so this is that call with the
+    geometry named rather than a second control definition to keep in step.
+    """
+    return admin_button(name, "", on_select, x=x, y=y, width=str(size), height=size,
+                        ind=ind, visible=visible)
 
 
 def title_actions(title, specs, ind=12):
