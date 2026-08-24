@@ -548,7 +548,9 @@ for L in LISTS:
         gc = g
 
         r = ctrl(o, "chkStdUnit", "ModernCheckbox", gc)
-        for k, v in [("Checked","ThisItem.Pick"),("Label",'""'),
+        # Default is the input; Checked is the OUTPUT that replaced classic Value on
+        # ModernToggle and ModernCheckbox. Setting Checked is rejected outright.
+        for k, v in [("Default","ThisItem.Pick"),("Label",'""'),
                      ("OnCheck","Patch(colStdUnits, ThisItem, { Pick: true })"),
                      ("OnUncheck","Patch(colStdUnits, ThisItem, { Pick: false })"),
                      ("X","12"),("Y","8"),("Width","28"),("Height","24")]: prop(o, k, v, r)

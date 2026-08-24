@@ -831,7 +831,7 @@ Screens:
                               - chkStdUnit:
                                   Control: ModernCheckbox
                                   Properties:
-                                    Checked: =ThisItem.Pick
+                                    Default: =ThisItem.Pick
                                     Label: =""
                                     OnCheck: |
                                       =Patch(colStdUnits, ThisItem, { Pick: true })

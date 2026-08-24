@@ -241,6 +241,43 @@ def untyped_variables(texts):
             if vals and all(vals)]
 
 
+# What each control reports back, and must never be assigned. The value goes in through
+# Default; these come out.
+OUTPUT_ONLY = {
+    "ModernToggle": "Checked",
+    "ModernCheckbox": "Checked",
+    "ModernDatePicker": "SelectedDate",
+    "ModernDropdown": "Selected",
+    "ModernCombobox": "Selected",
+}
+
+
+def assigned_outputs(text):
+    """A control given a value through the property it reports with.
+
+    Rejected outright by the compiler - "Unknown property 'Checked' for control type
+    'ModernCheckbox'" - which at least fails loudly, unlike most of what this file checks.
+    """
+    out, ctl, name, indent = [], None, None, None
+    for n, line in enumerate(text.splitlines(), 1):
+        h = re.match(r"^(\s*)- (\w+):\s*$", line)
+        if h:
+            name, indent, ctl = h.group(2), len(h.group(1)), None
+            continue
+        c = re.match(r"^\s+Control: ([\w/]+)\s*$", line)
+        if c:
+            ctl = c.group(1)
+            continue
+        if not ctl or ctl not in OUTPUT_ONLY:
+            continue
+        prop_name = OUTPUT_ONLY[ctl]
+        if re.match(rf"^\s+{prop_name}: ", line):
+            out.append((n, f"{name} is a {ctl} and is being given a value through "
+                           f"'{prop_name}', which is what it REPORTS - the value goes in "
+                           "through Default"))
+    return out
+
+
 def check_file(path):
     findings = []
     text = path.read_text(encoding="utf-8")
@@ -407,6 +444,7 @@ def check_file(path):
 
     findings.extend(duplicate_properties(text))
     findings.extend(odata_in_record_merge(text))
+    findings.extend(assigned_outputs(text))
 
     for n in duplicate_names(text):
         findings.append((0, f"duplicate control name '{n}' - Studio rejects this as "
