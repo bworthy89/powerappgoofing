@@ -6,7 +6,8 @@ Screens:
   scrEditForm:
     Properties:
       Fill: =AppDark.Bg
-      OnVisible: =Set(varConfirmDelete, false)
+      OnVisible: |
+        =Set(varConfirmDelete, false); Set(varResumeList, Blank())
     Children:
       - conRootEdit:
           Control: GroupContainer
@@ -51,7 +52,7 @@ Screens:
                   Width: =140
                   Height: =44
                   OnSelect: |
-                    =Navigate(varAdminReturn, ScreenTransition.UnCoverRight)
+                    =If(!IsBlank(varResumeList), Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()), Navigate(varAdminReturn, ScreenTransition.UnCoverRight))
             - lblTitleEdit:
                 Control: ModernText
                 Properties:
@@ -528,10 +529,32 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
                   Y: =282
                   Visible: =varAdminList = "Inst"
+            - btnNewProductInst:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+ New"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =40
+                  Width: =88
+                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                  Y: =282
+                  Visible: =varAdminList = "Inst" && varIsAdmin
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: |
+                    =Set(varRecInst, Patch(varRecInst, { Title: txtTitleInst.Text, Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerInst.Selected.ID, Value: ddCustomerInst.Selected.Title }), Product: If(IsBlank(ddProductInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductInst.Selected.ID, Value: ddProductInst.Selected.Title }), 'Parent': If(IsBlank(ddParentInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddParentInst.Selected.ID, Value: ddParentInst.Selected.Title }), 'Installed Version': txtInstVersionInst.Text, Status: { Value: ddStatusInst.Selected.Value }, 'Config Notes': txtConfigNotesInst.Text, 'Last Verified': dtpLastVerifiedInst.SelectedDate })); Set(varResumeList, "Inst"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapParentInst:
                 Control: ModernText
                 Properties:
@@ -781,10 +804,32 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
                   Y: =210
                   Visible: =varAdminList = "SolU"
+            - btnNewSolutionSolU:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+ New"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =40
+                  Width: =88
+                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                  Y: =210
+                  Visible: =varAdminList = "SolU" && varIsAdmin
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: |
+                    =Set(varRecSolU, Patch(varRecSolU, { Title: txtTitleSolU.Text, Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddSolutionSolU.Selected.ID, Value: ddSolutionSolU.Selected.Title }), Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }), Standard: tglStandardSolU.Checked })); Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Solution"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapUnitSolU:
                 Control: ModernText
                 Properties:
@@ -816,10 +861,32 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
                   Y: =282
                   Visible: =varAdminList = "SolU"
+            - btnNewUnitSolU:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+ New"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =40
+                  Width: =88
+                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                  Y: =282
+                  Visible: =varAdminList = "SolU" && varIsAdmin
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: |
+                    =Set(varRecSolU, Patch(varRecSolU, { Title: txtTitleSolU.Text, Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddSolutionSolU.Selected.ID, Value: ddSolutionSolU.Selected.Title }), Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }), Standard: tglStandardSolU.Checked })); Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Unit"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapStandardSolU:
                 Control: ModernText
                 Properties:
@@ -953,10 +1020,32 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
                   Y: =282
                   Visible: =varAdminList = "SwVer"
+            - btnNewProductSwVer:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+ New"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =40
+                  Width: =88
+                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                  Y: =282
+                  Visible: =varAdminList = "SwVer" && varIsAdmin
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: |
+                    =Set(varRecSwVer, Patch(varRecSwVer, { Title: txtTitleSwVer.Text, Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerSwVer.Selected.ID, Value: ddCustomerSwVer.Selected.Title }), Product: If(IsBlank(ddProductSwVer.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductSwVer.Selected.ID, Value: ddProductSwVer.Selected.Title }), 'Software Version': txtSwVersionSwVer.Text, 'Last Verified': dtpLastVerifiedSwVer.SelectedDate })); Set(varResumeList, "SwVer"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapSwVersionSwVer:
                 Control: ModernText
                 Properties:
@@ -1098,10 +1187,32 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
                   Y: =210
                   Visible: =varAdminList = "Ref"
+            - btnNewProductRef:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+ New"
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  FontWeight: =FontWeight.Semibold
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  Height: =40
+                  Width: =88
+                  X: =Gutter + ContentWidth - (Gutter * 2) - 88
+                  Y: =210
+                  Visible: =varAdminList = "Ref" && varIsAdmin
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  OnSelect: |
+                    =Set(varRecRef, Patch(varRecRef, { Title: txtTitleRef.Text, Product: If(IsBlank(ddProductRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductRef.Selected.ID, Value: ddProductRef.Selected.Title }), Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerRef.Selected.ID, Value: ddCustomerRef.Selected.Title }), Section: { Value: ddSectionRef.Selected.Value }, 'Reference Type': { Value: ddRefTypeRef.Selected.Value }, URL: txtURLRef.Text, Version: txtVersionRef.Text, Featured: tglFeaturedRef.Checked, 'Last Checked': dtpLastCheckedRef.SelectedDate })); Set(varResumeList, "Ref"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapCustomerRef:
                 Control: ModernText
                 Properties:
@@ -1355,7 +1466,7 @@ Screens:
                   OnSelect: |
                     =IfError(
                         If(varAdminList = "Cust",
-                            Patch(TB_Customers,
+                            Set(varSaved, Patch(TB_Customers,
                                 If(varAdminNew, Defaults(TB_Customers), varRecCust),
                                 {
                                     Title: txtTitleCust.Text,
@@ -1363,10 +1474,10 @@ Screens:
                                     'Support Notes': txtSupportNotesCust.Text,
                                     Active: tglActiveCust.Checked
                                 }
-                            )
+                            ))
                         );
                         If(varAdminList = "Prod",
-                            Patch(TB_Products,
+                            Set(varSaved, Patch(TB_Products,
                                 If(varAdminNew, Defaults(TB_Products), varRecProd),
                                 {
                                     Title: txtTitleProd.Text,
@@ -1376,10 +1487,10 @@ Screens:
                                     Description: txtDescriptionProd.Text,
                                     Active: tglActiveProd.Checked
                                 }
-                            )
+                            ))
                         );
                         If(varAdminList = "Inst",
-                            Patch(TB_Installations,
+                            Set(varSaved, Patch(TB_Installations,
                                 If(varAdminNew, Defaults(TB_Installations), varRecInst),
                                 {
                                     Title: txtTitleInst.Text,
@@ -1391,10 +1502,10 @@ Screens:
                                     'Config Notes': txtConfigNotesInst.Text,
                                     'Last Verified': dtpLastVerifiedInst.SelectedDate
                                 }
-                            )
+                            ))
                         );
                         If(varAdminList = "SolU",
-                            Patch(TB_SolutionUnits,
+                            Set(varSaved, Patch(TB_SolutionUnits,
                                 If(varAdminNew, Defaults(TB_SolutionUnits), varRecSolU),
                                 {
                                     Title: txtTitleSolU.Text,
@@ -1402,10 +1513,10 @@ Screens:
                                     Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }),
                                     Standard: tglStandardSolU.Checked
                                 }
-                            )
+                            ))
                         );
                         If(varAdminList = "SwVer",
-                            Patch(TB_SoftwareVersions,
+                            Set(varSaved, Patch(TB_SoftwareVersions,
                                 If(varAdminNew, Defaults(TB_SoftwareVersions), varRecSwVer),
                                 {
                                     Title: txtTitleSwVer.Text,
@@ -1414,10 +1525,10 @@ Screens:
                                     'Software Version': txtSwVersionSwVer.Text,
                                     'Last Verified': dtpLastVerifiedSwVer.SelectedDate
                                 }
-                            )
+                            ))
                         );
                         If(varAdminList = "Ref",
-                            Patch(TB_References,
+                            Set(varSaved, Patch(TB_References,
                                 If(varAdminNew, Defaults(TB_References), varRecRef),
                                 {
                                     Title: txtTitleRef.Text,
@@ -1430,10 +1541,14 @@ Screens:
                                     Featured: tglFeaturedRef.Checked,
                                     'Last Checked': dtpLastCheckedRef.SelectedDate
                                 }
-                            )
+                            ))
                         );
+                        If(varAdminList = "Inst" && varAdminNew && IsBlank(varSaved.'Parent'),     ForAll(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSaved.Customer.Value & " - " & SU.Unit.Value,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.Customer.Id, Value: varSaved.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.Unit.Id, Value: SU.Unit.Value },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true)) > 0,         Notify("Added " & varSaved.Title & " with " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true))                & " standard unit(s).", NotificationType.Success)) );
                         Set(varEditError, "");
-                        Navigate(varAdminReturn, ScreenTransition.UnCoverRight),
+                        If(!IsBlank(varResumeList),
+                            If(varResumeList = "Inst" && varResumeField = "Product", Set(varRecInst, Patch(varRecInst, { Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varRecSolU, Patch(varRecSolU, { Solution: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varRecSolU, Patch(varRecSolU, { Unit: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varRecSwVer, Patch(varRecSwVer, { Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "Ref" && varResumeField = "Product", Set(varRecRef, Patch(varRecRef, { Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title } }))); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
+                            Navigate(varAdminReturn, ScreenTransition.UnCoverRight)
+                        ),
                         Set(varEditError, FirstError.Message)
                     )
                   Font: =AppFont

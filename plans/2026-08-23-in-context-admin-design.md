@@ -240,18 +240,35 @@ customer is written inactive again and the old bug is back, silently.
 
 ## Not yet built
 
-None of these are blocked; they are the second half, and each is its own piece of work.
-
-- **Adding a machine offers its standard build.** The model's `TB_SolutionUnits` rows, the
-  standard ones ticked, created in the same action. Needs a selection gallery on the form and
-  a `ForAll` patch after the parent is created.
-- **`Not in the list — add a new model`** inside a model dropdown. Needs the in-progress form
-  to survive a detour and come back with the new model selected.
 - **`+ Add a document`** on the reference tabs of scrSolution, scrUnit and scrCatalogue, and
   the **Can take** list on a catalogue model.
-- **Retiring guided setup.** The spec makes this conditional on the above landing, and it
-  still is: until adding a machine offers its standard build, the wizard does something the
-  ordinary path cannot.
+- **Retiring guided setup.** Now unblocked — the ordinary path offers the standard build, so
+  the wizard no longer does anything the normal route cannot. Worth doing once the in-context
+  path has been used in anger.
+
+## Departures from the design, and why
+
+**The standard build creates itself rather than being ticked.** The design called for the
+model's units listed with the standard ones pre-ticked. `scrEditForm` has no room: its
+deepest list already reaches 754px against a Save button pinned to the bottom of the screen,
+so a picker would land behind it on any laptop. The standard build is the usual case by
+definition, the units appear on the machine's own screen immediately, and removing one costs
+a tap — so it creates them and says how many, rather than asking.
+
+That is a workaround for a real layout bug, not a preference. See below.
+
+## A bug this uncovered
+
+**`scrEditForm` cannot scroll, and two of its lists no longer fit.** The root container is a
+`ManualLayout` group sized to the screen, and nothing in a canvas app scrolls by default.
+References reaches 754px and Installations 710px, while Save sits at
+`Parent.Height - Gutter - 44`. On anything shorter than about 800px the last fields are
+behind the button.
+
+Fixing it means a scrollable container: an auto-layout group with `Overflow: Scroll` wrapping
+a `ManualLayout` group taller than the screen, so the absolute positions every field depends
+on are preserved. It is its own change — the auto-layout property names are not yet proven
+against this compiler — and it should land before anything else is added to that form.
 
 ## Risks
 

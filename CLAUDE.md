@@ -34,7 +34,9 @@ generators  →  migrate_dark  →  fix_dark_defaults  →  verify_yaml
   now no-ops and it is kept for that one job
 - **fix_dark_defaults** — gives controls an explicit `Color`/`Fill`. **A non-zero count is a
   finding, not noise**: it means new controls shipped depending on the theme default, which is
-  light, on an app whose ground is dark
+  light, on an app whose ground is dark. A count that **drops** is a different
+  finding: controls that were being counted have stopped existing, which usually means a
+  generator failed and its stale screen is still on disk
 - **verify_yaml** — a bespoke linter, ~10 checks, every one added after the corresponding bug
   reached the app
 
