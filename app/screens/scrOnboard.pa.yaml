@@ -70,7 +70,7 @@ Screens:
                   Text: ="Home"
                   Width: =Gutter * 8
                   X: =Gutter
-                  Y: =56 + Gutter
+                  Y: =56 + 12
             - lblWizTitle:
                 Control: ModernText
                 Properties:
@@ -86,7 +86,7 @@ Screens:
                   Text: ="New customer"
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =56 + Gutter + 34
+                  Y: =120
             - lblWizStep:
                 Control: ModernText
                 Properties:
@@ -102,7 +102,7 @@ Screens:
                   Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  the machines on site", 3, "Step 3 of 3  -  what is attached to each machine", "")
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =56 + Gutter + 72
+                  Y: =158
             - lblCapCustName:
                 Control: ModernText
                 Properties:
@@ -118,7 +118,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =112
+                  Y: =188
                   Visible: =varWizStep = 1
             - txtWizCustName:
                 Control: ModernTextInput
@@ -131,7 +131,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =130
+                  Y: =206
                   Visible: =varWizStep = 1
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -156,7 +156,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =184
+                  Y: =260
                   Visible: =varWizStep = 1
             - txtWizCustDesc:
                 Control: ModernTextInput
@@ -169,7 +169,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =202
+                  Y: =278
                   Visible: =varWizStep = 1
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -194,7 +194,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =280
+                  Y: =356
                   Visible: =varWizStep = 1
             - txtWizCustNotes:
                 Control: ModernTextInput
@@ -207,7 +207,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =298
+                  Y: =374
                   Visible: =varWizStep = 1
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -232,7 +232,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =376
+                  Y: =452
                   Visible: =varWizStep = 1
             - tglWizCustActive:
                 Control: ModernToggle
@@ -244,7 +244,7 @@ Screens:
                   Height: =36
                   Width: =110
                   X: =Gutter
-                  Y: =394
+                  Y: =470
                   Visible: =varWizStep = 1
             - btnWizStep1Next:
                 Control: ModernButton
@@ -295,7 +295,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =112
+                  Y: =188
                   Visible: =varWizStep = 2
             - ddWizSolProduct:
                 Control: ModernDropdown
@@ -308,7 +308,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =130
+                  Y: =206
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -329,7 +329,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =184
+                  Y: =260
                   Visible: =varWizStep = 2
             - txtWizSolVersion:
                 Control: Classic/TextInput
@@ -340,7 +340,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =202
+                  Y: =278
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -366,7 +366,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =244
+                  Y: =320
                   Visible: =varWizStep = 2
             - lblCapWizSolStatus:
                 Control: ModernText
@@ -383,7 +383,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =276
+                  Y: =352
                   Visible: =varWizStep = 2
             - ddWizSolStatus:
                 Control: ModernDropdown
@@ -396,7 +396,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =294
+                  Y: =370
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -417,7 +417,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =348
+                  Y: =424
                   Visible: =varWizStep = 2
             - txtWizSolNotes:
                 Control: Classic/TextInput
@@ -428,7 +428,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =366
+                  Y: =442
                   Visible: =varWizStep = 2
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -470,7 +470,7 @@ Screens:
                   Text: ="+  Add machine"
                   Width: =190
                   X: =Gutter
-                  Y: =444
+                  Y: =520
                   Visible: =varWizStep = 2 && !IsBlank(ddWizSolProduct.Selected)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -489,9 +489,9 @@ Screens:
                     =Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))
                   Visible: =varWizStep = 2
                   X: =Gutter
-                  Y: =504
+                  Y: =580
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - 504 - Gutter - 60
+                  Height: =Parent.Height - 580 - Gutter - 60
                   TemplateSize: =48
                   TemplatePadding: =4
                   ShowScrollbar: =true
@@ -529,7 +529,7 @@ Screens:
                   Height: =20
                   Width: =360
                   X: =Gutter + 210
-                  Y: =456
+                  Y: =532
                   Visible: =varWizStep = 2
             - btnWizStep2Next:
                 Control: ModernButton
@@ -566,7 +566,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =112
+                  Y: =188
                   Visible: =varWizStep = 3
             - ddWizUnitParent:
                 Control: ModernDropdown
@@ -584,7 +584,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =130
+                  Y: =206
                   Visible: =varWizStep = 3
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -604,7 +604,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =112
+                  Y: =188
                   Visible: =varWizStep = 3 && CountRows(Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)) = 0
             - lblWizCompHead:
                 Control: ModernText
@@ -621,7 +621,7 @@ Screens:
                   Height: =18
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =Gutter
-                  Y: =188
+                  Y: =264
                   Visible: =varWizStep = 3
             - lblWizAddedHead:
                 Control: ModernText
@@ -638,7 +638,7 @@ Screens:
                   Height: =18
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
-                  Y: =188
+                  Y: =264
                   Visible: =varWizStep = 3
             - galWizComponents:
                 Control: Gallery
@@ -648,9 +648,9 @@ Screens:
                     =Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)
                   Visible: =varWizStep = 3
                   X: =Gutter
-                  Y: =210
+                  Y: =286
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  Height: =Parent.Height - 210 - Gutter - 120
+                  Height: =Parent.Height - 286 - Gutter - 120
                   TemplateSize: =48
                   TemplatePadding: =4
                   ShowScrollbar: =true
@@ -740,7 +740,7 @@ Screens:
                   Height: =80
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
                   X: =Gutter
-                  Y: =218
+                  Y: =294
                   Visible: =varWizStep = 3 && CountRows(Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)) = 0
             - galWizUnits:
                 Control: Gallery
@@ -750,9 +750,9 @@ Screens:
                     =Filter(TB_Installations, Customer.Id = varWizCust.ID, !IsBlank('Parent'))
                   Visible: =varWizStep = 3
                   X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
-                  Y: =210
+                  Y: =286
                   Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  Height: =Parent.Height - 210 - Gutter - 120
+                  Height: =Parent.Height - 286 - Gutter - 120
                   TemplateSize: =48
                   TemplatePadding: =4
                   ShowScrollbar: =true

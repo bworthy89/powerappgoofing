@@ -68,7 +68,7 @@ Screens:
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =56 + Gutter + 34
+                  Y: =56 + 12
             - lblCapTitleCust:
                 Control: ModernText
                 Properties:
@@ -204,6 +204,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
+                  Label: =""
                   Default: =varRecCust.Active
                   Font: =AppFont
                   Size: =AppType.Body
@@ -417,6 +418,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
+                  Label: =""
                   Default: =varRecProd.Active
                   Font: =AppFont
                   Size: =AppType.Body
@@ -651,7 +653,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Choices(TB_Installations.Status)
-                  Default: =LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value)
+                  Default: =If(varAdminNew, LookUp(Choices(TB_Installations.Status), Value = "In Service"), LookUp(Choices(TB_Installations.Status), Value = varRecInst.Status.Value))
                   ItemDisplayText: =ThisItem.Value
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -905,6 +907,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
+                  Label: =""
                   Default: =If(varAdminNew, false, varRecSolU.Standard)
                   Font: =AppFont
                   Size: =AppType.Body
@@ -1410,6 +1413,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
+                  Label: =""
                   Default: =varRecRef.Featured
                   Font: =AppFont
                   Size: =AppType.Body

@@ -90,7 +90,7 @@ for k, v in [("BorderThickness","0"),("Color","AppDark.Accent"),
              ("HoverColor","AppDark.AccentSolid"),("HoverFill","AppDark.Sunken"),
              ("OnSelect","Navigate(scrHome, ScreenTransition.CoverRight)"),
              ("Size","AppType.Small"),("Text",'"<  Home"'),("Width","Gutter * 8"),
-             ("X","Gutter"),("Y","56 + Gutter"),("FocusedBorderThickness","2"),
+             ("X","Gutter"),("Y","56 + 12"),("FocusedBorderThickness","2"),
              ("FocusedBorderColor","AppDark.Accent")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizTitle", "Label", c)
@@ -99,7 +99,11 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),
              ("Size","AppType.Title"),("Wrap","false"),("AutoHeight","false"),
              ("Text",'"New customer"'),
              ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-             ("Y","56 + Gutter + 34")]: prop(o, k, v, q)
+             # Stacked under the Home button (68..112), with the fields from 172. All three
+             # used to sit in the same 80..150 band: Home 80..124, title 114..150 and the
+             # first caption at 112, so the wizard opened with its first field unlabelled
+             # and its title struck through by a button.
+             ("Y","120")]: prop(o, k, v, q)
 
 q = ctrl(o, "lblWizStep", "Label", c)
 steps = ('Switch(varWizStep, 1, "Step 1 of 3  -  the customer", '
@@ -109,7 +113,8 @@ for k, v in [("Color","AppDark.Muted"),("Font","AppFont"),
              ("Size","AppType.Small"),("FontWeight","FontWeight.Semibold"),
              ("Height","20"),("Wrap","false"),("AutoHeight","false"),
              ("Text",steps),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","56 + Gutter + 72")]: prop(o, k, v, q)
+             # Directly under the title (120..156), with the fields from 188.
+             ("X","Gutter"),("Y","158")]: prop(o, k, v, q)
 
 def caption(name, text, y, vis):
     q = ctrl(o, name, "Label", c)
@@ -176,7 +181,7 @@ def standard_hint(dd):
 
 # ---- step 1: the customer ----------------------------------------------
 V1 = "varWizStep = 1"
-y = 112
+y = 188
 for nm, cap, ml in [("txtWizCustName","Customer name",False),
                     ("txtWizCustDesc","Description",True),
                     ("txtWizCustNotes","Support notes",True)]:
@@ -214,7 +219,7 @@ for k, v in [("Text",'"Create customer  >"'),("Fill","AppDark.Accent"),
 
 # ---- step 2: solutions --------------------------------------------------
 V2 = "varWizStep = 2"
-y = 112
+y = 188
 caption("lblCapWizSolProduct", "Product", y, V2)
 dropdown("ddWizSolProduct", "Choices(TB_Installations.Product)", y + 18, V2); y += 72
 
@@ -332,7 +337,7 @@ FITTED = ("ClearCollect(colWizFitted, Filter(TB_Installations, "
 # "this machine takes no units" from "you have added them all".
 ONFILE = ("Filter(TB_SolutionUnits, Solution.Id = varWizParent.Product.Id)")
 
-y = 112
+y = 188
 caption("lblCapWizUnitParent", "Which machine are these attached to", y, V3)
 # Real rows, not Choices(). A solution added on step 2 seconds ago is in the
 # table's local cache the moment Patch returns, but it is NOT in the Choices()

@@ -127,6 +127,12 @@ def default_record_expr(L, f):
     is what the old If(varAdminNew, Blank(), ...) wrapper produced by hand.
     """
     v, n = var(L), f["n"]
+    if f["kind"] == "choice" and "new_default" in f:
+        # Defaults() only carries a column's default when the data source reports one, and
+        # for a Choice it often does not - so a new installation opened with Status empty.
+        opt = f"LookUp(Choices({L['source']}.{n}), Value = {f['new_default']})"
+        return (f"If(varAdminNew, {opt}, "
+                f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value))")
     if f["kind"] == "lookup":
         # The stash variable holds a real row from the target table, so it has the right
         # type by construction. A hand-built lookup record does not: with '@odata.type' it
@@ -223,7 +229,12 @@ title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
 for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
              ("Height","36"),("Size","AppType.Title"),("Text",title),("Wrap","false"),
              ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
-             ("X","Gutter"),("Y","56 + Gutter + 34")]: prop(o, k, v, q)
+             ("X","Gutter"),
+             # 56 is the band. This used to be 56 + Gutter + 34, which put the title
+             # at 114 and its bottom at 150 - over the first field's caption at 120.
+             # Every list lost its first label that way, and the field beneath looked
+             # like it had never been given one.
+             ("Y","56 + 12")]: prop(o, k, v, q)
 
 # ---- fields, grouped per list, only the selected list visible
 for L in LISTS:
@@ -303,7 +314,10 @@ for L in LISTS:
             # TrueFill / FalseFill do not exist on ModernToggle - the theme
             # paints it. Its output is Checked, which patch_value() reads.
             i = ctrl(o, nm, "ModernToggle", c)
-            for kk, vv in [("Default",default_expr(L,f)),("Font","AppFont"),
+            # Label is "the text shown next to the toggle" and renders the literal word
+            # "Label" when unset. This form draws its own caption above every field, so the
+            # control's own label is emptied rather than duplicated.
+            for kk, vv in [("Label",'""'),("Default",default_expr(L,f)),("Font","AppFont"),
                            ("Size","AppType.Body"),("Height","36"),("Width","110"),
                            ("X","Gutter"),("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
             h = 36
