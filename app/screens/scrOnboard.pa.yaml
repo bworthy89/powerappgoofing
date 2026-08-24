@@ -5,11 +5,8 @@ Screens:
     Properties:
       Fill: =AppDark.Bg
       OnVisible: |
-        =Set(varWizStep, 1);
-        Set(varWizError, "");
-        Set(varWizParent, Defaults(TB_Installations));
-        Clear(colWizFitted);
-        Set(varWizSolProdName, "")
+        =Set(varWizCust, Blank());
+        Set(varWizError, "")
     Children:
       - conRootWiz:
           Control: GroupContainer
@@ -99,7 +96,7 @@ Screens:
                   Height: =20
                   Wrap: =false
                   AutoHeight: =false
-                  Text: =Switch(varWizStep, 1, "Step 1 of 3  -  the customer", 2, "Step 2 of 3  -  the machines on site", 3, "Step 3 of 3  -  what is attached to each machine", "")
+                  Text: ="Create the site, then add the machines on it."
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =158
@@ -119,7 +116,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =188
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
             - txtWizCustName:
                 Control: ModernTextInput
                 Properties:
@@ -132,7 +129,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =206
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -157,7 +154,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =260
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
             - txtWizCustDesc:
                 Control: ModernTextInput
                 Properties:
@@ -170,7 +167,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =278
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -195,7 +192,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =356
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
             - txtWizCustNotes:
                 Control: ModernTextInput
                 Properties:
@@ -208,7 +205,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =374
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -233,7 +230,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =452
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
             - tglWizCustActive:
                 Control: ModernToggle
                 Properties:
@@ -245,7 +242,7 @@ Screens:
                   Width: =110
                   X: =Gutter
                   Y: =470
-                  Visible: =varWizStep = 1
+                  Visible: =!(!IsBlank(varWizCust))
             - btnWizStep1Next:
                 Control: ModernButton
                 Properties:
@@ -263,14 +260,14 @@ Screens:
                             )
                         );
                         Set(varWizError, "");
-                        Set(varWizStep, 2),
+                        Set(varWizError, ""),
                         Set(varWizError, FirstError.Message)
                     )
-                  Text: ="Create customer  >"
+                  Text: ="Create customer"
                   Width: =210
                   X: =Gutter
                   Y: =Parent.Height - Gutter - 44
-                  Visible: =varWizStep = 1 && Len(Trim(txtWizCustName.Text)) > 0
+                  Visible: =!(!IsBlank(varWizCust)) && Len(Trim(txtWizCustName.Text)) > 0
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
@@ -280,218 +277,77 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-            - lblCapWizSolProduct:
+            - lblWizMadeCust:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="Product"
-                  Color: =AppDark.Muted
+                  Text: ="✓  " & varWizCust.Title
+                  Color: =AppDark.Ok
                   Font: =AppFont
-                  Size: =AppType.Small
+                  Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
                   Wrap: =false
                   AutoHeight: =false
-                  Height: =18
+                  Height: =24
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =188
-                  Visible: =varWizStep = 2
-            - ddWizSolProduct:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Installations.Product)
-                  ItemDisplayText: =ThisItem.Value
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =206
-                  Visible: =varWizStep = 2
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - lblCapWizSolVersion:
+                  Visible: =!IsBlank(varWizCust)
+            - lblCapWizMachines:
                 Control: ModernText
                 Properties:
                   PaddingTop: =0
                   PaddingBottom: =0
-                  Text: ="Installed software version"
+                  Text: ="MACHINES ON SITE"
                   Color: =AppDark.Muted
                   Font: =AppFont
                   Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
+                  FontWeight: =FontWeight.Bold
                   Wrap: =false
                   AutoHeight: =false
                   Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
+                  Width: =200
                   X: =Gutter
-                  Y: =260
-                  Visible: =varWizStep = 2
-            - txtWizSolVersion:
-                Control: Classic/TextInput
-                Properties:
-                  Default: =""
-                  Mode: =TextMode.SingleLine
-                  HintText: =""
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =278
-                  Visible: =varWizStep = 2
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblHintWizSolVersion:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: =If(IsBlank(ddWizSolProduct.Selected), "The software build running on the machine, not the model number.", "Standard for " & ddWizSolProduct.Selected.Value & " is " & Coalesce(LookUp(TB_Products, ID = ddWizSolProduct.Selected.Id, 'Current Standard Version'), "not recorded"))
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =320
-                  Visible: =varWizStep = 2
-            - lblCapWizSolStatus:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Status"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =352
-                  Visible: =varWizStep = 2
-            - ddWizSolStatus:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Installations.Status)
-                  ItemDisplayText: =ThisItem.Value
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =370
-                  Visible: =varWizStep = 2
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - lblCapWizSolNotes:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Config notes"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =424
-                  Visible: =varWizStep = 2
-            - txtWizSolNotes:
-                Control: Classic/TextInput
-                Properties:
-                  Default: =""
-                  Mode: =TextMode.MultiLine
-                  HintText: =""
-                  Height: =64
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =442
-                  Visible: =varWizStep = 2
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Color: =AppDark.Fg
-                  Fill: =AppDark.Surface
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - btnWizAddSolution:
+                  Y: =224
+                  Visible: =!IsBlank(varWizCust)
+            - btnWizAddMachine:
                 Control: ModernButton
                 Properties:
-                  Appearance: =ButtonAppearance.Primary
-                  BasePaletteColor: =AppDark.Ok
-                  Icon: ="Add"
-                  Layout: =ButtonLayout.IconBefore
-                  OnSelect: |
-                    =IfError(
-                        Patch(TB_Installations, Defaults(TB_Installations),
-                            {
-                                Title: varWizCust.Title & " - " & ddWizSolProduct.Selected.Value,
-                                Customer:
-                                    { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
-                                      Id: varWizCust.ID, Value: varWizCust.Title },
-                                Product: ddWizSolProduct.Selected,
-                                'Installed Version': txtWizSolVersion.Text,
-                                Status: If(IsBlank(ddWizSolStatus.Selected), Blank(), { Value: ddWizSolStatus.Selected.Value }),
-                                'Config Notes': txtWizSolNotes.Text
-                            }
-                        );
-                        Set(varWizError, "");
-                        Reset(txtWizSolVersion);
-                        Reset(txtWizSolNotes);
-                        Reset(ddWizSolProduct),
-                        Set(varWizError, FirstError.Message)
-                    )
-                  Text: ="+  Add machine"
-                  Width: =190
-                  X: =Gutter
-                  Y: =520
-                  Visible: =varWizStep = 2 && !IsBlank(ddWizSolProduct.Selected)
+                  Appearance: =ButtonAppearance.Outline
+                  Text: ="+  Add a machine"
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
-                  BorderThickness: =0
-                  Height: =44
+                  Color: =AppDark.Accent
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
+                  X: |
+                    =Gutter
+                  Y: |
+                    =Parent.Height - Gutter - 44
+                  Width: |
+                    =ContentWidth - (Gutter * 2) - 180
+                  Height: =44
+                  Visible: |
+                    =!IsBlank(varWizCust)
+                  OnSelect: |
+                    =Set(varStCustomerInst, Blank()); Set(varStParentInst, Blank()); Set(varStProductInst, Blank()); Set(varStProductRef, Blank()); Set(varStProductSwVer, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerInst, varWizCust); Set(varRecInst, Defaults(TB_Installations)); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrOnboard); Navigate(scrEditForm, ScreenTransition.Cover)
             - galWizSolutions:
                 Control: Gallery
                 Variant: Vertical
                 Properties:
                   Items: |
                     =Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent'))
-                  Visible: =varWizStep = 2
+                  Visible: =!IsBlank(varWizCust)
                   X: =Gutter
-                  Y: =580
+                  Y: =248
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - 580 - Gutter - 60
+                  Height: =Max(Parent.Height - 248 - Gutter - 60, 120)
                   TemplateSize: =48
                   TemplatePadding: =4
                   ShowScrollbar: =true
@@ -503,7 +359,7 @@ Screens:
                         PaddingTop: =0
                         PaddingBottom: =0
                         Text: |
-                          =ThisItem.Title & "   " & Coalesce(ThisItem.'Installed Version', "no version")
+                          =ThisItem.Title & "   " & CountRows(Filter(TB_Installations, 'Parent'.Id = ThisItem.ID)) & " unit(s)"
                         Font: =AppFont
                         Size: =AppType.Small
                         Wrap: =false
@@ -528,335 +384,9 @@ Screens:
                   AutoHeight: =false
                   Height: =20
                   Width: =360
-                  X: =Gutter + 210
-                  Y: =532
-                  Visible: =varWizStep = 2
-            - btnWizStep2Next:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Primary
-                  Text: |
-                    ="Next: what is attached  >"
-                  Width: =260
-                  X: =ContentWidth - Gutter - 260
-                  Y: =Parent.Height - Gutter - 44
-                  OnSelect: =Set(varWizStep, 3)
-                  Visible: =varWizStep = 2
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  BorderThickness: =0
-                  Height: =44
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
-            - lblCapWizUnitParent:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Which machine are these attached to"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =188
-                  Visible: =varWizStep = 3
-            - ddWizUnitParent:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)
-                  OnChange: |
-                    =Set(varWizParent, ddWizUnitParent.Selected);
-                    Set(varWizSolProdName,
-                        LookUp(TB_Products, ID = varWizParent.Product.Id, Title));
-                    ClearCollect(colWizFitted, Filter(TB_Installations, 'Parent'.Id = varWizParent.ID))
-                  ItemDisplayText: =ThisItem.Title
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =206
-                  Visible: =varWizStep = 3
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - lblWizNoSolutions:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="No machines on this customer yet - go back a step and add one."
-                  Color: =AppDark.Danger
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  Wrap: =true
-                  AutoHeight: =false
-                  Height: =40
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =188
-                  Visible: =varWizStep = 3 && CountRows(Sort(Filter(TB_Installations, Customer.Id = varWizCust.ID, IsBlank('Parent')), Title, SortOrder.Ascending)) = 0
-            - lblWizCompHead:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: =If(IsBlank(ddWizUnitParent.Selected), "", "Units for a " & varWizSolProdName & "  -  the standard build is ticked")
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  X: =Gutter
-                  Y: =264
-                  Visible: =varWizStep = 3
-            - lblWizAddedHead:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Already added"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
-                  Y: =264
-                  Visible: =varWizStep = 3
-            - galWizComponents:
-                Control: Gallery
-                Variant: Vertical
-                Properties:
-                  Items: |
-                    =Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)
-                  Visible: =varWizStep = 3
-                  X: =Gutter
-                  Y: =286
-                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  Height: =Parent.Height - 286 - Gutter - 120
-                  TemplateSize: =48
-                  TemplatePadding: =4
-                  ShowScrollbar: =true
-                Children:
-                  - chkWizComp:
-                      Control: Classic/CheckBox
-                      Properties:
-                        Text: |
-                          =ThisItem.Unit.Value & "   " & LookUp(TB_Products, ID = ThisItem.Unit.Id).'Product Type'.Value
-                        Default: =ThisItem.Standard
-                        Reset: =varWizCompReset
-                        Color: =AppDark.Fg
-                        Font: =AppFont
-                        Size: =AppType.Small
-                        Fill: =AppDark.Sunken
-                        CheckmarkFill: =AppDark.Accent
-                        CheckboxBorderColor: =AppDark.Line
-                        PaddingLeft: =8
-                        X: =0
-                        Y: =2
-                        Height: =44
-                        Width: =Parent.TemplateWidth - 128
-                  - lblWizCompId:
-                      Control: ModernText
-                      Properties:
-                        Color: =AppDark.Fg
-                        PaddingTop: =0
-                        PaddingBottom: =0
-                        Text: =ThisItem.Unit.Id
-                        Visible: =false
-                        X: =0
-                        Y: =0
-                        Width: =1
-                        Height: =17
-                        Font: =AppFont
-                        Size: =AppType.Small
-                        Wrap: =false
-                        AutoHeight: =false
-                  - lblWizCompName:
-                      Control: ModernText
-                      Properties:
-                        Color: =AppDark.Fg
-                        PaddingTop: =0
-                        PaddingBottom: =0
-                        Text: =ThisItem.Unit.Value
-                        Visible: =false
-                        X: =0
-                        Y: =0
-                        Width: =1
-                        Height: =17
-                        Font: =AppFont
-                        Size: =AppType.Small
-                        Wrap: =false
-                        AutoHeight: =false
-                  - txtWizCompVersion:
-                      Control: Classic/TextInput
-                      Properties:
-                        Default: =LookUp(TB_Products, ID = ThisItem.Unit.Id).'Current Standard Version'
-                        Reset: =varWizCompReset
-                        Mode: =TextMode.SingleLine
-                        HintText: ="software"
-                        X: =Parent.TemplateWidth - 124
-                        Y: =2
-                        Height: =40
-                        Width: =120
-                        BorderColor: =AppDark.Line
-                        BorderThickness: =1
-                        Color: =AppDark.Fg
-                        Fill: =AppDark.Surface
-                        Font: =AppFont
-                        Size: =AppType.Body
-                        RadiusTopLeft: =6
-                        RadiusTopRight: =6
-                        RadiusBottomLeft: =6
-                        RadiusBottomRight: =6
-            - lblWizCompEmpty:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: =If(IsBlank(ddWizUnitParent.Selected), "Pick a machine above and its units appear here.", CountRows(Filter(TB_SolutionUnits, Solution.Id = varWizParent.Product.Id)) = 0, "A " & varWizSolProdName & " has no attached units on file. If that is wrong, add them under Admin.", "Everything on file for a " & varWizSolProdName & " is already added.")
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  Wrap: =true
-                  AutoHeight: =false
-                  Height: =80
-                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  X: =Gutter
-                  Y: =294
-                  Visible: =varWizStep = 3 && CountRows(Filter(TB_SolutionUnits As S, S.Solution.Id = varWizParent.Product.Id, CountRows(Filter(colWizFitted, Product.Id = S.Unit.Id)) = 0)) = 0
-            - galWizUnits:
-                Control: Gallery
-                Variant: Vertical
-                Properties:
-                  Items: |
-                    =Filter(TB_Installations, Customer.Id = varWizCust.ID, !IsBlank('Parent'))
-                  Visible: =varWizStep = 3
-                  X: =(Gutter + ((ContentWidth - (Gutter * 2) - 24) / 2) + 24)
-                  Y: =286
-                  Width: =((ContentWidth - (Gutter * 2) - 24) / 2)
-                  Height: =Parent.Height - 286 - Gutter - 120
-                  TemplateSize: =48
-                  TemplatePadding: =4
-                  ShowScrollbar: =true
-                Children:
-                  - lblWizUnitRow:
-                      Control: ModernText
-                      Properties:
-                        Color: =AppDark.Fg
-                        PaddingTop: =0
-                        PaddingBottom: =0
-                        Text: |
-                          =ThisItem.Title & "   under " & Coalesce(ThisItem.'Parent'.Value, "?")
-                        Font: =AppFont
-                        Size: =AppType.Small
-                        Wrap: =false
-                        AutoHeight: =false
-                        PaddingLeft: =10
-                        Fill: =AppDark.Sunken
-                        X: =0
-                        Y: =0
-                        Width: =Parent.TemplateWidth
-                        Height: =36
-            - lblCapWizUnitStatus:
-                Control: ModernText
-                Properties:
-                  PaddingTop: =0
-                  PaddingBottom: =0
-                  Text: ="Status for the ticked units"
-                  Color: =AppDark.Muted
-                  Font: =AppFont
-                  Size: =AppType.Small
-                  FontWeight: =FontWeight.Semibold
-                  Wrap: =false
-                  AutoHeight: =false
-                  Height: =18
-                  Width: =ContentWidth - (Gutter * 2)
-                  X: =Gutter
-                  Y: =Parent.Height - Gutter - 112
-                  Visible: =varWizStep = 3
-            - ddWizUnitStatus:
-                Control: ModernDropdown
-                Properties:
-                  Color: =ColorValue("#14181C")
-                  Fill: =ColorValue("#F2F4F8")
-                  Items: |
-                    =Choices(TB_Installations.Status)
-                  ItemDisplayText: =ThisItem.Value
-                  Height: =40
-                  Width: =260
-                  X: =Gutter
-                  Y: =Parent.Height - Gutter - 94
-                  Visible: =varWizStep = 3
-                  BorderColor: =AppDark.Line
-                  BorderThickness: =1
-                  Font: =AppFont
-                  Size: =AppType.Body
-            - btnWizAddUnits:
-                Control: ModernButton
-                Properties:
-                  Appearance: =ButtonAppearance.Primary
-                  BasePaletteColor: =AppDark.Ok
-                  Icon: ="Add"
-                  Layout: =ButtonLayout.IconBefore
-                  OnSelect: |
-                    =IfError(
-                        ForAll(
-                            Filter(galWizComponents.AllItems, chkWizComp.Value = true),
-                            Patch(TB_Installations, Defaults(TB_Installations),
-                                {
-                                    Title: varWizCust.Title & " - " & lblWizCompName.Text,
-                                    Customer:
-                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
-                                          Id: varWizCust.ID, Value: varWizCust.Title },
-                                    Product:
-                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
-                                          Id: Value(lblWizCompId.Text), Value: lblWizCompName.Text },
-                                    'Parent':
-                                        { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
-                                          Id: varWizParent.ID, Value: varWizParent.Title },
-                                    'Installed Version': txtWizCompVersion.Text,
-                                    Status: If(IsBlank(ddWizUnitStatus.Selected), Blank(), { Value: ddWizUnitStatus.Selected.Value })
-                                }
-                            )
-                        );
-                        Set(varWizError, "");
-                        ClearCollect(colWizFitted, Filter(TB_Installations, 'Parent'.Id = varWizParent.ID));
-                        Set(varWizCompReset, true);
-                        Set(varWizCompReset, false),
-                        Set(varWizError, FirstError.Message)
-                    )
-                  Text: =If(CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) = 1, "+  Add 1 ticked unit", "+  Add " & CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) & " ticked units")
-                  Width: =260
-                  X: =Gutter + 280
-                  Y: =Parent.Height - Gutter - 94
-                  Visible: =varWizStep = 3 && CountRows(Filter(galWizComponents.AllItems, chkWizComp.Value = true)) > 0
-                  Font: =AppFont
-                  Size: =AppType.Body
-                  FontWeight: =FontWeight.Semibold
-                  BorderThickness: =0
-                  Height: =44
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
+                  X: =Gutter + 220
+                  Y: =224
+                  Visible: =!IsBlank(varWizCust)
             - btnWizFinish:
                 Control: ModernButton
                 Properties:
@@ -864,11 +394,11 @@ Screens:
                   OnSelect: |
                     =Set(varCustomer, varWizCust);
                     Navigate(scrCustomerOverview, ScreenTransition.Cover)
-                  Text: ="Finish"
+                  Text: ="Done"
                   Width: =190
                   X: =ContentWidth - Gutter - 190
                   Y: =Parent.Height - Gutter - 44
-                  Visible: =varWizStep = 3
+                  Visible: =!IsBlank(varWizCust)
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
