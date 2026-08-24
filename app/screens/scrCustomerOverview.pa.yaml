@@ -109,7 +109,7 @@ Screens:
                   Visible: |
                     =varIsAdmin
                   OnSelect: |
-                    =Set(varRecInst, Patch(Defaults(TB_Installations), { Customer: LookUp(Choices(TB_Installations.Customer), Id = varCustomer.ID) })); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrCustomerOverview); Navigate(scrEditForm, ScreenTransition.Cover)
+                    =Set(varRecInst, Patch(Defaults(TB_Installations), { Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varCustomer.ID, Value: varCustomer.Title } })); Set(varAdminList, "Inst"); Set(varAdminNew, true); Set(varAdminReturn, scrCustomerOverview); Navigate(scrEditForm, ScreenTransition.Cover)
             - lblTitleOvw:
                 Control: ModernText
                 Properties:

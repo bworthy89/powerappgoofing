@@ -44,7 +44,7 @@ ACTIONS = [
     ("btnAddMachOvw", "+  Add a machine",
      P.admin_open("Inst",
                   "Patch(Defaults(TB_Installations), { Customer: "
-                  + P.seed("TB_Installations", "Customer", "varCustomer.ID") + " })",
+                  + P.seed("varCustomer.ID", "varCustomer.Title") + " })",
                   True, back="scrCustomerOverview"), 158),
 ]
 

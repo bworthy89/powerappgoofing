@@ -391,14 +391,22 @@ def admin_open(key, record_expr, is_new, back="scrAdmin"):
             "Navigate(scrEditForm, ScreenTransition.Cover)")
 
 
-def seed(source, field, id_expr):
-    """A lookup value shaped so a Choices()-fed dropdown will match it.
+SP_REF = '#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference'
 
-    Hand-built {Id, Value} records are not what a SharePoint lookup accepts, and the form
-    preselects by looking the stored value up in the same option set the control shows -
-    so the seed has to come out of Choices() to be found there at all.
+
+def seed(id_expr, title_expr):
+    """A lookup reference built from a row already in hand.
+
+    NOT LookUp(Choices(...), Id = ...). Choices() is a snapshot taken when the app loaded,
+    so a customer added minutes ago is not in it and the lookup returns blank - and Customer
+    is required on TB_Installations, so the Patch is rejected outright. 00_Setup.md records
+    the wizard shipping precisely that bug twice.
+
+    Building the reference literally is the documented alternative, and it cannot go stale
+    because it never consults a cache.
     """
-    return f"LookUp(Choices({source}.{field}), Id = {id_expr})"
+    return (f"{{ '@odata.type': \"{SP_REF}\", "
+            f"Id: {id_expr}, Value: {title_expr} }}")
 
 
 def admin_button(name, label, on_select, x, y, width, height=40, ind=12,

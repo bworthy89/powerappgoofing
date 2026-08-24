@@ -45,8 +45,8 @@ ACTIONS = [
     ("btnAddUnitSol", "+  Add a unit",
      P.admin_open("Inst",
                   "Patch(Defaults(TB_Installations), { Customer: "
-                  + P.seed("TB_Installations", "Customer", "varCustomer.ID") + ", 'Parent': "
-                  + P.seed("TB_Installations", "'Parent'", "varInstallation.ID") + " })",
+                  + P.seed("varCustomer.ID", "varCustomer.Title") + ", 'Parent': "
+                  + P.seed("varInstallation.ID", "varInstallation.Title") + " })",
                   True, back="scrSolution"), 136),
 ]
 

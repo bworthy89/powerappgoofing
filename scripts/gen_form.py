@@ -48,8 +48,16 @@ def patch_value(L, f):
     if k == "date":                  return f"{n}.SelectedDate"
     if k == "choice":                return f"{{ Value: {n}.Selected.Value }}"
     if k == "lookup":
-        # Choices() already returns records in the shape the lookup accepts.
-        return f"If(IsBlank({n}.Selected), Blank(), {n}.Selected)"
+        # The dropdown now yields a real row from the target list, not a {Id, Value} choice
+        # record, so the reference is built literally. 00_Setup.md: "Writing a lookup - build
+        # the record, don't look it up."
+        #
+        # .Selected.ID is the list's own column; .Selected.Id would be the choice record's
+        # field, which a table row does not have.
+        return ("If(IsBlank(" + n + ".Selected), Blank(), "
+                "{ '@odata.type': "
+                '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", '
+                "Id: " + n + ".Selected.ID, Value: " + n + ".Selected.Title })")
     raise ValueError(k)
 
 # Default shown in the input.
@@ -83,6 +91,9 @@ def default_expr(L, f):
 def default_record_expr(L, f):
     """Preselection for a ModernDropdown, whose Default is a Record.
 
+    A lookup is preselected by fetching the row back out of the target table by Id. A choice
+    is still matched inside its own option set.
+
     The classic control took the display Text, so an edit could just hand it
     the stored value. A record has to be found in the same option set the
     control is showing, hence the LookUp by Value.
@@ -91,6 +102,8 @@ def default_record_expr(L, f):
     is what the old If(varAdminNew, Blank(), ...) wrapper produced by hand.
     """
     v, n = var(L), f["n"]
+    if f["kind"] == "lookup":
+        return f"LookUp({f['target']}, ID = {v}.{n}.Id)"
     return f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value)"
 
 
@@ -105,36 +118,38 @@ def default_items_expr(L, f):
     return f"Filter({t}, ID = {v}.{n}.Id)"
 
 def items_expr(L, f):
+    """What a dropdown lists.
+
+    Choice columns read Choices(); it is built for exactly that and their option sets do not
+    change while the app is open. Lookups read the target table directly, because every one
+    of their targets can now be added to from inside the app, and Choices() is a snapshot
+    taken when the app loaded - see 00_Setup.md.
+    """
     if f["kind"] == "choice":
         return f"Choices({L['source']}.{f['n']})"
+
+    t = f["target"]
     if f.get("parent"):
-        # Choices() gives lookup-shaped {Id, Value} records but carries no other
-        # columns, so the customer scoping has to be applied by intersecting on
-        # Id with the rows that qualify. IsBlank('Parent') is the runtime-verified
-        # form - see app/00_Setup.md.
-        # Choices() yields {Id, Value} and carries no other columns, so the
-        # customer scoping is applied by asking, for each option, whether a
-        # qualifying row exists. "As Opt" names the outer scope so Opt.Id is not
-        # shadowed by TB_Installations' own columns in the inner Filter.
-        return ("Filter(Choices(TB_Installations.'Parent') As Opt, "
-                "CountRows(Filter(TB_Installations, ID = Opt.Id, "
-                "Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)")
-    if f.get("target") == "TB_Products":
+        # Solutions at the chosen customer: an installation with no Parent of its own.
+        # Against the table this is an ordinary Filter. It used to be an intersection
+        # against Choices() - asking, per option, whether a qualifying row existed - purely
+        # because a choice record carries no columns to filter on.
+        cond = ("Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'), "
+                "ID <> " + var(L) + ".ID")
+    elif t == "TB_Products":
         # A model can be retired while sites still have it installed - the delete guard
-        # correctly refuses to remove it - so Active is what stops it being OFFERED.
+        # refuses to remove it - so Active is what stops it being OFFERED.
         #
-        # Choices() carries only {Id, Value}, so Active is applied by asking per option
-        # whether a matching active row exists, the idiom in 00_Setup.md.
-        #
-        # The second clause is the one that matters. Without it, opening an existing machine
-        # whose model was since retired finds no matching option, the dropdown renders blank,
-        # and saving any unrelated edit writes that blank back - silent data loss triggered by
-        # an unrelated action. With it, a retired model stays visible exactly where it is
-        # already in use.
-        return (f"Filter(Choices({L['source']}.{f['n']}) As Opt, "
-                f"CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 "
-                f"|| Opt.Id = {var(L)}.{f['n']}.Id)")
-    return f"Choices({L['source']}.{f['n']})"
+        # The second clause keeps a retired model visible on the records already using it.
+        # Without it, opening such a record finds no matching option, the dropdown renders
+        # blank, and saving an unrelated edit writes that blank back.
+        cond = f"Active = true || ID = {var(L)}.{f['n']}.Id"
+    else:
+        cond = None
+
+    inner = f"Filter({t}, {cond})" if cond else t
+    return f"Sort({inner}, Title, SortOrder.Ascending)"
+
 
 # ------------------------------------------------------------------ generate
 o = io.StringIO()
@@ -276,7 +291,7 @@ for L in LISTS:
             i = ctrl(o, nm, "ModernDropdown", c)
             o.write(f"{i}Items: |\n{i}  ={items_expr(L,f)}\n")
             for kk, vv in [("Default",default_record_expr(L,f)),
-                           ("ItemDisplayText","ThisItem.Value"),
+                           ("ItemDisplayText","ThisItem.Title"),
                            ("BorderColor","AppDark.Line"),("BorderThickness","1"),
                            ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),

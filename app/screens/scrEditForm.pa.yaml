@@ -485,9 +485,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_Installations.Customer)
-                  Default: =LookUp(Choices(TB_Installations.Customer), Value = varRecInst.Customer.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(TB_Customers, Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Customers, ID = varRecInst.Customer.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -520,9 +520,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_Installations.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecInst.Product.Id)
-                  Default: =LookUp(Choices(TB_Installations.Product), Value = varRecInst.Product.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Products, Active = true || ID = varRecInst.Product.Id), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Products, ID = varRecInst.Product.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -555,9 +555,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_Installations.'Parent') As Opt, CountRows(Filter(TB_Installations, ID = Opt.Id, Customer.Id = ddCustomerInst.Selected.Id, IsBlank('Parent'))) > 0)
-                  Default: =LookUp(Choices(TB_Installations.'Parent'), Value = varRecInst.'Parent'.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'), ID <> varRecInst.ID), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Installations, ID = varRecInst.'Parent'.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -773,9 +773,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_SolutionUnits.Solution) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSolU.Solution.Id)
-                  Default: =LookUp(Choices(TB_SolutionUnits.Solution), Value = varRecSolU.Solution.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Solution.Id), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Products, ID = varRecSolU.Solution.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -808,9 +808,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_SolutionUnits.Unit) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSolU.Unit.Id)
-                  Default: =LookUp(Choices(TB_SolutionUnits.Unit), Value = varRecSolU.Unit.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Unit.Id), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Products, ID = varRecSolU.Unit.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -910,9 +910,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_SoftwareVersions.Customer)
-                  Default: =LookUp(Choices(TB_SoftwareVersions.Customer), Value = varRecSwVer.Customer.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(TB_Customers, Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Customers, ID = varRecSwVer.Customer.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -945,9 +945,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_SoftwareVersions.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecSwVer.Product.Id)
-                  Default: =LookUp(Choices(TB_SoftwareVersions.Product), Value = varRecSwVer.Product.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Products, Active = true || ID = varRecSwVer.Product.Id), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Products, ID = varRecSwVer.Product.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -1090,9 +1090,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Filter(Choices(TB_References.Product) As Opt, CountRows(Filter(TB_Products, ID = Opt.Id, Active = true)) > 0 || Opt.Id = varRecRef.Product.Id)
-                  Default: =LookUp(Choices(TB_References.Product), Value = varRecRef.Product.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(Filter(TB_Products, Active = true || ID = varRecRef.Product.Id), Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Products, ID = varRecRef.Product.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -1125,9 +1125,9 @@ Screens:
                   Color: =ColorValue("#14181C")
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
-                    =Choices(TB_References.Customer)
-                  Default: =LookUp(Choices(TB_References.Customer), Value = varRecRef.Customer.Value)
-                  ItemDisplayText: =ThisItem.Value
+                    =Sort(TB_Customers, Title, SortOrder.Ascending)
+                  Default: =LookUp(TB_Customers, ID = varRecRef.Customer.Id)
+                  ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Font: =AppFont
@@ -1383,9 +1383,9 @@ Screens:
                                 If(varAdminNew, Defaults(TB_Installations), varRecInst),
                                 {
                                     Title: txtTitleInst.Text,
-                                    Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), ddCustomerInst.Selected),
-                                    Product: If(IsBlank(ddProductInst.Selected), Blank(), ddProductInst.Selected),
-                                    'Parent': If(IsBlank(ddParentInst.Selected), Blank(), ddParentInst.Selected),
+                                    Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerInst.Selected.ID, Value: ddCustomerInst.Selected.Title }),
+                                    Product: If(IsBlank(ddProductInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductInst.Selected.ID, Value: ddProductInst.Selected.Title }),
+                                    'Parent': If(IsBlank(ddParentInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddParentInst.Selected.ID, Value: ddParentInst.Selected.Title }),
                                     'Installed Version': txtInstVersionInst.Text,
                                     Status: { Value: ddStatusInst.Selected.Value },
                                     'Config Notes': txtConfigNotesInst.Text,
@@ -1398,8 +1398,8 @@ Screens:
                                 If(varAdminNew, Defaults(TB_SolutionUnits), varRecSolU),
                                 {
                                     Title: txtTitleSolU.Text,
-                                    Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), ddSolutionSolU.Selected),
-                                    Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), ddUnitSolU.Selected),
+                                    Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddSolutionSolU.Selected.ID, Value: ddSolutionSolU.Selected.Title }),
+                                    Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }),
                                     Standard: tglStandardSolU.Checked
                                 }
                             )
@@ -1409,8 +1409,8 @@ Screens:
                                 If(varAdminNew, Defaults(TB_SoftwareVersions), varRecSwVer),
                                 {
                                     Title: txtTitleSwVer.Text,
-                                    Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), ddCustomerSwVer.Selected),
-                                    Product: If(IsBlank(ddProductSwVer.Selected), Blank(), ddProductSwVer.Selected),
+                                    Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerSwVer.Selected.ID, Value: ddCustomerSwVer.Selected.Title }),
+                                    Product: If(IsBlank(ddProductSwVer.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductSwVer.Selected.ID, Value: ddProductSwVer.Selected.Title }),
                                     'Software Version': txtSwVersionSwVer.Text,
                                     'Last Verified': dtpLastVerifiedSwVer.SelectedDate
                                 }
@@ -1421,8 +1421,8 @@ Screens:
                                 If(varAdminNew, Defaults(TB_References), varRecRef),
                                 {
                                     Title: txtTitleRef.Text,
-                                    Product: If(IsBlank(ddProductRef.Selected), Blank(), ddProductRef.Selected),
-                                    Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), ddCustomerRef.Selected),
+                                    Product: If(IsBlank(ddProductRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductRef.Selected.ID, Value: ddProductRef.Selected.Title }),
+                                    Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerRef.Selected.ID, Value: ddCustomerRef.Selected.Title }),
                                     Section: { Value: ddSectionRef.Selected.Value },
                                     'Reference Type': { Value: ddRefTypeRef.Selected.Value },
                                     URL: txtURLRef.Text,
