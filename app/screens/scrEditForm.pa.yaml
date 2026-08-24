@@ -108,7 +108,7 @@ Screens:
                         X: =0
                         Y: =0
                         Width: =ContentWidth
-                        Height: =Switch(varAdminList, "Cust", 72 + 96 + 96 + 68 + 24, "Prod", 72 + 72 + 72 + 72 + 96 + 68 + 24, "Inst", If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0) + 24, "SolU", 72 + 72 + 72 + 68 + 24, "SwVer", 72 + 72 + 72 + 72 + 76 + 24, "Ref", 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 76 + 24, 400)
+                        Height: =Switch(varAdminList, "Cust", 72 + 96 + 96 + 68 + 24, "Prod", 72 + 72 + 72 + 72 + 96 + 68 + 24, "Inst", If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0) + If(varAdminNew && IsBlank(varStParentInst) && CountRows(colStdUnits) > 0, 216, 0) + If(varAdminNew && IsBlank(varStParentInst) && !IsBlank(ddProductInst.Selected) && CountRows(colStdUnits) = 0, 50, 0) + 24, "SolU", 72 + 72 + 72 + 68 + 24, "SwVer", 72 + 72 + 72 + 72 + 76 + 24, "Ref", 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 76 + 24, 400)
                       Children:
                         - lblCapTitleCust:
                             Control: ModernText

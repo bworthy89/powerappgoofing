@@ -1547,3 +1547,31 @@ The inner group's `Height` is a `Switch` over `varAdminList`, since one containe
 six lists and the scroll extent has to match whichever is showing. Each arm is the same
 running total that positions that list's fields, so hiding a field shortens the scroll
 region as well as closing its gap.
+
+## A `ManualLayout` group clips anything past its declared `Height`, in silence
+
+The COMES WITH panel on `scrEditForm` was built, populated and invisible. The Save button
+read *"Add machine and 2 units"* — counting ticked rows out of the collection behind the
+list — while the list itself showed nothing.
+
+`conFieldsEdit` is a `ManualLayout` group inside the scrolling container, and its `Height` is
+a `Switch` over `varAdminList` summed from that list's **fields**. The panel was added below
+the fields and never added to the sum, so the group reported 168px while the gallery sat at
+166–346. Everything past 168 was outside the group. A `ManualLayout` group does not scroll
+and does not grow; it clips, and says nothing.
+
+Two things make this hard to see:
+
+- **The control is fine.** Its `Visible` is true, its `Items` are populated, its geometry is
+  sane. Nothing about it is wrong — it is the container that is too short.
+- **Anything reading the same data still works.** The button counted two units because it
+  reads `colStdUnits`, not the gallery. So the screen reports a state it will not show you,
+  which reads as a rendering bug rather than a layout one.
+
+**Whatever positions a control must also be what sizes its container.** Here both now come
+from the same function: `list_height` returns the sum, and the running total that positions
+each field is the same sequence of terms. Adding a control to that group without adding it to
+`list_height` puts it outside the group.
+
+`check_overlaps.py` cannot see this — the control does not overlap anything, it is simply
+beyond an edge.

@@ -60,11 +60,23 @@ def block_h(f):
 
 
 def list_height(L):
-    """How tall a list's fields are, as a formula - hidden fields contribute nothing."""
+    """How tall a list is, as a formula - anything hidden contributes nothing.
+
+    This drives conFieldsEdit, the group inside the scroll region. Anything drawn below the
+    height it reports is outside the group and simply does not render - a ManualLayout group
+    clips. The COMES WITH panel was missing from this sum, so it was built, populated and
+    invisible: the Save button counted two ticked units while the list showed none.
+    """
     parts = []
     for f in L["fields"]:
         sh = show_expr(L, f)
         parts.append(f"If({sh}, {block_h(f)}, 0)" if sh else str(block_h(f)))
+    if L["key"] == "Inst":
+        adding = "varAdminNew && IsBlank(varStParentInst)"
+        # the ticked list, or the line explaining there is nothing to tick
+        parts.append(f"If({adding} && CountRows(colStdUnits) > 0, 216, 0)")
+        parts.append(f"If({adding} && !IsBlank(ddProductInst.Selected) "
+                     "&& CountRows(colStdUnits) = 0, 50, 0)")
     return " + ".join(parts) + " + 24"
 
 
