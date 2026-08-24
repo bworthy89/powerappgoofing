@@ -63,7 +63,7 @@ def indent_of(block):
 
 def fix(path):
     s = path.read_text(encoding="utf-8")
-    added = {"Color": 0, "Fill": 0}
+    added = {"Color": 0, "Fill": 0, "BasePaletteColor": 0}
     out, blocks = [], re.split(r"(?=\n\s*- \w+:\n)", s)
 
     for b in blocks:
@@ -108,10 +108,18 @@ def fix(path):
                 want.append(("Color", "=AppDark.Fg"))
             if not has_fill:
                 want.append(("Fill", "=AppDark.Surface"))
-        elif ctl in BUTTONY and not has_color and not invisible:
-            # Primary already renders white on the accent; the others would inherit the
-            # light theme's near-black foreground.
-            if not re.search(r"Appearance: =ButtonAppearance\.Primary\s*$", b, re.M):
+        elif ctl in BUTTONY and not invisible:
+            # Primary does NOT render white on the accent here. The modern theme paints
+            # it near-black, which on this app's ground is an invisible button - it was
+            # reported as "the buttons are black". BasePaletteColor is the documented
+            # way to aim a modern button at a colour, and is already used to make
+            # scrAdmin's approve button green, so an existing one is left alone.
+            if re.search(r"Appearance: =ButtonAppearance\.Primary\s*$", b, re.M):
+                if not re.search(rf"^{ind}BasePaletteColor: ", b, re.M):
+                    want.append(("BasePaletteColor", "=AppDark.Accent"))
+                if not has_color:
+                    want.append(("Color", "=AppDark.OnBrand"))
+            elif not has_color:
                 want.append(("Color", "=AppDark.Fg"))
         elif ctl in TOGGLY and not has_color:
             want.append(("Color", "=AppDark.Fg"))
@@ -132,13 +140,15 @@ def fix(path):
     return added
 
 
-tot = {"Color": 0, "Fill": 0}
+tot = {"Color": 0, "Fill": 0, "BasePaletteColor": 0}
 for p in sorted(SCREENS.glob("*.pa.yaml")):
     if p.name == "scrHome.pa.yaml":
         continue                       # generated dark, every colour already explicit
     a = fix(p)
-    if a["Color"] or a["Fill"]:
-        print(f"  {p.name:30} +{a['Color']:3} Color  +{a['Fill']:3} Fill")
+    if any(a.values()):
+        print(f"  {p.name:30} +{a['Color']:3} Color  +{a['Fill']:3} Fill"
+              f"  +{a['BasePaletteColor']:3} BasePaletteColor")
     for k in tot:
         tot[k] += a[k]
-print(f"\n{tot['Color']} Color and {tot['Fill']} Fill properties added")
+print(f"{tot['Color']} Color, {tot['Fill']} Fill and "
+      f"{tot['BasePaletteColor']} BasePaletteColor properties added")

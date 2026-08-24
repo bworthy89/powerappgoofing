@@ -145,6 +145,8 @@ Screens:
             - btnRequest:
                 Control: ModernButton
                 Properties:
+                  BasePaletteColor: =AppDark.Accent
+                  Color: =AppDark.OnBrand
                   Appearance: =ButtonAppearance.Primary
                   Text: |
                     =If(Coalesce(LookUp(TB_Admins, (Lower(Person.Claims) = "i:0#.f|membership|" & Lower(User().Email) || Lower(Person.Email) = Lower(User().Email))).Status.Value, "") = "Denied", "Ask again", "Request admin access")

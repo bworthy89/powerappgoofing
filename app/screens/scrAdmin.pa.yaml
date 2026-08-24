@@ -248,6 +248,8 @@ Screens:
             - btnAddNew:
                 Control: ModernButton
                 Properties:
+                  BasePaletteColor: =AppDark.Accent
+                  Color: =AppDark.OnBrand
                   Appearance: =ButtonAppearance.Primary
                   Icon: ="Add"
                   Layout: =ButtonLayout.IconBefore
@@ -606,6 +608,7 @@ Screens:
                   - btnAccApprove:
                       Control: ModernButton
                       Properties:
+                        Color: =AppDark.OnBrand
                         Appearance: =ButtonAppearance.Primary
                         BasePaletteColor: =AppDark.Ok
                         OnSelect: |

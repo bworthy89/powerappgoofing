@@ -247,6 +247,8 @@ Screens:
             - btnWizStep1Next:
                 Control: ModernButton
                 Properties:
+                  BasePaletteColor: =AppDark.Accent
+                  Color: =AppDark.OnBrand
                   Appearance: =ButtonAppearance.Primary
                   OnSelect: |
                     =IfError(
@@ -391,6 +393,8 @@ Screens:
             - btnWizFinish:
                 Control: ModernButton
                 Properties:
+                  BasePaletteColor: =AppDark.Accent
+                  Color: =AppDark.OnBrand
                   Appearance: =ButtonAppearance.Primary
                   OnSelect: |
                     =Set(varCustomer, varWizCust);
