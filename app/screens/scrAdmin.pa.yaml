@@ -80,9 +80,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 0
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 0, 0)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 0, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -99,9 +99,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 1
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 1, 1)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 0, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -118,9 +118,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 2
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 2, 2)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 0, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -137,9 +137,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 3
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 3, 3)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 0, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -156,9 +156,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 4
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 0, 4)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 52, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -175,9 +175,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 5
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 1, 5)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 52, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -194,9 +194,9 @@ Screens:
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
                   Height: =44
-                  Width: =(ContentWidth - (Gutter * 2) - 48) / 7
-                  X: =Gutter + ((ContentWidth - (Gutter * 2) - 48) / 7 + 8) * 6
-                  Y: =56 + Gutter + 80
+                  Width: =If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7)
+                  X: =Gutter + (If(IsNarrow, (ContentWidth - (Gutter * 2) - 24) / 4, (ContentWidth - (Gutter * 2) - 48) / 7) + 8) * If(IsNarrow, 2, 6)
+                  Y: =56 + Gutter + 80 + If(IsNarrow, 52, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -217,7 +217,7 @@ Screens:
                   Size: =AppType.Body
                   Width: =ContentWidth - (Gutter * 2) - 130
                   X: =Gutter
-                  Y: =56 + Gutter + 126
+                  Y: =56 + Gutter + 126 + If(IsNarrow, 52, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -238,7 +238,7 @@ Screens:
                   Height: =40
                   Width: =150
                   X: =ContentWidth - Gutter - 118 - 8 - 150
-                  Y: =56 + Gutter + 126
+                  Y: =56 + Gutter + 126 + If(IsNarrow, 52, 0)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -258,7 +258,7 @@ Screens:
                   Height: =40
                   Width: =118
                   X: =ContentWidth - Gutter - 118
-                  Y: =56 + Gutter + 126
+                  Y: =56 + Gutter + 126 + If(IsNarrow, 52, 0)
                   Visible: =varAdminList <> "Acc"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -287,9 +287,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Cust"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -331,9 +331,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Prod"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -375,9 +375,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Inst"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -419,9 +419,9 @@ Screens:
                     )
                   Visible: =varAdminList = "SolU"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -463,9 +463,9 @@ Screens:
                     )
                   Visible: =varAdminList = "SwVer"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -507,9 +507,9 @@ Screens:
                     )
                   Visible: =varAdminList = "Ref"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =44
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -547,9 +547,9 @@ Screens:
                     =Sort(TB_Admins, If(Status.Value = "Pending", 0, 1), SortOrder.Ascending)
                   Visible: =varAdminList = "Acc"
                   X: =Gutter
-                  Y: =56 + Gutter + 180
+                  Y: =56 + Gutter + 180 + If(IsNarrow, 52, 0)
                   Width: =ContentWidth - (Gutter * 2)
-                  Height: =Parent.Height - (56 + Gutter + 180) - Gutter
+                  Height: =Parent.Height - (56 + Gutter + 180 + If(IsNarrow, 52, 0)) - Gutter
                   TemplateSize: =56
                   TemplatePadding: =6
                   ShowScrollbar: =true
@@ -660,7 +660,7 @@ Screens:
                   Wrap: =true
                   AutoHeight: =false
                   X: =Gutter
-                  Y: =56 + Gutter + 200
+                  Y: =56 + Gutter + 200 + If(IsNarrow, 52, 0)
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   Visible: =varAdminList = "Acc" && CountRows(TB_Admins) = 0
@@ -677,5 +677,5 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =56 + Gutter + 190
+                  Y: =56 + Gutter + 190 + If(IsNarrow, 52, 0)
                   Visible: =(varAdminList = "Cust" && CountRows(galAdmCust.AllItems) = 0) || (varAdminList = "Prod" && CountRows(galAdmProd.AllItems) = 0) || (varAdminList = "Inst" && CountRows(galAdmInst.AllItems) = 0) || (varAdminList = "SolU" && CountRows(galAdmSolU.AllItems) = 0) || (varAdminList = "SwVer" && CountRows(galAdmSwVer.AllItems) = 0) || (varAdminList = "Ref" && CountRows(galAdmRef.AllItems) = 0)

@@ -118,7 +118,7 @@ o.write(P.brand_band("Edit", "scrAdmin", back_transition="UnCoverRight", back_la
 
 q = ctrl(o, "lblTitleEdit", "Label", c)
 title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
-         + ", ".join(f'"{L["key"]}", "{L["label"][:-1].lower()}"' for L in LISTS) + ', "record")')
+         + ", ".join(f'"{L["key"]}", "{L["singular"]}"' for L in LISTS) + ', "record")')
 for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
              ("Height","36"),("Size","AppType.Title"),("Text",title),("Wrap","false"),
              ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),

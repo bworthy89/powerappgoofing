@@ -62,7 +62,7 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =36
                   Size: =AppType.Title
-                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "SwVer", "softwar", "Ref", "reference", "record")
+                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "SwVer", "software version", "Ref", "reference", "record")
                   Wrap: =false
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)

@@ -1297,3 +1297,36 @@ the document f-string where the value is already defined.
 `verify_yaml.py` now flags any `{Identifier}` surviving in a formula. Power Fx has no use for
 one, and record literals (`{ Value: "x" }`) are excluded because the pattern requires the
 whole brace to be a single identifier.
+
+## Internally consistent arithmetic is not correct arithmetic
+
+Adding a seventh tab to the admin strip updated every formula correctly — the width divided
+by the new count, each button's X multiplier lined up, the selected-state mapping was there.
+Reviewed on its own terms it was clean, and it was called clean.
+
+What none of that answered is what the numbers *produce*:
+
+| App.Width | 6 tabs | 7 tabs |
+|---|---|---|
+| 375 | 45.2px | **37.6px** |
+| 390 | 47.7px | **39.7px** |
+| 414 | 51.7px | **43.1px** |
+
+The row went from just clearing the 44px tap floor to failing on every mainstream phone.
+Nothing in the file was wrong; the result was unusable. **A formula that agrees with itself
+can still be checked for whether its output is sane**, and for anything responsive that means
+evaluating it at the actual breakpoints rather than reading it.
+
+`Gutter` and `ContentWidth` are named formulas in `App.pa.yaml`, so any width or offset can
+be computed for a given `App.Width` without opening Studio:
+
+```python
+g  = 16 if w < 640 else 24
+cw = min(w - g * 2, 1100)
+```
+
+Do that whenever a count changes in a row of anything.
+
+The related lesson: **the same review that called the arithmetic correct also missed it**, so
+"I checked the geometry" is not a claim worth making unless the check included the output at
+the sizes the app actually runs at.

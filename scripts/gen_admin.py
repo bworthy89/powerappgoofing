@@ -22,7 +22,7 @@ ACCESS = dict(key="Acc",
               raw_label=True)
 
 LISTS = [
-    dict(key="Cust", label="Customers", source="TB_Customers",
+    dict(key="Cust", label="Customers", singular="customer", source="TB_Customers",
          deps="CountRows(Filter(TB_Installations, Customer.Id = varRecCust.ID))"
               " + CountRows(Filter(TB_References, Customer.Id = varRecCust.ID))",
          depsLabel="installations or documents", fields=[
@@ -31,7 +31,7 @@ LISTS = [
         dict(n="'Support Notes'", kind="note",   caption="Support notes", id="SupportNotes"),
         dict(n="Active",          kind="bool",   caption="Active"),
     ]),
-    dict(key="Prod", label="Products", source="TB_Products",
+    dict(key="Prod", label="Products", singular="product", source="TB_Products",
          deps="CountRows(Filter(TB_Installations, Product.Id = varRecProd.ID))"
               " + CountRows(Filter(TB_References, Product.Id = varRecProd.ID))"
               " + CountRows(Filter(TB_SolutionUnits, Solution.Id = varRecProd.ID))"
@@ -44,7 +44,7 @@ LISTS = [
         dict(n="Description",                  kind="note",   caption="Description"),
         dict(n="Active",                       kind="bool",   caption="Active"),
     ]),
-    dict(key="Inst", label="Installations", source="TB_Installations",
+    dict(key="Inst", label="Installations", singular="installation", source="TB_Installations",
          deps="CountRows(Filter(TB_Installations, 'Parent'.Id = varRecInst.ID))",
          depsLabel="units attached to it", fields=[
         dict(n="Title",                 kind="text",   caption="Name"),
@@ -56,7 +56,7 @@ LISTS = [
         dict(n="Status",                kind="choice", caption="Status"),
         dict(n="'Config Notes'",        kind="note",   caption="Config notes", id="ConfigNotes"),
     ]),
-    dict(key="SolU", label="Solution units", source="TB_SolutionUnits", fields=[
+    dict(key="SolU", label="Solution units", singular="solution unit", source="TB_SolutionUnits", fields=[
         dict(n="Title",    kind="text",   caption="Label, e.g. CI 300X - SDRB250"),
         dict(n="Solution", kind="lookup", caption="Solution model", target="TB_Products"),
         dict(n="Unit",     kind="lookup", caption="Unit model that attaches to it", target="TB_Products"),
@@ -65,7 +65,7 @@ LISTS = [
     # The software build a site runs for a model. One row per customer and model; a
     # machine with its own Installed Version overrides it, so this is a default rather
     # than an assertion about every machine.
-    dict(key="SwVer", label="Software", source="TB_SoftwareVersions", fields=[
+    dict(key="SwVer", label="Software", singular="software version", source="TB_SoftwareVersions", fields=[
         dict(n="Title",    kind="text",   caption="Label, e.g. Northgate - CI 300X"),
         dict(n="Customer", kind="lookup", caption="Customer", target="TB_Customers"),
         dict(n="Product",  kind="lookup", caption="Model this version applies to",
@@ -73,7 +73,7 @@ LISTS = [
         dict(n="'Software Version'", kind="text",
              caption="Software version running at this site", id="SwVersion"),
     ]),
-    dict(key="Ref", label="References", source="TB_References", fields=[
+    dict(key="Ref", label="References", singular="reference", source="TB_References", fields=[
         dict(n="Title",              kind="text",   caption="Title"),
         dict(n="Product",            kind="lookup", caption="Product", target="TB_Products"),
         dict(n="Customer",           kind="lookup", caption="Customer (blank = applies to all customers)",
@@ -142,7 +142,17 @@ def gen_admin():
 
     # The tab bar divides by however many lists there are. It was hardcoded to
     # four, which silently pushed the fifth tab off the right edge.
-    TABW = f"(ContentWidth - (Gutter * 2) - {8 * len(LISTS)}) / {len(LISTS) + 1}"
+    #
+    # It now also WRAPS below the breakpoint. Seven tabs across a 375px screen gives 37.6px
+    # buttons - under the 44px floor on every mainstream phone. The formulas were internally
+    # consistent throughout, which is what hid it: the arithmetic agreed with itself while
+    # the result was unusable. Wrapping to 4 then the rest gives ~76px at 360px.
+    NTABS = len(LISTS) + 1
+    PER_ROW = 4
+    ROW_DROP = 52
+    TAB_DROP = "If(IsNarrow, 52, 0)"
+    TABW = (f"If(IsNarrow, (ContentWidth - (Gutter * 2) - {8 * (PER_ROW - 1)}) / {PER_ROW}, "
+            f"(ContentWidth - (Gutter * 2) - {8 * (NTABS - 1)}) / {NTABS})")
 
     # list selector buttons
     for i, L in enumerate(LISTS + [ACCESS]):
@@ -155,8 +165,8 @@ def gen_admin():
                      ("HoverFill",f'If({sel}, AppDark.AccentSolid, AppDark.Sunken)'),
                      ("BorderColor","AppDark.Line"),("BorderThickness","1"),
                      ("Height","44"),("Width",TABW),
-                     ("X",f"Gutter + ({TABW} + 8) * {i}"),
-                     ("Y","56 + Gutter + 80"),
+                     ("X", f"Gutter + ({TABW} + 8) * If(IsNarrow, {i % PER_ROW}, {i})"),
+                     ("Y", f"56 + Gutter + 80 + If(IsNarrow, {(i // PER_ROW) * ROW_DROP}, 0)"),
                      ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                      ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                      ("OnSelect",f'Set(varAdminList, "{L["key"]}")'),
@@ -167,7 +177,7 @@ def gen_admin():
     for k, v in [("BorderColor","AppDark.Line"),("BorderThickness","1"),("Color","AppDark.Fg"),
                  ("Default",'""'),("Fill","AppDark.Surface"),("Font","AppFont"),("Height","40"),
                  ("HintText",'"Search"'),("Size","AppType.Body"),
-                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","56 + Gutter + 126"),
+                 ("Width","ContentWidth - (Gutter * 2) - 130"),("X","Gutter"),("Y","56 + Gutter + 126 + " + TAB_DROP),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
         prop(o, k, v, q)
@@ -184,7 +194,7 @@ def gen_admin():
                  ("HoverFill","AppDark.Sunken"),("BorderColor","AppDark.Line"),
                  ("BorderThickness","1"),
                  ("Height","40"),("Width","150"),
-                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","56 + Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118 - 8 - 150"),("Y","56 + Gutter + 126 + " + TAB_DROP),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                  ("Visible",'varAdminList = "Cust"'),
@@ -197,7 +207,7 @@ def gen_admin():
                  ("Fill","AppDark.Ok"),("Color","AppDark.OnBrand"),
                  ("HoverFill","AppDark.Accent"),("BorderThickness","0"),
                  ("Height","40"),("Width","118"),
-                 ("X","ContentWidth - Gutter - 118"),("Y","56 + Gutter + 126"),
+                 ("X","ContentWidth - Gutter - 118"),("Y","56 + Gutter + 126 + " + TAB_DROP),
                  ("Visible",'varAdminList <> "Acc"'),
                  ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                  ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
@@ -231,9 +241,9 @@ def gen_admin():
                 f"{q}      Filter({L['source']}, StartsWith(Title, Trim(txtSearchAdm.Text))),\n"
                 f"{q}      \"Title\",\n{q}      SortOrder.Ascending\n{q}  )\n")
         for k, v in [("Visible",f'varAdminList = "{L["key"]}"'),
-                     ("X","Gutter"),("Y","56 + Gutter + 180"),
+                     ("X","Gutter"),("Y","56 + Gutter + 180 + " + TAB_DROP),
                      ("Width","ContentWidth - (Gutter * 2)"),
-                     ("Height","Parent.Height - (56 + Gutter + 180) - Gutter"),
+                     ("Height","Parent.Height - (56 + Gutter + 180 + " + TAB_DROP + ") - Gutter"),
                      ("TemplateSize","44"),("TemplatePadding","6"),("ShowScrollbar","true")]:
             prop(o, k, v, q)
         o.write(f"{q[:-2]}Children:\n")
@@ -259,9 +269,9 @@ def gen_admin():
     # Pending first, so the thing needing a decision is at the top.
     o.write(f"{q}Items: |\n"
             f"{q}  =Sort(TB_Admins, If(Status.Value = \"Pending\", 0, 1), SortOrder.Ascending)\n")
-    for k, v in [("Visible",VIS),("X","Gutter"),("Y","56 + Gutter + 180"),
+    for k, v in [("Visible",VIS),("X","Gutter"),("Y","56 + Gutter + 180 + " + TAB_DROP),
                  ("Width","ContentWidth - (Gutter * 2)"),
-                 ("Height","Parent.Height - (56 + Gutter + 180) - Gutter"),
+                 ("Height","Parent.Height - (56 + Gutter + 180 + " + TAB_DROP + ") - Gutter"),
                  ("TemplateSize","56"),("TemplatePadding","6"),
                  ("ShowScrollbar","true")]:
         prop(o, k, v, q)
@@ -327,7 +337,7 @@ def gen_admin():
     for k, v in [("Text",'"No access requests. The first admin is added to TB_Admins directly in SharePoint; everyone after that asks here."'),
                  ("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Wrap","true"),("AutoHeight","false"),
-                 ("X","Gutter"),("Y","56 + Gutter + 200"),("Height","40"),
+                 ("X","Gutter"),("Y","56 + Gutter + 200 + " + TAB_DROP),("Height","40"),
                  ("Width","ContentWidth - (Gutter * 2)"),
                  ("Visible",f'{VIS} && CountRows(TB_Admins) = 0')]:
         prop(o, k, v, q)
@@ -338,7 +348,7 @@ def gen_admin():
     for k, v in [("Align","Align.Center"),("Color","AppDark.Muted"),("Font","AppFont"),
                  ("Size","AppType.Small"),("Text",'"Nothing matches that search."'),
                  ("Height","40"),("Width","ContentWidth - (Gutter * 2)"),
-                 ("X","Gutter"),("Y","56 + Gutter + 190"),("Visible",cond)]:
+                 ("X","Gutter"),("Y","56 + Gutter + 190 + " + TAB_DROP),("Visible",cond)]:
         prop(o, k, v, q)
     return o.getvalue()
 
