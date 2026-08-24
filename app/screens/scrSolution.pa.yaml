@@ -323,9 +323,47 @@ Screens:
                   Wrap: =false
                   AutoHeight: =false
                   Visible: |
-                    =varSolTab = "Units" && CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0
+                    =varSolTab = "Units" && CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0 && !varIsAdmin
                   Text: |
-                    =CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) & " also attached, not on the model's list"
+                    =Concat(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0) As N, N.Product.Value, ", ") & " attached, not on the model's list"
+            # An admin can close the gap from here. This writes the same row the save
+            # path writes when a unit is attached - optional, never standard, because one
+            # installation cannot establish the usual build.
+            - btnFixStraySol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Color: =AppDark.Warn
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  X: =Gutter
+                  Y: |
+                    =conConfigNotesSol.Y + If(conConfigNotesSol.Visible, conConfigNotesSol.Height + Gutter, 0) + 44 + 12 - 4
+                  Width: =Parent.Width - (Gutter * 2)
+                  Height: =28
+                  Visible: |
+                    =varSolTab = "Units" && CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)) > 0 && varIsAdmin
+                  Text: |
+                    =Concat(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0) As N, N.Product.Value, ", ") & " attached, not on the model's list - add"
+                  OnSelect: |
+                    =ForAll(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, I.Status.Value <> "Retired", CountRows(Filter(TB_SolutionUnits, Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0) As X,
+                        Patch(TB_SolutionUnits, Defaults(TB_SolutionUnits), {
+                            Title: varInstallation.Product.Value & " - " & X.Product.Value,
+                            Solution: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varInstallation.Product.Id, Value: varInstallation.Product.Value },
+                            Unit: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: X.Product.Id, Value: X.Product.Value },
+                            Standard: false
+                        })
+                    );
+                    Refresh(TB_SolutionUnits);
+                    Notify("Added to " & varInstallation.Product.Value & "'s unit list.",
+                           NotificationType.Success)
             - galUnitsSol:
                 Control: Gallery
                 Variant: Vertical

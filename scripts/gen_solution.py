@@ -64,6 +64,19 @@ U_VER   = f"{FITTED}.'Last Verified'"
 U_STALE = P.verified_is_stale(U_VER)
 U_NOTE  = P.verified_note(U_VER)
 
+# Units attached to THIS machine whose model the catalogue does not list against this
+# machine's model. Named rather than counted: "1 also attached" told nobody which.
+STRAY_ROWS = ("Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, "
+              "I.Status.Value <> \"Retired\", "
+              "CountRows(Filter(TB_SolutionUnits, "
+              "Solution.Id = varInstallation.Product.Id, Unit.Id = I.Product.Id)) = 0)")
+STRAY_NAMES = f'Concat({STRAY_ROWS} As N, N.Product.Value, ", ")'
+UPROD_SELF = "varInstallation.Product"
+SOL_REF = ("{ '@odata.type': " + '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference"' + ", "
+           "Id: varInstallation.Product.Id, Value: varInstallation.Product.Value }")
+UNIT_REF = ("{ '@odata.type': " + '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference"' + ", "
+            "Id: X.Product.Id, Value: X.Product.Value }")
+
 # Units attached here that the model does not list. Rare, but silently hiding one would be
 # this app's characteristic failure: a correct-looking screen missing a machine.
 STRAY = ("CountRows(Filter(TB_Installations As I, I.'Parent'.Id = varInstallation.ID, "
@@ -248,9 +261,47 @@ Screens:
                   Wrap: =false
                   AutoHeight: =false
                   Visible: |
-                    =varSolTab = "Units" && {STRAY} > 0
+                    =varSolTab = "Units" && {STRAY} > 0 && !varIsAdmin
                   Text: |
-                    ={STRAY} & " also attached, not on the model's list"
+                    ={STRAY_NAMES} & " attached, not on the model's list"
+            # An admin can close the gap from here. This writes the same row the save
+            # path writes when a unit is attached - optional, never standard, because one
+            # installation cannot establish the usual build.
+            - btnFixStraySol:
+                Control: ModernButton
+                Properties:
+                  Appearance: =ButtonAppearance.Outline
+                  Color: =AppDark.Warn
+                  BorderColor: =AppDark.Line
+                  BorderThickness: =1
+                  RadiusTopLeft: =6
+                  RadiusTopRight: =6
+                  RadiusBottomLeft: =6
+                  RadiusBottomRight: =6
+                  Font: =AppFont
+                  Size: =AppType.Small
+                  FontWeight: =FontWeight.Semibold
+                  X: =Gutter
+                  Y: |
+                    ={Y_UNITS} - 4
+                  Width: ={CW}
+                  Height: =28
+                  Visible: |
+                    =varSolTab = "Units" && {STRAY} > 0 && varIsAdmin
+                  Text: |
+                    ={STRAY_NAMES} & " attached, not on the model's list - add"
+                  OnSelect: |
+                    =ForAll({STRAY_ROWS} As X,
+                        Patch(TB_SolutionUnits, Defaults(TB_SolutionUnits), {{
+                            Title: {UPROD_SELF}.Value & " - " & X.Product.Value,
+                            Solution: {SOL_REF},
+                            Unit: {UNIT_REF},
+                            Standard: false
+                        }})
+                    );
+                    Refresh(TB_SolutionUnits);
+                    Notify("Added to " & {UPROD_SELF}.Value & "'s unit list.",
+                           NotificationType.Success)
             - galUnitsSol:
                 Control: Gallery
                 Variant: Vertical
