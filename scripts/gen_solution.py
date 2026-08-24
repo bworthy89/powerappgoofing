@@ -43,11 +43,10 @@ ACTIONS = [
     ("btnEditSol", "Edit",
      P.admin_open("Inst", "varInstallation", False, back="scrSolution"), 84),
     ("btnAddUnitSol", "+  Add a unit",
-     P.admin_open("Inst",
-                  "Patch(Defaults(TB_Installations), { Customer: "
-                  + P.seed("varCustomer.ID", "varCustomer.Title") + ", 'Parent': "
-                  + P.seed("varInstallation.ID", "varInstallation.Title") + " })",
-                  True, back="scrSolution"), 136),
+     P.admin_open("Inst", "Defaults(TB_Installations)", True, back="scrSolution",
+                  extra=P.stash([("varStCustomerInst",
+                                  "LookUp(TB_Customers, ID = varCustomer.ID)"),
+                                 ("varStParentInst", "varInstallation")])), 136),
 ]
 
 BAND = P.BAND

@@ -36,6 +36,11 @@ def ctrl(o, name, control, ind, variant=None):
 
 def var(L): return "varRec" + L["key"]
 
+
+def stash_var(L, f):
+    """Where a lookup's pre-filled row lives. Mirrored in screen_parts.STASH_VARS."""
+    return "varSt" + fid(f) + L["key"]
+
 def input_name(L, f): return {"text":"txt","note":"txt","url":"txt","choice":"dd","bool":"tgl","lookup":"dd","date":"dtp"}[f["kind"]] + fid(f) + L["key"]
 
 # value written by Patch for one field
@@ -59,20 +64,6 @@ def patch_value(L, f):
                 '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", '
                 "Id: " + n + ".Selected.ID, Value: " + n + ".Selected.Title })")
     raise ValueError(k)
-
-# What the "+ New" detour writes back into the record variable.
-#
-# Same values as patch_value, except a lookup carries no '@odata.type'. This goes through
-# Patch(record, changes) - two arguments, no data source - which merges structurally and
-# rejects a record whose field set differs. patch_value's odata field is required for the
-# three-argument write and fatal here.
-def stash_value(L, f):
-    n, k = input_name(L, f), f["kind"]
-    if k == "lookup":
-        return (f"If(IsBlank({n}.Selected), Blank(), "
-                f"{{ Id: {n}.Selected.ID, Value: {n}.Selected.Title }})")
-    return patch_value(L, f)
-
 
 # Default shown in the input.
 #
@@ -117,7 +108,11 @@ def default_record_expr(L, f):
     """
     v, n = var(L), f["n"]
     if f["kind"] == "lookup":
-        return f"LookUp({f['target']}, ID = {v}.{n}.Id)"
+        # The stash variable holds a real row from the target table, so it has the right
+        # type by construction. A hand-built lookup record does not: with '@odata.type' it
+        # has a field too many for a structural comparison and without it a field too few.
+        st = stash_var(L, f)
+        return (f"If(!IsBlank({st}), {st}, LookUp({f['target']}, ID = {v}.{n}.Id))")
     return f"LookUp(Choices({L['source']}.{n}), Value = {v}.{n}.Value)"
 
 
@@ -164,6 +159,13 @@ def items_expr(L, f):
     inner = f"Filter({t}, {cond})" if cond else t
     return f"Sort({inner}, Title, SortOrder.Ascending)"
 
+
+# screen_parts clears these on every entry to the form, and cannot see LISTS to derive them.
+# A field added here and not there would pre-fill with whatever the last visit left behind.
+_want = sorted(stash_var(L, f) for L in LISTS for f in L["fields"] if f["kind"] == "lookup")
+assert _want == sorted(P.STASH_VARS), (
+    "screen_parts.STASH_VARS is out of step with the form's lookup fields - "
+    f"generator has {_want}, screen_parts has {sorted(P.STASH_VARS)}")
 
 # ------------------------------------------------------------------ generate
 o = io.StringIO()
@@ -328,10 +330,11 @@ for L in LISTS:
                 # Write what is on screen back into the record variable before detouring.
                 # The form's defaults read that variable, so returning repopulates the
                 # fields with no further work - and nothing the admin typed is lost.
-                stash = ", ".join(f"{g['n']}: {stash_value(L, g)}" for g in L["fields"])
+                # No stash. The detour never leaves this screen - it only switches which
+                # field group is visible - and a hidden control keeps its value, so there is
+                # nothing to save and nothing to restore.
                 b = ctrl(o, "btnNew" + fid(f) + L["key"], "ModernButton", c)
-                go = (f"Set({var(L)}, Patch({var(L)}, {{ {stash} }})); "
-                      f'Set(varResumeList, "{L["key"]}"); '
+                go = (f'Set(varResumeList, "{L["key"]}"); '
                       "Set(varResumeNew, varAdminNew); "
                       f'Set(varResumeField, "{fid(f)}"); '
                       "Set(varRecProd, Defaults(TB_Products)); "
@@ -351,10 +354,6 @@ for L in LISTS:
         y += 18 + h + 14
 
 # ---- save
-# Handed back into a record variable by Patch(record, changes), so the plain lookup shape -
-# the odata field belongs only on the three-argument write. See stash_value.
-REF = "{ Id: varSaved.ID, Value: varSaved.Title }"
-
 q = ctrl(o, "btnSaveEdit", "Classic/Button", c)
 lines = ["IfError("]
 for idx, L in enumerate(LISTS):
@@ -375,7 +374,7 @@ for idx, L in enumerate(LISTS):
 # would need every branch to be the same record type, and they are not.
 resume = "; ".join(
     f'If(varResumeList = "{L["key"]}" && varResumeField = "{fid(f)}", '
-    f"Set({var(L)}, Patch({var(L)}, {{ {f['n']}: " + REF + " })))"
+    f"Set({stash_var(L, f)}, varSaved); Reset({input_name(L, f)}))"
     for L in LISTS for f in L["fields"] if f.get("target") == "TB_Products")
 resume += ("; Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); "
            "Set(varResumeList, Blank())")

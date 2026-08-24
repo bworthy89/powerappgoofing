@@ -274,7 +274,7 @@ Screens:
                         "SwVer", Set(varRecSwVer, Defaults(TB_SoftwareVersions)),
                         "Ref", Set(varRecRef, Defaults(TB_References))
                     );
-                    Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                    Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
             - galAdmCust:
                 Control: Gallery
                 Variant: Vertical
@@ -304,7 +304,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecCust, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
@@ -348,7 +348,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecProd, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
@@ -392,7 +392,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecInst, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
@@ -436,7 +436,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecSolU, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
@@ -480,7 +480,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecSwVer, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
@@ -524,7 +524,7 @@ Screens:
                         OnSelect: |
                           =Set(varRecRef, ThisItem);
                           Set(varAdminNew, false);
-                          Set(varAdminReturn, scrAdmin); Navigate(scrEditForm, ScreenTransition.Cover)
+                          Set(varAdminReturn, scrAdmin); Set(varStCustomerInst, Blank()); Set(varStProductInst, Blank()); Set(varStParentInst, Blank()); Set(varStSolutionSolU, Blank()); Set(varStUnitSolU, Blank()); Set(varStCustomerSwVer, Blank()); Set(varStProductSwVer, Blank()); Set(varStProductRef, Blank()); Set(varStCustomerRef, Blank()); Navigate(scrEditForm, ScreenTransition.Cover)
                         Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small

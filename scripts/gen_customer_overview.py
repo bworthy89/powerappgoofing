@@ -42,10 +42,10 @@ ACTIONS = [
      P.admin_open("Cust", "LookUp(TB_Customers, ID = varCustomer.ID)", False,
                   back="scrCustomerOverview"), 84),
     ("btnAddMachOvw", "+  Add a machine",
-     P.admin_open("Inst",
-                  "Patch(Defaults(TB_Installations), { Customer: "
-                  + P.seed("varCustomer.ID", "varCustomer.Title") + " })",
-                  True, back="scrCustomerOverview"), 158),
+     P.admin_open("Inst", "Defaults(TB_Installations)", True,
+                  back="scrCustomerOverview",
+                  extra=P.stash([("varStCustomerInst",
+                                  "LookUp(TB_Customers, ID = varCustomer.ID)")])), 158),
 ]
 
 CARD_H = 88

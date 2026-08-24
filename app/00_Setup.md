@@ -1380,39 +1380,56 @@ usually right. Override one only where the column's default is wrong *for a new 
 specifically* — `TB_SolutionUnits.Standard` is the single case here, and it says so at the
 field definition rather than in the form.
 
-## `Patch` has two forms, and a SharePoint lookup needs a different shape in each
+## A SharePoint lookup record cannot be built by hand for `Patch(record, changes)`
 
 ```powerfx
 Patch( Source, Base, Changes )   -- writes. Coerces Changes against the list schema.
 Patch( Record, Changes )         -- merges two records. No schema, no coercion.
 ```
 
-The three-argument write **requires** the odata field on a lookup, as recorded above:
+The three-argument write **requires** the odata field on a lookup:
 
 ```powerfx
 Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference",
             Id: varCustomer.ID, Value: varCustomer.Title }
 ```
 
-The two-argument merge **rejects** it. There is no data source to coerce against, so the
-record types are compared structurally and the extra field makes them differ:
+The two-argument merge accepts **neither** that shape nor the plain `{ Id, Value }`. Both
+fail identically:
 
 ```
 The type of this argument 'Customer' does not match the expected type 'Record'.
 Found type 'Record'.
 ```
 
-That message names neither the field that is wrong nor the reason, and "Record does not match
-Record" reads like a compiler fault rather than a shape mismatch. The rule is simply:
+With the odata field the literal has one field too many; without it, one too few. The message
+names neither the offending field nor the direction, and "Record does not match Record" reads
+like a compiler fault rather than a shape mismatch. **The first fix — dropping the odata
+field — looked obviously right and was still wrong**, which is what makes this worth a rule:
+the error is identical either way, so the second attempt gives no more information than the
+first.
 
-| what you are doing | lookup shape |
-|---|---|
-| writing a row | `{ '@odata.type': …, Id, Value }` |
-| seeding or merging a local record | `{ Id, Value }` |
+Do not construct one. A row read from the table already has the type, because it came from
+the table:
 
-It surfaced when the in-context admin work started seeding a record variable with the
-customer whose screen you were on. The same literal that had been correct in the wizard for
-months was wrong three lines later, because the `Patch` around it had one fewer argument.
+```powerfx
+Set(varStCustomerInst, LookUp(TB_Customers, ID = varCustomer.ID))   -- fine
+```
 
-`verify_yaml.odata_in_record_merge` walks the record literal with balanced braces and reports
-the odata field inside a two-argument `Patch`.
+`scrEditForm` keeps one such variable per lookup field and each dropdown prefers it over the
+record:
+
+```powerfx
+Default: =If(!IsBlank(varStCustomerInst), varStCustomerInst,
+             LookUp(TB_Customers, ID = varRecInst.Customer.Id))
+```
+
+They are cleared in `admin_open` and in scrAdmin's own entries — **not** in `OnVisible`, which
+runs *after* the `OnSelect` that navigated and would wipe the value it was meant to carry.
+
+`screen_parts.STASH_VARS` lists them and `gen_form` asserts the list still matches its lookup
+fields, so a field added in one place and not the other fails the build rather than pre-filling
+with whatever the previous visit left behind.
+
+`verify_yaml.odata_in_record_merge` still reports the odata field inside a two-argument
+`Patch`, which catches the first of the two wrong shapes.

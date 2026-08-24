@@ -373,7 +373,7 @@ def effective_version(inst, customer_id, product_id):
 # to while adding the most clutter to the busiest screens.
 
 
-def admin_open(key, record_expr, is_new, back="scrAdmin"):
+def admin_open(key, record_expr, is_new, back="scrAdmin", extra=None):
     """The single way any screen opens the edit form.
 
     scrEditForm reads four variables: which list it is editing, the record, whether this
@@ -384,35 +384,48 @@ def admin_open(key, record_expr, is_new, back="scrAdmin"):
     form's defaults read that record variable directly, so anything patched into it arrives
     already filled in, and the admin never answers a question the screen already knew.
     """
-    return (f"Set(varRec{key}, {record_expr}); "
+    return (clear_stash() + "; "
+            + (extra + "; " if extra else "")
+            + f"Set(varRec{key}, {record_expr}); "
             f'Set(varAdminList, "{key}"); '
             f"Set(varAdminNew, {'true' if is_new else 'false'}); "
             f"Set(varAdminReturn, {back}); "
             "Navigate(scrEditForm, ScreenTransition.Cover)")
 
 
-SP_REF = '#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference'
+# One per lookup field on scrEditForm, each holding a real row from that field's
+# target table. gen_form asserts this list still matches the fields it generates, so
+# the two cannot drift apart silently.
+STASH_VARS = [
+    "varStCustomerInst",
+    "varStProductInst",
+    "varStParentInst",
+    "varStSolutionSolU",
+    "varStUnitSolU",
+    "varStCustomerSwVer",
+    "varStProductSwVer",
+    "varStProductRef",
+    "varStCustomerRef",
+]
 
 
-def seed(id_expr, title_expr):
-    """A lookup reference built from a row already in hand.
+def clear_stash():
+    """Blank every stash variable.
 
-    NOT LookUp(Choices(...), Id = ...). Choices() is a snapshot taken when the app loaded,
-    so a customer added minutes ago is not in it and the lookup returns blank - and Customer
-    is required on TB_Installations, so the Patch is rejected outright. 00_Setup.md records
-    the wizard shipping precisely that bug twice.
-
-    Building the reference literally is the documented alternative, and it cannot go stale
-    because it never consults a cache.
-
-    No '@odata.type' here, unlike the write in gen_form. This value is merged into a local
-    record by the two-argument Patch(record, changes), which is a strict structural merge
-    with no data source to coerce against - an extra field makes the types differ and Power
-    Fx rejects it with "does not match the expected type 'Record'. Found type 'Record'".
-    The three-argument Patch(source, base, changes) that actually writes does coerce, and
-    there the odata field is required.
+    Called from admin_open and from scrAdmin's entries - deliberately not from OnVisible,
+    which runs after the OnSelect that navigated and would wipe the seed it just set.
     """
-    return f"{{ Id: {id_expr}, Value: {title_expr} }}"
+    return "; ".join(f"Set({n}, Blank())" for n in STASH_VARS)
+
+
+def stash(pairs):
+    """Set named stash variables to rows already in hand.
+
+    A row from the table has the lookup's type because it came from the table. Building the
+    record by hand does not work in either direction: with '@odata.type' it has a field too
+    many for a structural merge, without it a field too few.
+    """
+    return "; ".join(f"Set({k}, {v})" for k, v in pairs)
 
 
 def admin_button(name, label, on_select, x, y, width, height=40, ind=12,

@@ -487,7 +487,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Customers, ID = varRecInst.Customer.Id)
+                  Default: =If(!IsBlank(varStCustomerInst), varStCustomerInst, LookUp(TB_Customers, ID = varRecInst.Customer.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -522,7 +522,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Products, Active = true || ID = varRecInst.Product.Id), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Products, ID = varRecInst.Product.Id)
+                  Default: =If(!IsBlank(varStProductInst), varStProductInst, LookUp(TB_Products, ID = varRecInst.Product.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -553,8 +553,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: |
-                    =Set(varRecInst, Patch(varRecInst, { Title: txtTitleInst.Text, Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), { Id: ddCustomerInst.Selected.ID, Value: ddCustomerInst.Selected.Title }), Product: If(IsBlank(ddProductInst.Selected), Blank(), { Id: ddProductInst.Selected.ID, Value: ddProductInst.Selected.Title }), 'Parent': If(IsBlank(ddParentInst.Selected), Blank(), { Id: ddParentInst.Selected.ID, Value: ddParentInst.Selected.Title }), 'Installed Version': txtInstVersionInst.Text, Status: { Value: ddStatusInst.Selected.Value }, 'Config Notes': txtConfigNotesInst.Text, 'Last Verified': dtpLastVerifiedInst.SelectedDate })); Set(varResumeList, "Inst"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                  OnSelect: =Set(varResumeList, "Inst"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapParentInst:
                 Control: ModernText
                 Properties:
@@ -579,7 +578,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Installations, Customer.Id = ddCustomerInst.Selected.ID, IsBlank('Parent'), ID <> varRecInst.ID), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Installations, ID = varRecInst.'Parent'.Id)
+                  Default: =If(!IsBlank(varStParentInst), varStParentInst, LookUp(TB_Installations, ID = varRecInst.'Parent'.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -797,7 +796,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Solution.Id), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Products, ID = varRecSolU.Solution.Id)
+                  Default: =If(!IsBlank(varStSolutionSolU), varStSolutionSolU, LookUp(TB_Products, ID = varRecSolU.Solution.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -828,8 +827,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: |
-                    =Set(varRecSolU, Patch(varRecSolU, { Title: txtTitleSolU.Text, Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), { Id: ddSolutionSolU.Selected.ID, Value: ddSolutionSolU.Selected.Title }), Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }), Standard: tglStandardSolU.Checked })); Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Solution"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                  OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Solution"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapUnitSolU:
                 Control: ModernText
                 Properties:
@@ -854,7 +852,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Products, Active = true || ID = varRecSolU.Unit.Id), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Products, ID = varRecSolU.Unit.Id)
+                  Default: =If(!IsBlank(varStUnitSolU), varStUnitSolU, LookUp(TB_Products, ID = varRecSolU.Unit.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -885,8 +883,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: |
-                    =Set(varRecSolU, Patch(varRecSolU, { Title: txtTitleSolU.Text, Solution: If(IsBlank(ddSolutionSolU.Selected), Blank(), { Id: ddSolutionSolU.Selected.ID, Value: ddSolutionSolU.Selected.Title }), Unit: If(IsBlank(ddUnitSolU.Selected), Blank(), { Id: ddUnitSolU.Selected.ID, Value: ddUnitSolU.Selected.Title }), Standard: tglStandardSolU.Checked })); Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Unit"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                  OnSelect: =Set(varResumeList, "SolU"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Unit"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapStandardSolU:
                 Control: ModernText
                 Properties:
@@ -978,7 +975,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Customers, ID = varRecSwVer.Customer.Id)
+                  Default: =If(!IsBlank(varStCustomerSwVer), varStCustomerSwVer, LookUp(TB_Customers, ID = varRecSwVer.Customer.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1013,7 +1010,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Products, Active = true || ID = varRecSwVer.Product.Id), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Products, ID = varRecSwVer.Product.Id)
+                  Default: =If(!IsBlank(varStProductSwVer), varStProductSwVer, LookUp(TB_Products, ID = varRecSwVer.Product.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1044,8 +1041,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: |
-                    =Set(varRecSwVer, Patch(varRecSwVer, { Title: txtTitleSwVer.Text, Customer: If(IsBlank(ddCustomerSwVer.Selected), Blank(), { Id: ddCustomerSwVer.Selected.ID, Value: ddCustomerSwVer.Selected.Title }), Product: If(IsBlank(ddProductSwVer.Selected), Blank(), { Id: ddProductSwVer.Selected.ID, Value: ddProductSwVer.Selected.Title }), 'Software Version': txtSwVersionSwVer.Text, 'Last Verified': dtpLastVerifiedSwVer.SelectedDate })); Set(varResumeList, "SwVer"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                  OnSelect: =Set(varResumeList, "SwVer"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapSwVersionSwVer:
                 Control: ModernText
                 Properties:
@@ -1180,7 +1176,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(Filter(TB_Products, Active = true || ID = varRecRef.Product.Id), Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Products, ID = varRecRef.Product.Id)
+                  Default: =If(!IsBlank(varStProductRef), varStProductRef, LookUp(TB_Products, ID = varRecRef.Product.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1211,8 +1207,7 @@ Screens:
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
                   RadiusBottomRight: =6
-                  OnSelect: |
-                    =Set(varRecRef, Patch(varRecRef, { Title: txtTitleRef.Text, Product: If(IsBlank(ddProductRef.Selected), Blank(), { Id: ddProductRef.Selected.ID, Value: ddProductRef.Selected.Title }), Customer: If(IsBlank(ddCustomerRef.Selected), Blank(), { Id: ddCustomerRef.Selected.ID, Value: ddCustomerRef.Selected.Title }), Section: { Value: ddSectionRef.Selected.Value }, 'Reference Type': { Value: ddRefTypeRef.Selected.Value }, URL: txtURLRef.Text, Version: txtVersionRef.Text, Featured: tglFeaturedRef.Checked, 'Last Checked': dtpLastCheckedRef.SelectedDate })); Set(varResumeList, "Ref"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
+                  OnSelect: =Set(varResumeList, "Ref"); Set(varResumeNew, varAdminNew); Set(varResumeField, "Product"); Set(varRecProd, Defaults(TB_Products)); Set(varAdminList, "Prod"); Set(varAdminNew, true)
             - lblCapCustomerRef:
                 Control: ModernText
                 Properties:
@@ -1237,7 +1232,7 @@ Screens:
                   Fill: =ColorValue("#F2F4F8")
                   Items: |
                     =Sort(TB_Customers, Title, SortOrder.Ascending)
-                  Default: =LookUp(TB_Customers, ID = varRecRef.Customer.Id)
+                  Default: =If(!IsBlank(varStCustomerRef), varStCustomerRef, LookUp(TB_Customers, ID = varRecRef.Customer.Id))
                   ItemDisplayText: =ThisItem.Title
                   BorderColor: =AppDark.Line
                   BorderThickness: =1
@@ -1546,7 +1541,7 @@ Screens:
                         If(varAdminList = "Inst" && varAdminNew && IsBlank(varSaved.'Parent'),     ForAll(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSaved.Customer.Value & " - " & SU.Unit.Value,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.Customer.Id, Value: varSaved.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.Unit.Id, Value: SU.Unit.Value },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSaved.ID, Value: varSaved.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true)) > 0,         Notify("Added " & varSaved.Title & " with " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varSaved.Product.Id, Standard = true))                & " standard unit(s).", NotificationType.Success)) );
                         Set(varEditError, "");
                         If(!IsBlank(varResumeList),
-                            If(varResumeList = "Inst" && varResumeField = "Product", Set(varRecInst, Patch(varRecInst, { Product: { Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varRecSolU, Patch(varRecSolU, { Solution: { Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varRecSolU, Patch(varRecSolU, { Unit: { Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varRecSwVer, Patch(varRecSwVer, { Product: { Id: varSaved.ID, Value: varSaved.Title } }))); If(varResumeList = "Ref" && varResumeField = "Product", Set(varRecRef, Patch(varRecRef, { Product: { Id: varSaved.ID, Value: varSaved.Title } }))); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
+                            If(varResumeList = "Inst" && varResumeField = "Product", Set(varStProductInst, varSaved); Reset(ddProductInst)); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varStSolutionSolU, varSaved); Reset(ddSolutionSolU)); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varStUnitSolU, varSaved); Reset(ddUnitSolU)); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varStProductSwVer, varSaved); Reset(ddProductSwVer)); If(varResumeList = "Ref" && varResumeField = "Product", Set(varStProductRef, varSaved); Reset(ddProductRef)); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
                             Navigate(varAdminReturn, ScreenTransition.UnCoverRight)
                         ),
                         Set(varEditError, FirstError.Message)
