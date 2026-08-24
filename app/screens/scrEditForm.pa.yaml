@@ -8,6 +8,17 @@ Screens:
       Fill: =AppDark.Bg
       OnVisible: |
         =Set(varConfirmDelete, false); Set(varResumeList, Blank())
+      OnHidden: |
+        =Refresh(TB_Customers);
+        Refresh(TB_Products);
+        Refresh(TB_Installations);
+        Refresh(TB_SolutionUnits);
+        Refresh(TB_SoftwareVersions);
+        Refresh(TB_References);
+        If(varCustomer.ID > 0,
+            Set(varCustomer, LookUp(TB_Customers, ID = varCustomer.ID)));
+        If(varInstallation.ID > 0,
+            Set(varInstallation, LookUp(TB_Installations, ID = varInstallation.ID)))
     Children:
       - conRootEdit:
           Control: GroupContainer

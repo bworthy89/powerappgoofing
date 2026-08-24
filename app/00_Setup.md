@@ -1614,3 +1614,38 @@ vertically, so on a narrow screen an admin's title drifted down into the middle 
 buttons. The allowance now lives in `screen_parts.title_gap()`, added by whatever comes
 next. **Reserve space in the thing that follows, never by making the thing before it
 taller.**
+
+## Two kinds of stale, and neither fixes itself
+
+*"The data source is loaded from the service automatically when the app is loaded"* and
+*"your app doesn't automatically detect changes while it's running."* Editing something and
+then not seeing it had two separate causes, and only one of them is the data source.
+
+**The cache.** `Patch` keeps the local copy in step **for the row it just wrote**, which is
+why a machine you add appears in a gallery immediately. Nothing else arrives — another
+admin's work, or a row this session has not touched. `Refresh(<source>)` is what fetches it.
+
+**The record variables.** `varCustomer` and `varInstallation` hold a **copy**, taken when the
+row was tapped. Editing a machine from its own screen wrote the change, returned to
+`scrSolution`, and showed the copy — so the version you had just corrected was not the
+version on the screen. No amount of `Refresh` helps: the screen is not reading the data
+source, it is reading a variable. This is the one that looked like it needed a restart.
+
+Both live in **`scrEditForm.OnHidden`**, and `scrOnboard` has the same shape:
+
+```powerfx
+Refresh(TB_Customers); Refresh(TB_Products); Refresh(TB_Installations);
+Refresh(TB_SolutionUnits); Refresh(TB_SoftwareVersions); Refresh(TB_References);
+If(varCustomer.ID > 0, Set(varCustomer, LookUp(TB_Customers, ID = varCustomer.ID)));
+If(varInstallation.ID > 0,
+   Set(varInstallation, LookUp(TB_Installations, ID = varInstallation.ID)))
+```
+
+`OnHidden` rather than the Save button, for three reasons. It runs however you left —
+including **cancelling after the "+ New" detour created a model**, which no save would have
+covered. It runs before the destination's `OnVisible`. And it is one property instead of six
+edits threaded through the longest formula in the app, which matters when a fix has to be
+applied by hand in Studio.
+
+The guard is not optional: `App.OnStart` seeds both variables from `Defaults()`, whose `ID`
+is blank, and looking that up would empty the variable it was meant to refresh.

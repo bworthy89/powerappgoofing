@@ -7,6 +7,9 @@ Screens:
       OnVisible: |
         =Set(varWizCust, Blank());
         Set(varWizError, "")
+      OnHidden: |
+        =Refresh(TB_Customers);
+        Refresh(TB_Installations)
     Children:
       - conRootWiz:
           Control: GroupContainer

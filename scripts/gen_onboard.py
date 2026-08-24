@@ -71,6 +71,11 @@ o.write('Screens:\n  scrOnboard:\n    Properties:\n      Fill: =AppDark.Bg\n'
         '      OnVisible: |\n'
         '        =Set(varWizCust, Blank());\n'
         '        Set(varWizError, "")\n'
+        # Same as scrEditForm: the customer and any machines added here should be current
+        # on whatever screen comes next.
+        '      OnHidden: |\n'
+        '        =Refresh(TB_Customers);\n'
+        '        Refresh(TB_Installations)\n'
         '    Children:\n')
 ind = "      "
 p = ctrl(o, "conRootWiz", "GroupContainer", ind, "ManualLayout")
