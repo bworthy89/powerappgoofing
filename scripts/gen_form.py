@@ -48,6 +48,24 @@ SEEDED = {
 }
 
 
+def show_expr(L, f):
+    """When this field is asked at all, or None when it always is.
+
+    A field the screen already answered is not worth a question. The conditions read the
+    stash variables rather than the record, because those are what the seeding sets and
+    they are blank whenever the form was opened without context.
+    """
+    if L["key"] == "Inst":
+        if fid(f) == "Customer":
+            return "IsBlank(varStCustomerInst)"
+        if fid(f) == "Parent":
+            return "IsBlank(varStParentInst)"
+        if f["n"] == "Title":
+            # Generated from the two lookups on a new record - see patch_value.
+            return "!varAdminNew"
+    return None
+
+
 def has_stash(L, f):
     """True when a lookup has somewhere to be pre-filled FROM.
 
@@ -66,6 +84,12 @@ def input_name(L, f): return {"text":"txt","note":"txt","url":"txt","choice":"dd
 # value written by Patch for one field
 def patch_value(L, f):
     n, k = input_name(L, f), f["kind"]
+    if L["key"] == "Inst" and f["n"] == "Title":
+        # The row label only ever restated what Customer and Product already say, so on a
+        # new record it is generated and the field is not asked for. An existing row keeps
+        # whatever it was given.
+        return ('If(varAdminNew, ddCustomerInst.Selected.Title & " - " & '
+                f'ddProductInst.Selected.Title, {n}.Text)')
     if k in ("text", "note", "url"): return f"{n}.Text"
     if k == "bool":                  return f"{n}.Checked"
     # SelectedDate is the date picker's output; blank when nothing is chosen,
@@ -238,17 +262,24 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight
 
 # ---- fields, grouped per list, only the selected list visible
 for L in LISTS:
-    y = 120
-    vis = f'varAdminList = "{L["key"]}"'
+    # Y is a running total of the blocks above, so a hidden field closes its own gap
+    # instead of leaving a hole. prior holds (shown-when, block height) for each field
+    # already emitted; a field that is always shown contributes its height unconditionally.
+    prior = []
+    base_vis = f'varAdminList = "{L["key"]}"'
     for f in L["fields"]:
         nm, k = input_name(L, f), f["kind"]
+        show = show_expr(L, f)
+        vis = base_vis if show is None else f"({base_vis}) && ({show})"
+        y = "120" + "".join(
+            f" + If({sh}, {ht}, 0)" if sh else f" + {ht}" for sh, ht in prior)
         cap = ctrl(o, "lblCap" + fid(f) + L["key"], "Label", c)
         for kk, vv in [("Text",f'"{f["caption"]}"'),("Color","AppDark.Muted"),
                        ("Font","AppFont"),("Size","AppType.Small"),
                        ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
                        ("AutoHeight","false"),("Height","18"),
                        ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-                       ("Y",str(y)),("Visible",vis)]: prop(o, kk, vv, cap)
+                       ("Y",y),("Visible",vis)]: prop(o, kk, vv, cap)
         # The date picker is taller than a text input; setting h here means the shared
         # advance at the bottom of the loop handles it, rather than the branch keeping
         # its own copy of the same arithmetic.
@@ -296,7 +327,7 @@ for L in LISTS:
                            # No Radius: 00_Setup.md's confirmed radius list does not include
                            # this control, and Rectangle rejects those same properties with
                            # PA2108. Square corners are cheaper than a failed paste.
-                           ("X","Gutter"),("Y",str(y+18)),("Visible",vis)]:
+                           ("X","Gutter"),("Y",y + " + 18"),("Visible",vis)]:
                 prop(o, kk, vv, i)
         elif k in ("text","note","url"):
             i = ctrl(o, nm, "Classic/TextInput", c)
@@ -307,7 +338,7 @@ for L in LISTS:
                            ("Fill","AppDark.Surface"),("Font","AppFont"),
                            ("Size","AppType.Body"),("Height",str(h)),
                            ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-                           ("Y",str(y+18)),("Visible",vis),
+                           ("Y",y + " + 18"),("Visible",vis),
                            ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                            ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]: prop(o, kk, vv, i)
         elif k == "bool":
@@ -319,7 +350,7 @@ for L in LISTS:
             # control's own label is emptied rather than duplicated.
             for kk, vv in [("Label",'""'),("Default",default_expr(L,f)),("Font","AppFont"),
                            ("Size","AppType.Body"),("Height","36"),("Width","110"),
-                           ("X","Gutter"),("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
+                           ("X","Gutter"),("Y",y + " + 18"),("Visible",vis)]: prop(o, kk, vv, i)
             h = 36
         elif k == "choice":
             i = ctrl(o, nm, "ModernDropdown", c)
@@ -330,7 +361,7 @@ for L in LISTS:
                            ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),
                            ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
-                           ("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
+                           ("Y",y + " + 18"),("Visible",vis)]: prop(o, kk, vv, i)
         else:
             # Lookups use a Drop down with an explicit Value column.
             #
@@ -362,7 +393,7 @@ for L in LISTS:
                            ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),
                            ("Width",dw),("X","Gutter"),
-                           ("Y",str(y+18)),("Visible",vis)]: prop(o, kk, vv, i)
+                           ("Y",y + " + 18"),("Visible",vis)]: prop(o, kk, vv, i)
             if model:
                 # Write what is on screen back into the record variable before detouring.
                 # The form's defaults read that variable, so returning repopulates the
@@ -383,12 +414,12 @@ for L in LISTS:
                                ("Color","AppDark.Accent"),("BorderColor","AppDark.Line"),
                                ("BorderThickness","1"),("Height","40"),("Width","88"),
                                ("X","Gutter + ContentWidth - (Gutter * 2) - 88"),
-                               ("Y",str(y+18)),
+                               ("Y",y + " + 18"),
                                ("Visible",f"{vis} && varIsAdmin"),
                                ("RadiusTopLeft","6"),("RadiusTopRight","6"),
                                ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                                ("OnSelect",go)]: prop(o, kk, vv, b)
-        y += 18 + h + 14
+        prior.append((show, 18 + h + 14))
 
 # ---- save
 q = ctrl(o, "btnSaveEdit", "Classic/Button", c)

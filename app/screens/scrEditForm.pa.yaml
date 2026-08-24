@@ -101,7 +101,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
+                  Y: =120 + 18
                   Visible: =varAdminList = "Cust"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -122,7 +122,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
+                  Y: =120 + 72
                   Visible: =varAdminList = "Cust"
             - txtDescriptionCust:
                 Control: ModernTextInput
@@ -139,7 +139,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "Cust"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -160,7 +160,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =288
+                  Y: =120 + 72 + 96
                   Visible: =varAdminList = "Cust"
             - txtSupportNotesCust:
                 Control: ModernTextInput
@@ -177,7 +177,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =306
+                  Y: =120 + 72 + 96 + 18
                   Visible: =varAdminList = "Cust"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -198,7 +198,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =384
+                  Y: =120 + 72 + 96 + 96
                   Visible: =varAdminList = "Cust"
             - tglActiveCust:
                 Control: ModernToggle
@@ -211,7 +211,7 @@ Screens:
                   Height: =36
                   Width: =110
                   X: =Gutter
-                  Y: =402
+                  Y: =120 + 72 + 96 + 96 + 18
                   Visible: =varAdminList = "Cust"
             - lblCapTitleProd:
                 Control: ModernText
@@ -245,7 +245,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
+                  Y: =120 + 18
                   Visible: =varAdminList = "Prod"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -266,7 +266,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
+                  Y: =120 + 72
                   Visible: =varAdminList = "Prod"
             - ddProductTypeProd:
                 Control: ModernDropdown
@@ -284,7 +284,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "Prod"
             - lblCapFamilyProd:
                 Control: ModernText
@@ -301,7 +301,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =264
+                  Y: =120 + 72 + 72
                   Visible: =varAdminList = "Prod"
             - ddFamilyProd:
                 Control: ModernDropdown
@@ -319,7 +319,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "Prod"
             - lblCapStdVersionProd:
                 Control: ModernText
@@ -336,7 +336,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =336
+                  Y: =120 + 72 + 72 + 72
                   Visible: =varAdminList = "Prod"
             - txtStdVersionProd:
                 Control: ModernTextInput
@@ -353,7 +353,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =354
+                  Y: =120 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Prod"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -374,7 +374,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =408
+                  Y: =120 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "Prod"
             - txtDescriptionProd:
                 Control: ModernTextInput
@@ -391,7 +391,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =426
+                  Y: =120 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Prod"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -412,7 +412,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =504
+                  Y: =120 + 72 + 72 + 72 + 72 + 96
                   Visible: =varAdminList = "Prod"
             - tglActiveProd:
                 Control: ModernToggle
@@ -425,7 +425,7 @@ Screens:
                   Height: =36
                   Width: =110
                   X: =Gutter
-                  Y: =522
+                  Y: =120 + 72 + 72 + 72 + 72 + 96 + 18
                   Visible: =varAdminList = "Prod"
             - lblCapTitleInst:
                 Control: ModernText
@@ -443,7 +443,7 @@ Screens:
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =120
-                  Visible: =varAdminList = "Inst"
+                  Visible: =(varAdminList = "Inst") && (!varAdminNew)
             - txtTitleInst:
                 Control: ModernTextInput
                 Properties:
@@ -459,8 +459,8 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
-                  Visible: =varAdminList = "Inst"
+                  Y: =120 + 18
+                  Visible: =(varAdminList = "Inst") && (!varAdminNew)
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
                   RadiusBottomLeft: =6
@@ -480,8 +480,8 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
-                  Visible: =varAdminList = "Inst"
+                  Y: =120 + If(!varAdminNew, 72, 0)
+                  Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
             - ddCustomerInst:
                 Control: ModernDropdown
                 Properties:
@@ -498,8 +498,8 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =210
-                  Visible: =varAdminList = "Inst"
+                  Y: =120 + If(!varAdminNew, 72, 0) + 18
+                  Visible: =(varAdminList = "Inst") && (IsBlank(varStCustomerInst))
             - lblCapProductInst:
                 Control: ModernText
                 Properties:
@@ -515,7 +515,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =264
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0)
                   Visible: =varAdminList = "Inst"
             - ddProductInst:
                 Control: ModernDropdown
@@ -533,7 +533,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
-                  Y: =282
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
                   Visible: =varAdminList = "Inst"
             - btnNewProductInst:
                 Control: ModernButton
@@ -549,7 +549,7 @@ Screens:
                   Height: =40
                   Width: =88
                   X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =282
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
                   Visible: =varAdminList = "Inst" && varIsAdmin
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -571,8 +571,8 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =336
-                  Visible: =varAdminList = "Inst"
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72
+                  Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
             - ddParentInst:
                 Control: ModernDropdown
                 Properties:
@@ -589,8 +589,8 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =354
-                  Visible: =varAdminList = "Inst"
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + 18
+                  Visible: =(varAdminList = "Inst") && (IsBlank(varStParentInst))
             - lblCapInstVersionInst:
                 Control: ModernText
                 Properties:
@@ -606,7 +606,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =408
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0)
                   Visible: =varAdminList = "Inst"
             - txtInstVersionInst:
                 Control: ModernTextInput
@@ -623,7 +623,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =426
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 18
                   Visible: =varAdminList = "Inst"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -644,7 +644,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =480
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72
                   Visible: =varAdminList = "Inst"
             - ddStatusInst:
                 Control: ModernDropdown
@@ -662,7 +662,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =498
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 18
                   Visible: =varAdminList = "Inst"
             - lblCapConfigNotesInst:
                 Control: ModernText
@@ -679,7 +679,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =552
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72
                   Visible: =varAdminList = "Inst"
             - txtConfigNotesInst:
                 Control: ModernTextInput
@@ -696,7 +696,7 @@ Screens:
                   Height: =64
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =570
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 18
                   Visible: =varAdminList = "Inst"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -717,7 +717,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =648
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96
                   Visible: =varAdminList = "Inst"
             - dtpLastVerifiedInst:
                 Control: ModernDatePicker
@@ -734,7 +734,7 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =666
+                  Y: =120 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 18
                   Visible: =varAdminList = "Inst"
             - lblCapTitleSolU:
                 Control: ModernText
@@ -768,7 +768,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
+                  Y: =120 + 18
                   Visible: =varAdminList = "SolU"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -789,7 +789,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
+                  Y: =120 + 72
                   Visible: =varAdminList = "SolU"
             - ddSolutionSolU:
                 Control: ModernDropdown
@@ -807,7 +807,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "SolU"
             - btnNewSolutionSolU:
                 Control: ModernButton
@@ -823,7 +823,7 @@ Screens:
                   Height: =40
                   Width: =88
                   X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "SolU" && varIsAdmin
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -845,7 +845,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =264
+                  Y: =120 + 72 + 72
                   Visible: =varAdminList = "SolU"
             - ddUnitSolU:
                 Control: ModernDropdown
@@ -863,7 +863,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "SolU"
             - btnNewUnitSolU:
                 Control: ModernButton
@@ -879,7 +879,7 @@ Screens:
                   Height: =40
                   Width: =88
                   X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "SolU" && varIsAdmin
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -901,7 +901,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =336
+                  Y: =120 + 72 + 72 + 72
                   Visible: =varAdminList = "SolU"
             - tglStandardSolU:
                 Control: ModernToggle
@@ -914,7 +914,7 @@ Screens:
                   Height: =36
                   Width: =110
                   X: =Gutter
-                  Y: =354
+                  Y: =120 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "SolU"
             - lblCapTitleSwVer:
                 Control: ModernText
@@ -948,7 +948,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
+                  Y: =120 + 18
                   Visible: =varAdminList = "SwVer"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -969,7 +969,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
+                  Y: =120 + 72
                   Visible: =varAdminList = "SwVer"
             - ddCustomerSwVer:
                 Control: ModernDropdown
@@ -987,7 +987,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "SwVer"
             - lblCapProductSwVer:
                 Control: ModernText
@@ -1004,7 +1004,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =264
+                  Y: =120 + 72 + 72
                   Visible: =varAdminList = "SwVer"
             - ddProductSwVer:
                 Control: ModernDropdown
@@ -1022,7 +1022,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "SwVer"
             - btnNewProductSwVer:
                 Control: ModernButton
@@ -1038,7 +1038,7 @@ Screens:
                   Height: =40
                   Width: =88
                   X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "SwVer" && varIsAdmin
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1060,7 +1060,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =336
+                  Y: =120 + 72 + 72 + 72
                   Visible: =varAdminList = "SwVer"
             - txtSwVersionSwVer:
                 Control: ModernTextInput
@@ -1077,7 +1077,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =354
+                  Y: =120 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "SwVer"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1098,7 +1098,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =408
+                  Y: =120 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "SwVer"
             - dtpLastVerifiedSwVer:
                 Control: ModernDatePicker
@@ -1115,7 +1115,7 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =426
+                  Y: =120 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "SwVer"
             - lblCapTitleRef:
                 Control: ModernText
@@ -1149,7 +1149,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =138
+                  Y: =120 + 18
                   Visible: =varAdminList = "Ref"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1170,7 +1170,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =192
+                  Y: =120 + 72
                   Visible: =varAdminList = "Ref"
             - ddProductRef:
                 Control: ModernDropdown
@@ -1188,7 +1188,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2) - If(varIsAdmin, 96, 0)
                   X: =Gutter
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "Ref"
             - btnNewProductRef:
                 Control: ModernButton
@@ -1204,7 +1204,7 @@ Screens:
                   Height: =40
                   Width: =88
                   X: =Gutter + ContentWidth - (Gutter * 2) - 88
-                  Y: =210
+                  Y: =120 + 72 + 18
                   Visible: =varAdminList = "Ref" && varIsAdmin
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1226,7 +1226,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =264
+                  Y: =120 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - ddCustomerRef:
                 Control: ModernDropdown
@@ -1244,7 +1244,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =282
+                  Y: =120 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
             - lblCapSectionRef:
                 Control: ModernText
@@ -1261,7 +1261,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =336
+                  Y: =120 + 72 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - ddSectionRef:
                 Control: ModernDropdown
@@ -1279,7 +1279,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =354
+                  Y: =120 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
             - lblCapRefTypeRef:
                 Control: ModernText
@@ -1296,7 +1296,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =408
+                  Y: =120 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - ddRefTypeRef:
                 Control: ModernDropdown
@@ -1314,7 +1314,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =426
+                  Y: =120 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
             - lblCapURLRef:
                 Control: ModernText
@@ -1331,7 +1331,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =480
+                  Y: =120 + 72 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - txtURLRef:
                 Control: ModernTextInput
@@ -1348,7 +1348,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =498
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1369,7 +1369,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =552
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - txtVersionRef:
                 Control: ModernTextInput
@@ -1386,7 +1386,7 @@ Screens:
                   Height: =40
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =570
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
                   RadiusTopLeft: =6
                   RadiusTopRight: =6
@@ -1407,7 +1407,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =624
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72
                   Visible: =varAdminList = "Ref"
             - tglFeaturedRef:
                 Control: ModernToggle
@@ -1420,7 +1420,7 @@ Screens:
                   Height: =36
                   Width: =110
                   X: =Gutter
-                  Y: =642
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 18
                   Visible: =varAdminList = "Ref"
             - lblCapLastCheckedRef:
                 Control: ModernText
@@ -1437,7 +1437,7 @@ Screens:
                   Height: =18
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =692
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68
                   Visible: =varAdminList = "Ref"
             - dtpLastCheckedRef:
                 Control: ModernDatePicker
@@ -1454,7 +1454,7 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =710
+                  Y: =120 + 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 18
                   Visible: =varAdminList = "Ref"
             - btnSaveEdit:
                 Control: ModernButton
@@ -1492,7 +1492,7 @@ Screens:
                             Set(varSavedInst, Patch(TB_Installations,
                                 If(varAdminNew, Defaults(TB_Installations), varRecInst),
                                 {
-                                    Title: txtTitleInst.Text,
+                                    Title: If(varAdminNew, ddCustomerInst.Selected.Title & " - " & ddProductInst.Selected.Title, txtTitleInst.Text),
                                     Customer: If(IsBlank(ddCustomerInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddCustomerInst.Selected.ID, Value: ddCustomerInst.Selected.Title }),
                                     Product: If(IsBlank(ddProductInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddProductInst.Selected.ID, Value: ddProductInst.Selected.Title }),
                                     'Parent': If(IsBlank(ddParentInst.Selected), Blank(), { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: ddParentInst.Selected.ID, Value: ddParentInst.Selected.Title }),
