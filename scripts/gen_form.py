@@ -170,10 +170,32 @@ for L in LISTS:
                        ("AutoHeight","false"),("Height","18"),
                        ("Width","ContentWidth - (Gutter * 2)"),("X","Gutter"),
                        ("Y",str(y)),("Visible",vis)]: prop(o, kk, vv, cap)
-        h = 64 if k == "note" else 40
+        # The date picker is taller than a text input; setting h here means the shared
+        # advance at the bottom of the loop handles it, rather than the branch keeping
+        # its own copy of the same arithmetic.
+        h = 64 if k == "note" else (44 if k == "date" else 40)
         if k == "date":
-            # Properties per the modern date picker docs: DefaultDate seeds it, SelectedDate
-            # reads back, and Color/Size replaced FontColor/FontSize in the updated control.
+            # Properties per learn.microsoft.com .../modern-controls/modern-control-date-picker
+            # (note the SINGULAR "modern-control-"; a near-identical "modern-controls-"
+            # page exists, is older, and does not list DefaultDate - a review flagged this
+            # property as invented on the strength of that page):
+            #
+            #   DefaultDate   "the initial date selected in the control before the user
+            #                 makes a change", listed under General and again under Recent
+            #                 updates as a new property. NOT the bare `Default` the other
+            #                 modern inputs here use.
+            #   SelectedDate  the output, read by patch_value.
+            #   Format        "accepts DatePickerFormat enum values" - the enum type name
+            #                 is stated there, so DatePickerFormat.LongAbbreviated is safe.
+            #   Placeholder   spelled that way under General, matching this app's other
+            #                 modern inputs.
+            #   Color/Size    replaced FontColor/FontSize in the updated control.
+            #
+            # Fill is NOT in that documentation. It is written anyway because ModernDropdown
+            # takes it and the two controls are documented together for every other styling
+            # property. If the compiler rejects it, deleting it costs nothing visually: the
+            # ink is dark and the theme's own surface is light, which is the whole reason
+            # this control is in the light-field family.
             i = ctrl(o, nm, "ModernDatePicker", c)
             for kk, vv in [("DefaultDate", default_expr(L,f)),
                            ("Placeholder", '"Not verified"'),
@@ -188,11 +210,15 @@ for L in LISTS:
                            ("Color","AppDark.Fg"),("Fill","AppDark.Surface"),
                            ("BorderColor","AppDark.Line"),("BorderThickness","1"),
                            ("Height","44"),("Width","ContentWidth - (Gutter * 2)"),
-                           ("X","Gutter"),("Y",str(y)),("Visible",vis),
-                           ("RadiusTopLeft","6"),("RadiusTopRight","6"),
-                           ("RadiusBottomLeft","6"),("RadiusBottomRight","6")]:
+                           # y+18 clears the caption, as every other branch does. At y the
+                           # picker's opaque surface covered its own label and the field
+                           # shipped looking unlabelled.
+                           #
+                           # No Radius: 00_Setup.md's confirmed radius list does not include
+                           # this control, and Rectangle rejects those same properties with
+                           # PA2108. Square corners are cheaper than a failed paste.
+                           ("X","Gutter"),("Y",str(y+18)),("Visible",vis)]:
                 prop(o, kk, vv, i)
-            y += 44 + 28
         elif k in ("text","note","url"):
             i = ctrl(o, nm, "Classic/TextInput", c)
             for kk, vv in [("Default",default_expr(L,f)),("Mode",

@@ -377,18 +377,21 @@ Screens:
                               AppDark.Faint,
                               AppDark.Fg
                           )
-                  # The date under the number, matching the unit rows on scrSolution.
+                  # The date, on its own row. It cannot sit beside the meta line: that
+                  # runs to 0.62 of the card and the version column starts at 0.55, so
+                  # their boxes overlapped - and on a 303px card there is no split that
+                  # fits a family, a unit count and an age across one line.
                   - lblCardAgeOvw:
                       Control: ModernText
                       Properties:
                         PaddingTop: =0
                         PaddingBottom: =0
                         OnSelect: =Select(Parent)
-                        X: =20 + ((Parent.TemplateWidth - 40) * 0.55)
-                        Y: =58
-                        Width: =(Parent.TemplateWidth - 40) * 0.45 - 12
+                        X: =20
+                        Y: =67
+                        Width: =(Parent.TemplateWidth - 40)
                         Height: =18
-                        Align: =Align.Right
+                        Align: =Align.Left
                         Font: =AppFont
                         Size: =AppType.Small
                         Wrap: =false

@@ -221,7 +221,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =20
                         Y: =14
-                        Width: =(Parent.TemplateWidth - 40) * 0.68
+                        Width: =(Parent.TemplateWidth - 40) * 0.62
                         Height: =26
                         Text: =ThisItem.Title
                         Font: =AppFont
@@ -238,7 +238,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =20
                         Y: =42
-                        Width: =(Parent.TemplateWidth - 40) * 0.68
+                        Width: =(Parent.TemplateWidth - 40) * 0.62
                         Height: =20
                         Font: =AppFont
                         Size: =AppType.Small
@@ -256,9 +256,9 @@ Screens:
                         PaddingTop: =0
                         PaddingBottom: =0
                         OnSelect: =Select(Parent)
-                        X: =20 + ((Parent.TemplateWidth - 40) * 0.68)
+                        X: =20 + ((Parent.TemplateWidth - 40) * 0.62)
                         Y: =28
-                        Width: =(Parent.TemplateWidth - 40) * 0.32 - 10
+                        Width: =(Parent.TemplateWidth - 40) * 0.38 - 10
                         Height: =22
                         Align: =Align.Right
                         Font: =AppFont

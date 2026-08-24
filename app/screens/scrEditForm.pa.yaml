@@ -710,12 +710,8 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =648
+                  Y: =666
                   Visible: =varAdminList = "Inst"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
             - lblCapTitleSolU:
                 Control: ModernText
                 Properties:
@@ -1031,12 +1027,8 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =408
+                  Y: =426
                   Visible: =varAdminList = "SwVer"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
             - lblCapTitleRef:
                 Control: ModernText
                 Properties:
@@ -1352,12 +1344,8 @@ Screens:
                   Height: =44
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
-                  Y: =692
+                  Y: =710
                   Visible: =varAdminList = "Ref"
-                  RadiusTopLeft: =6
-                  RadiusTopRight: =6
-                  RadiusBottomLeft: =6
-                  RadiusBottomRight: =6
             - btnSaveEdit:
                 Control: ModernButton
                 Properties:
