@@ -63,12 +63,28 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =36
                   Size: =AppType.Title
-                  Text: =If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "SwVer", "software version", "Ref", "reference", "record")
+                  Text: =If(varAdminList = "Inst" && varAdminNew, If(!IsBlank(varStParentInst), "Add a unit", "Add a machine"), If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, "Cust", "customer", "Prod", "product", "Inst", "installation", "SolU", "solution unit", "SwVer", "software version", "Ref", "reference", "record"))
                   Wrap: =false
                   AutoHeight: =false
                   Width: =ContentWidth - (Gutter * 2)
                   X: =Gutter
                   Y: =56 + 12
+            - lblSubtitleEdit:
+                Control: ModernText
+                Properties:
+                  Text: =If(varAdminList = "Inst" && varAdminNew, If(!IsBlank(varStParentInst), "to " & varStParentInst.Title, "at " & varStCustomerInst.Title), "")
+                  Color: =AppDark.Muted
+                  Font: =AppFont
+                  Size: =AppType.Body
+                  Wrap: =false
+                  AutoHeight: =false
+                  PaddingTop: =0
+                  PaddingBottom: =0
+                  Height: =22
+                  Width: =ContentWidth - (Gutter * 2)
+                  X: =Gutter
+                  Y: =104
+                  Visible: =varAdminList = "Inst" && varAdminNew
             - conScrollEdit:
                 Control: GroupContainer
                 Variant: AutoLayout
@@ -77,19 +93,22 @@ Screens:
                   LayoutOverflowY: =LayoutOverflow.Scroll
                   Fill: =RGBA(0, 0, 0, 0)
                   X: =0
-                  Y: =120
+                  Y: =If(varAdminList = "Inst" && varAdminNew, 132, 120)
                   Width: =ContentWidth
-                  Height: =Max(Parent.Height - 120 - Gutter - 100, 200)
+                  Height: =Max(Parent.Height - 132 - Gutter - 100, 200)
                 Children:
                   - conFieldsEdit:
                       Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
                         Fill: =RGBA(0, 0, 0, 0)
+                        FillPortions: =0
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
                         X: =0
                         Y: =0
                         Width: =ContentWidth
-                        Height: =Switch(varAdminList, "Cust", 72 + 96 + 96 + 68 + 24, "Prod", 72 + 72 + 72 + 72 + 96 + 68 + 24, "Inst", If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 76 + 24, "SolU", 72 + 72 + 72 + 68 + 24, "SwVer", 72 + 72 + 72 + 72 + 76 + 24, "Ref", 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 76 + 24, 400)
+                        Height: =Switch(varAdminList, "Cust", 72 + 96 + 96 + 68 + 24, "Prod", 72 + 72 + 72 + 72 + 96 + 68 + 24, "Inst", If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0) + 24, "SolU", 72 + 72 + 72 + 68 + 24, "SwVer", 72 + 72 + 72 + 72 + 76 + 24, "Ref", 72 + 72 + 72 + 72 + 72 + 72 + 72 + 68 + 76 + 24, 400)
                       Children:
                         - lblCapTitleCust:
                             Control: ModernText
@@ -557,6 +576,8 @@ Screens:
                               X: =Gutter
                               Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 18
                               Visible: =varAdminList = "Inst"
+                              OnChange: |
+                                =ClearCollect(colStdUnits, ForAll(Filter(TB_SolutionUnits, Solution.Id = ddProductInst.Selected.ID) As SU, { UnitId: SU.Unit.Id, UnitName: SU.Unit.Value, Std: SU.Standard, Pick: SU.Standard }))
                         - btnNewProductInst:
                             Control: ModernButton
                             Properties:
@@ -629,7 +650,7 @@ Screens:
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
                               Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0)
-                              Visible: =varAdminList = "Inst"
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew || !IsBlank(varStParentInst))
                         - txtInstVersionInst:
                             Control: ModernTextInput
                             Properties:
@@ -646,7 +667,7 @@ Screens:
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
                               Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 18
-                              Visible: =varAdminList = "Inst"
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew || !IsBlank(varStParentInst))
                               RadiusTopLeft: =6
                               RadiusTopRight: =6
                               RadiusBottomLeft: =6
@@ -666,7 +687,7 @@ Screens:
                               Height: =18
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0)
                               Visible: =varAdminList = "Inst"
                         - ddStatusInst:
                             Control: ModernDropdown
@@ -684,7 +705,7 @@ Screens:
                               Height: =40
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 18
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 18
                               Visible: =varAdminList = "Inst"
                         - lblCapConfigNotesInst:
                             Control: ModernText
@@ -701,8 +722,8 @@ Screens:
                               Height: =18
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72
-                              Visible: =varAdminList = "Inst"
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
                         - txtConfigNotesInst:
                             Control: ModernTextInput
                             Properties:
@@ -718,8 +739,8 @@ Screens:
                               Height: =64
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 18
-                              Visible: =varAdminList = "Inst"
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + 18
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
                               RadiusTopLeft: =6
                               RadiusTopRight: =6
                               RadiusBottomLeft: =6
@@ -739,8 +760,8 @@ Screens:
                               Height: =18
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96
-                              Visible: =varAdminList = "Inst"
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0)
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
                         - dtpLastVerifiedInst:
                             Control: ModernDatePicker
                             Properties:
@@ -756,8 +777,103 @@ Screens:
                               Height: =44
                               Width: =ContentWidth - (Gutter * 2)
                               X: =Gutter
-                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + 72 + 72 + 96 + 18
-                              Visible: =varAdminList = "Inst"
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + 18
+                              Visible: =(varAdminList = "Inst") && (!varAdminNew)
+                        - lblCapComesWith:
+                            Control: ModernText
+                            Properties:
+                              Text: ="COMES WITH"
+                              Color: =AppDark.Muted
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              FontWeight: =FontWeight.Bold
+                              Wrap: =false
+                              AutoHeight: =false
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2)
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0)
+                              Visible: =(varAdminList = "Inst") && (varAdminNew && IsBlank(varStParentInst) && CountRows(colStdUnits) > 0)
+                        - lblHintComesWith:
+                            Control: ModernText
+                            Properties:
+                              Text: ="from the model's standard build"
+                              Color: =AppDark.Faint
+                              Font: =AppFont
+                              Size: =AppType.Small
+                              Wrap: =false
+                              AutoHeight: =false
+                              PaddingTop: =0
+                              PaddingBottom: =0
+                              Height: =18
+                              Width: =ContentWidth - (Gutter * 2) - 110
+                              X: =Gutter + 110
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0)
+                              Visible: =(varAdminList = "Inst") && (varAdminNew && IsBlank(varStParentInst) && CountRows(colStdUnits) > 0)
+                        - galStdUnits:
+                            Control: Gallery
+                            Variant: Vertical
+                            Properties:
+                              Items: |
+                                =colStdUnits
+                              TemplateSize: =40
+                              TemplatePadding: =0
+                              ShowScrollbar: =true
+                              Fill: =AppDark.Surface
+                              X: =Gutter
+                              Y: =0 + If(!varAdminNew, 72, 0) + If(IsBlank(varStCustomerInst), 72, 0) + 72 + If(IsBlank(varStParentInst), 72, 0) + If(!varAdminNew || !IsBlank(varStParentInst), 72, 0) + 72 + If(!varAdminNew, 96, 0) + If(!varAdminNew, 76, 0) + 22
+                              Width: =ContentWidth - (Gutter * 2)
+                              Height: =Min(CountRows(colStdUnits) * 40 + 8, 180)
+                              Visible: =(varAdminList = "Inst") && (varAdminNew && IsBlank(varStParentInst) && CountRows(colStdUnits) > 0)
+                            Children:
+                              - chkStdUnit:
+                                  Control: ModernCheckbox
+                                  Properties:
+                                    Checked: =ThisItem.Pick
+                                    Label: =""
+                                    OnCheck: |
+                                      =Patch(colStdUnits, ThisItem, { Pick: true })
+                                    OnUncheck: |
+                                      =Patch(colStdUnits, ThisItem, { Pick: false })
+                                    X: =12
+                                    Y: =8
+                                    Width: =28
+                                    Height: =24
+                              - lblStdUnitName:
+                                  Control: ModernText
+                                  Properties:
+                                    Color: =AppDark.Fg
+                                    Text: =ThisItem.UnitName
+                                    Font: =AppFont
+                                    Size: =AppType.Body
+                                    FontWeight: =FontWeight.Semibold
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    OnSelect: =Select(Parent)
+                                    X: =46
+                                    Y: =10
+                                    Width: =120
+                                    Height: =22
+                              - lblStdUnitType:
+                                  Control: ModernText
+                                  Properties:
+                                    Text: =LookUp(TB_Products, ID = ThisItem.UnitId).'Product Type'.Value & If(ThisItem.Std, "", "  ·  optional")
+                                    Color: =AppDark.Muted
+                                    Font: =AppFont
+                                    Size: =AppType.Small
+                                    Wrap: =false
+                                    AutoHeight: =false
+                                    PaddingTop: =0
+                                    PaddingBottom: =0
+                                    OnSelect: =Select(Parent)
+                                    X: =172
+                                    Y: =11
+                                    Width: =Parent.TemplateWidth - 184
+                                    Height: =20
                         - lblCapTitleSolU:
                             Control: ModernText
                             Properties:
@@ -1564,7 +1680,7 @@ Screens:
                                 }
                             )
                         );
-                        If(varAdminList = "Inst" && varAdminNew && IsBlank(varSavedInst.'Parent'),     ForAll(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSavedInst.Customer.Value & " - " & SU.Unit.Value,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.Customer.Id, Value: varSavedInst.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.Unit.Id, Value: SU.Unit.Value },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.ID, Value: varSavedInst.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true)) > 0,         Notify("Added " & varSavedInst.Title & " with " & CountRows(Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true))                & " standard unit(s).", NotificationType.Success)) );
+                        If(varAdminList = "Inst" && varAdminNew && IsBlank(varSavedInst.'Parent'),     ForAll(Filter(colStdUnits, Pick) As SU,         Patch(TB_Installations, Defaults(TB_Installations), {             Title: varSavedInst.Customer.Value & " - " & SU.UnitName,             Customer: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.Customer.Id, Value: varSavedInst.Customer.Value },             Product: { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: SU.UnitId, Value: SU.UnitName },             'Parent': { '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", Id: varSavedInst.ID, Value: varSavedInst.Title },             Status: { Value: "In Service" }         })     );     If(CountRows(Filter(colStdUnits, Pick)) > 0,         Notify("Added " & varSavedInst.Title & " with " & CountRows(Filter(colStdUnits, Pick))                & " standard unit(s).", NotificationType.Success)) );
                         Set(varEditError, "");
                         If(!IsBlank(varResumeList),
                             If(varResumeList = "Inst" && varResumeField = "Product", Set(varStProductInst, varSavedProd); Reset(ddProductInst)); If(varResumeList = "SolU" && varResumeField = "Solution", Set(varStSolutionSolU, varSavedProd); Reset(ddSolutionSolU)); If(varResumeList = "SolU" && varResumeField = "Unit", Set(varStUnitSolU, varSavedProd); Reset(ddUnitSolU)); If(varResumeList = "SwVer" && varResumeField = "Product", Set(varStProductSwVer, varSavedProd); Reset(ddProductSwVer)); If(varResumeList = "Ref" && varResumeField = "Product", Set(varStProductRef, varSavedProd); Reset(ddProductRef)); Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); Set(varResumeList, Blank()),
@@ -1575,7 +1691,7 @@ Screens:
                   Font: =AppFont
                   Size: =AppType.Body
                   FontWeight: =FontWeight.Semibold
-                  Text: ="Save"
+                  Text: =If(varAdminList = "Inst" && varAdminNew && IsBlank(varStParentInst) && CountRows(Filter(colStdUnits, Pick)) > 0, "Add machine and " & CountRows(Filter(colStdUnits, Pick)) & " unit(s)", "Save")
                   BorderThickness: =0
                   Height: =44
                   Width: =160

@@ -83,6 +83,13 @@ def show_expr(L, f):
         if f["n"] == "Title":
             # Generated from the two lookups on a new record - see patch_value.
             return "!varAdminNew"
+        # A new machine takes its version from the site default and has no notes or
+        # verification date yet, so none of the three is worth a question. A new UNIT does
+        # carry its own version, which is why that one turns on when a parent was seeded.
+        if fid(f) == "InstVersion":
+            return "!varAdminNew || !IsBlank(varStParentInst)"
+        if fid(f) in ("ConfigNotes", "LastVerified"):
+            return "!varAdminNew"
     return None
 
 
@@ -268,8 +275,12 @@ o.write(P.brand_band("Edit", "varAdminReturn", back_transition="UnCoverRight",
 # as a duplicate control name.
 
 q = ctrl(o, "lblTitleEdit", "Label", c)
-title = ('If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
-         + ", ".join(f'"{L["key"]}", "{L["singular"]}"' for L in LISTS) + ', "record")')
+# "New installation" named the table. This names the task, which is what the person
+# doing it is thinking about.
+title = ('If(varAdminList = "Inst" && varAdminNew, '
+         'If(!IsBlank(varStParentInst), "Add a unit", "Add a machine"), '
+         'If(varAdminNew, "New ", "Edit ") & Switch(varAdminList, '
+         + ", ".join(f'"{L["key"]}", "{L["singular"]}"' for L in LISTS) + ', "record"))')
 for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight.Bold"),
              ("Height","36"),("Size","AppType.Title"),("Text",title),("Wrap","false"),
              ("AutoHeight","false"),("Width","ContentWidth - (Gutter * 2)"),
@@ -280,6 +291,19 @@ for k, v in [("Color","AppDark.Fg"),("Font","AppFont"),("FontWeight","FontWeight
              # like it had never been given one.
              ("Y","56 + 12")]: prop(o, k, v, q)
 
+# The context, said out loud. Without it "Add a unit" is a question about nothing in
+# particular; with it the screen states the machine it is about to attach one to.
+q = ctrl(o, "lblSubtitleEdit", "ModernText", c)
+sub = ('If(varAdminList = "Inst" && varAdminNew, '
+       'If(!IsBlank(varStParentInst), "to " & varStParentInst.Title, '
+       '"at " & varStCustomerInst.Title), "")')
+for k, v in [("Text",sub),("Color","AppDark.Muted"),("Font","AppFont"),
+             ("Size","AppType.Body"),("Wrap","false"),("AutoHeight","false"),
+             ("PaddingTop","0"),("PaddingBottom","0"),
+             ("Height","22"),("Width","ContentWidth - (Gutter * 2)"),
+             ("X","Gutter"),("Y","104"),
+             ("Visible",'varAdminList = "Inst" && varAdminNew')]: prop(o, k, v, q)
+
 # ---- the scroll region
 #
 # Between the title and the buttons. Everything below this point that belongs to a field is
@@ -288,17 +312,26 @@ sc = ctrl(o, "conScrollEdit", "GroupContainer", c, "AutoLayout")
 for k, v in [("LayoutDirection","LayoutDirection.Vertical"),
              ("LayoutOverflowY","LayoutOverflow.Scroll"),
              ("Fill","RGBA(0, 0, 0, 0)"),
-             ("X","0"),("Y","120"),
+             ("X","0"),
+             ("Y",'If(varAdminList = "Inst" && varAdminNew, 132, 120)'),
              ("Width","ContentWidth"),
-             # Down to just above lblDeleteBlocked, which sits at Parent.Height - Gutter - 88
-             ("Height","Max(Parent.Height - 120 - Gutter - 100, 200)")]:
+             # Down to just above lblDeleteBlocked, at Parent.Height - Gutter - 88
+             ("Height","Max(Parent.Height - 132 - Gutter - 100, 200)")]:
     prop(o, k, v, sc)
 o.write(f"{sc[:-2]}Children:\n")
 
 fc = ctrl(o, "conFieldsEdit", "GroupContainer", sc, "ManualLayout")
 HEIGHTS = "Switch(varAdminList, " + ", ".join(
     f'"{L["key"]}", {list_height(L)}' for L in LISTS) + ", 400)"
-for k, v in [("Fill","RGBA(0, 0, 0, 0)"),("X","0"),("Y","0"),
+for k, v in [("Fill","RGBA(0, 0, 0, 0)"),
+             # FillPortions 0 is what the pane calls "Flexible height", turned off. Without
+             # it the container stretches this group to its own height, the fields overflow
+             # a ManualLayout group - which does not scroll - and the tail is simply clipped.
+             # The documentation calls the property FlexibleHeight; that is the pane label,
+             # the same way "Vertical Overflow" is really LayoutOverflowY.
+             ("FillPortions","0"),
+             ("LayoutMinHeight","16"),("LayoutMinWidth","16"),
+             ("X","0"),("Y","0"),
              ("Width","ContentWidth"),("Height",HEIGHTS)]:
     prop(o, k, v, fc)
 o.write(f"{fc[:-2]}Children:\n")
@@ -440,6 +473,18 @@ for L in LISTS:
                            ("Font","AppFont"),("Size","AppType.Body"),("Height","40"),
                            ("Width",dw),("X","Gutter"),
                            ("Y",y + " + 18"),("Visible",vis)]: prop(o, kk, vv, i)
+            if model and L["key"] == "Inst":
+                # Choosing the model is what makes its standard build knowable, so the
+                # collection is built here rather than at save time.
+                # ForAll returning flat records, NOT AddColumns: quoted column names
+                # were retired in 3.24042 and this compiler answers them with four errors
+                # from one pair of quotes. Flat columns also avoid the "expects at least
+                # some columns of simple values" warning that a nested lookup would draw.
+                prop(o, "OnChange",
+                     "ClearCollect(colStdUnits, ForAll(Filter(TB_SolutionUnits, "
+                     "Solution.Id = ddProductInst.Selected.ID) As SU, "
+                     "{ UnitId: SU.Unit.Id, UnitName: SU.Unit.Value, "
+                     "Std: SU.Standard, Pick: SU.Standard }))", i)
             if model:
                 # Write what is on screen back into the record variable before detouring.
                 # The form's defaults read that variable, so returning repopulates the
@@ -466,6 +511,67 @@ for L in LISTS:
                                ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
                                ("OnSelect",go)]: prop(o, kk, vv, b)
         prior.append((show, 18 + h + 14))
+
+    if L["key"] == "Inst":
+        # The model's standard build, ticked. Only when adding a machine - a unit has no
+        # build of its own - and only when the chosen model actually lists any.
+        pshow = ("varAdminNew && IsBlank(varStParentInst) && CountRows(colStdUnits) > 0")
+        py = "0" + "".join(f" + If({sh}, {ht}, 0)" if sh else f" + {ht}"
+                           for sh, ht in prior)
+        pvis = f"({base_vis}) && ({pshow})"
+
+        q = ctrl(o, "lblCapComesWith", "ModernText", c)
+        for k, v in [("Text",'"COMES WITH"'),("Color","AppDark.Muted"),
+                     ("Font","AppFont"),("Size","AppType.Small"),
+                     ("FontWeight","FontWeight.Bold"),("Wrap","false"),
+                     ("AutoHeight","false"),("PaddingTop","0"),("PaddingBottom","0"),
+                     ("Height","18"),("Width","ContentWidth - (Gutter * 2)"),
+                     ("X","Gutter"),("Y",py),("Visible",pvis)]: prop(o, k, v, q)
+
+        q = ctrl(o, "lblHintComesWith", "ModernText", c)
+        for k, v in [("Text",'"from the model\'s standard build"'),
+                     ("Color","AppDark.Faint"),("Font","AppFont"),
+                     ("Size","AppType.Small"),("Wrap","false"),("AutoHeight","false"),
+                     ("PaddingTop","0"),("PaddingBottom","0"),
+                     ("Height","18"),("Width","ContentWidth - (Gutter * 2) - 110"),
+                     ("X","Gutter + 110"),("Y",py),("Visible",pvis)]: prop(o, k, v, q)
+
+        g = ctrl(o, "galStdUnits", "Gallery", c, "Vertical")
+        o.write(f"{g}Items: |\n{g}  =colStdUnits\n")
+        for k, v in [("TemplateSize","40"),("TemplatePadding","0"),
+                     ("ShowScrollbar","true"),("Fill","AppDark.Surface"),
+                     ("X","Gutter"),("Y",py + " + 22"),
+                     ("Width","ContentWidth - (Gutter * 2)"),
+                     ("Height","Min(CountRows(colStdUnits) * 40 + 8, 180)"),
+                     ("Visible",pvis)]: prop(o, k, v, g)
+        o.write(f"{g[:-2]}Children:\n")
+        gc = g
+
+        r = ctrl(o, "chkStdUnit", "ModernCheckbox", gc)
+        for k, v in [("Checked","ThisItem.Pick"),("Label",'""'),
+                     ("OnCheck","Patch(colStdUnits, ThisItem, { Pick: true })"),
+                     ("OnUncheck","Patch(colStdUnits, ThisItem, { Pick: false })"),
+                     ("X","12"),("Y","8"),("Width","28"),("Height","24")]: prop(o, k, v, r)
+
+        r = ctrl(o, "lblStdUnitName", "ModernText", gc)
+        for k, v in [("Text","ThisItem.UnitName"),("Color","AppDark.Fg"),
+                     ("Font","AppFont"),("Size","AppType.Body"),
+                     ("FontWeight","FontWeight.Semibold"),("Wrap","false"),
+                     ("AutoHeight","false"),("PaddingTop","0"),("PaddingBottom","0"),
+                     ("OnSelect","Select(Parent)"),
+                     ("X","46"),("Y","10"),("Width","120"),("Height","22")]: prop(o, k, v, r)
+
+        r = ctrl(o, "lblStdUnitType", "ModernText", gc)
+        typ = ("LookUp(TB_Products, ID = ThisItem.UnitId).'Product Type'.Value & "
+               'If(ThisItem.Std, "", "  ·  optional")')
+        for k, v in [("Text",typ),("Color","AppDark.Muted"),("Font","AppFont"),
+                     ("Size","AppType.Small"),("Wrap","false"),("AutoHeight","false"),
+                     ("PaddingTop","0"),("PaddingBottom","0"),
+                     ("OnSelect","Select(Parent)"),
+                     ("X","172"),("Y","11"),
+                     ("Width","Parent.TemplateWidth - 184"),("Height","20")]: prop(o, k, v, r)
+
+        prior.append((pshow, 22 + 180 + 14))
 
 # ---- save  (back at the root: these stay put while the fields scroll)
 c = c_root
@@ -510,7 +616,7 @@ resume += ("; Set(varAdminList, varResumeList); Set(varAdminNew, varResumeNew); 
 #
 # "As SU" names the outer row: TB_Installations has its own Product and Customer, which
 # would otherwise shadow the ones being read from TB_SolutionUnits.
-STD = "Filter(TB_SolutionUnits, Solution.Id = varSavedInst.Product.Id, Standard = true)"
+STD = "Filter(colStdUnits, Pick)"
 
 
 def _ref(id_expr, title_expr):
@@ -524,9 +630,9 @@ build = " ".join([
     'If(varAdminList = "Inst" && varAdminNew && IsBlank(varSavedInst.' + "'Parent'" + "),",
     "    ForAll(" + STD + " As SU,",
     "        Patch(TB_Installations, Defaults(TB_Installations), {",
-    '            Title: varSavedInst.Customer.Value & " - " & SU.Unit.Value,',
+    '            Title: varSavedInst.Customer.Value & " - " & SU.UnitName,',
     "            Customer: " + _ref("varSavedInst.Customer.Id", "varSavedInst.Customer.Value") + ",",
-    "            Product: " + _ref("SU.Unit.Id", "SU.Unit.Value") + ",",
+    "            Product: " + _ref("SU.UnitId", "SU.UnitName") + ",",
     "            " + "'Parent': " + _ref("varSavedInst.ID", "varSavedInst.Title") + ",",
     '            Status: { Value: "In Service" }',
     "        })",
@@ -547,7 +653,9 @@ lines += ["    " + build.strip(),
           ")"]
 blk(o, "OnSelect", lines, q)
 for k, v in [("Font","AppFont"),("Size","AppType.Body"),("FontWeight","FontWeight.Semibold"),
-             ("Text",'"Save"'),("Fill","AppDark.Accent"),("Color","AppDark.OnBrand"),
+             ("Text", 'If(varAdminList = "Inst" && varAdminNew && IsBlank(varStParentInst) '
+                     '&& CountRows(Filter(colStdUnits, Pick)) > 0, "Add machine and " '
+                     '& CountRows(Filter(colStdUnits, Pick)) & " unit(s)", "Save")'),("Fill","AppDark.Accent"),("Color","AppDark.OnBrand"),
              ("HoverFill","AppDark.AccentSolid"),("BorderThickness","0"),
              ("Height","44"),("Width","160"),("X","Gutter"),
              ("Y","Parent.Height - Gutter - 44"),
