@@ -62,7 +62,13 @@ LISTS = [
         dict(n="Title",    kind="text",   caption="Label, e.g. CI 300X - SDRB250"),
         dict(n="Solution", kind="lookup", caption="Solution model", target="TB_Products"),
         dict(n="Unit",     kind="lookup", caption="Unit model that attaches to it", target="TB_Products"),
-        dict(n="Standard", kind="bool",   caption="Part of the standard build"),
+        # The column's SharePoint default is true, and every other field now lets its
+        # default through. This one does not: a unit a model CAN take is more often
+        # optional than standard, a pre-ticked toggle looks identical to one you set, and
+        # getting it wrong propagates - the standard build is what the guided setup
+        # pre-ticks when a machine is added to a site.
+        dict(n="Standard", kind="bool",   caption="Part of the standard build",
+             new_default="false"),
     ]),
     # The software build a site runs for a model. One row per customer and model; a
     # machine with its own Installed Version overrides it, so this is a default rather

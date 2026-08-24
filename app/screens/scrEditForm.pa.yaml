@@ -841,7 +841,7 @@ Screens:
                 Control: ModernToggle
                 Properties:
                   Color: =AppDark.Fg
-                  Default: =varRecSolU.Standard
+                  Default: =If(varAdminNew, false, varRecSolU.Standard)
                   Font: =AppFont
                   Size: =AppType.Body
                   Height: =36

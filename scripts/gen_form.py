@@ -68,6 +68,12 @@ def patch_value(L, f):
 def default_expr(L, f):
     v, n = var(L), f["n"]
     k = f["kind"]
+    # Reading the record directly means a column's SharePoint default now reaches a new
+    # record, where the old If(varAdminNew, ...) wrapper suppressed it. That is a fix for
+    # Active and sensible for Status, but see gen_admin: one field wants the opposite and
+    # says so there rather than having this function know about individual columns.
+    if "new_default" in f:
+        return f'If(varAdminNew, {f["new_default"]}, {v}.{n})' 
     if k in ("text", "note", "url"): return f"{v}.{n}"
     if k == "bool":                  return f"{v}.{n}"
     if k == "date":                  return f"{v}.{n}"

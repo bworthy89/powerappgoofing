@@ -206,6 +206,38 @@ closing a gap; showing them filled needs no runtime layout arithmetic. It is als
 behaviour — the admin can see what the screen assumed and correct it, which is what makes
 *moving a machine between customers* work with no special gesture, as resolved above.
 
+## A side effect worth knowing about
+
+Letting the form's defaults read the record directly - which is what makes context arrive
+pre-filled - also lets a column's **SharePoint default** through to a new record. The old
+`If(varAdminNew, ...)` wrapper suppressed it for every field, everywhere.
+
+Four columns declare a default. Three now honour it and one is held back:
+
+| Column | Default | Now |
+|---|---|---|
+| `TB_Customers.Active` | true | honoured — **this fixes a bug** |
+| `TB_Products.Active` | true | honoured — **same bug** |
+| `TB_Installations.Status` | In Service | honoured |
+| `TB_SolutionUnits.Standard` | true | **held at false** |
+
+**The bug it fixes.** The wizard's Active toggle defaults to true; the admin form forced
+false. So a customer or model created through *Admin → Add new* was written inactive — and
+every browse list filters on `Active = true`, so it was invisible on the customer list, in
+the catalogue and in search, until somebody reopened the record and flipped a toggle they had
+no reason to look at. Two paths that create the same row disagreed about it, which is why
+nobody noticed: whichever one you used, the behaviour looked consistent.
+
+**Why `Standard` is the exception.** A unit a model *can* take is more often optional than
+standard, a pre-ticked toggle looks identical to one somebody set deliberately, and the error
+propagates: the standard build is what the guided setup pre-ticks when a machine is added to
+a site. That is a schema default which is right for the column and wrong for a new record, so
+`gen_admin` overrides it there and says why.
+
+Worth confirming when the schema change is made: this assumes the live SharePoint columns
+were actually created with those defaults. If `Active` has no default in SharePoint, a new
+customer is written inactive again and the old bug is back, silently.
+
 ## Not yet built
 
 None of these are blocked; they are the second half, and each is its own piece of work.
