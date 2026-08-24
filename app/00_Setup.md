@@ -982,12 +982,29 @@ Three roles, not one:
 
 The field case is the one that hides. Those controls also had no `Fill`, so they were white
 boxes on a dark screen — and because the text inside them was perfectly readable, they do
-not register when you scan for a contrast problem. A `Primary` button is already correct
-(white on the accent, from the theme); forcing a colour onto it would fight the theme.
+not register when you scan for a contrast problem. A `Primary` button was believed to need
+no colour — white on the accent, from the theme, with anything else fighting it.
+**That turned out to be false; see below.**
 
 `scripts/fix_dark_defaults.py` applies this and reports what it added. Run it after any
 change that introduces controls, and treat a non-zero count as a real finding rather than
 noise — it means new controls shipped depending on a default that is wrong for this app.
+
+### A `Primary` button renders near-black, not white-on-accent
+
+The modern theme this app actually draws with paints `Primary` a near-black surface. On a
+near-black ground that is a button nobody can see, and it was reported exactly that way:
+*"they are black"*. All six were affected — Save, Add new, Approve, Request access, Create
+customer and Done — and the app had shipped that way for as long as the claim above stood.
+
+`BasePaletteColor` is the documented way to aim a modern button at a colour, and was already
+in use to make the approve button green. `fix_dark_defaults` now sets it plus an explicit
+`Color` on every `Primary` button, and leaves an existing `BasePaletteColor` alone.
+
+The lesson is not about buttons. **"The theme handles it" is a claim with a shelf life.** It
+was true of the theme in front of whoever wrote it, nothing re-checked it when the theme
+changed underneath, and the note then argued *against* fixing it — so the rule actively
+defended the bug. A colour this app depends on belongs in `AppDark`, stated.
 
 ## A component cannot go inside a gallery, which decides what components are worth building
 
