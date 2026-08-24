@@ -383,7 +383,11 @@ def check_file(path):
         #     f-string, so a brace that was escaped but never substituted ships as text.
         #     Studio says "unexpected characters" and the control falls back to zero,
         #     which reads as a layout bug rather than a build one.
-        for ph in re.findall(r"\{([A-Za-z_]\w*)\}", code):
+        # Was [A-Za-z_]\w* - bare identifiers only - so "{P.title_gap()}" walked straight
+        # past it and reached Studio. Dots, parens and brackets are all fair game in a
+        # Python expression. A Power Fx record literal always contains ": ", and this
+        # pattern refuses a colon, so { Value: "x" } is not mistaken for one.
+        for ph in re.findall(r"\{([A-Za-z_][\w.()\[\]]*)\}", code):
             findings.append((n, f"unresolved template placeholder '{{{ph}}}' - the "
                                 "generator emitted it literally"))
 

@@ -127,7 +127,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleUnit.Y + lblTitleUnit.Height + {P.title_gap()}
+                  Y: =lblTitleUnit.Y + lblTitleUnit.Height + If(varIsAdmin && IsNarrow, 48, 0)
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =22
                   Font: =AppFont

@@ -117,7 +117,7 @@ STATE_COLOUR = f"""=If(
                           )"""
 
 Y_TITLE = f"{P.BAND} + 24"
-Y_SUB = "lblTitleOvw.Y + lblTitleOvw.Height + {P.title_gap()}"
+Y_SUB = "lblTitleOvw.Y + lblTitleOvw.Height + " + P.title_gap()
 Y_NOTES = "lblSubtitleOvw.Y + lblSubtitleOvw.Height + Gutter"
 Y_HEAD = ("conSupportNotes.Y + "
           "If(conSupportNotes.Visible, conSupportNotes.Height + Gutter, 0)")
