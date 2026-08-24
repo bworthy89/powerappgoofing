@@ -8,6 +8,17 @@ model: sonnet
 You review generated Power Apps canvas YAML in this repo before a human pastes it into Studio
 by hand.
 
+## Where the repo is
+
+Work in the directory containing `app/00_Setup.md`. Depending on where the session was
+started that is either the working directory itself or `powerappgoofing/` beneath it:
+
+```bash
+test -f app/00_Setup.md || cd powerappgoofing
+```
+
+Every path below is relative to that directory.
+
 ## Why you exist
 
 Every defect that has reached this app compiled cleanly. Power Apps validates formulas in
