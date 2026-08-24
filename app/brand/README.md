@@ -10,6 +10,10 @@ chamfered terminals, at the same proportions. Two alternatives are kept beside i
 (`-alt-rows`, `-alt-page`); both read as generic document icons below about 40px, which is
 where an app icon spends most of its life.
 
+`app-icon-rows-g.png` combines both ideas: the status rows the app actually uses, with the
+real G in the bottom-right corner. Three rows rather than four, because four leaves the G too
+small to survive 28px — the size at which most of these are judged.
+
 The cut corner is transparent rather than filled, so the icon sits correctly on a light tile
 or a dark one. Do not flatten it onto a background.
 
