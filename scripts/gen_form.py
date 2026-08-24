@@ -60,6 +60,20 @@ def patch_value(L, f):
                 "Id: " + n + ".Selected.ID, Value: " + n + ".Selected.Title })")
     raise ValueError(k)
 
+# What the "+ New" detour writes back into the record variable.
+#
+# Same values as patch_value, except a lookup carries no '@odata.type'. This goes through
+# Patch(record, changes) - two arguments, no data source - which merges structurally and
+# rejects a record whose field set differs. patch_value's odata field is required for the
+# three-argument write and fatal here.
+def stash_value(L, f):
+    n, k = input_name(L, f), f["kind"]
+    if k == "lookup":
+        return (f"If(IsBlank({n}.Selected), Blank(), "
+                f"{{ Id: {n}.Selected.ID, Value: {n}.Selected.Title }})")
+    return patch_value(L, f)
+
+
 # Default shown in the input.
 #
 # These used to read If(varAdminNew, <empty>, varRec.<field>), which forced every field on a
@@ -314,7 +328,7 @@ for L in LISTS:
                 # Write what is on screen back into the record variable before detouring.
                 # The form's defaults read that variable, so returning repopulates the
                 # fields with no further work - and nothing the admin typed is lost.
-                stash = ", ".join(f"{g['n']}: {patch_value(L, g)}" for g in L["fields"])
+                stash = ", ".join(f"{g['n']}: {stash_value(L, g)}" for g in L["fields"])
                 b = ctrl(o, "btnNew" + fid(f) + L["key"], "ModernButton", c)
                 go = (f"Set({var(L)}, Patch({var(L)}, {{ {stash} }})); "
                       f'Set(varResumeList, "{L["key"]}"); '
@@ -337,9 +351,9 @@ for L in LISTS:
         y += 18 + h + 14
 
 # ---- save
-REF = ("{ '@odata.type': "
-       '"#Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference", '
-       "Id: varSaved.ID, Value: varSaved.Title }")
+# Handed back into a record variable by Patch(record, changes), so the plain lookup shape -
+# the odata field belongs only on the three-argument write. See stash_value.
+REF = "{ Id: varSaved.ID, Value: varSaved.Title }"
 
 q = ctrl(o, "btnSaveEdit", "Classic/Button", c)
 lines = ["IfError("]

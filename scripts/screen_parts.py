@@ -404,9 +404,15 @@ def seed(id_expr, title_expr):
 
     Building the reference literally is the documented alternative, and it cannot go stale
     because it never consults a cache.
+
+    No '@odata.type' here, unlike the write in gen_form. This value is merged into a local
+    record by the two-argument Patch(record, changes), which is a strict structural merge
+    with no data source to coerce against - an extra field makes the types differ and Power
+    Fx rejects it with "does not match the expected type 'Record'. Found type 'Record'".
+    The three-argument Patch(source, base, changes) that actually writes does coerce, and
+    there the odata field is required.
     """
-    return (f"{{ '@odata.type': \"{SP_REF}\", "
-            f"Id: {id_expr}, Value: {title_expr} }}")
+    return f"{{ Id: {id_expr}, Value: {title_expr} }}"
 
 
 def admin_button(name, label, on_select, x, y, width, height=40, ind=12,

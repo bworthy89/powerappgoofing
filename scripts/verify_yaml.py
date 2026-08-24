@@ -177,6 +177,42 @@ def duplicate_properties(text):
     return out
 
 
+TWO_ARG_PATCH = re.compile(r"Patch\(\s*(varRec\w+|Defaults\([A-Za-z_]+\))\s*,\s*\{")
+
+
+def _record_literal(text, brace):
+    """The record literal starting at `brace`, matched on balanced braces."""
+    depth, i = 0, brace
+    while i < len(text):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[brace:i + 1]
+        i += 1
+    return text[brace:]
+
+
+def odata_in_record_merge(text):
+    """'@odata.type' inside a two-argument Patch.
+
+    Patch(source, base, changes) coerces against the list schema and REQUIRES the odata
+    field on a SharePoint lookup. Patch(record, changes) merges structurally, has nothing to
+    coerce against, and rejects the extra field - reporting only that a Record did not match
+    a Record.
+    """
+    out = []
+    for m in TWO_ARG_PATCH.finditer(text):
+        lit = _record_literal(text, m.end() - 1)
+        if "'@odata.type'" in lit:
+            line = text.count("\n", 0, m.start()) + 1
+            out.append((line, f"'@odata.type' inside Patch({m.group(1)}, ...) - a two-argument "
+                              "Patch merges structurally and rejects the extra field; it is "
+                              "required only on the three-argument write"))
+    return out
+
+
 def check_file(path):
     findings = []
     text = path.read_text(encoding="utf-8")
@@ -342,6 +378,7 @@ def check_file(path):
                     findings.append((n, f"'{quoted}' is not a column in any of the four lists"))
 
     findings.extend(duplicate_properties(text))
+    findings.extend(odata_in_record_merge(text))
 
     for n in duplicate_names(text):
         findings.append((0, f"duplicate control name '{n}' - Studio rejects this as "
