@@ -85,6 +85,8 @@ CT_BLOCK = f"(22 + {CT_H} + If(varIsAdmin, 56, 0) + 20)"
 # expression a quoted argument is a plain literal, so {WIDE} there stays literal.
 CT_X = f"If({WIDE}, Gutter + (({P.CW} - Gutter) / 2) + Gutter, Gutter)"
 CT_W = f"If({WIDE}, ({P.CW} - Gutter) / 2, {P.CW})"
+# the hint sits after the 70px heading plus a gap
+CT_W_HINT = f"({CT_W}) - 78"
 
 DOCS_Y = (f"If({WIDE}, lblModelsHeadingCat.Y + If({EXPANDED}, {CT_BLOCK}, 0), "
           "Parent.Height - Gutter - 250)")
@@ -137,7 +139,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleCat.Y + lblTitleCat.Height
+                  Y: =lblTitleCat.Y + lblTitleCat.Height + {P.title_gap()}
                   Width: ={P.CW}
                   Height: =22
                   Font: =AppFont
@@ -176,7 +178,7 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: ={LIST_Y}
-                  Width: ={P.CW}
+                  Width: ={CT_W}
                   Height: =22
                   Text: ="MODELS"
                   Font: =AppFont
@@ -354,7 +356,7 @@ Screens:
                   X: |
                     =If({WIDE}, Gutter + (({P.CW} - Gutter) / 2) + Gutter, Gutter)
                   Y: =lblModelsHeadingCat.Y
-                  Width: =200
+                  Width: =70
                   Height: =18
                   Text: ="CAN TAKE"
                   Font: =AppFont
@@ -373,7 +375,7 @@ Screens:
                   X: |
                     =(If({WIDE}, Gutter + (({P.CW} - Gutter) / 2) + Gutter, Gutter)) + 78
                   Y: =lblModelsHeadingCat.Y
-                  Width: =260
+                  Width: ={CT_W_HINT}
                   Height: =18
                   Text: ="drives the Units tab and the standard build"
                   Font: =AppFont
@@ -497,7 +499,8 @@ Screens:
                   PaddingBottom: =0
                   X: |
                     =If({WIDE}, Gutter + (({P.CW} - Gutter) / 2) + Gutter, Gutter)
-                  Y: =lblModelsHeadingCat.Y
+                  Y: |
+                    ={DOCS_Y}
                   Width: |
                     =If({WIDE}, ({P.CW} - Gutter) / 2, {P.CW})
                   Height: =40

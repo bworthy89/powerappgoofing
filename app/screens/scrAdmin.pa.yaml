@@ -6,13 +6,49 @@ Screens:
   scrAdmin:
     Properties:
       Fill: =AppDark.Bg
-      OnVisible: |
-        =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))
     Children:
+      - lblNoAccessAdm:
+          Control: ModernText
+          Properties:
+            PaddingTop: =0
+            PaddingBottom: =0
+            Text: ="This area is for administrators."
+            Color: =AppDark.Muted
+            Font: =AppFont
+            Size: =AppType.Body
+            Align: =Align.Center
+            Wrap: =true
+            AutoHeight: =false
+            Height: =44
+            Width: =Parent.Width
+            X: =0
+            Y: =Parent.Height / 2 - 60
+            Visible: =!varIsAdmin
+      - btnNoAccessHomeAdm:
+          Control: ModernButton
+          Properties:
+            Color: =AppDark.Fg
+            Appearance: =ButtonAppearance.Outline
+            Text: ="Back to home"
+            BorderColor: =AppDark.Line
+            BorderThickness: =1
+            Font: =AppFont
+            Size: =AppType.Body
+            Height: =44
+            Width: =200
+            X: =(Parent.Width - 200) / 2
+            Y: =Parent.Height / 2
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            Visible: =!varIsAdmin
+            OnSelect: =Navigate(scrHome, ScreenTransition.UnCoverRight)
       - conRootAdm:
           Control: GroupContainer
           Variant: ManualLayout
           Properties:
+            Visible: =varIsAdmin
             Fill: =AppDark.Bg
             Height: =Parent.Height
             Width: =ContentWidth
@@ -602,7 +638,7 @@ Screens:
                         Wrap: =false
                         AutoHeight: =false
                         X: =Gutter
-                        Y: =26
+                        Y: =28
                         Width: =Parent.TemplateWidth - 300
                         Height: =18
                   - btnAccApprove:

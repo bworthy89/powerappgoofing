@@ -1575,3 +1575,42 @@ each field is the same sequence of terms. Adding a control to that group without
 
 `check_overlaps.py` cannot see this — the control does not overlap anything, it is simply
 beyond an edge.
+
+## Check the layout every time a screen is regenerated — the build now does
+
+Three separate overlaps shipped in one week: a date picker on top of its own caption, a
+screen title on top of the first field's caption, and the catalogue's CAN TAKE heading on
+top of its own hint. All compiled clean. All looked like a **missing** label rather than a
+covered one, which sends you hunting for a control that is right there.
+
+`scripts/check_overlaps.py` is now the last pass in `build_screens.py` and fails the build
+when two text-bearing siblings intersect. It reports at two widths, because a layout can be
+right on a desktop and wrong on a phone — the four title rows were.
+
+### It was reporting zero while looking at almost nothing
+
+The first version resolved only plain arithmetic, so it skipped every control positioned
+from another control (`Y = lblModelsHeadingCat.Y`), from a breakpoint
+(`X = If(scrCatalogue.Size >= ScreenSize.Large, …)`), or written as a block scalar — which
+on `scrCatalogue` is nearly all of them. It said **0 overlaps** about a screen with four.
+
+**A checker that skips silently is worse than none**: it answers the question you asked with
+a number that does not mean what it looks like. It now resolves
+
+- block scalars (`X: |` with the value on the next line) — the original pattern only ever
+  matched `X: =` on one line
+- references to other controls, iteratively, until nothing more resolves
+- `If()` whose condition it can decide, term by term: a conjunction is false as soon as one
+  term is, even when the others are opaque
+
+and prints how many controls it **could not** resolve, so the summary can never again be
+mistaken for a clean bill of health.
+
+### Reserving space by inflating a control does not work
+
+A title's `Height` used to carry the wrapped button row, so anything laid out at
+`lblTitle.Y + lblTitle.Height` cleared the buttons. But a `ModernText` centres its text
+vertically, so on a narrow screen an admin's title drifted down into the middle of its own
+buttons. The allowance now lives in `screen_parts.title_gap()`, added by whatever comes
+next. **Reserve space in the thing that follows, never by making the thing before it
+taller.**

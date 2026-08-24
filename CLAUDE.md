@@ -25,7 +25,7 @@ python scripts/build_screens.py
 runs, in order:
 
 ```
-generators  →  migrate_dark  →  fix_dark_defaults  →  verify_yaml
+generators  →  migrate_dark  →  fix_dark_defaults  →  verify_yaml  →  check_overlaps
 ```
 
 - **generators** — one per screen, plus `screen_parts.py` for fragments shared between them
@@ -39,6 +39,11 @@ generators  →  migrate_dark  →  fix_dark_defaults  →  verify_yaml
   generator failed and its stale screen is still on disk
 - **verify_yaml** — a bespoke linter, ~10 checks, every one added after the corresponding bug
   reached the app
+- **check_overlaps** — fails the build when two text-bearing siblings intersect, at both a
+  desktop and a phone width. Three overlaps shipped in one week before this ran
+  automatically, and each read as a *missing* label rather than a covered one. It also
+  prints how many controls it could not resolve — that number going up means it is seeing
+  less, not that the screens got better
 
 A generator that crashes leaves the previous screen in place, so the build looks like it
 succeeded and the stale screen is what gets pasted. `build_screens.py` prints a `FAILED:` line

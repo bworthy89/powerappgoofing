@@ -63,7 +63,7 @@ def refs(section):
 
 Y_CRUMB = f"{P.BAND} + 20"
 Y_TITLE = "lblCrumbUnit.Y + lblCrumbUnit.Height + 4"
-Y_SUB = "lblTitleUnit.Y + lblTitleUnit.Height"
+Y_SUB = "lblTitleUnit.Y + lblTitleUnit.Height + {P.title_gap()}"
 Y_HERO = "lblSubtitleUnit.Y + lblSubtitleUnit.Height + Gutter"
 Y_CFG = "cmpVersionUnit.Y + cmpVersionUnit.Height + Gutter"
 Y_DOCS = ("conConfigNotesUnit.Y + "

@@ -124,16 +124,47 @@ def gen_admin():
     o.write("# One gallery per list, toggled by varAdminList. Each row is a single\n")
     o.write("# Classic/Button so the whole row is the tap target and the text is the\n")
     o.write("# button's own Text - no separate label to keep aligned.\n")
-    # The screen turns people away itself. Hiding the button on home is tidiness;
-    # this is the part that holds if anyone arrives by another route. Neither is a
-    # security boundary - a technician with Contribute can edit the lists directly
-    # in SharePoint, so the real control is list permissions.
+    # The screen turns people away by rendering its refusal, not by bouncing them.
+    #
+    # This used to be OnVisible: If(!varIsAdmin, Navigate(scrHome, ...)), which the
+    # compiler now refuses outright - "Navigate cannot be used here since it would
+    # automatically always navigate away from this screen" - and which was the wrong
+    # shape anyway: the screen flashes, the back stack gains an entry nobody asked for,
+    # and on a slow load admin chrome appears before it is snatched away.
+    #
+    # conRootAdm is gated on varIsAdmin instead, so nothing is drawn, and a statement
+    # plus a way back takes its place. Safe to land on from any route.
+    #
+    # Neither this nor hiding the button on home is a security boundary - a technician
+    # with Contribute can edit the lists directly in SharePoint, so the real control is
+    # list permissions. This is about the app not lying about what it will show you.
     o.write('Screens:\n  scrAdmin:\n    Properties:\n      Fill: =AppDark.Bg\n'
-            '      OnVisible: |\n'
-            '        =If(!varIsAdmin, Navigate(scrHome, ScreenTransition.UnCoverRight))\n'
             '    Children:\n')
     ind = "      "
+    q = ctrl(o, "lblNoAccessAdm", "Label", ind)
+    for k, v in [("Text",'"This area is for administrators."'),
+                 ("Color","AppDark.Muted"),("Font","AppFont"),
+                 ("Size","AppType.Body"),("Align","Align.Center"),
+                 ("Wrap","true"),("AutoHeight","false"),
+                 ("Height","44"),("Width","Parent.Width"),("X","0"),
+                 ("Y","Parent.Height / 2 - 60"),("Visible","!varIsAdmin")]:
+        prop(o, k, v, q)
+
+    q = ctrl(o, "btnNoAccessHomeAdm", "Classic/Button", ind)
+    for k, v in [("Text",'"Back to home"'),("Fill","AppDark.Surface"),
+                 ("Color","AppDark.Fg"),("HoverFill","AppDark.Sunken"),
+                 ("BorderColor","AppDark.Line"),("BorderThickness","1"),
+                 ("Font","AppFont"),("Size","AppType.Body"),
+                 ("Height","44"),("Width","200"),
+                 ("X","(Parent.Width - 200) / 2"),("Y","Parent.Height / 2"),
+                 ("RadiusTopLeft","6"),("RadiusTopRight","6"),
+                 ("RadiusBottomLeft","6"),("RadiusBottomRight","6"),
+                 ("Visible","!varIsAdmin"),
+                 ("OnSelect","Navigate(scrHome, ScreenTransition.UnCoverRight)")]:
+        prop(o, k, v, q)
+
     p = ctrl(o, "conRootAdm", "GroupContainer", ind, "ManualLayout")
+    prop(o, "Visible", "varIsAdmin", p)
     prop(o, "Fill", "AppDark.Bg", p)
     prop(o, "Height", "Parent.Height", p)
     prop(o, "Width", "ContentWidth", p)
@@ -310,7 +341,7 @@ def gen_admin():
     o.write(f'{r}Text: |\n{r}  =Coalesce(ThisItem.Person.Email, "no email") & "   ·   " '
             f'& ThisItem.Status.Value & "   ·   asked " & Text(ThisItem.Created, "d mmm")\n')
     for k, v in [("Color","AppDark.Muted"),("Font","AppFont"),("Size","AppType.Small"),
-                 ("Wrap","false"),("AutoHeight","false"),("X","Gutter"),("Y","26"),
+                 ("Wrap","false"),("AutoHeight","false"),("X","Gutter"),("Y","28"),
                  ("Width","Parent.TemplateWidth - 300"),("Height","18")]:
         prop(o, k, v, r)
 

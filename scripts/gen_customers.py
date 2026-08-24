@@ -108,7 +108,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleCus.Y + lblTitleCus.Height
+                  Y: =lblTitleCus.Y + lblTitleCus.Height + {P.title_gap()}
                   Width: ={P.CW}
                   Height: =22
                   Font: =AppFont

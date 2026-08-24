@@ -91,7 +91,7 @@ Screens:
                   X: =Gutter
                   Y: =56 + 24
                   Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 184, 0)
-                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
+                  Height: =41
                   Text: ="Customers"
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)
@@ -107,7 +107,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleCus.Y + lblTitleCus.Height
+                  Y: =lblTitleCus.Y + lblTitleCus.Height + If(varIsAdmin && IsNarrow, 48, 0)
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =22
                   Font: =AppFont

@@ -113,7 +113,7 @@ Screens:
                   X: =Gutter
                   Y: =lblCrumbUnit.Y + lblCrumbUnit.Height + 4
                   Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 60, 0)
-                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
+                  Height: =41
                   Text: =LookUp(TB_Products, ID = varInstallation.Product.Id).Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)
@@ -127,7 +127,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleUnit.Y + lblTitleUnit.Height
+                  Y: =lblTitleUnit.Y + lblTitleUnit.Height + {P.title_gap()}
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =22
                   Font: =AppFont

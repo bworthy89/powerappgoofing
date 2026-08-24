@@ -12,6 +12,7 @@ The generators now emit dark directly. This script exists so the follow-up passe
 forgotten either, and so the order is written down once rather than remembered:
 
     generators  ->  migrate_dark  ->  fix_dark_defaults  ->  verify_yaml
+                ->  check_overlaps
 
 Both middle passes are idempotent. migrate_dark's token maps no-op now that the generators
 emit AppDark; what it still contributes is the 3px brand rule on screens that have no full
@@ -27,7 +28,11 @@ SCRIPTS = Path(__file__).parent
 GENERATORS = ["gen_home", "gen_solution", "gen_unit", "gen_customer_overview",
               "gen_customers", "gen_catalogue", "gen_request_access",
               "gen_admin", "gen_form", "gen_onboard"]
-PASSES = ["migrate_dark", "fix_dark_defaults", "verify_yaml"]
+# check_overlaps runs last and every time. A screen whose controls sit on top of each
+# other compiles clean, and the symptom is a label that looks MISSING rather than
+# covered - so it reads as "you forgot one" and sends you looking in the wrong place.
+# Three of those shipped in one week before this was automatic.
+PASSES = ["migrate_dark", "fix_dark_defaults", "verify_yaml", "check_overlaps"]
 
 
 ROOT = SCRIPTS.parent

@@ -130,7 +130,7 @@ def tab(key, label, i):
 # Vertical chain. Each offset has exactly one author; the config panel contributes its
 # height only when it is visible, so nothing downstream needs a branch of its own.
 Y_TITLE = f"{BAND} + 24"
-Y_SUB = "lblTitleSol.Y + lblTitleSol.Height"
+Y_SUB = "lblTitleSol.Y + lblTitleSol.Height + {P.title_gap()}"
 Y_HERO = "lblSubtitleSol.Y + lblSubtitleSol.Height + Gutter"
 Y_CFG = "cmpVersionSol.Y + cmpVersionSol.Height + Gutter"
 # The three lists now share one origin instead of stacking, so the page height no longer

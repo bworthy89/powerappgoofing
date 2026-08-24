@@ -245,7 +245,8 @@ o.write(P.admin_button(
     "btnWizAddMachine", "+  Add a machine",
     P.admin_open("Inst", "Defaults(TB_Installations)", True, back="scrOnboard",
                  extra=P.stash([("varStCustomerInst", "varWizCust")])),
-    x="Gutter", y="Parent.Height - Gutter - 44", width="ContentWidth - (Gutter * 2) - 180",
+    x="Gutter", y="Parent.Height - Gutter - 44", # Finish is 190 wide against the right edge; leave it room and a gap.
+    width="ContentWidth - (Gutter * 2) - 230",
     height=44, ind=12, visible=V2))
 
 y = 248

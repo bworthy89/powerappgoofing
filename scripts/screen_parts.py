@@ -523,13 +523,186 @@ def title_shrink(specs):
 
 
 def title_height(base=41):
-    """A title's Height, carrying the wrapped button row on narrow screens.
+    """A title's Height. Just the title.
 
-    Every screen positions its next control at lblTitle.Y + lblTitle.Height, so putting the
-    extra height here shifts the rest of the screen down without any screen needing to know
-    the buttons exist.
+    It used to carry the wrapped button row as extra height, so that whatever laid itself
+    out at lblTitle.Y + lblTitle.Height cleared the buttons. That reserved the space by
+    making the LABEL taller - and a ModernText centres its text vertically, so on a narrow
+    screen an admin's title drifted down into the middle of its own buttons.
+
+    Reserving space below a control by inflating that control only works if nothing draws
+    in the reserved part. The allowance lives in title_gap now, added by whatever comes
+    next, which is what it always meant.
     """
-    return f"{base} + If(varIsAdmin && IsNarrow, {ACTION_ROW}, 0)"
+    return str(base)
+
+
+def title_gap():
+    """The room a wrapped button row needs, for the control that follows the title."""
+    return f"If(varIsAdmin && IsNarrow, {ACTION_ROW}, 0)"
+
+
+# ------------------------------------------------------------------- admin affordances
+#
+# One set of screens serves both roles. Edit powers are switched on by varIsAdmin rather
+# than duplicated into a parallel set of admin screens, which would drift apart. Nothing
+# about the technician view changes: every affordance here is invisible without the flag.
+#
+# Outlined and muted throughout, never filled. These land on screens that were deliberately
+# decluttered, and a row of solid buttons would undo that in one paste.
+#
+# They sit on each object's own screen rather than on every gallery row. A row already
+# navigates to the object, so a per-row edit button duplicates the destination it sits next
+# to while adding the most clutter to the busiest screens.
+
+
+def admin_open(key, record_expr, is_new, back="scrAdmin", extra=None):
+    """The single way any screen opens the edit form.
+
+    scrEditForm reads four variables: which list it is editing, the record, whether this
+    is a create, and where to return. That last one is what makes editing in place work at
+    all - the form used to navigate to scrAdmin unconditionally, so editing a machine from
+    its own screen would have dropped the admin on a list of database tables. Seeding the record with context - the customer whose page you are on,
+    the machine you are inside - is what separates "add a unit here" from "add a unit": the
+    form's defaults read that record variable directly, so anything patched into it arrives
+    already filled in, and the admin never answers a question the screen already knew.
+    """
+    return (clear_stash() + "; "
+            + (extra + "; " if extra else "")
+            + f"Set(varRec{key}, {record_expr}); "
+            f'Set(varAdminList, "{key}"); '
+            f"Set(varAdminNew, {'true' if is_new else 'false'}); "
+            f"Set(varAdminReturn, {back}); "
+            "Navigate(scrEditForm, ScreenTransition.Cover)")
+
+
+# One per lookup field on scrEditForm, each holding a real row from that field's
+# target table. gen_form asserts this list still matches the fields it generates, so
+# the two cannot drift apart silently.
+STASH_VARS = [
+    "varStCustomerInst",
+    "varStParentInst",
+    "varStProductInst",
+    "varStProductRef",
+    "varStProductSwVer",
+    "varStSolutionSolU",
+    "varStUnitSolU",
+]
+
+
+def clear_stash():
+    """Blank every stash variable.
+
+    Called from admin_open and from scrAdmin's entries - deliberately not from OnVisible,
+    which runs after the OnSelect that navigated and would wipe the seed it just set.
+    """
+    return "; ".join(f"Set({n}, Blank())" for n in STASH_VARS)
+
+
+def stash(pairs):
+    """Set named stash variables to rows already in hand.
+
+    A row from the table has the lookup's type because it came from the table. Building the
+    record by hand does not work in either direction: with '@odata.type' it has a field too
+    many for a structural merge, without it a field too few.
+    """
+    return "; ".join(f"Set({k}, {v})" for k, v in pairs)
+
+
+def admin_button(name, label, on_select, x, y, width, height=40, ind=12,
+                 visible="varIsAdmin"):
+    """An outlined, admin-only button. Used for both "+ Add ..." and "Edit".
+
+    Written as a literal block and indented afterwards rather than assembled from escaped
+    fragments: an escaped newline has been eaten in transit three times on this project,
+    each time producing a file that looked plausible and did not parse.
+    """
+    # An empty label means an icon button - a pencil. Same control, same geometry
+    # machinery, so the responsive wrap and the title shrink need to know nothing about it.
+    face = '      Icon: ="Edit"\n      Text: =""' if not label else f'      Text: ="{label}"'
+    body = f"""- {name}:
+    Control: ModernButton
+    Properties:
+      Appearance: =ButtonAppearance.Outline
+{face}
+      Font: =AppFont
+      Size: =AppType.Body
+      FontWeight: =FontWeight.Semibold
+      Color: ={"AppDark.Muted" if not label else "AppDark.Accent"}
+      BorderColor: =AppDark.Line
+      BorderThickness: =1
+      RadiusTopLeft: =6
+      RadiusTopRight: =6
+      RadiusBottomLeft: =6
+      RadiusBottomRight: =6
+      X: |
+        ={x}
+      Y: |
+        ={y}
+      Width: |
+        ={width}
+      Height: ={height}
+      Visible: |
+        ={visible}
+      OnSelect: |
+        ={on_select}
+"""
+    pad = " " * ind
+    return "".join(pad + ln if ln.strip() else ln
+                   for ln in body.splitlines(keepends=True))
+
+
+ACTION_GAP = 8
+
+
+ACTION_H = 40
+ACTION_ROW = 48          # the band a wrapped button row occupies, including its gap
+
+
+def pencil(name, on_select, x, y, ind=12, visible="varIsAdmin", size=32):
+    """A square edit affordance somewhere other than the title row - on a hero panel, say.
+
+    An empty label is what makes admin_button render an icon, so this is that call with the
+    geometry named rather than a second control definition to keep in step.
+    """
+    return admin_button(name, "", on_select, x=x, y=y, width=str(size), height=size,
+                        ind=ind, visible=visible)
+
+
+def title_actions(title, specs, ind=12):
+    """Admin buttons on a screen's title row.
+
+    The title row is the one element every screen here shares, and it is the only place an
+    affordance fits without disturbing a layout tuned for a technician - a button below a
+    list would have to push a gallery down, and every gallery in this app is sized from the
+    control above it.
+
+    Wide: right-aligned beside the title, in declared order, rightmost last.
+    Narrow: their own row underneath, left to right in declared order, because two buttons
+    beside a title on a phone leave the title about ninety pixels.
+    """
+    widths = [w for *_rest, w in specs]
+    out = []
+    for i, (name, label, on_select, w) in enumerate(specs):
+        left = sum(widths[:i]) + i * ACTION_GAP
+        right = sum(widths[i:]) + (len(specs) - i) * ACTION_GAP
+        x = (f"If(IsNarrow, Gutter + {left}, "
+             f"Gutter + ({CW}) - {right})")
+        y = f"{title}.Y + If(IsNarrow, 41, 0)"
+        out.append(admin_button(name, label, on_select, x=x, y=y,
+                                width=str(w), height=ACTION_H, ind=ind))
+    return "".join(out)
+
+
+def title_shrink(specs):
+    """A title's Width, leaving room for buttons that sit beside it.
+
+    Only when there are buttons AND they are beside it. On narrow they are on their own row,
+    so the title keeps the full measure; for a technician the If is false either way and the
+    screen is byte-identical to what it was.
+    """
+    total = sum(w + ACTION_GAP for *_rest, w in specs) + ACTION_GAP
+    return f"({CW}) - If(varIsAdmin && !IsNarrow, {total}, 0)"
 
 
 # ---------------------------------------------------------------------------- verification

@@ -118,7 +118,7 @@ Screens:
                   X: =Gutter
                   Y: =56 + 24
                   Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 266, 0)
-                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
+                  Height: =41
                   Text: =varCustomer.Title
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)
@@ -134,7 +134,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleOvw.Y + lblTitleOvw.Height
+                  Y: =lblTitleOvw.Y + lblTitleOvw.Height + {P.title_gap()}
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =22
                   Font: =AppFont
@@ -305,7 +305,7 @@ Screens:
                         OnSelect: =Select(Parent)
                         X: =20
                         Y: =46
-                        Width: =(Parent.TemplateWidth - 40) * 0.62
+                        Width: =(Parent.TemplateWidth - 40) * 0.53
                         Height: =20
                         Font: =AppFont
                         Size: =AppType.Small

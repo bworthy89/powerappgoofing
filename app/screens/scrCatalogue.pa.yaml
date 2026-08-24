@@ -92,7 +92,7 @@ Screens:
                   X: =Gutter
                   Y: =56 + 24
                   Width: =(Parent.Width - (Gutter * 2)) - If(varIsAdmin && !IsNarrow, 168, 0)
-                  Height: =41 + If(varIsAdmin && IsNarrow, 48, 0)
+                  Height: =41
                   Text: ="Catalogue"
                   Font: =AppFont
                   Size: =If(IsNarrow, AppType.Title, AppType.Display)
@@ -106,7 +106,7 @@ Screens:
                   PaddingTop: =0
                   PaddingBottom: =0
                   X: =Gutter
-                  Y: =lblTitleCat.Y + lblTitleCat.Height
+                  Y: =lblTitleCat.Y + lblTitleCat.Height + If(varIsAdmin && IsNarrow, 48, 0)
                   Width: =Parent.Width - (Gutter * 2)
                   Height: =22
                   Font: =AppFont
@@ -145,7 +145,7 @@ Screens:
                   PaddingBottom: =0
                   X: =Gutter
                   Y: =txtSearchCat.Y + txtSearchCat.Height + Gutter
-                  Width: =Parent.Width - (Gutter * 2)
+                  Width: =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: =22
                   Text: ="MODELS"
                   Font: =AppFont
@@ -323,7 +323,7 @@ Screens:
                   X: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
                   Y: =lblModelsHeadingCat.Y
-                  Width: =200
+                  Width: =70
                   Height: =18
                   Text: ="CAN TAKE"
                   Font: =AppFont
@@ -342,7 +342,7 @@ Screens:
                   X: |
                     =(If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)) + 78
                   Y: =lblModelsHeadingCat.Y
-                  Width: =260
+                  Width: =(If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))) - 78
                   Height: =18
                   Text: ="drives the Units tab and the standard build"
                   Font: =AppFont
@@ -485,7 +485,8 @@ Screens:
                   PaddingBottom: =0
                   X: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, Gutter + ((Parent.Width - (Gutter * 2) - Gutter) / 2) + Gutter, Gutter)
-                  Y: =lblModelsHeadingCat.Y
+                  Y: |
+                    =If(scrCatalogue.Size >= ScreenSize.Large, lblModelsHeadingCat.Y + If(!IsBlank(varExpandedModel) && varExpandedModel <> 0, (22 + Min(CountRows(Filter(TB_SolutionUnits, Solution.Id = varExpandedModel)) * 44 + 8, 180) + If(varIsAdmin, 56, 0) + 20), 0), Parent.Height - Gutter - 250)
                   Width: |
                     =If(scrCatalogue.Size >= ScreenSize.Large, (Parent.Width - (Gutter * 2) - Gutter) / 2, Parent.Width - (Gutter * 2))
                   Height: =40

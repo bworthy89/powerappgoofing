@@ -335,7 +335,7 @@ Screens:
                   Y: |
                     =Parent.Height - Gutter - 44
                   Width: |
-                    =ContentWidth - (Gutter * 2) - 180
+                    =ContentWidth - (Gutter * 2) - 230
                   Height: =44
                   Visible: |
                     =!IsBlank(varWizCust)
