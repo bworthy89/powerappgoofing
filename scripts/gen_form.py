@@ -692,7 +692,28 @@ build = " ".join([
     ");",
 ])
 
-lines += ["    " + build.strip(),
+# Attaching a unit the model does not list teaches the catalogue that it takes one.
+# PM is the parent machine's model - the Solution side of the TB_SolutionUnits row.
+PM = "LookUp(TB_Installations, ID = varSavedInst.'Parent'.Id).Product"
+learn = " ".join([
+    'If(varAdminList = "Inst" && varAdminNew'
+    " && !IsBlank(varSavedInst.'Parent')",
+    f"   && CountRows(Filter(TB_SolutionUnits, Solution.Id = {PM}.Id,",
+    "        Unit.Id = varSavedInst.Product.Id)) = 0,",
+    "    Patch(TB_SolutionUnits, Defaults(TB_SolutionUnits), {",
+    f'        Title: {PM}.Value & " - " & varSavedInst.Product.Value,',
+    f"        Solution: " + _ref(f"{PM}.Id", f"{PM}.Value") + ",",
+    "        Unit: " + _ref("varSavedInst.Product.Id", "varSavedInst.Product.Value") + ",",
+    "        Standard: false",
+    "    });",
+    "    Refresh(TB_SolutionUnits);",
+    f'    Notify("Added " & varSavedInst.Product.Value & " to " & {PM}.Value',
+    '           & "\'s unit list.", NotificationType.Success)',
+    ");",
+])
+
+lines += ["    " + learn,
+          "    " + build.strip(),
           '    Set(varEditError, "");',
           "    If(!IsBlank(varResumeList),",
           "        " + resume + ",",
